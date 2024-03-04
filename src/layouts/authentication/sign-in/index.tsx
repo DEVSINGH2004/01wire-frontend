@@ -245,7 +245,7 @@ function SignIn(): JSX.Element {
               <Paper
                 sx={{
                   mx: "auto",
-                  height: isSignup || showPassword ? "80vh" : "70vh",
+                  height: "600px",
                   overflow: "scroll",
                 }}
               >
