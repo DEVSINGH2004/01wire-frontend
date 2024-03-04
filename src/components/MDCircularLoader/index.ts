@@ -1,1 +1,1 @@
-export { default } from './MDCircularLoader';
+export { default } from "./MDCircularLoader"

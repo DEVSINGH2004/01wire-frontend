@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import Grid from "@mui/material/Grid";
+import { Grid, InputAdornment, Divider, Paper } from "@mui/material";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -19,11 +19,10 @@ import { MuiOtpInput } from "mui-one-time-password-input";
 // Image
 import bgImage from "assets/images/loginBg.png";
 import loginLogo from "assets/images/loginLogo.png";
-import InputAdornment from "@mui/material/InputAdornment";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import { Divider, Paper } from "@mui/material";
+
 import { ISignupVars, SIGNUP } from "graphql/mutations/signup";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { ILoginVars, LOGIN } from "graphql/mutations/login";
@@ -175,7 +174,6 @@ function SignIn(): JSX.Element {
       },
     })
       .then((res: any) => {
-        debugger;
         if (!forgotPsw) {
           localStorage.setItem("token", res.data.verifyOtp.token);
           toast.success("Login Successful!!");

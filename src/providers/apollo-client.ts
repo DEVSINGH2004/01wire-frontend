@@ -1,5 +1,3 @@
-"use client";
-
 import { HttpLink, ApolloLink , concat, InMemoryCache, ApolloClient} from "@apollo/client";
 
 const authMiddleware = new ApolloLink((operation, forward) => {
