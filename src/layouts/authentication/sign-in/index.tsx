@@ -246,6 +246,7 @@ function SignIn(): JSX.Element {
                 sx={{
                   mx: "auto",
                   height: "600px",
+                  width: "580px",
                   overflow: "scroll",
                 }}
               >
