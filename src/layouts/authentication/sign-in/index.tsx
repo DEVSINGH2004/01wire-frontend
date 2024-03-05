@@ -289,7 +289,10 @@ function SignIn(): JSX.Element {
                         InputLabelProps={{
                           shrink: true,
                         }}
-                        onChange={(e: any) => setEmail(e.target.value)}
+                        onChange={(e: any) => {
+                          setEmail(e.target.value);
+                          setEmailError("");
+                        }}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="start">
