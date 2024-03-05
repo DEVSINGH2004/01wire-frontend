@@ -63,7 +63,8 @@ export default styled(TextField)(({ theme, ownerState }: { theme?: Theme; ownerS
   });
 
   return {
-    backgroundColor: disabled ? `${grey[200]} !important` : transparent.main,
+    backgroundColor: disabled ? `${grey[200]} !important` : "white",
+    borderRadius: "8px",
     pointerEvents: disabled ? "none" : "auto",
     ...(error && errorStyles()),
     ...(success && successStyles()),
