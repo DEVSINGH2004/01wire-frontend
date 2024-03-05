@@ -37,7 +37,8 @@ interface Props extends TypographyProps {
     | "light"
     | "dark"
     | "text"
-    | "white";
+    | "white"
+    | "textSecondary";
   fontWeight?: "light" | "regular" | "medium" | "bold" | undefined;
   textTransform?: "none" | "capitalize" | "uppercase" | "lowercase";
   verticalAlign?:
