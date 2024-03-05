@@ -20,7 +20,7 @@ function collapseItem(theme: Theme, ownerState: any) {
   const { palette, transitions, breakpoints, boxShadows, borders, functions } = theme;
   const { active, transparentSidenav, whiteSidenav, darkMode } = ownerState;
 
-  const { white, transparent, dark, grey } = palette;
+  const { white, transparent, dark, grey, primary } = palette;
   const { md } = boxShadows;
   const { borderRadius } = borders;
   const { pxToRem, rgba } = functions;
@@ -36,7 +36,7 @@ function collapseItem(theme: Theme, ownerState: any) {
       } else if (whiteSidenav) {
         backgroundValue = active ? grey[200] : transparent.main;
       } else {
-        backgroundValue = active ? rgba(white.main, 0.2) : transparent.main;
+        backgroundValue = active ? primary.main : transparent.main;
       }
 
       return backgroundValue;
@@ -61,6 +61,7 @@ function collapseItem(theme: Theme, ownerState: any) {
 
     "&:hover, &:focus": {
       backgroundColor:
+      active ?transparent: 
         transparentSidenav && !darkMode
           ? grey[300]
           : rgba(whiteSidenav ? grey[400] : white.main, 0.2),

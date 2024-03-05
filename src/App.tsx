@@ -53,6 +53,7 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
+import brandLogo from "assets/images/wireLogo.png";
 import SignIn from "layouts/authentication/sign-in";
 
 export default function App() {
@@ -201,7 +202,7 @@ export default function App() {
             <>
               <Sidenav
                 color={sidenavColor}
-                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                brand={brandLogo}
                 brandName="Dashboard"
                 routes={routes}
                 onMouseEnter={handleOnMouseEnter}
