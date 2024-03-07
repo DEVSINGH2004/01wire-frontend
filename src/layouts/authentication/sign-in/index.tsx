@@ -159,6 +159,8 @@ function SignIn(): JSX.Element {
           setLoading(false);
           toast.error(err?.response?.data?.message || "Error fetching email data");
         });
+    } else {
+      toast.error(`Please enter the ${!fullName ? "name":"password"}`);
     }
   };
 
@@ -217,6 +219,23 @@ function SignIn(): JSX.Element {
       });
   };
 
+  const handleSubmit = () => {
+    if (isSignup) handleSignup();
+    else if (showPassword) handleLogin();
+    else if (showOtp) handleVerifyOtp();
+    else if (!showOtp && forgotPsw) handleResetPassword();
+    else handleEmailSubmit();
+    
+  }
+
+  const onKeyDownHandler = (e: any) => {
+    if (e?.keyCode === 13) {
+      e?.target?.blur();
+    e?.preventDefault()
+      handleSubmit();
+    }
+  };
+
   return (
     <PageLayout>
       <Grid
@@ -269,7 +288,7 @@ function SignIn(): JSX.Element {
               </>
             </MDBox>
             <MDBox p={3}>
-              <MDBox component="form" role="form">
+              <MDBox component="form" role="form" onKeyDown={onKeyDownHandler}>
                 {!(showOtp || forgotPsw) && (
                   <>
                     <MDTypography
@@ -284,6 +303,7 @@ function SignIn(): JSX.Element {
                       <MDInput
                         type="email"
                         fullWidth
+                        disabled={isSignup || showPassword}
                         error={emailError !== ""}
                         value={email}
                         InputLabelProps={{
@@ -420,13 +440,7 @@ function SignIn(): JSX.Element {
 
                 <MDBox mt={4}>
                   <MDButton
-                    onClick={() => {
-                      if (isSignup) handleSignup();
-                      else if (showPassword) handleLogin();
-                      else if (showOtp) handleVerifyOtp();
-                      else if (!showOtp && forgotPsw) handleResetPassword();
-                      else handleEmailSubmit();
-                    }}
+                    onClick={handleSubmit}
                     color="secondary"
                     size="large"
                     fullWidth
