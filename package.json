@@ -1,8 +1,8 @@
 {
-  "name": "material-dashboard-2-pro-react-ts",
+  "name": "01wire-fe",
   "version": "1.0.2",
   "private": true,
-  "description": "React + TypeScript version of Material Dashboard 2 PRO by Creative Tim",
+  "description": "01wire dashboard",
   "dependencies": {
     "@apollo/client": "^3.9.5",
     "@asseinfo/react-kanban": "2.2.0",
