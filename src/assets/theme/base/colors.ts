@@ -60,6 +60,7 @@ interface Types {
         focus: string;
         primary?: string;
         secondary?: string;
+        textSecondary?: string;
         disabled?: string;
       }
     | any;
@@ -153,6 +154,7 @@ const colors: Types = {
   text: {
     main: "#7b809a",
     focus: "#7b809a",
+    textSecondary: "#F9565C"
   },
 
   transparent: {
