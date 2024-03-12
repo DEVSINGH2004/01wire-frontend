@@ -1,25 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 /** 
-  All of the routes for the Material Dashboard 2 PRO React are added here,
-  You can add a new route, customize the routes and delete the routes here.
-
-  Once you add a new route on this file it will be visible automatically on
-  the Sidenav.
-
   For adding a new route you can follow the existing routes in the routes array.
   1. The `type` key with the `collapse` value is used for a route.
   2. The `type` key with the `title` value is used for a title inside the Sidenav. 
@@ -36,25 +15,24 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 PRO React layouts
-import Analytics from "layouts/dashboards/analytics";
-import Sales from "layouts/dashboards/sales";
 import Dashboards from "layouts/pages/dashboards";
+import MyCredits from "layouts/pages/myCredits";
+import Releases from "layouts/pages/releases";
+import Clients from "layouts/pages/clients"
 
 // Material Dashboard 2 PRO React TS components
 import MDAvatar from "components/MDAvatar";
-
-// @mui icons
-import Icon from "@mui/material/Icon";
-
-// Images
-import profilePicture from "assets/images/team-3.jpg";
+import ClientIcon from "assets/images/icons/sidebarClient.svg";
+import DashboardIcon from "assets/images/icons/sidebarDashboard.svg";
+import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
+import WalletIcon from "assets/images/icons/sidebarWallet.svg";
 
 const routes = [
   {
     type: "collapse",
     name: "Dashboards",
     key: "dashboards",
-    icon: <Icon fontSize="medium">dashboard</Icon>,
+    icon: <img src={DashboardIcon} width="24px" height="24px"/>,
     noCollapse: true,
     route: "/dashboards",
     component: <Dashboards />,
@@ -62,26 +40,29 @@ const routes = [
   {
     type: "collapse",
     name: "Release",
-    key: "changelog",
-    href: "https://github.com/creativetimofficial/ct-material-dashboard-pro-react/blob/main/CHANGELOG.md",
-    icon: <Icon fontSize="medium">dashboard</Icon>,
+    icon: <img src={ReleaseIcon} width="24px" height="24px"/>,
+    key: "releases",
     noCollapse: true,
+    route: "/releases",
+    component: <Releases />,
   },
   {
     type: "collapse",
     name: "Client",
-    key: "changelog",
-    href: "https://github.com/creativetimofficial/ct-material-dashboard-pro-react/blob/main/CHANGELOG.md",
-    icon: <Icon fontSize="medium">dashboard</Icon>,
+    icon: <img src={ClientIcon} width="24px" height="24px"/>,
+    key: "clients",
     noCollapse: true,
+    route: "/clients",
+    component: <Clients />,
   },
   {
     type: "collapse",
     name: "My Credits",
-    key: "changelog",
-    href: "https://github.com/creativetimofficial/ct-material-dashboard-pro-react/blob/main/CHANGELOG.md",
-    icon: <Icon fontSize="medium">dashboard</Icon>,
+    key: "my-credits",
     noCollapse: true,
+    route: "/my-credits",
+    icon: <img src={WalletIcon} width="24px" height="24px"/>,
+    component: <MyCredits />,
   },
 
   // { type: "divider", key: "divider-0" },

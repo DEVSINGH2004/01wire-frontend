@@ -47,7 +47,7 @@ interface Props {
   canSearch?: boolean;
   showTotalEntries?: boolean;
   table: {
-    columns: { [key: string]: any }[];
+    columns?: { [key: string]: any }[];
     rows: { [key: string]: any }[];
   };
   pagination?: {
@@ -56,6 +56,7 @@ interface Props {
   };
   isSorted?: boolean;
   noEndBorder?: boolean;
+  showHeader?: boolean;
 }
 
 function DataTable({
@@ -66,6 +67,7 @@ function DataTable({
   pagination,
   isSorted,
   noEndBorder,
+  showHeader,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -75,7 +77,7 @@ function DataTable({
     entries = entriesPerPage.entries ? entriesPerPage.entries : ["10", "25", "50", "100"];
   }
 
-  const columns = useMemo<any>(() => table.columns, [table]);
+  const columns = useMemo<any>(() => table?.columns, [table]) ||[];
   const data = useMemo<any>(() => table.rows, [table]);
 
   const tableInstance = useTable(
@@ -207,23 +209,25 @@ function DataTable({
         </MDBox>
       ) : null}
       <Table {...getTableProps()}>
-        <MDBox component="thead">
-          {headerGroups.map((headerGroup: any, key: any) => (
-            <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: any, key: any) => (
-                <DataTableHeadCell
-                  key={key}
-                  {...column.getHeaderProps(isSorted && column.getSortByToggleProps())}
-                  width={column.width ? column.width : "auto"}
-                  align={column.align ? column.align : "left"}
-                  sorted={setSortedValue(column)}
-                >
-                  {column.render("Header")}
-                </DataTableHeadCell>
-              ))}
-            </TableRow>
-          ))}
-        </MDBox>
+        {false && (
+          <MDBox component="thead">
+            {headerGroups.map((headerGroup: any, key: any) => (
+              <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column: any, key: any) => (
+                  <DataTableHeadCell
+                    key={key}
+                    {...column.getHeaderProps(isSorted && column.getSortByToggleProps())}
+                    width={column.width ? column.width : "auto"}
+                    align={column.align ? column.align : "left"}
+                    sorted={setSortedValue(column)}
+                  >
+                    {column.render("Header")}
+                  </DataTableHeadCell>
+                ))}
+              </TableRow>
+            ))}
+          </MDBox>
+        )}
         <TableBody {...getTableBodyProps()}>
           {page.map((row: any, key: any) => {
             prepareRow(row);
@@ -303,6 +307,7 @@ DataTable.defaultProps = {
   pagination: { variant: "gradient", color: "info" },
   isSorted: true,
   noEndBorder: false,
+  showHeader: true,
 };
 
 export default DataTable;

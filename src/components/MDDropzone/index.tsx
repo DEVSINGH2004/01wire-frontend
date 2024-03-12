@@ -47,7 +47,7 @@ function MDDropzone({ options }: Props): JSX.Element {
     Dropzone.autoDiscover = false;
 
     function createDropzone() {
-      return new Dropzone(dropzoneRef.current, { ...options });
+      return new Dropzone(dropzoneRef.current, { dictDefaultMessage: "Click to upload or drag and drag", ...options });
     }
 
     function removeDropzone() {
@@ -63,13 +63,16 @@ function MDDropzone({ options }: Props): JSX.Element {
     <MDDropzoneRoot
       action="/file-upload"
       ref={dropzoneRef}
-      className="form-control dropzone"
-      ownerState={{ darkMode }}
+      className="form-control"
+        ownerState={{ darkMode }}
+        style={{minHeight: "110px", border:"none !important"}}
     >
-      <MDBox className="fallback" bgColor="transparent">
+        <MDBox sx={{
+          minHeight: "150px",
+        }}className="fallback" bgColor="transparent" >
         <input name="file" type="file" multiple />
       </MDBox>
-    </MDDropzoneRoot>
+      </MDDropzoneRoot>
   );
 }
 

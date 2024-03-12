@@ -42,40 +42,46 @@ interface BadgeColorsTypes {
 
 interface Types {
   background:
-    | {
-        default: string;
-        sidenav?: string;
-        card?: string;
-      }
-    | any;
+  | {
+    default: string;
+    sidenav?: string;
+    card?: string;
+  }
+  | any;
   white:
-    | {
-        main: string;
-        focus: string;
-      }
-    | any;
+  | {
+    main: string;
+    focus: string;
+  }
+  | any;
   text:
-    | {
-        main: string;
-        focus: string;
-        primary?: string;
-        secondary?: string;
-        textSecondary?: string;
-        disabled?: string;
-      }
-    | any;
+  | {
+    main: string;
+    focus: string;
+    primary?: string;
+    secondary?: string;
+    textSecondary?: string;
+    disabled?: string;
+  }
+  | any;
   transparent:
-    | {
-        main: string;
-      }
-    | any;
+  | {
+    main: string;
+  }
+  | any;
   black:
-    | {
-        light: string;
-        main: string;
-        focus: string;
-      }
-    | any;
+  | {
+    light: string;
+    main: string;
+    focus: string;
+  }
+  | any;
+  pinkCard:
+  | {
+    main: string;
+    focus: string;
+  }
+  | any;
   primary: ColorsTypes | any;
   secondary: ColorsTypes | any;
   info: ColorsTypes | any;
@@ -85,65 +91,65 @@ interface Types {
   light: ColorsTypes | any;
   dark: ColorsTypes | any;
   grey:
-    | {
-        [key: string | number]: string;
-      }
-    | any;
+  | {
+    [key: string | number]: string;
+  }
+  | any;
   gradients:
-    | {
-        primary: GradientsTypes;
-        secondary: GradientsTypes;
-        info: GradientsTypes;
-        success: GradientsTypes;
-        warning: GradientsTypes;
-        error: GradientsTypes;
-        light: GradientsTypes;
-        dark: GradientsTypes;
-      }
-    | any;
+  | {
+    primary: GradientsTypes;
+    secondary: GradientsTypes;
+    info: GradientsTypes;
+    success: GradientsTypes;
+    warning: GradientsTypes;
+    error: GradientsTypes;
+    light: GradientsTypes;
+    dark: GradientsTypes;
+  }
+  | any;
   socialMediaColors:
-    | {
-        facebook: SocialMediaColorsTypes;
-        twitter: SocialMediaColorsTypes;
-        instagram: SocialMediaColorsTypes;
-        linkedin: SocialMediaColorsTypes;
-        pinterest: SocialMediaColorsTypes;
-        youtube: SocialMediaColorsTypes;
-        vimeo: SocialMediaColorsTypes;
-        slack: SocialMediaColorsTypes;
-        dribbble: SocialMediaColorsTypes;
-        github: SocialMediaColorsTypes;
-        reddit: SocialMediaColorsTypes;
-        tumblr: SocialMediaColorsTypes;
-      }
-    | any;
+  | {
+    facebook: SocialMediaColorsTypes;
+    twitter: SocialMediaColorsTypes;
+    instagram: SocialMediaColorsTypes;
+    linkedin: SocialMediaColorsTypes;
+    pinterest: SocialMediaColorsTypes;
+    youtube: SocialMediaColorsTypes;
+    vimeo: SocialMediaColorsTypes;
+    slack: SocialMediaColorsTypes;
+    dribbble: SocialMediaColorsTypes;
+    github: SocialMediaColorsTypes;
+    reddit: SocialMediaColorsTypes;
+    tumblr: SocialMediaColorsTypes;
+  }
+  | any;
   badgeColors:
-    | {
-        primary: BadgeColorsTypes;
-        secondary: BadgeColorsTypes;
-        info: BadgeColorsTypes;
-        success: BadgeColorsTypes;
-        warning: BadgeColorsTypes;
-        error: BadgeColorsTypes;
-        light: BadgeColorsTypes;
-        dark: BadgeColorsTypes;
-      }
-    | any;
+  | {
+    primary: BadgeColorsTypes;
+    secondary: BadgeColorsTypes;
+    info: BadgeColorsTypes;
+    success: BadgeColorsTypes;
+    warning: BadgeColorsTypes;
+    error: BadgeColorsTypes;
+    light: BadgeColorsTypes;
+    dark: BadgeColorsTypes;
+  }
+  | any;
   coloredShadows:
-    | {
-        [key: string]: string;
-      }
-    | any;
+  | {
+    [key: string]: string;
+  }
+  | any;
   inputBorderColor: string;
   tabs:
+  | {
+    indicator:
     | {
-        indicator:
-          | {
-              boxShadow: string;
-            }
-          | any;
-      }
+      boxShadow: string;
+    }
     | any;
+  }
+  | any;
 }
 
 const colors: Types = {
@@ -171,7 +177,9 @@ const colors: Types = {
     main: "#000000",
     focus: "#000000",
   },
-
+  pinkCard: {
+    main: "#E93B77",
+  },
   primary: {
     main: "#EE5C61",
     focus: "#EE5C61",

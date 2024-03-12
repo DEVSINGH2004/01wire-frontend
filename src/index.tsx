@@ -19,6 +19,8 @@ import App from "App";
 import Provider from "providers/apollo";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Material Dashboard 2 PRO React TS Context Provider
 import { MaterialUIControllerProvider } from "context";

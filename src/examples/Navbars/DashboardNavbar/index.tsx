@@ -27,8 +27,8 @@ import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
-import MDBadge from "components/MDBadge";
+import colors from "assets/theme/base/colors";
+import borders from "assets/theme/base/borders";
 
 // Material Dashboard 2 PRO React TS examples components
 import Breadcrumbs from "examples/Breadcrumbs";
@@ -51,6 +51,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import MDTypography from "components/MDTypography";
 
 // Declaring prop types for DashboardNavbar
 interface Props {
@@ -60,6 +61,8 @@ interface Props {
 }
 
 function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
+  const { white, grey } = colors;
+  const { borderWidth } = borders;
   const [navbarType, setNavbarType] = useState<
     "fixed" | "absolute" | "relative" | "static" | "sticky"
   >();
@@ -150,16 +153,21 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
       <Toolbar sx={navbarContainer}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
-          <IconButton sx={navbarDesktopMenu} onClick={handleMiniSidenav} size="small" disableRipple>
-            <Icon fontSize="medium" sx={iconsStyle}>
-              {miniSidenav ? "menu_open" : "menu"}
-            </Icon>
-          </IconButton>
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput label="Search here" />
+            <MDBox
+              py={1}
+              px={2}
+              sx={{
+                borderRadius: "8px",
+                backgroundColor: white.main,
+                border: `${borderWidth[1]} solid ${grey[400]}`,
+              }}
+            >
+              <MDTypography fontWeight="bold" fontSize="1rem" color="primary">
+                500 Credits
+              </MDTypography>
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton

@@ -33,6 +33,8 @@ import Configurator from "examples/Configurator";
 // Material Dashboard 2 PRO React TS themes
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
+import 'slick-carousel/slick/slick.css';
+import "slick-carousel/slick/slick-theme.css"
 
 // Material Dashboard 2 PRO React TS Dark Mode themes
 import themeDark from "assets/theme-dark";
