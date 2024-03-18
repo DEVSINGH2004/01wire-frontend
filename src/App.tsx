@@ -57,7 +57,6 @@ import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 import brandLogo from "assets/images/wireLogo.png";
 import SignIn from "layouts/authentication/sign-in";
-import ReleaseForm from "layouts/pages/releases/components/ReleaseForm";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -187,7 +186,6 @@ export default function App() {
             )}
             {layout === "vr" && <Configurator />}
             <Routes>
-              <Route path="/releases/:id" element={<ReleaseForm />} />
               {getRoutes(routes)}
               <Route path="*" element={<Navigate to="/dashboards" />} />
             </Routes>
@@ -219,7 +217,6 @@ export default function App() {
           {layout === "vr" && <Configurator />}
           <Routes>
             {getRoutes(routes)}
-            <Route path="/releases/:id" element={<ReleaseForm />} />
             <Route path="*" element={<Navigate to="/dashboards" />} />
           </Routes>
         </>

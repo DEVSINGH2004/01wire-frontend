@@ -21,7 +21,6 @@ import ReleaseForm from "./components/ReleaseForm";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 
 // Data
-import dataTableData from "layouts/applications/data-tables/data/dataTableData";
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
@@ -30,7 +29,6 @@ import {
   IGetArticlesVars,
 } from "graphql/queries/filterArticlesPaginated";
 import EditIcon from "assets/images/icons/editIcon.png";
-import { useNavigate } from "react-router-dom";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -92,7 +90,6 @@ const columns = [
   },
 ];
 function Releases(): JSX.Element {
-  const navigate = useNavigate();
   const [client, setClient] = useState<string>("");
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>(false);
@@ -130,8 +127,8 @@ function Releases(): JSX.Element {
         };
       });
       setData({ rows, columns });
-      setLoader(false);
     }
+    setLoader(false);
   }, [articlesData]);
   return (
     <DashboardLayout>

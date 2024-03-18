@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
@@ -9,7 +8,6 @@ import { useMutation } from "@apollo/client";
 import InputAdornment from "@mui/material/InputAdornment";
 import InfoIconOutlined from "@mui/icons-material/InfoOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-
 import XIcon from "@mui/icons-material/X";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -18,7 +16,6 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
-import PublicIcon from "@mui/icons-material/Public";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { countryList } from "constants/index";
@@ -136,13 +133,6 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
               options={CategoryOptions}
               variant="outlined"
             />
-            {/* <FormField
-              type="text"
-              label="Title"
-              name="title"
-              control={control}
-              variant="outlined"
-            /> */}
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormField
@@ -315,20 +305,6 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
               options={Object.keys(countryList)}
               variant="outlined"
             />
-            {/* <FormField
-              type="text"
-              label="Country"
-              name="country"
-              control={control}
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <PublicIcon />
-                  </InputAdornment>
-                ),
-              }}
-            /> */}
             <FormField
               type="text"
               label="Instagram"

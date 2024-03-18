@@ -18,7 +18,6 @@ import {
   IGetArticleByIdVars,
   IGetArticleById,
 } from "graphql/queries/getArticleById";
-import { useParams } from "react-router-dom";
 
 interface Props {
   onClose?: (p: boolean) => void;
@@ -53,10 +52,9 @@ function getStepContent(
 }
 
 function ReleaseForm({ onClose, idVal }: Props): JSX.Element {
-  const { id } = useParams();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [saveData, setSaveData] = useState<boolean>(false);
-  const [articleId, setId] = useState<string>(idVal !== true ? idVal : id);
+  const [articleId, setId] = useState<string>(idVal !== true && idVal);
   const [article, setArticle] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const steps = getSteps();

@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -22,7 +7,6 @@ import Slider from "react-slick";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import IconButton from "@mui/material/IconButton";
-
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -39,9 +23,6 @@ import {
   IGetPublicationsVars,
 } from "graphql/queries/filterPublicationsPaginated";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
-
-// NewProduct page components
-import FormField from "../FormField";
 
 // Custom arrow component for previous button
 const PrevArrow = ({ onClick }: { onClick?: any }) => {
@@ -116,7 +97,6 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
     setBundlePids(pIds);
   };
   const handlePublicationClick = (id: any) => {
-    console.log("clickedPublicationId", id, publicationIds?.indexOf(id));
     if (publicationIds?.indexOf(id) !== -1) {
       const newIds = publicationIds?.filter((one: any) => one !== id);
       setPublicationIds(newIds);
@@ -124,7 +104,6 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
       setPublicationIds((oldVal: any) => [...oldVal, id]);
     }
   };
-  console.log("publicationIds", publicationIds);
   const onSubmit = () => {
     setLoading(true);
     updateArticle({
@@ -149,7 +128,6 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
   };
   useEffect(() => {
     if (saveData) {
-      console.log("saveData", saveData);
       onSubmit();
     }
   }, [saveData]);
