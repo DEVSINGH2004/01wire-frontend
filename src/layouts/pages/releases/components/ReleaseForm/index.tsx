@@ -118,7 +118,7 @@ function ReleaseForm({ onClose, idVal }: Props): JSX.Element {
       <MDBox p={2}>
         <MDBox>
           {loading ? (
-            <MDCircularLoader overlayloader startLoader />
+            <MDCircularLoader startLoader />
           ) : (
             getStepContent(activeStep, saveData, handleNext, article, fetchData)
           )}
