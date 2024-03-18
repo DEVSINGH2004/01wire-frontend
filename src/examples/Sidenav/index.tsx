@@ -78,8 +78,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
   const itemParentName = items[1];
   const itemName = items[items.length - 1];
 
-  console.log("collapseName", collapseName);
-
   let textColor:
     | "primary"
     | "secondary"

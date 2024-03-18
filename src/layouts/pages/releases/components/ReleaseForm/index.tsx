@@ -1,77 +1,113 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 // @mui material components
-import Grid from "@mui/material/Grid";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Card from "@mui/material/Card";
-
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
-import MDTypography from "components/MDTypography";
-
+import MDCircularLoader from "components/MDCircularLoader";
 // NewProduct page components
 import AddPress from "../AddPress";
 import Media from "../Media";
 import PlanNPayment from "../PlanNPayment";
 import ReviewNPublish from "../ReviewNPublish";
+import { useLazyQuery } from "@apollo/client";
+import {
+  GET_ARTICLE_BY_ID,
+  IGetArticleByIdVars,
+  IGetArticleById,
+} from "graphql/queries/getArticleById";
+import { useParams } from "react-router-dom";
 
 interface Props {
-  onClose: (p: boolean) => void;
+  onClose?: (p: boolean) => void;
+  idVal?: any;
 }
 
 function getSteps(): string[] {
   return ["Add Press Release", "Category & Media", "Plan & Payment", "Review & Publish"];
 }
 
-function getStepContent(stepIndex: number): JSX.Element {
+function getStepContent(
+  stepIndex: number,
+  saveData: boolean,
+  handleNext: any,
+  article: any,
+  fetchData: any
+): JSX.Element {
   switch (stepIndex) {
     case 0:
-      return <AddPress />;
+      return <AddPress cb={handleNext} saveData={saveData} data={article} refetch={fetchData} />;
     case 1:
-      return <Media />;
+      return <Media cb={handleNext} saveData={saveData} data={article} refetch={fetchData} />;
     case 2:
-      return <PlanNPayment />;
+      return (
+        <PlanNPayment cb={handleNext} saveData={saveData} data={article} refetch={fetchData} />
+      );
     case 3:
-      return <ReviewNPublish />;
+      return <ReviewNPublish data={article} />;
     default:
       return null;
   }
 }
 
-function ReleaseForm({ onClose }: Props): JSX.Element {
+function ReleaseForm({ onClose, idVal }: Props): JSX.Element {
+  const { id } = useParams();
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [saveData, setSaveData] = useState<boolean>(false);
+  const [articleId, setId] = useState<string>(idVal || id);
+  const [article, setArticle] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
 
-  const handleNext = () => setActiveStep(activeStep + 1);
-  const handleBack = () => setActiveStep(activeStep - 1);
+  const handleNext = (id?: any) => {
+    if (id) setId(id);
+    setSaveData(false);
+    setActiveStep(activeStep + 1);
+  };
+  const handleBack = () => {
+    if (saveData) setSaveData(false);
+    setActiveStep(activeStep - 1);
+  };
 
+  const [getArticleById] = useLazyQuery<IGetArticleById, IGetArticleByIdVars>(GET_ARTICLE_BY_ID, {
+    fetchPolicy: "network-only",
+  });
+  const fetchData = () => {
+    setLoading(true);
+    getArticleById({
+      variables: {
+        id: articleId,
+      },
+    })
+      .then((res: any) => {
+        setArticle(res?.data?.getArticleById);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("error in detail fetching", err);
+        setLoading(false);
+      });
+  };
+  useEffect(() => {
+    if (articleId) {
+      fetchData();
+    }
+  }, [articleId]);
   return (
     <>
       <MDBox mt={-3} mb={3} mx={2}>
-        <Stepper activeStep={activeStep} alternativeLabel sx={{
-         background: `
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel
+          sx={{
+            background: `
           linear-gradient(180deg, #F7595F 0%, #F8303C 100%)
-          `
-        }}>
+          `,
+          }}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -81,7 +117,11 @@ function ReleaseForm({ onClose }: Props): JSX.Element {
       </MDBox>
       <MDBox p={2}>
         <MDBox>
-          {getStepContent(activeStep)}
+          {loading ? (
+            <MDCircularLoader overlayloader startLoader />
+          ) : (
+            getStepContent(activeStep, saveData, handleNext, article, fetchData)
+          )}
           <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
             {activeStep === 0 ? (
               <MDBox />
@@ -93,7 +133,7 @@ function ReleaseForm({ onClose }: Props): JSX.Element {
             <MDButton
               variant="gradient"
               color="dark"
-              onClick={!isLastStep ? handleNext : undefined}
+              onClick={!isLastStep ? () => setSaveData(true) : undefined}
             >
               {isLastStep ? "send" : "next"}
             </MDButton>

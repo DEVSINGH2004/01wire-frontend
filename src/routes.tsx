@@ -18,7 +18,7 @@
 import Dashboards from "layouts/pages/dashboards";
 import MyCredits from "layouts/pages/myCredits";
 import Releases from "layouts/pages/releases";
-import Clients from "layouts/pages/clients"
+import Clients from "layouts/pages/clients";
 
 // Material Dashboard 2 PRO React TS components
 import MDAvatar from "components/MDAvatar";
@@ -32,7 +32,7 @@ const routes = [
     type: "collapse",
     name: "Dashboards",
     key: "dashboards",
-    icon: <img src={DashboardIcon} width="24px" height="24px"/>,
+    icon: <img src={DashboardIcon} width="24px" height="24px" />,
     noCollapse: true,
     route: "/dashboards",
     component: <Dashboards />,
@@ -40,7 +40,7 @@ const routes = [
   {
     type: "collapse",
     name: "Release",
-    icon: <img src={ReleaseIcon} width="24px" height="24px"/>,
+    icon: <img src={ReleaseIcon} width="24px" height="24px" />,
     key: "releases",
     noCollapse: true,
     route: "/releases",
@@ -49,7 +49,7 @@ const routes = [
   {
     type: "collapse",
     name: "Client",
-    icon: <img src={ClientIcon} width="24px" height="24px"/>,
+    icon: <img src={ClientIcon} width="24px" height="24px" />,
     key: "clients",
     noCollapse: true,
     route: "/clients",
@@ -61,7 +61,7 @@ const routes = [
     key: "my-credits",
     noCollapse: true,
     route: "/my-credits",
-    icon: <img src={WalletIcon} width="24px" height="24px"/>,
+    icon: <img src={WalletIcon} width="24px" height="24px" />,
     component: <MyCredits />,
   },
 

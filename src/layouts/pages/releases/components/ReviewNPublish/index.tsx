@@ -1,5 +1,3 @@
-
-
 // @mui material components
 import Grid from "@mui/material/Grid";
 
@@ -14,12 +12,12 @@ import PlanNPayment from "../PlanNPayment";
 // NewProduct page components
 import FormField from "../FormField";
 
-function ReviewNPublish(): JSX.Element {
+function ReviewNPublish({ data }: { data: any }): JSX.Element {
   return (
     <MDBox>
-      <AddPress />
-      <Media />
-      <PlanNPayment/>
+      <AddPress data={data} />
+      <Media data={data} />
+      <PlanNPayment data={data} />
     </MDBox>
   );
 }

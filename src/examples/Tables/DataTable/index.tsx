@@ -77,7 +77,7 @@ function DataTable({
     entries = entriesPerPage.entries ? entriesPerPage.entries : ["10", "25", "50", "100"];
   }
 
-  const columns = useMemo<any>(() => table?.columns, [table]) ||[];
+  const columns = useMemo<any>(() => table?.columns, [table]) || [];
   const data = useMemo<any>(() => table.rows, [table]);
 
   const tableInstance = useTable(
@@ -169,7 +169,7 @@ function DataTable({
   } else {
     entriesEnd = pageSize * (pageIndex + 1);
   }
-
+  console.log("page", page);
   return (
     <TableContainer sx={{ boxShadow: "none" }}>
       {entriesPerPage || canSearch ? (
@@ -231,6 +231,7 @@ function DataTable({
         <TableBody {...getTableBodyProps()}>
           {page.map((row: any, key: any) => {
             prepareRow(row);
+            console.log("row>>", row);
             return (
               <TableRow key={key} {...row.getRowProps()}>
                 {row.cells.map((cell: any, key: any) => (

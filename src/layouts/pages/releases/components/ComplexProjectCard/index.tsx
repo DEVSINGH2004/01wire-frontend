@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { ReactNode } from "react";
+import { Key, ReactNode } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -25,6 +25,7 @@ import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
+import TrendingUpIcon from "assets/images/icons/trendingIcon.png";
 
 // Declaring prop types for the ComplexProjectCard
 interface Props {
@@ -50,6 +51,15 @@ function ComplexProjectCard({
   description,
   members,
   dropdown,
+  stats,
+  traffic,
+  linkType,
+  timeLine,
+  credits,
+  categories,
+  onClick,
+  selected,
+  id,
 }: Props): JSX.Element {
   const renderMembers = members.map((member, key) => {
     const memberKey = `member-${key}`;
@@ -78,24 +88,77 @@ function ComplexProjectCard({
   });
 
   return (
-    <Card>
+    <Card
+      onClick={() => onClick(id)}
+      sx={{
+        boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25) !important",
+        border: selected && "1px solid rgba(238, 92, 97, 1) !important",
+        cursor: onClick && "pointer",
+      }}
+    >
       <MDBox p={2}>
-        <MDBox display="flex" alignItems="center">
+        <MDBox display="flex" alignItems="start">
           <MDAvatar
-            src={image}
+            src={`${process.env.REACT_APP_IMAGE_BASE_URL}${image}`}
             alt={title}
-            size="xl"
             variant="rounded"
             bgColor={color}
-            sx={{ p: 1, mt: 1, borderRadius: ({ borders: { borderRadius } }) => borderRadius.xl }}
+            sx={{
+              height: "80px",
+              width: "110px",
+              borderRadius: "3.47px",
+            }}
           />
-          <MDBox ml={2} mt={-2} lineHeight={0}>
+          <MDBox ml={2}>
             <MDTypography variant="h6" textTransform="capitalize" fontWeight="medium">
               {title}
             </MDTypography>
-            {members.length > -1 ? <MDBox display="flex">{renderMembers}</MDBox> : null}
+            <MDTypography fontSize="14px" color="rgba(123, 128, 154, 1) !important">
+              Press Release / Blockchain & Crypto
+            </MDTypography>
+            <MDBox mt={1} display="flex" alignItems="center">
+              <MDBox
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                borderRadius="section"
+                height="25px"
+                p="5px"
+                bgColor="light"
+                mr="5px"
+              >
+                <img src={TrendingUpIcon} height="16px" width="16px" />
+                <MDTypography ml="3px" fontWeight={400} fontSize="14px">
+                  {`${traffic} Traffic`}
+                </MDTypography>
+              </MDBox>
+              {stats.map((one: any, i: Key) => {
+                return (
+                  <MDBox
+                    key={i}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    borderRadius="section"
+                    height="25px"
+                    p="5px"
+                    bgColor="light"
+                    mr="5px"
+                  >
+                    <MDTypography mr={1} fontWeight={"medium"} fontSize="14px">
+                      {one?.title}
+                    </MDTypography>
+                    <MDTypography fontWeight={400} fontSize="14px">
+                      {one?.value}
+                    </MDTypography>
+                  </MDBox>
+                );
+              })}
+            </MDBox>
+            {/* {members.length > -1 ? <MDBox display="flex">{renderMembers}</MDBox> : null} */}
           </MDBox>
-          {dropdown && (
+
+          {/* {dropdown && (
             <MDTypography
               color="secondary"
               onClick={dropdown.action}
@@ -109,15 +172,16 @@ function ComplexProjectCard({
               <Icon sx={{ cursor: "pointer", fontWeight: "bold" }}>more_vert</Icon>
             </MDTypography>
           )}
-          {dropdown.menu}
+          {dropdown.menu} */}
         </MDBox>
-        <MDBox my={2} lineHeight={1}>
+
+        {/* <MDBox my={2} lineHeight={1}>
           <MDTypography variant="button" fontWeight="light" color="text">
             {description}
           </MDTypography>
-        </MDBox>
-        <Divider />
-        <MDBox display="flex" justifyContent="space-between" alignItems="center">
+        </MDBox> */}
+        <Divider sx={{ borderWidth: "1px", background: "rgba(0, 0, 0, 0.2)" }} />
+        {/* <MDBox display="flex" justifyContent="space-between" alignItems="center">
           {members.length > -1 ? (
             <MDBox display="flex" flexDirection="column" lineHeight={0}>
               <MDTypography variant="button" fontWeight="medium">
@@ -138,11 +202,54 @@ function ComplexProjectCard({
               </MDTypography>
             </MDBox>
           ) : null}
+        </MDBox> */}
+        <MDBox display="flex" justifyContent="space-between" alignItems="center">
+          <MDBox display="flex" alignItems="center">
+            <DisplayLabelValue label={"Categories"} value={categories} />
+            <Divider
+              orientation="vertical"
+              sx={{ background: "rgba(0, 0, 0, 0.2)", borderWidth: "1px", height: "36px" }}
+            />
+            <DisplayLabelValue label={"Link Type"} value={linkType} />
+            <Divider
+              orientation="vertical"
+              sx={{ background: "rgba(0, 0, 0, 0.2)", borderWidth: "1px", height: "36px" }}
+            />
+            <DisplayLabelValue label={"Timeline"} value={timeLine} />
+          </MDBox>
+          <DisplayLabelValue label="Credit" value={credits} size="18px" color="primary" />
         </MDBox>
       </MDBox>
     </Card>
   );
 }
+const DisplayLabelValue = ({
+  label,
+  value,
+  size,
+  weight,
+  color,
+}: {
+  label: any;
+  value: any;
+  size?: any;
+  weight?: any;
+  color?: any;
+}) => {
+  return (
+    <MDBox>
+      <MDTypography variant="caption">{label}</MDTypography>
+      <MDTypography
+        mt={"2px"}
+        fontSize={size || "14px"}
+        fontWeight={weight || "medium"}
+        color={color}
+      >
+        {value}
+      </MDTypography>
+    </MDBox>
+  );
+};
 
 // Declaring default props for ComplexProjectCard
 ComplexProjectCard.defaultProps = {

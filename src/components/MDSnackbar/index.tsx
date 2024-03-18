@@ -39,9 +39,9 @@ interface Props extends SnackbarProps {
   color?: "primary" | "secondary" | "info" | "success" | "warning" | "error" | "dark" | "light";
   icon: ReactNode;
   title: string;
-  dateTime: string;
-  content: string;
-  close: () => void;
+  dateTime?: string;
+  content?: string;
+  close?: () => void;
   bgWhite?: boolean;
   [key: string]: any;
 }

@@ -7,9 +7,8 @@ export interface SpamSenderInfo {
   id: string;
   firstName: string;
   lastName: string;
-  profilePhotoId: string
+  profilePhotoId: string;
 }
-
 
 export interface PoolStatsType {
   unread: number;
@@ -26,7 +25,7 @@ export type Pool = {
   labels: string[];
   stats: PoolStatsType;
   spamSenderIds: string[];
-  isSpreadSheetEnabled: boolean
+  isSpreadSheetEnabled: boolean;
   spamSenderInfo: SpamSenderInfo[];
   keywordIds: string[];
   chatIds: string[];
@@ -55,13 +54,13 @@ export type MsgContentWebpageType = {
 
 export type ContentType = {
   text: string;
-  webPage: MsgContentWebpageType
+  webPage: MsgContentWebpageType;
 };
 export type SenderInfoType = {
   _id: string;
   firstName: string;
   lastName: string;
-  profilePhotoId: string
+  profilePhotoId: string;
 };
 
 export type ArticleMediaContactType = {
@@ -79,7 +78,6 @@ export type ArticleMediaContactType = {
   youtube: string;
   others: string;
 };
-
 
 export type ArticleType = {
   id: string;
@@ -100,7 +98,7 @@ export type ArticleType = {
   bundleIds: string[];
   publicationIds: string[];
   mediaContact: ArticleMediaContactType;
-  publishAt: string
+  publishAt: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -117,7 +115,7 @@ export type ClientSocialType = {
   twitter: string;
   youtube: string;
   others: string;
-}
+};
 
 export type Client = {
   id: string;
@@ -129,17 +127,69 @@ export type Client = {
   website: string;
   ticker: string;
   logo: string;
-  social: ClientSocialType
+  social: ClientSocialType;
   createdAt: string;
   updatedAt: string;
 };
-
 
 export type ClientData = {
   data: Client[];
   paginationInfo: PaginationInfo;
 };
-
+type PublicationStatsType = {
+  da: number;
+  pa: number;
+  dr: number;
+  ur: number;
+  traffic: number;
+};
+type BundlePublicationInfoType = {
+  id: string;
+  title: string;
+  image: string;
+  stats: PublicationStatsType;
+  categories: string[];
+  linkType: string;
+  url: string;
+  timeline: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+};
+export type Bundle = {
+  id: string;
+  publicationIds: string[];
+  image: string;
+  description: string;
+  type: string;
+  category: string;
+  traffic: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  publicationInfo: BundlePublicationInfoType;
+};
+export type BundleData = {
+  data: Bundle[];
+  paginationInfo: PaginationInfo;
+};
+export type Publication = {
+  id: string;
+  title: string;
+  image: string;
+  stats: PublicationStatsType;
+  categories: string[];
+  linkType: string;
+  url: string;
+  timeline: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+};
+export type PublicationData = {
+  data: Publication[];
+  paginationInfo: PaginationInfo;
+};
 export type PaginationInfo = {
   currentPage: number;
   perPage: number;
@@ -149,11 +199,7 @@ export type PaginationInfo = {
   hasPreviousPage: boolean;
 };
 
-
-
 export type FetchClientDataResponse = ClientData | ErrorResponse;
-
-
 
 export interface Chat {
   id: number;
@@ -245,6 +291,6 @@ export type FetchUserResponse = UserData | ErrorResponse;
 export type UpdatePoolData = Pool | ErrorResponse;
 
 export interface PaginationInput {
-  currentPage: number
-  perPage: number
+  currentPage: number;
+  perPage: number;
 }

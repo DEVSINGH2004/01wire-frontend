@@ -4,7 +4,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 // draft-js
-import { EditorState } from "draft-js";
+import { EditorState, convertFromHTML, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import { convertToHTML } from "draft-convert";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -15,18 +15,31 @@ import MDEditorRoot from "components/MDEditor/MDEditorRoot";
 // Material Dashboard 2 PRO React context
 import { useMaterialUIController } from "context";
 
-function MDEditor({ value }: any) {
+function MDEditor({ value, onChange }: { value: any; onChange: any }) {
+  console.log("value", value);
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
 
   const [convertedContent, setConvertedContent] = React.useState(null);
-  const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
+  const [editorState, setEditorState] = React.useState(() => {
+    if (value) {
+      const contentState = convertFromHTML(value);
+      console.log("contentState", contentState);
+      return EditorState.createWithContent(
+        ContentState.createFromBlockArray(contentState.contentBlocks, contentState.entityMap)
+      );
+    }
+    return EditorState.createEmpty();
+  });
 
   React.useEffect(() => {
+    console.log("editorState.getCurrentContent()", editorState.getCurrentContent());
     const html = convertToHTML(editorState.getCurrentContent());
+    console.log("html", html);
+    onChange(html);
     setConvertedContent(html);
   }, [editorState]);
-
+  console.log("convertedContent", convertedContent);
   return (
     <MDEditorRoot ownerState={{ darkMode }}>
       {value && typeof value === "function" && value(convertedContent)}
@@ -36,13 +49,14 @@ function MDEditor({ value }: any) {
 }
 
 // Setting default values for the props of MDEditor
-MDEditor.defaultProps = {
-  value: () => {},
-};
+// MDEditor.defaultProps = {
+//   value: () => {},
+// };
 
 // Typechecking props for the MDEditor
 MDEditor.propTypes = {
-  value: PropTypes.func,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 export default MDEditor;

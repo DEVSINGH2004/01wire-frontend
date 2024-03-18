@@ -33,8 +33,8 @@ import Configurator from "examples/Configurator";
 // Material Dashboard 2 PRO React TS themes
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
-import 'slick-carousel/slick/slick.css';
-import "slick-carousel/slick/slick-theme.css"
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Material Dashboard 2 PRO React TS Dark Mode themes
 import themeDark from "assets/theme-dark";
@@ -57,6 +57,7 @@ import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 import brandLogo from "assets/images/wireLogo.png";
 import SignIn from "layouts/authentication/sign-in";
+import ReleaseForm from "layouts/pages/releases/components/ReleaseForm";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -186,6 +187,7 @@ export default function App() {
             )}
             {layout === "vr" && <Configurator />}
             <Routes>
+              <Route path="/releases/:id" element={<ReleaseForm />} />
               {getRoutes(routes)}
               <Route path="*" element={<Navigate to="/dashboards" />} />
             </Routes>
@@ -217,6 +219,7 @@ export default function App() {
           {layout === "vr" && <Configurator />}
           <Routes>
             {getRoutes(routes)}
+            <Route path="/releases/:id" element={<ReleaseForm />} />
             <Route path="*" element={<Navigate to="/dashboards" />} />
           </Routes>
         </>

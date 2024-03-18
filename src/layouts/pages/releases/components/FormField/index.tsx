@@ -6,31 +6,36 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDLabel from "components/MDLabel";
 import { Controller } from "react-hook-form";
-import FormControl from "@mui/material/FormControl"
+import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import MDEditor from "components/MDEditor";
 import FileUpload from "./FileUpload";
-import InfoIcon from '@mui/icons-material/Info';
-
+import InfoIcon from "@mui/icons-material/Info";
 
 // Declaring props types for FormField
 interface Props {
   label?: string;
   type?: string;
   name?: string;
-  subLabel?: string
+  subLabel?: string;
   control?: any;
   options?: any;
   defaultValue?: any;
   [key: string]: any;
 }
 
-
-            
-function FormField({ label, subLabel, name, type, options, defaultValue, control, ...rest }: Props): JSX.Element {
-  
+function FormField({
+  label,
+  subLabel,
+  name,
+  type,
+  options,
+  defaultValue,
+  control,
+  ...rest
+}: Props): JSX.Element {
   switch (type) {
-    case 'dropdown': {
+    case "dropdown": {
       return (
         <MDBox mb={2}>
           {label && <MDLabel label={label} />}
@@ -40,71 +45,68 @@ function FormField({ label, subLabel, name, type, options, defaultValue, control
               control={control}
               render={({ field: { onChange, value } }) => (
                 <Autocomplete
-                id="combo-box-demo"
-                options={options}
+                  id="combo-box-demo"
+                  options={options}
                   value={value}
                   onChange={(event, newValue) => {
                     onChange(newValue);
                   }}
                   renderInput={(params) => <MDInput {...params} variant="outlined" />}
-    />
-
-                )}
                 />
+              )}
+            />
           </FormControl>
           {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
-    {subLabel &&<MDTypography fontWeight="regular" fontSize="13px">{subLabel}</MDTypography>}
-</MDBox>
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
       );
     }
-    case 'file': {
+    case "file": {
       return (
         <MDBox mb={2}>
           {label && <MDLabel label={label} />}
           <FormControl fullWidth>
-            <MDBox sx={{
-              minHeight: "150px",
-              background: "#EE5C6114",
-              borderRadius: "8px",
-              border: "1px dashed #F9565C !important",
-              padding: "20px 20px",
-            }}>
-              {useMemo(
-                () => (
-                  <FileUpload />
-                ),
-                []
+            <Controller
+              name={name}
+              control={control}
+              defaultValue={defaultValue}
+              render={({ field: { onChange, value } }) => (
+                <MDBox
+                  sx={{
+                    minHeight: "150px",
+                    background: "#EE5C6114",
+                    borderRadius: "8px",
+                    border: "1px dashed #F9565C !important",
+                    padding: "20px 20px",
+                  }}
+                >
+                  {useMemo(
+                    () => (
+                      <FileUpload value={value} onChange={onChange} />
+                    ),
+                    []
+                  )}
+                </MDBox>
               )}
-            </MDBox>
+            />
           </FormControl>
           {/* <FormHelperText error={true}>textsjwkehk</FormHelperText> */}
-          {subLabel && <MDBox display="flex" bgColor={"grey-200"}
-            borderRadius="lg"
-            p={1}
-            mt={1}
-          ><InfoIcon sx={{ mr: 1 }} color="action" /> <MDTypography fontWeight="regular" fontSize="13px">{subLabel}</MDTypography></MDBox>}
+          {subLabel && (
+            <MDBox display="flex" bgColor={"grey-200"} borderRadius="lg" p={1} mt={1}>
+              <InfoIcon sx={{ mr: 1 }} color="action" />{" "}
+              <MDTypography fontWeight="regular" fontSize="13px">
+                {subLabel}
+              </MDTypography>
+            </MDBox>
+          )}
         </MDBox>
       );
     }
-    case 'editor': {
-      return (
-        <MDBox mb={2}>
-        {label && <MDLabel label={label} />}
-        <FormControl fullWidth>
-          <Controller
-            name={name}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-  <MDEditor />
-              )}
-              />
-        </FormControl>
-        {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
-  {subLabel &&<MDTypography fontWeight="regular" fontSize="13px">{subLabel}</MDTypography>}
-</MDBox>
-      );
-    }
-   default: {
+    case "editor": {
       return (
         <MDBox mb={2}>
           {label && <MDLabel label={label} />}
@@ -113,20 +115,42 @@ function FormField({ label, subLabel, name, type, options, defaultValue, control
               name={name}
               control={control}
               render={({ field: { onChange, value } }) => (
-    <MDInput  onChange={onChange}
-    value={value} {...rest} />
-
-                )}
-                />
+                <MDEditor onChange={onChange} value={value} />
+              )}
+            />
           </FormControl>
           {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
-    {subLabel &&<MDTypography fontWeight="regular" fontSize="13px">{subLabel}</MDTypography>}
-</MDBox>
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
+      );
+    }
+    default: {
+      return (
+        <MDBox mb={2}>
+          {label && <MDLabel label={label} />}
+          <FormControl fullWidth>
+            <Controller
+              name={name}
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <MDInput onChange={onChange} value={value} {...rest} />
+              )}
+            />
+          </FormControl>
+          {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
       );
     }
   }
-
-
 }
 
 export default FormField;

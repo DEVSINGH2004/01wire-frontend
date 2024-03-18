@@ -13,237 +13,237 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import { useState, useEffect } from "react";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import Autocomplete from "@mui/material/Autocomplete";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import IconButton from "@mui/material/IconButton";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
+import MDCircularLoader from "components/MDCircularLoader";
 import DefaultPricingCard from "../DefaultPricingCard";
-import ComplexProjectCard from "../ComplexProjectCard"
+import ComplexProjectCard from "../ComplexProjectCard";
 import { useMaterialUIController } from "context";
-
-import logoSlack from "assets/images/small-logos/logo-slack.svg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import logoXD from "assets/images/small-logos/logo-xd.svg";
-import logoAsana from "assets/images/small-logos/logo-asana.svg";
-import logoInvision from "assets/images/small-logos/logo-invision.svg";
-import logoAtlassian from "assets/images/small-logos/logo-atlassian.svg";
-
-
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
+import {
+  GET_PUBLICATIONS,
+  IGetPublications,
+  IGetPublicationsVars,
+} from "graphql/queries/filterPublicationsPaginated";
+import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 
 // NewProduct page components
 import FormField from "../FormField";
 
-function PlanNPayment(): JSX.Element {
+// Custom arrow component for previous button
+const PrevArrow = ({ onClick }: { onClick?: any }) => {
+  return (
+    <IconButton style={{ position: "absolute", top: "50%", left: "-50px", background: "#fff" }}>
+      <KeyboardArrowLeftIcon onClick={onClick} />
+    </IconButton>
+  );
+};
+
+// Custom arrow component for next button
+const NextArrow = ({ onClick }: { onClick?: any }) => {
+  return (
+    <IconButton style={{ position: "absolute", top: "50%", right: "-38px", background: "#fff" }}>
+      <KeyboardArrowRightIcon onClick={onClick} />
+    </IconButton>
+  );
+};
+interface Props {
+  cb?: any;
+  saveData?: boolean;
+  data?: any;
+  refetch?: () => void;
+}
+function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
+  const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [publicationIds, setPublicationIds] = useState<any>(
+    data?.publicationIds ? data?.publicationIds : []
+  );
+  const [selected, setSelected] = useState<any>(data?.bundleIds[0]);
+  const [bundlePids, setBundlePids] = useState<any>([]);
   const settings = {
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
     className: "center",
-    centerMode: true,
     infinite: true,
     centerPadding: "60px",
-    slidesToShow: 3,
-    speed: 500
+    prevArrow: <PrevArrow />,
+    nextArrow: <NextArrow />,
   };
+  const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
+    variables: {
+      paginationInput: {
+        currentPage: 0,
+        perPage: 200,
+      },
+    },
+  });
+  console.log("bundlesData", bundlesData);
+  const { data: publicationsData } = useQuery<IGetPublications, IGetPublicationsVars>(
+    GET_PUBLICATIONS,
+    {
+      variables: {
+        filterInput: {
+          filterIds: bundlePids,
+        },
+        paginationInput: {
+          currentPage: 0,
+          perPage: 200,
+        },
+      },
+    }
+  );
+  console.log("publicationsData", publicationsData);
+  const handleChange = (e: any, pIds: any) => {
+    console.log("val>>", e.target.value, "pIds>>", pIds);
+    setSelected((prevVal: any) => (prevVal === e.target.value ? "" : e.target.value));
+    setBundlePids(pIds);
+  };
+  const handlePublicationClick = (id: any) => {
+    console.log("clickedPublicationId", id, publicationIds?.indexOf(id));
+    if (publicationIds?.indexOf(id) !== -1) {
+      const newIds = publicationIds?.filter((one: any) => one !== id);
+      setPublicationIds(newIds);
+    } else {
+      setPublicationIds((oldVal: any) => [...oldVal, id]);
+    }
+  };
+  console.log("publicationIds", publicationIds);
+  const onSubmit = () => {
+    setLoading(true);
+    updateArticle({
+      variables: {
+        params: {
+          id: data?.id,
+          bundleIds: selected ? [selected] : [],
+          publicationIds: [...publicationIds, ...bundlePids],
+        },
+      },
+    })
+      .then((res: any) => {
+        setLoading(false);
+        if (refetch) refetch();
+        const resId = res?.data?.updateArticle?.id;
+        cb(resId);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log("error in saving data", err);
+      });
+  };
+  useEffect(() => {
+    if (saveData) {
+      console.log("saveData", saveData);
+      onSubmit();
+    }
+  }, [saveData]);
   return (
     <MDBox>
+      {loading && <MDCircularLoader overlayloader startLoader />}
       <MDTypography variant="h5">Bundles</MDTypography>
-      <MDBox
-            display="flex"
-            flexDirection="column"
-      justifyContent="space-between"
-      alignItems="flex-start"
-      bgColor={ "grey-200"}
-      borderRadius="lg"
-      p={3}
-      mb={ 1}
-      mt={2}
-      >
-       
-
-
-          <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} lg={4}>
-          <DefaultPricingCard
-            color={darkMode ? "dark" : "white"}
-            badge={{ color: darkMode ? "warning" : "light", label: "starter" }}
-            price={{ currency: "$", value: "234", type: "mo" }}
-            specifications={[
-              { label: "2 team members", includes: true },
-              { label: "20GB Cloud storage", includes: true },
-              { label: "Integration help", includes: false },
-              { label: "Sketch Files", includes: false },
-              { label: "API Access", includes: false },
-              { label: "Complete documentation", includes: false },
-            ]}
-            action={{
-              type: "internal",
-              route: "/",
-              color: darkMode ? "warning" : "dark",
-              label: "join",
-            }}
-            shadow={darkMode}
-          />
-        </Grid>
-        <Grid item xs={12} lg={4}>
-          <DefaultPricingCard
-            color="dark"
-            badge={{ color: "info", label: "premium" }}
-            price={{ currency: "$", value: "premium", type: "mo" }}
-            specifications={[
-              { label: "10 team members", includes: true },
-              { label: "40GB Cloud storage", includes: true },
-              { label: "Integration help", includes: true },
-              { label: "Sketch Files", includes: true },
-              { label: "API Access", includes: false },
-              { label: "Complete documentation", includes: false },
-            ]}
-            action={{
-              type: "internal",
-              route: "/",
-              color: "info",
-              label: "try premium",
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} lg={4}>
-          <DefaultPricingCard
-            color={darkMode ? "dark" : "white"}
-            badge={{ color: darkMode ? "warning" : "light", label: "enterprise" }}
-            price={{ currency: "$", value: "enterprise", type: "mo" }}
-            specifications={[
-              { label: "Unlimited team members", includes: true },
-              { label: "100GB Cloud storage", includes: true },
-              { label: "Integration help", includes: true },
-              { label: "Sketch Files", includes: true },
-              { label: "API Access", includes: true },
-              { label: "Complete documentation", includes: true },
-            ]}
-            action={{
-              type: "internal",
-              route: "/",
-              color: darkMode ? "warning" : "dark",
-              label: "join",
-            }}
-            shadow={darkMode}
-          />
-        </Grid>
-      </Grid>
+      <MDBox bgColor={"grey-200"} borderRadius="lg" p={"24px 60px 24px 70px"} mb={1} mt={2}>
+        <Slider {...settings}>
+          {bundlesData?.filterBundlesPaginated?.data?.map((one, i) => {
+            console.log("bundlesData>>eer", one);
+            return (
+              //
+              <MDBox key={i} width={"290px !important"}>
+                <DefaultPricingCard
+                  color={darkMode ? "dark" : "white"}
+                  badge={{
+                    color: one?.type === "PREMIUM" ? "primary" : "rgba(222, 226, 232, 1)",
+                    label: one?.type,
+                  }}
+                  price={{ currency: "$", value: one?.price?.toString(), type: "mo" }}
+                  specifications={[
+                    { label: "2 team members", includes: true },
+                    { label: "20GB Cloud storage", includes: true },
+                    { label: "Integration help", includes: false },
+                    { label: "Sketch Files", includes: false },
+                    { label: "API Access", includes: false },
+                    { label: "Complete documentation", includes: false },
+                  ]}
+                  action={{
+                    type: "internal",
+                    route: "/",
+                    color: darkMode ? "warning" : "dark",
+                    label: "join",
+                  }}
+                  shadow={darkMode}
+                  totalPublications={one?.publicationIds?.length}
+                  reach={one?.traffic || ""}
+                  handleChange={handleChange}
+                  selected={selected}
+                  id={one?.id}
+                  pIds={one?.publicationIds}
+                />
+              </MDBox>
+            );
+          })}
+        </Slider>
       </MDBox>
       <MDBox py={2} display="flex" justifyContent="space-between">
         <MDTypography variant="h5">Publications</MDTypography>
-            <MDBox width="173px" ml="auto">
-              <MDInput
-                placeholder="Search..."
-                size="small"
-                fullWidth
-                // onChange={({ currentTarget }: any) => {
-                //   setSearch(search);
-                //   onSearchChange(currentTarget.value);
-                // }}
-              />
-            </MDBox>
+        <MDBox width="173px" ml="auto">
+          <MDInput
+            placeholder="Search..."
+            size="small"
+            fullWidth
+            // onChange={({ currentTarget }: any) => {
+            //   setSearch(search);
+            //   onSearchChange(currentTarget.value);
+            // }}
+          />
+        </MDBox>
       </MDBox>
       <MDBox mt={5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={6}>
-              <MDBox mb={1.5} mt={1.5} variant="gradient">
-                <ComplexProjectCard
-                  image={logoSlack}
-                  title="slack bot"
-                  description="If everything I did failed - which it doesn't, I think that it actually succeeds."
-                  dateTime="02.03.22"
-                  members={["qweqwe", "qweqwe"]}
-                  // dropdown={{
-                  //   action: openSlackBotMenu,
-                  //   menu: renderMenu(slackBotMenu, closeSlackBotMenu),
-                  // }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <MDBox mb={1.5} mt={1.5}>
-                <ComplexProjectCard
-                  image={logoSpotify}
-                  title="premium support"
-                  description="Pink is obviously a better color. Everyone’s born confident, and everything’s taken away from you."
-                  dateTime="22.11.21"
-                  members={["qweqwe", "qweqwe"]}
-                  // dropdown={{
-                  //   action: openPremiumSupportMenu,
-                  //   menu: renderMenu(premiumSupportMenu, closePremiumSupportMenu),
-                  // }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <MDBox mb={1.5} mt={1.5}>
-                <ComplexProjectCard
-                  image={logoXD}
-                  title="design tools"
-                  description="Constantly growing. We’re constantly making mistakes from which we learn and improve."
-                  dateTime="06.03.20"
-                  members={["qweqwe", "qweqwe"]}
-                  // dropdown={{
-                  //   action: openDesignToolsMenu,
-                  //   menu: renderMenu(designToolsMenu, closeDesignToolsMenu),
-                  // }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <MDBox mb={1.5} mt={1.5}>
-                <ComplexProjectCard
-                  image={logoAsana}
-                  title="looking great"
-                  description="You have the opportunity to play this game of life you need to appreciate every moment."
-                  dateTime="14.03.24"
-                  members={["team1", "team2", "team3", "team4", "team5", "team3"]}
-                  // dropdown={{
-                  //   action: openLookingGreatMenu,
-                  //   menu: renderMenu(lookingGreatMenu, closeLookingGreatMenu),
-                  // }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <MDBox mb={1.5} mt={1.5}>
-                <ComplexProjectCard
-                  image={logoInvision}
-                  title="developer first"
-                  description="For standing out. But the time is now to be okay to be the greatest you."
-                  dateTime="16.01.22"
-                  members={["team1", "team2", "team3", "team4"]}
-                  // dropdown={{
-                  //   action: openDeveloperFirstMenu,
-                  //   menu: renderMenu(developerFirstMenu, closeDeveloperFirstMenu),
-                  // }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <MDBox mb={1.5} mt={1.5}>
-                <ComplexProjectCard
-                  image={logoAtlassian}
-                  title="Product Development"
-                  description="We strive to embrace and drive change in our industry. We are project."
-                  dateTime="16.01.22"
-                  members={["team1", "team2", "team3", "team4"]}
-                  // dropdown={{
-                  //   action: openDeveloperFirstMenu,
-                  //   menu: renderMenu(developerFirstMenu, closeDeveloperFirstMenu),
-                  // }}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
+        <Grid container spacing={3}>
+          {publicationsData?.filterPublicationsPaginated?.data?.map((one, i) => {
+            return (
+              <Grid key={i} item xs={12} md={6} lg={6}>
+                <MDBox my={1.5} variant="gradient">
+                  <ComplexProjectCard
+                    image={one?.image}
+                    title={one?.title}
+                    description="If everything I did failed - which it doesn't, I think that it actually succeeds."
+                    dateTime="02.03.22"
+                    stats={[
+                      { title: "DA", value: one?.stats?.da },
+                      { title: "DR", value: one?.stats?.dr },
+                      { title: "PA", value: one?.stats?.pa },
+                      { title: "UR", value: one?.stats?.ur },
+                    ]}
+                    traffic={one?.stats?.traffic}
+                    linkType={one?.linkType?.split("_")?.join(" ")}
+                    timeLine={one?.timeline?.split("_")?.join(" ")}
+                    credits={one?.price}
+                    categories={one?.categories?.join(" / ")}
+                    onClick={handlePublicationClick}
+                    selected={publicationIds?.length && publicationIds?.indexOf(one?.id) !== -1}
+                    id={one?.id}
+                  />
+                </MDBox>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </MDBox>
     </MDBox>
   );
 }
