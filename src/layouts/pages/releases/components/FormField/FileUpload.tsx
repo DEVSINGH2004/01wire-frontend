@@ -10,11 +10,8 @@ import MDAvatar from "components/MDAvatar";
 import CloseIcon from "@mui/icons-material/Close";
 
 const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Element => {
-  console.log("Imgvalue", value);
   const [selectedFile, setSelectedFile] = useState<any>(value);
-
   const onDrop = useCallback(async (acceptedFiles: any) => {
-    console.log("acceptedFiles", acceptedFiles, "onChange", onChange);
     const file = acceptedFiles?.[0];
     const formData = new FormData();
     formData.append("file", file);
@@ -43,8 +40,9 @@ const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Ele
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
   });
-  console.log("img", `${process.env.REACT_APP_IMAGE_BASE_URL}${selectedFile}`);
-
+  useEffect(() => {
+    setSelectedFile(value);
+  }, [value]);
   return (
     <MDBox height="100%" display="flex" alignItems="center" justifyContent="center">
       {selectedFile ? (

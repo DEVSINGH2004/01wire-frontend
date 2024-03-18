@@ -84,12 +84,7 @@ function FormField({
                     padding: "20px 20px",
                   }}
                 >
-                  {useMemo(
-                    () => (
-                      <FileUpload value={value} onChange={onChange} />
-                    ),
-                    []
-                  )}
+                  <FileUpload value={value} onChange={onChange} />
                 </MDBox>
               )}
             />
