@@ -1,8 +1,6 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
-import {
-  Client
-} from "types";
+import { Client } from "types";
 
 export interface IGetClientByIdVars {
   id: string;
@@ -36,5 +34,3 @@ export const GET_CLIENT_BY_ID = gql`
     }
   }
 `;
-
-

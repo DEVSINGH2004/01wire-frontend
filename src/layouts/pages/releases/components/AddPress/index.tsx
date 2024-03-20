@@ -26,7 +26,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
   console.log("articleData", data);
   const {
     control,
-    formState: { errors },
+    formState: { isDirty },
     reset,
     handleSubmit,
   } = useForm({ defaultValues: { clientId: null, content: null, featureImage: "" } });
@@ -85,10 +85,12 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
     }
   };
   useEffect(() => {
-    if (saveData) {
+    if (saveData && isDirty) {
       handleSubmit(onSubmit)();
+    } else if (saveData) {
+      cb();
     }
-  }, [saveData]);
+  }, [saveData, isDirty]);
 
   useEffect(() => {
     if (data?.id) {
@@ -123,7 +125,6 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               control={control}
               options={clientsObj}
               variant="outlined"
-              disabled
             />
 
             <FormField

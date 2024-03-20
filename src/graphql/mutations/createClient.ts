@@ -1,8 +1,21 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export interface ClientCreateInput {
   title: string;
-  phone: string;
+  type: string;
+  category: string[];
+  email: string;
+  website: string;
+  ticker: string;
+  logo: string;
+  social: {
+    facebook: string;
+    instagram: string;
+    linkedIn: string;
+    twitter: string;
+    youtube: string;
+    others: string;
+  };
 }
 export interface ICreateClientVars {
   params: ClientCreateInput;
@@ -10,8 +23,10 @@ export interface ICreateClientVars {
 export const CREATE_CLIENT = gql`
   mutation createClient($params: ClientCreateInput!) {
     createClient(params: $params) {
-     id
-     link
+      id
+      title
+      type
+      email
     }
   }
 `;

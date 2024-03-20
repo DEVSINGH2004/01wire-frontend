@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -28,14 +29,24 @@ import {
   IGetArticles,
   IGetArticlesVars,
 } from "graphql/queries/filterArticlesPaginated";
-import EditIcon from "assets/images/icons/editIcon.png";
+import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
+
+const ReleaseTypeOptions = [
+  { label: "Draft", value: "DRAFT" },
+  { label: "Submitted", value: "SUBMITTED" },
+  { label: "In Review", value: "IN_REVIEW" },
+  { label: "Awaiting Approval", value: "AWAITING_APPROVAL" },
+  { label: "Scheduled", value: "SCHEDULED" },
+  { label: "Rejected", value: "REJECTED" },
+  { label: "None", value: "" },
+];
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
     {actions?.map((one: any, i: any) => {
       return (
         <IconButton key={i} onClick={one?.onClick}>
-          <img src={one?.Icon} height="36px" width="36px" />
+          <EditIcon fontSize="small" />
         </IconButton>
       );
     })}
@@ -89,14 +100,18 @@ const columns = [
     Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
   },
 ];
+
 function Releases(): JSX.Element {
-  const [client, setClient] = useState<string>("");
   const [loader, setLoader] = useState<boolean>(false);
+  const [filter, setFilter] = useState<any>({});
   const [openForm, setOpenForm] = useState<any>(false);
   const [tableData, setData] = useState<any>({ rows: [], columns });
+
   const { data: articlesData, loading } = useQuery<IGetArticles, IGetArticlesVars>(GET_ARTICLES, {
     variables: {
-      filterInput: {},
+      filterInput: {
+        ...filter,
+      },
       paginationInput: {
         currentPage: 0,
         perPage: 200,
@@ -104,12 +119,32 @@ function Releases(): JSX.Element {
     },
     fetchPolicy: "network-only",
   });
-  console.log("articlesData", articlesData);
+  const { data: clientsData } = useQuery<IGetClients, IGetClientsVars>(GET_CLIENTS, {
+    variables: {
+      filterInput: {},
+      paginationInput: {
+        currentPage: 0,
+        perPage: 200,
+      },
+    },
+  });
+  const clientsOptions: any = clientsData?.filterClientsPaginated?.data?.map((el) => ({
+    label: el?.title,
+    value: el?.id,
+  }));
+  if (clientsOptions?.length) {
+    clientsOptions.push({
+      label: "None",
+      value: "",
+    });
+  }
+
   useEffect(() => {
     setLoader(true);
     const articles = articlesData?.filterArticlesPaginated?.data;
+    let rows: any = [];
     if (articles?.length) {
-      const rows = articles?.map((one) => {
+      rows = articles?.map((one) => {
         return {
           featureImage: `${process.env.REACT_APP_IMAGE_BASE_URL}${one?.featureImage}`,
           title: one?.title,
@@ -118,18 +153,17 @@ function Releases(): JSX.Element {
             {
               Icon: EditIcon,
               onClick: () => {
-                console.log("edit clicked");
-                // navigate(`/releases/${one?.id}`);
                 setOpenForm(one?.id);
               },
             },
           ],
         };
       });
-      setData({ rows, columns });
     }
+    setData({ rows, columns });
     setLoader(false);
   }, [articlesData]);
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -139,26 +173,44 @@ function Releases(): JSX.Element {
             <MDBox display="flex">
               <Autocomplete
                 disableClearable
-                value={client}
-                options={["Client", "Test"]}
-                onChange={(event, newValue) => {
-                  setClient(newValue);
+                value={
+                  filter?.clientId &&
+                  clientsOptions?.find((one: any) => one?.value === filter?.clientId)
+                }
+                options={clientsOptions}
+                onChange={(event, option: any) => {
+                  if (option?.value) {
+                    setFilter({ ...filter, clientId: option?.value });
+                  } else {
+                    const newFilter = { ...filter };
+                    delete newFilter?.clientId;
+                    setFilter(newFilter);
+                  }
                 }}
                 size="small"
-                sx={{ width: "5rem" }}
-                renderInput={(params) => <MDInput {...params} />}
+                sx={{ width: "12rem" }}
+                renderInput={(params) => <MDInput label="Select Client" {...params} />}
               />
               <MDBox pl={2}>
                 <Autocomplete
                   disableClearable
-                  value={client}
-                  options={["Release Type", "Test"]}
-                  onChange={(event, newValue) => {
-                    setClient(newValue);
+                  value={
+                    filter?.status &&
+                    ReleaseTypeOptions?.find((one: any) => one?.value === filter?.status)
+                  }
+                  options={ReleaseTypeOptions}
+                  onChange={(event, option) => {
+                    if (option?.value) {
+                      setFilter({ ...filter, status: option?.value });
+                    } else {
+                      const newFilter = { ...filter };
+                      delete newFilter?.status;
+                      setFilter(newFilter);
+                    }
                   }}
                   size="small"
-                  sx={{ width: "7.6rem" }}
-                  renderInput={(params) => <MDInput {...params} />}
+                  sx={{ width: "10rem" }}
+                  renderInput={(params) => <MDInput label="Select Type" {...params} />}
                 />
               </MDBox>
             </MDBox>

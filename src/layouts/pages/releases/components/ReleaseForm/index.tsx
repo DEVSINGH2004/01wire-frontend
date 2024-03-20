@@ -54,7 +54,7 @@ function getStepContent(
 function ReleaseForm({ onClose, idVal }: Props): JSX.Element {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [saveData, setSaveData] = useState<boolean>(false);
-  const [articleId, setId] = useState<string>(idVal !== true && idVal);
+  const [articleId, setId] = useState<string>(idVal && idVal !== true && idVal);
   const [article, setArticle] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const steps = getSteps();

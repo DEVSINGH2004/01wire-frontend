@@ -1,75 +1,125 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useState } from "react";
-
-// @mui material components
-import Grid from "@mui/material/Grid";
+import { useState, useEffect } from "react";
+import { useLazyQuery } from "@apollo/client";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Card from "@mui/material/Card";
-
-// Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
-import MDTypography from "components/MDTypography";
-
-// NewProduct page components
 import ClientInfo from "../ClientInfo";
 import SocialInfo from "../SocialInfo";
-// import PlanNPayment from "../PlanNPayment";
-// import ReviewNPublish from "../ReviewNPublish";
-
+import {
+  GET_CLIENT_BY_ID,
+  IGetClientByIdVars,
+  IGetClientById,
+} from "graphql/queries/getClientById";
+import MDCircularLoader from "components/MDCircularLoader";
 interface Props {
-  onClose: (p: boolean) => void;
+  id: any;
+  onClose: () => void;
+  refetchList: () => void;
 }
 
 function getSteps(): string[] {
   return ["Client Info", "Social Media Info"];
 }
 
-function getStepContent(stepIndex: number): JSX.Element {
+function getStepContent(
+  stepIndex: number,
+  saveData: boolean,
+  handleNext: any,
+  client: any,
+  refetch: any,
+  handleLastClick: any,
+  setSaveData: any
+): JSX.Element {
   switch (stepIndex) {
     case 0:
-      return <ClientInfo/>;
+      return (
+        <ClientInfo
+          saveData={saveData}
+          cb={handleNext}
+          data={client}
+          refetch={refetch}
+          setSaveData={setSaveData}
+        />
+      );
     case 1:
-      return <SocialInfo/>;
-   
-    
+      return (
+        <SocialInfo
+          saveData={saveData}
+          cb={handleNext}
+          data={client}
+          refetch={handleLastClick}
+          setSaveData={setSaveData}
+        />
+      );
+
     default:
       return null;
   }
 }
 
-function ClientForm({ onClose }: Props): JSX.Element {
+function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [saveData, setSaveData] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [client, setClient] = useState<any>();
+  const [clientId, setId] = useState<any>(id && id !== true && id);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
+  const [getClientById] = useLazyQuery<IGetClientById, IGetClientByIdVars>(GET_CLIENT_BY_ID, {
+    fetchPolicy: "network-only",
+  });
 
-  const handleNext = () => setActiveStep(activeStep + 1);
-  const handleBack = () => setActiveStep(activeStep - 1);
-
+  const handleNext = (newId?: any) => {
+    console.log("newId", newId);
+    if (newId) setId(newId);
+    setSaveData(false);
+    setActiveStep(activeStep + 1);
+  };
+  const handleBack = () => {
+    if (saveData) setSaveData(false);
+    setActiveStep(activeStep - 1);
+  };
+  const fetchData = (resId?: any) => {
+    console.log("fetchData", resId);
+    setLoading(true);
+    getClientById({
+      variables: {
+        id: clientId || resId,
+      },
+    })
+      .then((res: any) => {
+        console.log("clientById", res);
+        setClient(res?.data?.getClientById);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log("err while fetching client detail", err);
+      });
+  };
+  useEffect(() => {
+    if (clientId) {
+      fetchData();
+    }
+  }, [clientId]);
+  const handleLastClick = () => {
+    refetchList();
+    onClose();
+  };
   return (
     <>
       <MDBox mt={-3} mb={3} mx={2}>
-        <Stepper activeStep={activeStep} alternativeLabel sx={{
-         background: `
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel
+          sx={{
+            background: `
           linear-gradient(180deg, #F7595F 0%, #F8303C 100%)
-          `
-        }}>
+          `,
+          }}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -79,7 +129,19 @@ function ClientForm({ onClose }: Props): JSX.Element {
       </MDBox>
       <MDBox p={2}>
         <MDBox>
-          {getStepContent(activeStep)}
+          {loading ? (
+            <MDCircularLoader startLoader />
+          ) : (
+            getStepContent(
+              activeStep,
+              saveData,
+              handleNext,
+              client,
+              fetchData,
+              handleLastClick,
+              setSaveData
+            )
+          )}
           <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
             {activeStep === 0 ? (
               <MDBox />
@@ -88,12 +150,8 @@ function ClientForm({ onClose }: Props): JSX.Element {
                 back
               </MDButton>
             )}
-            <MDButton
-              variant="gradient"
-              color="dark"
-              onClick={!isLastStep ? handleNext : undefined}
-            >
-              {isLastStep ? "send" : "next"}
+            <MDButton variant="gradient" color="dark" onClick={() => setSaveData(true)}>
+              {isLastStep ? "save" : "next"}
             </MDButton>
           </MDBox>
         </MDBox>
