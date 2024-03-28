@@ -1,25 +1,9 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Grid from "@mui/material/Grid";
-
+import Card from "@mui/material/Card";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
 // Material Dashboard 2 PRO React TS examples components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -42,18 +26,85 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import ERIcon from "assets/images/ER.svg";
+import AAIcon from "assets/images/AA.svg";
+import ScheduledIcon from "assets/images/Scheduled.svg";
+import RejectedIcon from "assets/images/Rejected.svg";
 
 function Overview(): JSX.Element {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox mb={2} />
-      <MDBox pt={2} px={2} lineHeight={1.25}>
-        <MDTypography variant="h6" fontWeight="medium">
-          Current Status
-        </MDTypography>
-      </MDBox>
-      <MDBox p={2}>
+      <MDTypography mt={1} variant="h6" fontWeight="medium">
+        Current Status
+      </MDTypography>
+      <Grid mt={1} container spacing={2}>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+            <MDBox display="flex" alignItems="center" justifyContent="space-between">
+              <img src={ERIcon} height="64px" width="64px" alt="ER" />
+              <MDBox>
+                <MDTypography fontSize="16px" fontWeight="light" color="text">
+                  Editorial Review
+                </MDTypography>
+                <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                  1
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+            <MDBox display="flex" alignItems="center" justifyContent="space-between">
+              <img src={AAIcon} height="64px" width="64px" alt="ER" />
+              <MDBox>
+                <MDTypography fontSize="16px" fontWeight="light" color="text">
+                  Awaiting Approval
+                </MDTypography>
+                <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                  0
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+            <MDBox display="flex" alignItems="center" justifyContent="space-between">
+              <img src={ScheduledIcon} height="64px" width="64px" alt="ER" />
+              <MDBox>
+                <MDTypography fontSize="16px" fontWeight="light" color="text">
+                  Scheduled
+                </MDTypography>
+                <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                  9
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+            <MDBox display="flex" alignItems="center" justifyContent="space-between">
+              <img src={RejectedIcon} height="64px" width="64px" alt="ER" />
+              <MDBox>
+                <MDTypography fontSize="16px" fontWeight="light" color="text">
+                  Rejected
+                </MDTypography>
+                <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                  12
+                </MDTypography>
+              </MDBox>
+            </MDBox>
+          </Card>
+        </Grid>
+      </Grid>
+      <MDTypography mt={2} variant="h6" fontWeight="medium">
+        Recent Press Release
+      </MDTypography>
+      <MDBox mt={3} display="flex" alignItems="center" gap="24px" overflow="auto"></MDBox>
+      {/* <MDBox p={2}>
         <Grid container spacing={6}>
           <Grid item xs={12} md={6} xl={3}>
             <DefaultProjectCard
@@ -446,7 +497,7 @@ function Overview(): JSX.Element {
             />
           </Grid>
         </Grid>
-      </MDBox>
+      </MDBox> */}
       <Footer />
     </DashboardLayout>
   );

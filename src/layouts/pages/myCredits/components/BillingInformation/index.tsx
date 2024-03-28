@@ -1,23 +1,36 @@
-
-
-// @mui material components
+import dayjs from "dayjs";
 import Card from "@mui/material/Card";
-import Icon from "@mui/material/Icon";
-
-
-// Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
 import colors from "assets/theme/base/colors";
-
-
-// Billing page components
 import Bill from "../Bill";
 import Transaction from "../Transaction";
-
+import { useQuery } from "@apollo/client";
+import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
+import { IGetTransactions, GET_TRANSACTIONS } from "graphql/queries/filterTransactionsPaginated";
+import WalletIcon from "assets/images/account_balance_wallet.svg";
+import AddIcon from "assets/images/add_circle.svg";
 
 function BillingInformation(): JSX.Element {
   const { pinkCard } = colors;
+  const { data, loading, refetch } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
+    fetchPolicy: "network-only",
+  });
+  console.log("userWallet", data);
+
+  const { data: transactionsData } = useQuery<IGetTransactions>(GET_TRANSACTIONS, {
+    variables: {
+      filterInput: {},
+      paginationInput: {
+        currentPage: 0,
+        perPage: 200,
+      },
+    },
+    fetchPolicy: "network-only",
+  });
+  console.log("transactionsData", transactionsData);
+
   return (
     <Card id="delete-account">
       <MDBox pt={3} px={2}>
@@ -27,22 +40,22 @@ function BillingInformation(): JSX.Element {
       </MDBox>
       <MDBox pt={1} pb={2} px={2}>
         <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          
-          
           <MDBox
             display="flex"
             flexDirection="column"
-      justifyContent="space-between"
-      alignItems="flex-start"
-      bgColor={ "grey-100"}
-      borderRadius="lg"
-      p={3}
-      mb={ 1}
-      mt={2}
-    >
-                          <MDBox
-                  variant="gradient"
-              bgColor={pinkCard.main}
+            justifyContent="space-between"
+            alignItems="flex-start"
+            bgColor={"grey-100"}
+            borderRadius="lg"
+            p={3}
+            mb={1}
+            mt={2}
+          >
+            <MDBox display="flex" alignItems="center" justifyContent="space-between" width={"100%"}>
+              <MDBox display="flex" alignItems="center">
+                <MDBox
+                  // variant="gradient"
+                  bgColor={"primary"}
                   color="white"
                   width="4rem"
                   height="4rem"
@@ -51,70 +64,97 @@ function BillingInformation(): JSX.Element {
                   justifyContent="center"
                   alignItems="center"
                   shadow="md"
+                  mr={2}
                 >
-                  <Icon fontSize="medium" color="inherit">
-                    account_balance_wallet_outlined
-                  </Icon>
+                  <img src={WalletIcon} height={"24px"} width={"20.7"} />
                 </MDBox>
-                </MDBox>
-                <MDBox
+                <MDTypography fontSize="16px" fontWeight="medium">
+                  My Credits
+                </MDTypography>
+              </MDBox>
+              <MDBox display="flex" alignItems="center">
+                <MDTypography fontSize="24px" fontWeight="medium" color="primary">
+                  {data?.getUserWallet?.balance}
+                </MDTypography>
+                {/* <MDButton variant="gradient" color="primary">
+                  <MDTypography fontSize="16px" fontWeight="regular" mr={1} color="white">
+                    Add Credits
+                  </MDTypography>
+                  <img src={AddIcon} height={"16px"} width={"16px"} />
+                </MDButton> */}
+              </MDBox>
+            </MDBox>
+          </MDBox>
+          <MDBox
             display="flex"
             flexDirection="column"
-      justifyContent="space-between"
-      alignItems="flex-start"
-      bgColor={ "grey-100"}
-      borderRadius="lg"
-      p={3}
-      mb={ 1}
-      mt={2}
-    >
-     
-        <MDBox mt={1} mb={2}>
-          <MDTypography variant="caption" color="text" fontWeight="bold" textTransform="uppercase">
-            Past Recharges
-          </MDTypography>
-        </MDBox>
-        <MDBox
-          component="ul"
+            justifyContent="space-between"
+            alignItems="flex-start"
+            bgColor={"grey-100"}
+            borderRadius="lg"
+            p={3}
+            mb={1}
+            mt={2}
+          >
+            <MDBox mt={1} mb={2}>
+              <MDTypography
+                variant="caption"
+                color="text"
+                fontWeight="bold"
+                textTransform="uppercase"
+              >
+                Past Recharges
+              </MDTypography>
+            </MDBox>
+            <MDBox
+              component="ul"
               display="flex"
               width="100%"
-          flexDirection="column"
-          p={0}
-          m={0}
-          sx={{ listStyle: "none" }}
-        >
-          <Transaction
-            color="success"
-            icon="add"
-            name="Credit Recharge"
-            description="26 March 2020, at 13:45 PM"
-            value="750"
-          />
-          <Transaction
-            color="success"
-            icon="add"
-            name="Credit Recharge"
-            description="26 March 2020, at 12:30 PM"
-            value="1,000"
-          />
-          <Transaction
-            color="success"
-            icon="add"
-            name="Credit Recharge"
-            description="26 March 2020, at 08:30 AM"
-            value="2,500"
-          />
-          <Transaction
-            color="success"
-            icon="add"
-            name="Credit Recharge"
-            description="26 March 2020, at 05:00 AM"
-            value="750"
-          />
+              flexDirection="column"
+              p={0}
+              m={0}
+              sx={{ listStyle: "none" }}
+            >
+              {transactionsData?.filterTransactionsPaginated?.data?.length > 0 ? (
+                transactionsData?.filterTransactionsPaginated?.data?.map((one: any, i: any) => {
+                  const name =
+                    one?.type === "CREDIT" && one?.status === "SUCCESS"
+                      ? "Credit Recharge"
+                      : one?.type === "CREDIT" && one?.status === "FAILED"
+                      ? "Credit Recharge Failed"
+                      : one?.type === "DEBIT" && one?.status === "success"
+                      ? "Credit Used"
+                      : `${one?.type} ${one?.status?.toLowerCase()?.charAt(0)?.toUpperCase()}`;
+                  const transactionDate = dayjs(one?.updatedAt).format(
+                    "DD MMMM YYYY, [at] HH:mm A"
+                  );
+                  return (
+                    <Transaction
+                      key={i}
+                      color={one?.status === "SUCCESS" ? "success" : "error"}
+                      icon="add"
+                      name={name}
+                      description={transactionDate}
+                      value={one?.amount}
+                    />
+                  );
+                })
+              ) : (
+                <MDBox m={"auto"}>
+                  <MDTypography variant="h6">No data found</MDTypography>
+                </MDBox>
+              )}
+              {/* <Transaction
+                color="success"
+                icon="add"
+                name="Credit Recharge"
+                description="26 March 2020, at 13:45 PM"
+                value="750"
+              /> */}
+            </MDBox>
+          </MDBox>
         </MDBox>
       </MDBox>
-        </MDBox>
-        </MDBox>
     </Card>
   );
 }

@@ -1,14 +1,8 @@
-// @mui material components
 import Grid from "@mui/material/Grid";
-
-// Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
-
-// Material Dashboard 2 PRO React TS components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-
 import BillingInformation from "./components/BillingInformation";
-import Transactions from "./components/Transactions";
+import TopUpPackages from "./components/TopUpPackages";
 
 function MyCredits(): JSX.Element {
   return (
@@ -16,11 +10,11 @@ function MyCredits(): JSX.Element {
       <MDBox mt={4}>
         <MDBox mb={3}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={5}>
               <BillingInformation />
             </Grid>
-            <Grid item xs={12} md={5}>
-              <Transactions />
+            <Grid item xs={12} md={7}>
+              <TopUpPackages />
             </Grid>
           </Grid>
         </MDBox>

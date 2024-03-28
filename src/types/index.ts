@@ -136,6 +136,20 @@ export type ClientData = {
   data: Client[];
   paginationInfo: PaginationInfo;
 };
+export type Transaction = {
+  id: string;
+  userId: string;
+  status: string;
+  type: string;
+  kind: string;
+  amount: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export type TransactionData = {
+  data: Transaction[];
+  paginationInfo: PaginationInfo;
+};
 type PublicationStatsType = {
   da: number;
   pa: number;
