@@ -1,39 +1,19 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
-
 // react-router components
 import { useLocation, Link, useNavigate } from "react-router-dom";
-
 // @material-ui core components
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
-
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import colors from "assets/theme/base/colors";
 import borders from "assets/theme/base/borders";
-
 // Material Dashboard 2 PRO React TS examples components
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
-
 // Custom styles for DashboardNavbar
 import {
   navbar,
@@ -43,7 +23,6 @@ import {
   navbarDesktopMenu,
   navbarMobileMenu,
 } from "examples/Navbars/DashboardNavbar/styles";
-
 // Material Dashboard 2 PRO React context
 import {
   useMaterialUIController,
@@ -52,7 +31,6 @@ import {
   setOpenConfigurator,
 } from "context";
 import MDTypography from "components/MDTypography";
-
 // Declaring prop types for DashboardNavbar
 interface Props {
   absolute?: boolean;

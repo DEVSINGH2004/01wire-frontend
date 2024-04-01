@@ -2,15 +2,12 @@ import dayjs from "dayjs";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 import colors from "assets/theme/base/colors";
-import Bill from "../Bill";
 import Transaction from "../Transaction";
 import { useQuery } from "@apollo/client";
 import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
 import { IGetTransactions, GET_TRANSACTIONS } from "graphql/queries/filterTransactionsPaginated";
 import WalletIcon from "assets/images/account_balance_wallet.svg";
-import AddIcon from "assets/images/add_circle.svg";
 
 function BillingInformation(): JSX.Element {
   const { pinkCard } = colors;
@@ -76,12 +73,6 @@ function BillingInformation(): JSX.Element {
                 <MDTypography fontSize="24px" fontWeight="medium" color="primary">
                   {data?.getUserWallet?.balance}
                 </MDTypography>
-                {/* <MDButton variant="gradient" color="primary">
-                  <MDTypography fontSize="16px" fontWeight="regular" mr={1} color="white">
-                    Add Credits
-                  </MDTypography>
-                  <img src={AddIcon} height={"16px"} width={"16px"} />
-                </MDButton> */}
               </MDBox>
             </MDBox>
           </MDBox>

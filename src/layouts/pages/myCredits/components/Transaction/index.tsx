@@ -1,27 +1,6 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { ReactNode } from "react";
-
-// @mui material components
-import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 
 // Declaring props types for Transaction
 interface Props {
@@ -37,11 +16,6 @@ function Transaction({ color, icon, name, description, value }: Props): JSX.Elem
     <MDBox key={name} component="li" py={1} pr={2} mb={1}>
       <MDBox display="flex" justifyContent="space-between" alignItems="center">
         <MDBox display="flex" alignItems="center">
-          {/* <MDBox mr={2}>
-            <MDButton variant="outlined" color={color} iconOnly circular>
-              <Icon sx={{ fontWeight: "bold" }}>{icon}</Icon>
-            </MDButton>
-          </MDBox> */}
           <MDBox display="flex" flexDirection="column">
             <MDTypography variant="button" fontWeight="medium" gutterBottom>
               {name}

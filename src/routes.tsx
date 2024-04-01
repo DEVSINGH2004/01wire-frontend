@@ -19,9 +19,7 @@ import Dashboards from "layouts/pages/dashboards";
 import MyCredits from "layouts/pages/myCredits";
 import Releases from "layouts/pages/releases";
 import Clients from "layouts/pages/clients";
-
 // Material Dashboard 2 PRO React TS components
-import MDAvatar from "components/MDAvatar";
 import ClientIcon from "assets/images/icons/sidebarClient.svg";
 import DashboardIcon from "assets/images/icons/sidebarDashboard.svg";
 import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
