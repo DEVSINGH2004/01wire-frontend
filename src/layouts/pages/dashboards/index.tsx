@@ -118,7 +118,7 @@ function Overview(): JSX.Element {
                     margin: 0,
                   }}
                 />
-                <CardContent sx={{ m: 1, p: 0 }}>
+                <CardContent sx={{ ml: 1, mt: 2, p: 0 }}>
                   <MDTypography
                     fontSize="16px"
                     fontWeight="regular"
@@ -129,8 +129,8 @@ function Overview(): JSX.Element {
                       width: "150px",
                     }}
                   >
-                    EU Drafts New Rules for all the new press releases.All Press releases should be
-                    according to the new draft rules.
+                    EUss Drafts New Rules for all the new press releases.All Press releases should
+                    be according to the new draft rules.
                   </MDTypography>
                   <MDTypography variant="body2" sx={{ mt: 1, color: "rgba(123, 128, 154, 1)" }}>
                     {dayjs("2024-02-16T14:33:00").format("DD MMM YYYY, h:mm A")}

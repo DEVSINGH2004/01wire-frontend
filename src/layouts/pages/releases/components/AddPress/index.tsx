@@ -23,13 +23,15 @@ interface Props {
 }
 
 function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
-  console.log("articleData", data);
+  const { title, content, summary, featureImage, featureImageDesc } = data;
   const {
     control,
     formState: { isDirty },
     reset,
     handleSubmit,
-  } = useForm({ defaultValues: { clientId: null, content: null, featureImage: "" } });
+  } = useForm({
+    defaultValues: { clientId: null, title, content, summary, featureImage, featureImageDesc },
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [createArticle] = useMutation<ICreateArticleVars>(CREATE_ARTICLE);
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
@@ -42,14 +44,12 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
       },
     },
   });
-  console.log("clientsData", clientsData);
   const clientsObj: any = clientsData?.filterClientsPaginated?.data?.map((el) => ({
     label: el?.title,
     value: el?.id,
   }));
 
   const onSubmit = async (formVals: any) => {
-    console.log("formVals", formVals);
     const { clientId = {} } = formVals || {};
     setLoading(true);
     try {
@@ -94,20 +94,11 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
 
   useEffect(() => {
     if (data?.id) {
-      const { content, summary, title, clientId, featureImage, featureImageDesc } = data;
+      const { clientId } = data;
       const clientObj = clientsData?.filterClientsPaginated?.data?.find(
         (el) => el?.id === clientId
       );
-      console.log("featureImage", featureImage);
-      const defaultValues = {
-        content,
-        summary,
-        title,
-        featureImage,
-        featureImageDesc,
-        clientId: clientObj?.title,
-      };
-      reset(defaultValues);
+      reset({ clientId: clientObj?.title });
     }
   }, [data, clientsData]);
   return (
