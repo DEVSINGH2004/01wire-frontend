@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 // @mui material components
 import Grid from "@mui/material/Grid";
-
+import InfoIcon from "@mui/icons-material/Info";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
-import MDSnackbar from "components/MDSnackbar";
+import MDButton from "components/MDButton";
 import { useForm } from "react-hook-form";
+import EditorialGuidelines from "../EditorialGuidelines";
 
 // NewProduct page components
 import FormField from "../FormField";
@@ -23,6 +25,7 @@ interface Props {
 }
 
 function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
+  const [open, setOpen] = useState<boolean>(false);
   const { title, content, summary, featureImage, featureImageDesc } = data;
   const {
     control,
@@ -75,13 +78,14 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
         });
       }
       setLoading(false);
-      <MDSnackbar color="success" icon="check" title="Saved Successfully" open />;
+      toast.success("Saved Successfully");
       if (refetch) refetch();
       const resId = res?.data?.updateArticle?.id || res?.data?.createArticle?.id;
       cb(resId);
-    } catch (err) {
-      console.error("Error in saving data:", err);
+    } catch (err: any) {
       setLoading(false);
+      console.error("Error in saving data:", err);
+      toast.error(err?.message);
     }
   };
   useEffect(() => {
@@ -104,6 +108,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
+      {open && <EditorialGuidelines onClose={() => setOpen(false)} />}
       <MDTypography variant="h5">Product Information</MDTypography>
       <MDBox mt={3}>
         <Grid container spacing={3}>
@@ -138,7 +143,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
           <Grid item xs={12} sm={5}>
             <FormField
               type="file"
-              subLabel="SVG, PNG, JPG(max. 3MB)"
+              subLabel="JPEG, PNG, JPG(max. 3MB)"
               name="featureImage"
               label="Feature Image"
               control={control}
@@ -157,11 +162,34 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
       <MDBox mt={2}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
+            <MDBox sx={{ mb: "0.5rem" }} display="flex" alignItems="center">
+              <MDTypography
+                component="label"
+                fontSize="1rem"
+                fontWeight="medium"
+                color="textSecondary"
+              >
+                Press Release Content
+              </MDTypography>
+              <MDButton
+                startIcon={<InfoIcon />}
+                sx={{ ml: 1, borderRadius: "32px", height: "34px" }}
+                color="info"
+                onClick={() => setOpen(true)}
+              >
+                <MDTypography
+                  fontSize="14px"
+                  sx={{ fontWeight: 400, color: "rgba(255, 255, 255, 1)" }}
+                >
+                  Editorial Guidelines
+                </MDTypography>
+              </MDButton>
+            </MDBox>
             <FormField
               type="editor"
               name="content"
               control={control}
-              label="Press Release Content"
+              label=""
               multiline
               rows={4}
               variant="outlined"

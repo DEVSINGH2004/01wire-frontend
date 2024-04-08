@@ -13,7 +13,6 @@
   10. The `title` key is only for the item with the type of `title` and its used for the title text on the Sidenav.
   10. The `component` key is used to store the component of its route.
 */
-
 // Material Dashboard 2 PRO React layouts
 import Dashboards from "layouts/pages/dashboards";
 import MyCredits from "layouts/pages/myCredits";

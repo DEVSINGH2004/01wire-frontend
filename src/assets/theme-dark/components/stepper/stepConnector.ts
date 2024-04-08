@@ -26,7 +26,7 @@ type Types = any;
 const stepConnector: Types = {
   styleOverrides: {
     root: {
-      color: "#9fc9ff",
+      color: "rgba(255,255,255,0.5)",
       transition: "all 200ms linear",
 
       "&.Mui-active": {

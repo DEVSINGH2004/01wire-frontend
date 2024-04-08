@@ -1,34 +1,41 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import MDBox from "components/MDBox";
-
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { IconButton } from "@mui/material";
 import MDTypography from "components/MDTypography";
+import MDCircularLoader from "components/MDCircularLoader";
 import axiosInstance from "utils/axiosInstance";
 import MDAvatar from "components/MDAvatar";
 import CloseIcon from "@mui/icons-material/Close";
+import { MAX_IMAGE_SIZE } from "constants/index";
+import { toast } from "react-toastify";
 
 const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Element => {
   const [selectedFile, setSelectedFile] = useState<any>(value);
+  const [loading, setLoading] = useState<boolean>(false);
   const onDrop = useCallback(async (acceptedFiles: any) => {
     const file = acceptedFiles?.[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const response = await axiosInstance.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("File uploaded successfully:", response);
-      onChange(response?.data?.fileName);
-      setSelectedFile(response?.data?.fileName);
-
-      // Handle successful upload
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      // Handle error
+    if (file?.size > MAX_IMAGE_SIZE) {
+      toast.error("Image size exceeds the maximum allowed size (3MB).");
+    } else {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const response = await axiosInstance.post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setLoading(false);
+        onChange(response?.data?.fileName);
+        setSelectedFile(response?.data?.fileName);
+      } catch (error: any) {
+        setLoading(false);
+        console.error("Error uploading file:", error);
+        toast.error(error?.response?.data?.message);
+      }
     }
   }, []);
 
@@ -39,20 +46,26 @@ const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Ele
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+    },
   });
   useEffect(() => {
     setSelectedFile(value);
   }, [value]);
   return (
     <MDBox height="100%" display="flex" alignItems="center" justifyContent="center">
-      {selectedFile ? (
+      {loading ? (
+        <MDCircularLoader overlayloader startLoader />
+      ) : selectedFile ? (
         <MDBox position="relative">
           <MDAvatar
             src={`${process.env.REACT_APP_IMAGE_BASE_URL}${selectedFile}`}
             variant="rounded"
             sx={{
-              height: "80px",
-              width: "210px",
+              height: "130px",
+              width: "400px",
               borderRadius: "3.47px",
             }}
           />
@@ -64,6 +77,9 @@ const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Ele
               background: "#fff",
               height: "20px",
               width: "20px",
+              "&:hover": {
+                background: "#fff",
+              },
             }}
             onClick={handleRemoveFile}
           >

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,8 +13,6 @@ import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
 
 // Material Dashboard 2 PRO React TS examples components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -102,9 +101,12 @@ const columns = [
 ];
 
 function Releases(): JSX.Element {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [loader, setLoader] = useState<boolean>(false);
   const [filter, setFilter] = useState<any>({});
-  const [openForm, setOpenForm] = useState<any>(false);
+  const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns });
 
   const { data: articlesData, loading } = useQuery<IGetArticles, IGetArticlesVars>(GET_ARTICLES, {
@@ -117,6 +119,7 @@ function Releases(): JSX.Element {
         perPage: 200,
       },
     },
+    skip: !!id,
     fetchPolicy: "network-only",
   });
   const { data: clientsData } = useQuery<IGetClients, IGetClientsVars>(GET_CLIENTS, {
@@ -153,6 +156,7 @@ function Releases(): JSX.Element {
             {
               Icon: EditIcon,
               onClick: () => {
+                navigate(`/releases/${one?.id}`);
                 setOpenForm(one?.id);
               },
             },
@@ -164,9 +168,14 @@ function Releases(): JSX.Element {
     setLoader(false);
   }, [articlesData]);
 
+  useEffect(() => {
+    if (location?.pathname === "/releases") {
+      setOpenForm(false);
+    }
+  }, [location]);
+
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
+    <>
       {!openForm && (
         <>
           <MDBox display="flex" alignItems="center" justifyContent="space-between" pt={2}>
@@ -237,7 +246,7 @@ function Releases(): JSX.Element {
           {loading || loader ? (
             <MDCircularLoader overlayloader startLoader />
           ) : openForm ? (
-            <ReleaseForm onClose={() => setOpenForm(false)} idVal={openForm} />
+            <ReleaseForm idVal={openForm} />
           ) : tableData?.rows?.length ? (
             <DataTable table={tableData} />
           ) : (
@@ -248,7 +257,7 @@ function Releases(): JSX.Element {
         </Card>
       </MDBox>
       <Footer />
-    </DashboardLayout>
+    </>
   );
 }
 

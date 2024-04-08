@@ -103,7 +103,15 @@ function DefaultPricingCard({
       </MDTypography>
     </MDBox>
   ));
-
+  const handleClick = (e: any) => {
+    console.log("eVal", e?.target?.value, "selected", selected);
+    if (selected === e?.target?.value) {
+      e.stopPropagation(); // Prevent the default behavior of the click event
+      handleChange(null, pIds); // Unselect the radio button
+    } else {
+      handleChange(e, pIds); // Select the radio button
+    }
+  };
   return (
     <Card sx={{ boxShadow: ({ boxShadows: { lg } }) => (shadow ? lg : "none") }}>
       <MDBox bgColor={color} variant={"gradient"} borderRadius="xl">
@@ -207,9 +215,9 @@ function DefaultPricingCard({
               <Radio
                 color="primary"
                 checked={selected === id}
-                onChange={(e) => {
-                  console.log("entered", e.target.value);
-                  handleChange(e, pIds);
+                onClick={(e: any) => {
+                  console.log("entered", e?.target?.value);
+                  handleClick(e);
                 }}
                 value={id}
                 name="radio-buttons"

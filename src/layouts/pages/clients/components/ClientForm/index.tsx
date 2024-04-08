@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useLazyQuery } from "@apollo/client";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import ClientInfo from "../ClientInfo";
 import SocialInfo from "../SocialInfo";
@@ -14,9 +16,9 @@ import {
 } from "graphql/queries/getClientById";
 import MDCircularLoader from "components/MDCircularLoader";
 interface Props {
-  id: any;
-  onClose: () => void;
-  refetchList: () => void;
+  id?: any;
+  onClose?: () => void;
+  refetchList?: () => void;
 }
 
 function getSteps(): string[] {
@@ -60,9 +62,11 @@ function getStepContent(
 }
 
 function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeStep, setActiveStep] = useState<number>(location?.state?.step ? 1 : 0);
   const [saveData, setSaveData] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [client, setClient] = useState<any>();
   const [clientId, setId] = useState<any>(id && id !== true && id);
   const steps = getSteps();
@@ -102,11 +106,14 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
   useEffect(() => {
     if (clientId) {
       fetchData();
+    } else {
+      setLoading(false);
     }
   }, [clientId]);
   const handleLastClick = () => {
-    refetchList();
-    onClose();
+    if (refetchList) refetchList();
+    if (onClose) onClose();
+    navigate(`/clients`);
   };
   return (
     <>
@@ -142,18 +149,22 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
               setSaveData
             )
           )}
-          <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
-            {activeStep === 0 ? (
-              <MDBox />
-            ) : (
-              <MDButton variant="gradient" color="light" onClick={handleBack}>
-                back
+          {!loading && (
+            <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
+              {activeStep === 0 ? (
+                <MDBox />
+              ) : (
+                <MDButton color="white" onClick={handleBack}>
+                  <MDTypography fontSize="16px" sx={{ fontWeight: 400, fontFamily: "Roboto" }}>
+                    {"< Back"}
+                  </MDTypography>
+                </MDButton>
+              )}
+              <MDButton color="primary" onClick={() => setSaveData(true)}>
+                {isLastStep ? "save" : "next"}
               </MDButton>
-            )}
-            <MDButton variant="gradient" color="dark" onClick={() => setSaveData(true)}>
-              {isLastStep ? "save" : "next"}
-            </MDButton>
-          </MDBox>
+            </MDBox>
+          )}
         </MDBox>
       </MDBox>
     </>

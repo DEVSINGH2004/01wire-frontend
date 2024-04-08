@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client";
 import { UPDATE_CLIENT, IUpdateClientVars } from "graphql/mutations/updateClient";
 import Grid from "@mui/material/Grid";
@@ -52,12 +53,14 @@ function SocialInfo({
       })
         .then(() => {
           setLoading(false);
+          toast.success("Saved Successfully");
           if (refetch) refetch();
           cb();
         })
-        .catch((err) => {
+        .catch((err: any) => {
           setLoading(false);
           setSaveData(false);
+          toast.error(err?.message);
           console.log("err while updating client", err);
         });
     }

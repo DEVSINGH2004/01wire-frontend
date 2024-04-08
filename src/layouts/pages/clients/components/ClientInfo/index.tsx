@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
 import { useForm } from "react-hook-form";
@@ -90,12 +91,14 @@ function ClientInfo({
         });
       }
       setLoading(false);
+      toast.success("Saved Successfully");
       const resId = res?.data?.updateClient?.id || res?.data?.createClient?.id;
       if (refetch) refetch(resId);
       cb(resId);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error in saving data:", err);
       setLoading(false);
+      toast.error(err?.message);
       setSaveData(false);
     }
   };

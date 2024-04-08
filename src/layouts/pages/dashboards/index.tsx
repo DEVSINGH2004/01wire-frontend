@@ -9,8 +9,6 @@ import IconButton from "@mui/material/IconButton";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 // Material Dashboard 2 PRO React TS examples components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 // Images
 import homeDecor1 from "assets/images/home-decor-1.jpg";
@@ -24,8 +22,7 @@ import TiltArrowIcon from "assets/images/TiltArrow.svg";
 
 function Overview(): JSX.Element {
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
+    <>
       <MDTypography mt={1} variant="h6" fontWeight="medium">
         Current Status
       </MDTypography>
@@ -208,7 +205,7 @@ function Overview(): JSX.Element {
       <MDBox mt={"100px"}>
         <Footer />
       </MDBox>
-    </DashboardLayout>
+    </>
   );
 }
 

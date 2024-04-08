@@ -18,6 +18,8 @@ import {
   IGetArticleByIdVars,
   IGetArticleById,
 } from "graphql/queries/getArticleById";
+import { useParams } from "react-router-dom";
+import MDTypography from "components/MDTypography";
 
 interface Props {
   onClose?: (p: boolean) => void;
@@ -51,7 +53,7 @@ function getStepContent(
   }
 }
 
-function ReleaseForm({ onClose, idVal }: Props): JSX.Element {
+function ReleaseForm({ idVal }: Props): JSX.Element {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [saveData, setSaveData] = useState<boolean>(false);
   const [articleId, setId] = useState<string>(idVal && idVal !== true && idVal);
@@ -118,24 +120,33 @@ function ReleaseForm({ onClose, idVal }: Props): JSX.Element {
           {loading ? (
             <MDCircularLoader startLoader />
           ) : (
-            getStepContent(activeStep, saveData, handleNext, article, fetchData)
+            <>
+              {getStepContent(activeStep, saveData, handleNext, article, fetchData)}
+              <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
+                {activeStep === 0 ? (
+                  <MDBox />
+                ) : (
+                  <MDButton
+                    color="white"
+                    onClick={handleBack}
+                    sx={{
+                      boxShadow: "0px 1px 5px 0px #0000001F",
+                    }}
+                  >
+                    <MDTypography fontSize="16px" sx={{ fontWeight: 400, fontFamily: "Roboto" }}>
+                      {"< Back"}
+                    </MDTypography>
+                  </MDButton>
+                )}
+                <MDButton
+                  color="primary"
+                  onClick={!isLastStep ? () => setSaveData(true) : undefined}
+                >
+                  {isLastStep ? "send" : "next"}
+                </MDButton>
+              </MDBox>
+            </>
           )}
-          <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
-            {activeStep === 0 ? (
-              <MDBox />
-            ) : (
-              <MDButton variant="gradient" color="light" onClick={handleBack}>
-                back
-              </MDButton>
-            )}
-            <MDButton
-              variant="gradient"
-              color="dark"
-              onClick={!isLastStep ? () => setSaveData(true) : undefined}
-            >
-              {isLastStep ? "send" : "next"}
-            </MDButton>
-          </MDBox>
         </MDBox>
       </MDBox>
     </>

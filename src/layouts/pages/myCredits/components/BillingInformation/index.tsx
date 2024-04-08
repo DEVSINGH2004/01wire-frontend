@@ -2,20 +2,13 @@ import dayjs from "dayjs";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import colors from "assets/theme/base/colors";
 import Transaction from "../Transaction";
 import { useQuery } from "@apollo/client";
-import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
 import { IGetTransactions, GET_TRANSACTIONS } from "graphql/queries/filterTransactionsPaginated";
 import WalletIcon from "assets/images/account_balance_wallet.svg";
 
-function BillingInformation(): JSX.Element {
-  const { pinkCard } = colors;
-  const { data, loading, refetch } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
-    fetchPolicy: "network-only",
-  });
+function BillingInformation({ data }: { data: any }): JSX.Element {
   console.log("userWallet", data);
-
   const { data: transactionsData } = useQuery<IGetTransactions>(GET_TRANSACTIONS, {
     variables: {
       filterInput: {},
@@ -51,7 +44,6 @@ function BillingInformation(): JSX.Element {
             <MDBox display="flex" alignItems="center" justifyContent="space-between" width={"100%"}>
               <MDBox display="flex" alignItems="center">
                 <MDBox
-                  // variant="gradient"
                   bgColor={"primary"}
                   color="white"
                   width="4rem"

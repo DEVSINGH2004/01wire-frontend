@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -39,7 +40,7 @@ interface Props {
 function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
   const {
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
     reset,
     handleSubmit,
   } = useForm({ defaultValues: { category: "", country: "" } });
@@ -47,7 +48,6 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const onSubmit = (formVals: any) => {
     setLoading(true);
-    console.log("mediaFormVals", formVals);
     const {
       name,
       email,
@@ -91,21 +91,24 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
     })
       .then((res: any) => {
         setLoading(false);
+        toast.success("Saved Successfully");
         if (refetch) refetch();
         const resId = res?.data?.updateArticle?.id;
         cb(resId);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log("error in saving data", err);
         setLoading(false);
+        toast.error(err?.message);
       });
   };
   useEffect(() => {
-    if (saveData) {
-      console.log("saveData", saveData);
+    if (saveData && isDirty) {
       handleSubmit(onSubmit)();
+    } else if (saveData) {
+      cb();
     }
-  }, [saveData]);
+  }, [saveData, isDirty]);
   useEffect(() => {
     if (data?.id) {
       const { category, notes, mediaContact } = data;

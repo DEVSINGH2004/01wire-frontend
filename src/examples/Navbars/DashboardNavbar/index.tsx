@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 // react-router components
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // @material-ui core components
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,8 +20,6 @@ import {
   navbarContainer,
   navbarRow,
   navbarIconButton,
-  navbarDesktopMenu,
-  navbarMobileMenu,
 } from "examples/Navbars/DashboardNavbar/styles";
 // Material Dashboard 2 PRO React context
 import {
@@ -31,6 +29,7 @@ import {
   setOpenConfigurator,
 } from "context";
 import MDTypography from "components/MDTypography";
+
 // Declaring prop types for DashboardNavbar
 interface Props {
   absolute?: boolean;
@@ -49,6 +48,25 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState<any>(false);
   const route = useLocation().pathname.split("/").slice(1);
+
+  // useEffect(() => {
+  //   let url;
+  //   const eventSource = new EventSource(url);
+
+  //   eventSource.onmessage = (event) => {
+  //     console.log("Message received:", event.data);
+  //     // Handle the received data as needed
+  //   };
+
+  //   eventSource.onerror = (error) => {
+  //     console.error("Error occurred:", error);
+  //     // Handle errors
+  //   };
+
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
 
   useEffect(() => {
     // Setting the navbar type
@@ -98,7 +116,7 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>account_circle</Icon>} title="Profile" />
+      {/* <NotificationItem icon={<Icon>account_circle</Icon>} title="Profile" /> */}
       <NotificationItem onClick={handleLogout} icon={<Icon>logout</Icon>} title="Logout" />
     </Menu>
   );

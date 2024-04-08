@@ -249,3 +249,12 @@ export const countryList = {
   Zambia: "Zambia",
   Zimbabwe: "Zimbabwe",
 };
+export const TermsAndConditionsList = [
+  "Who has encountered the terrible Frol of the system of this exchange ???.",
+  "New accounts are restricted for deposits and withdrawals.",
+  "Purchases cryptocurrency with google and Apple Pay , maybe someone knows similar exchanges !",
+  "New accounts are restricted for deposits and withdrawals.",
+  "Purchases cryptocurrency with google and Apple Pay , maybe someone knows similar exchanges !",
+  "Purchases cryptocurrency with google and Apple Pay , maybe someone knows similar exchanges !",
+];
+export const MAX_IMAGE_SIZE = 3 * 1024 * 1024;

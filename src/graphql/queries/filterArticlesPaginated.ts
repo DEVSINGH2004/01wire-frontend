@@ -43,6 +43,7 @@ export const GET_ARTICLES = gql`
         timezone
         notes
         publishAt
+        createdAt
         mediaContact {
           name
           email

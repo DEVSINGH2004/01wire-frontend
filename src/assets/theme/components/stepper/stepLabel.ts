@@ -32,9 +32,8 @@ const stepLabel: Types = {
     label: {
       marginTop: `${pxToRem(8)} !important`,
       fontWeight: fontWeightRegular,
-      fontSize: size.xs,
-      color: "#9fc9ff",
-      textTransform: "uppercase",
+      fontSize: size.sm,
+      color: `${rgba(white.main, 0.5)}`,
 
       "&.Mui-active": {
         fontWeight: `${fontWeightRegular} !important`,

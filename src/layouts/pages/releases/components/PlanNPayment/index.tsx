@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import "slick-carousel/slick/slick.css";
@@ -75,7 +76,6 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
       },
     },
   });
-  console.log("bundlesData", bundlesData);
   const { data: publicationsData } = useQuery<IGetPublications, IGetPublicationsVars>(
     GET_PUBLICATIONS,
     {
@@ -90,11 +90,15 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
       },
     }
   );
-  console.log("publicationsData", publicationsData);
   const handleChange = (e: any, pIds: any) => {
-    console.log("val>>", e.target.value, "pIds>>", pIds);
-    setSelected((prevVal: any) => (prevVal === e.target.value ? "" : e.target.value));
-    setBundlePids(pIds);
+    if (e?.target?.value) {
+      setSelected(e.target.value);
+      setBundlePids(pIds);
+    } else {
+      setSelected("");
+      const newPids = bundlePids?.filter((one: any) => !pIds.includes(one));
+      setBundlePids(newPids);
+    }
   };
   const handlePublicationClick = (id: any) => {
     if (publicationIds?.indexOf(id) !== -1) {
@@ -105,26 +109,35 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
     }
   };
   const onSubmit = () => {
-    setLoading(true);
-    updateArticle({
-      variables: {
-        params: {
-          id: data?.id,
-          bundleIds: selected ? [selected] : [],
-          publicationIds: [...publicationIds, ...bundlePids],
+    if (
+      JSON.stringify([...publicationIds, ...bundlePids]) !== JSON.stringify(publicationIds) &&
+      data?.bundleIds[0] !== selected
+    ) {
+      setLoading(true);
+      updateArticle({
+        variables: {
+          params: {
+            id: data?.id,
+            bundleIds: selected ? [selected] : [],
+            publicationIds: [...publicationIds, ...bundlePids],
+          },
         },
-      },
-    })
-      .then((res: any) => {
-        setLoading(false);
-        if (refetch) refetch();
-        const resId = res?.data?.updateArticle?.id;
-        cb(resId);
       })
-      .catch((err) => {
-        setLoading(false);
-        console.log("error in saving data", err);
-      });
+        .then((res: any) => {
+          setLoading(false);
+          toast.success("Saved Successfully");
+          if (refetch) refetch();
+          const resId = res?.data?.updateArticle?.id;
+          cb(resId);
+        })
+        .catch((err: any) => {
+          setLoading(false);
+          toast.error(err?.message);
+          console.log("error in saving data", err);
+        });
+    } else {
+      cb();
+    }
   };
   useEffect(() => {
     if (saveData) {
@@ -138,9 +151,7 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
       <MDBox bgColor={"grey-200"} borderRadius="lg" p={"24px 60px 24px 70px"} mb={1} mt={2}>
         <Slider {...settings}>
           {bundlesData?.filterBundlesPaginated?.data?.map((one, i) => {
-            console.log("bundlesData>>eer", one);
             return (
-              //
               <MDBox key={i} width={"290px !important"}>
                 <DefaultPricingCard
                   color={darkMode ? "dark" : "white"}

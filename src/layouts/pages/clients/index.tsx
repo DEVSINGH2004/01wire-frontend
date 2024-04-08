@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import { DeleteOutline as DeleteOutlineIcon } from "@mui/icons-material";
@@ -9,8 +10,6 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 // Material Dashboard 2 PRO React TS examples components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import ClientForm from "./components/ClientForm";
@@ -18,6 +17,8 @@ import { useQuery } from "@apollo/client";
 import productImage from "assets/images/products/product-11.jpg";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import MDCircularLoader from "components/MDCircularLoader";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ClientProfile from "./components/ClientProfile";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -64,8 +65,11 @@ const columns = [
   },
 ];
 
-function Releases(): JSX.Element {
+function Clients(): JSX.Element {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [openForm, setOpenForm] = useState<any>(false);
+  const [openClientProfile, setOpen] = useState<any>(false);
   const [loader, setLoader] = useState<boolean>(true);
   const [tableData, setData] = useState<any>([]);
 
@@ -81,6 +85,7 @@ function Releases(): JSX.Element {
         perPage: 200,
       },
     },
+    skip: !!id,
     fetchPolicy: "network-only",
   });
 
@@ -95,7 +100,13 @@ function Releases(): JSX.Element {
             {
               Icon: <EditIcon fontSize="small" />,
               onClick: () => {
-                setOpenForm(one?.id);
+                navigate(`/clients/${one?.id}`);
+              },
+            },
+            {
+              Icon: <VisibilityIcon fontSize="small" />,
+              onClick: () => {
+                setOpen(one?.id);
               },
             },
             // {
@@ -112,10 +123,17 @@ function Releases(): JSX.Element {
     setLoader(false);
   }, [clientsData]);
 
+  useEffect(() => {
+    if (id) {
+      setOpenForm(id);
+    } else {
+      setOpenForm(false);
+    }
+  }, [id]);
+  console.log("loading", loading, "loader", loader);
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      {!openForm && (
+    <>
+      {!openForm && !openClientProfile && (
         <MDBox display="flex" alignItems="center" justifyContent="flex-end" pt={2}>
           <MDButton
             variant="contained"
@@ -128,23 +146,27 @@ function Releases(): JSX.Element {
         </MDBox>
       )}
       <MDBox pt={openForm ? 6 : 2} pb={3}>
-        <Card sx={{ minHeight: "400px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : openForm ? (
-            <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
-          ) : tableData?.rows?.length ? (
-            <DataTable showHeader={false} table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
+        {openClientProfile && !id ? (
+          <ClientProfile id={openClientProfile} />
+        ) : (
+          <Card sx={{ minHeight: "400px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : openForm ? (
+              <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+            ) : tableData?.rows?.length ? (
+              <DataTable showHeader={false} table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
+        )}
       </MDBox>
       <Footer />
-    </DashboardLayout>
+    </>
   );
 }
 
-export default Releases;
+export default Clients;

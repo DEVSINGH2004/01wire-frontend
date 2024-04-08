@@ -28,9 +28,9 @@ type Types = any;
 const stepIcon: Types = {
   styleOverrides: {
     root: {
-      background: "#9fc9ff",
-      fill: "#9fc9ff",
-      stroke: "#9fc9ff",
+      background: "#adb5bd",
+      fill: "#adb5bd",
+      stroke: "#adb5bd",
       strokeWidth: pxToRem(10),
       width: pxToRem(13),
       height: pxToRem(13),

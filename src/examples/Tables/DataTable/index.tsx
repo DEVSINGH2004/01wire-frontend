@@ -1,20 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useMemo, useEffect, useState } from "react";
-
 // react-table components
 import { useTable, usePagination, useGlobalFilter, useAsyncDebounce, useSortBy } from "react-table";
 
@@ -169,7 +153,6 @@ function DataTable({
   } else {
     entriesEnd = pageSize * (pageIndex + 1);
   }
-  console.log("page", page);
   return (
     <TableContainer sx={{ boxShadow: "none" }}>
       {entriesPerPage || canSearch ? (
@@ -231,7 +214,6 @@ function DataTable({
         <TableBody {...getTableBodyProps()}>
           {page.map((row: any, key: any) => {
             prepareRow(row);
-            console.log("row>>", row);
             return (
               <TableRow key={key} {...row.getRowProps()}>
                 {row.cells.map((cell: any, key: any) => (
