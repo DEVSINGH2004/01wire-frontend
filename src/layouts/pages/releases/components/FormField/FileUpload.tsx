@@ -7,6 +7,7 @@ import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import axiosInstance from "utils/axiosInstance";
 import MDAvatar from "components/MDAvatar";
+import DisplayImage from "components/DisplayImage";
 import CloseIcon from "@mui/icons-material/Close";
 import { MAX_IMAGE_SIZE } from "constants/index";
 import { toast } from "react-toastify";
@@ -68,13 +69,13 @@ const FileUpload = ({
       {loading ? (
         <MDCircularLoader overlayloader startLoader />
       ) : selectedFile ? (
-        <MDBox position="relative">
-          <MDAvatar
-            src={`${process.env.REACT_APP_IMAGE_BASE_URL}${selectedFile}`}
-            variant="rounded"
-            sx={{
-              height: "130px",
-              width: "400px",
+        <MDBox position="relative" display="flex" alignItems="center" justifyContent="center">
+          <DisplayImage
+            src={selectedFile}
+            height="140px"
+            width="400px"
+            alt="logo"
+            styles={{
               borderRadius: "3.47px",
             }}
           />
