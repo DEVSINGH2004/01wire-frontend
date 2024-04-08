@@ -35,9 +35,10 @@ interface Props {
   saveData?: boolean;
   data?: any;
   refetch?: () => void;
+  disabled?: any;
 }
 
-function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
+function Media({ cb, saveData, data, refetch, disabled = false }: Props): JSX.Element {
   const {
     control,
     formState: { errors, isDirty },
@@ -135,6 +136,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
               control={control}
               options={CategoryOptions}
               variant="outlined"
+              disabled={disabled}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -146,6 +148,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
               multiline
               rows={6}
               variant="outlined"
+              disabled={disabled}
             />
           </Grid>
         </Grid>
@@ -170,6 +173,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -184,6 +188,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -200,6 +205,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -214,6 +220,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
           </Grid>
         </Grid>
@@ -234,6 +241,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
           </Grid>
         </Grid>
@@ -254,6 +262,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -268,6 +277,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -282,6 +292,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -296,6 +307,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -307,6 +319,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
               control={control}
               options={Object.keys(countryList)}
               variant="outlined"
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -321,6 +334,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -335,6 +349,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -349,6 +364,7 @@ function Media({ cb, saveData, data, refetch }: Props): JSX.Element {
                   </InputAdornment>
                 ),
               }}
+              disabled={disabled}
             />
           </Grid>
         </Grid>

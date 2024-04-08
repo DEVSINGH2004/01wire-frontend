@@ -32,6 +32,7 @@ function FormField({
   options,
   defaultValue,
   control,
+  disabled = false,
   ...rest
 }: Props): JSX.Element {
   switch (type) {
@@ -51,6 +52,7 @@ function FormField({
                   onChange={(event, newValue) => {
                     onChange(newValue);
                   }}
+                  disabled={disabled}
                   renderInput={(params) => <MDInput {...params} variant="outlined" />}
                 />
               )}
@@ -84,7 +86,7 @@ function FormField({
                     padding: "20px 20px",
                   }}
                 >
-                  <FileUpload value={value} onChange={onChange} />
+                  <FileUpload disabled={disabled} value={value} onChange={onChange} />
                 </MDBox>
               )}
             />
@@ -110,7 +112,7 @@ function FormField({
               name={name}
               control={control}
               render={({ field: { onChange, value } }) => (
-                <MDEditor onChange={onChange} value={value} />
+                <MDEditor disabled={disabled} onChange={onChange} value={value} />
               )}
             />
           </FormControl>
@@ -132,7 +134,7 @@ function FormField({
               name={name}
               control={control}
               render={({ field: { onChange, value } }) => (
-                <MDInput onChange={onChange} value={value} {...rest} />
+                <MDInput disabled={disabled} onChange={onChange} value={value} {...rest} />
               )}
             />
           </FormControl>

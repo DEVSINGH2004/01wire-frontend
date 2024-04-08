@@ -22,9 +22,10 @@ interface Props {
   saveData?: boolean;
   data?: any;
   refetch?: () => void;
+  disabled?: any;
 }
 
-function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
+function AddPress({ cb, saveData, data = {}, refetch, disabled = false }: Props): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const { title, content, summary, featureImage, featureImageDesc } = data;
   const {
@@ -121,6 +122,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               control={control}
               options={clientsObj}
               variant="outlined"
+              disabled={disabled}
             />
 
             <FormField
@@ -129,6 +131,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               name="title"
               control={control}
               variant="outlined"
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -138,6 +141,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               multiline
               rows={4}
               variant="outlined"
+              disabled={disabled}
             />
           </Grid>
           <Grid item xs={12} sm={5}>
@@ -148,6 +152,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               label="Feature Image"
               control={control}
               defaultValue={data?.featureImage}
+              disabled={disabled}
             />
             <FormField
               type="text"
@@ -155,6 +160,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               name="featureImageDesc"
               control={control}
               variant="outlined"
+              disabled={disabled}
             />
           </Grid>
         </Grid>
@@ -193,6 +199,7 @@ function AddPress({ cb, saveData, data = {}, refetch }: Props): JSX.Element {
               multiline
               rows={4}
               variant="outlined"
+              disabled={disabled}
             />
           </Grid>
         </Grid>

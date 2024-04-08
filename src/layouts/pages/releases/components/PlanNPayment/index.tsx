@@ -47,8 +47,9 @@ interface Props {
   saveData?: boolean;
   data?: any;
   refetch?: () => void;
+  disabled?: any;
 }
-function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
+function PlanNPayment({ data, cb, saveData, refetch, disabled = false }: Props): JSX.Element {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
@@ -181,6 +182,7 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
                   selected={selected}
                   id={one?.id}
                   pIds={one?.publicationIds}
+                  disabled={disabled}
                 />
               </MDBox>
             );
@@ -223,7 +225,7 @@ function PlanNPayment({ data, cb, saveData, refetch }: Props): JSX.Element {
                     timeLine={one?.timeline?.split("_")?.join(" ")}
                     credits={one?.price}
                     categories={one?.categories?.join(" / ")}
-                    onClick={handlePublicationClick}
+                    onClick={disabled ? () => {} : handlePublicationClick}
                     selected={publicationIds?.length && publicationIds?.indexOf(one?.id) !== -1}
                     id={one?.id}
                   />

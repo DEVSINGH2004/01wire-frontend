@@ -11,7 +11,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import { MAX_IMAGE_SIZE } from "constants/index";
 import { toast } from "react-toastify";
 
-const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Element => {
+const FileUpload = ({
+  onChange,
+  value,
+  disabled = false,
+}: {
+  onChange: any;
+  value: any;
+  disabled?: any;
+}): JSX.Element => {
   const [selectedFile, setSelectedFile] = useState<any>(value);
   const [loading, setLoading] = useState<boolean>(false);
   const onDrop = useCallback(async (acceptedFiles: any) => {
@@ -46,6 +54,7 @@ const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Ele
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    disabled,
     accept: {
       "image/jpeg": [],
       "image/png": [],
@@ -69,22 +78,24 @@ const FileUpload = ({ onChange, value }: { onChange: any; value: any }): JSX.Ele
               borderRadius: "3.47px",
             }}
           />
-          <IconButton
-            sx={{
-              position: "absolute",
-              right: -10,
-              top: -5,
-              background: "#fff",
-              height: "20px",
-              width: "20px",
-              "&:hover": {
+          {!disabled && (
+            <IconButton
+              sx={{
+                position: "absolute",
+                right: -10,
+                top: -5,
                 background: "#fff",
-              },
-            }}
-            onClick={handleRemoveFile}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+                height: "20px",
+                width: "20px",
+                "&:hover": {
+                  background: "#fff",
+                },
+              }}
+              onClick={handleRemoveFile}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
         </MDBox>
       ) : (
         <MDBox

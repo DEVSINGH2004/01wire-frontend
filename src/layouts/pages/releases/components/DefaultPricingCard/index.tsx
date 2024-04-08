@@ -74,6 +74,7 @@ function DefaultPricingCard({
   id,
   selected,
   pIds,
+  disabled = false,
 }: Props): JSX.Element {
   const renderSpecifications = specifications.map(({ label, includes }) => (
     <MDBox key={label} display="flex" alignItems="center" p={1}>
@@ -219,6 +220,7 @@ function DefaultPricingCard({
                   console.log("entered", e?.target?.value);
                   handleClick(e);
                 }}
+                disabled={disabled}
                 value={id}
                 name="radio-buttons"
                 inputProps={{ "aria-label": "A" }}

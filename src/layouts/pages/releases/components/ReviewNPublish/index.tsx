@@ -7,9 +7,9 @@ import PlanNPayment from "../PlanNPayment";
 function ReviewNPublish({ data }: { data: any }): JSX.Element {
   return (
     <MDBox>
-      <AddPress data={data} />
-      <Media data={data} />
-      <PlanNPayment data={data} />
+      <AddPress data={data} disabled />
+      <Media data={data} disabled />
+      <PlanNPayment data={data} disabled />
     </MDBox>
   );
 }

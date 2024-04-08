@@ -8,7 +8,15 @@ import MDEditorRoot from "components/MDEditor/MDEditorRoot";
 import { useMaterialUIController } from "context";
 import axiosInstance from "utils/axiosInstance";
 import { toast } from "react-toastify";
-function MDEditor({ value, onChange }: { value: any; onChange: any }) {
+function MDEditor({
+  value,
+  onChange,
+  disabled = false,
+}: {
+  value: any;
+  onChange: any;
+  disabled?: any;
+}) {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
   const [editorState, setEditorState] = React.useState(() => {
@@ -86,6 +94,8 @@ function MDEditor({ value, onChange }: { value: any; onChange: any }) {
   return (
     <MDEditorRoot ownerState={{ darkMode }}>
       <Editor
+        readOnly={disabled}
+        toolbarHidden={disabled}
         editorStyle={{ minHeight: "352px" }}
         toolbar={config}
         editorState={editorState}
