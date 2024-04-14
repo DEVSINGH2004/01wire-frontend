@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
 // react-router components
 import { useLocation, useNavigate } from "react-router-dom";
 // @material-ui core components
@@ -48,7 +50,9 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState<any>(false);
   const route = useLocation().pathname.split("/").slice(1);
-
+  const { data } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
+    fetchPolicy: "network-only",
+  });
   // useEffect(() => {
   //   let url;
   //   const eventSource = new EventSource(url);
@@ -102,6 +106,11 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
   const handleLogout = () => {
     localStorage.clear();
     navigate("/sign-in");
+    handleCloseMenu();
+  };
+  const handleProfileClick = () => {
+    navigate("/profile");
+    handleCloseMenu();
   };
   // Render the notifications menu
   const renderMenu = () => (
@@ -116,7 +125,11 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      {/* <NotificationItem icon={<Icon>account_circle</Icon>} title="Profile" /> */}
+      <NotificationItem
+        onClick={handleProfileClick}
+        icon={<Icon>account_circle</Icon>}
+        title="Profile"
+      />
       <NotificationItem onClick={handleLogout} icon={<Icon>logout</Icon>} title="Logout" />
     </Menu>
   );
@@ -139,7 +152,6 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
       return colorValue;
     },
   });
-
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -162,9 +174,10 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
               }}
             >
               <MDTypography fontWeight="bold" fontSize="1rem" color="primary">
-                500 Credits
+                {`${data?.getUserWallet?.balance || 0} Credits`}
               </MDTypography>
             </MDBox>
+
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton
                 size="small"

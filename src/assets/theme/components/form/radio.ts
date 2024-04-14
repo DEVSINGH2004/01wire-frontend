@@ -22,7 +22,7 @@ import pxToRem from "assets/theme/functions/pxToRem";
 import linearGradient from "assets/theme/functions/linearGradient";
 
 const { borderWidth, borderColor } = borders;
-const { transparent, info } = colors;
+const { transparent, info, primary } = colors;
 
 // types
 type Types = any;
@@ -45,7 +45,7 @@ const radio: Types = {
         width: pxToRem(14),
         height: pxToRem(14),
         borderRadius: "50%",
-        backgroundImage: linearGradient(info.main, info.main),
+        backgroundImage: linearGradient(primary.main, primary.main),
         opacity: 0,
         left: 0,
         right: 0,
@@ -67,10 +67,10 @@ const radio: Types = {
       color: borderColor,
 
       "&.Mui-checked": {
-        color: info.main,
+        color: primary.main,
 
         "& .MuiSvgIcon-root": {
-          borderColor: info.main,
+          borderColor: primary.main,
         },
 
         "&:after": {

@@ -22,6 +22,7 @@ import PaymentSuccess from "layouts/pages/myCredits/components/PaymentSuccess";
 import PaymentFailed from "layouts/pages/myCredits/components/PaymentFailed";
 import Releases from "layouts/pages/releases";
 import Clients from "layouts/pages/clients";
+import Profile from "layouts/pages/profile";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -102,6 +103,7 @@ export default function App() {
             <Routes>
               {getRoutes(routes)}
 
+              <Route path="/profile" element={<Profile />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/clients/:id" element={<Clients />} />

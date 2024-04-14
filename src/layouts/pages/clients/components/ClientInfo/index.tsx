@@ -174,7 +174,7 @@ function ClientInfo({
           <Grid item xs={12} sm={5}>
             <FormField
               type="file"
-              subLabel="SVG, PNG, JPG(max. 3MB)"
+              subLabel="JPEG, PNG, JPG(max. 3MB)"
               name="logo"
               label="Logo"
               control={control}

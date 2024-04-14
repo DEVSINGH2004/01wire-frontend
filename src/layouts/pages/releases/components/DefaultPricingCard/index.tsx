@@ -114,7 +114,12 @@ function DefaultPricingCard({
     }
   };
   return (
-    <Card sx={{ boxShadow: ({ boxShadows: { lg } }) => (shadow ? lg : "none") }}>
+    <Card
+      sx={{
+        boxShadow: ({ boxShadows: { lg } }) => (shadow ? lg : "none"),
+        border: selected === id && "1px solid #EE5C61",
+      }}
+    >
       <MDBox bgColor={color} variant={"gradient"} borderRadius="xl">
         <MDBox
           bgColor={badge.color}
@@ -216,16 +221,15 @@ function DefaultPricingCard({
               <Radio
                 color="primary"
                 checked={selected === id}
-                onClick={(e: any) => {
-                  console.log("entered", e?.target?.value);
-                  handleClick(e);
-                }}
+                onClick={handleClick}
                 disabled={disabled}
                 value={id}
-                name="radio-buttons"
-                inputProps={{ "aria-label": "A" }}
               />
-              <MDTypography fontSize="14px" fontWeight="regular" color="inherit">
+              <MDTypography
+                fontSize="14px"
+                fontWeight="regular"
+                sx={{ color: selected === id ? "#EE5C61" : "#84878E" }}
+              >
                 Select
               </MDTypography>
             </MDBox>

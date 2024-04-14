@@ -134,7 +134,13 @@ function FormField({
               name={name}
               control={control}
               render={({ field: { onChange, value } }) => (
-                <MDInput disabled={disabled} onChange={onChange} value={value} {...rest} />
+                <MDInput
+                  type={type}
+                  disabled={disabled}
+                  onChange={onChange}
+                  value={value}
+                  {...rest}
+                />
               )}
             />
           </FormControl>
