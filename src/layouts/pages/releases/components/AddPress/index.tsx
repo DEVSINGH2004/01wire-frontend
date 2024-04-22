@@ -23,9 +23,17 @@ interface Props {
   data?: any;
   refetch?: () => void;
   disabled?: any;
+  setSaveData?: any;
 }
 
-function AddPress({ cb, saveData, data = {}, refetch, disabled = false }: Props): JSX.Element {
+function AddPress({
+  cb,
+  saveData,
+  data = {},
+  refetch,
+  disabled = false,
+  setSaveData,
+}: Props): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const { title, content, summary, featureImage, featureImageDesc } = data;
   const {
@@ -87,6 +95,7 @@ function AddPress({ cb, saveData, data = {}, refetch, disabled = false }: Props)
       setLoading(false);
       console.error("Error in saving data:", err);
       toast.error(err?.message);
+      setSaveData(false);
     }
   };
   useEffect(() => {

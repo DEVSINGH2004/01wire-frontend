@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { EditorState, convertFromHTML, ContentState, Modifier } from "draft-js";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
-import { convertToHTML } from "draft-convert";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import MDEditorRoot from "components/MDEditor/MDEditorRoot";
 import { useMaterialUIController } from "context";
 import axiosInstance from "utils/axiosInstance";
 import { toast } from "react-toastify";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
+
 function MDEditor({
   value,
   onChange,
@@ -20,11 +22,10 @@ function MDEditor({
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
   const [editorState, setEditorState] = React.useState(() => {
-    if (value) {
-      const contentState = convertFromHTML(value);
-      return EditorState.createWithContent(
-        ContentState.createFromBlockArray(contentState.contentBlocks, contentState.entityMap)
-      );
+    const contentBlock = value && htmlToDraft(value);
+    if (contentBlock) {
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+      return EditorState.createWithContent(contentState);
     }
     return EditorState.createEmpty();
   });
@@ -60,35 +61,14 @@ function MDEditor({
     image: {
       uploadCallback: uploadCallback,
       previewImage: true,
+      alignmentEnabled: true,
       alt: { present: true, mandatory: true },
       inputAccept: "image/jpeg,image/jpg,image/png,image/svg",
     },
-    // fontFamily: {
-    //   options: ["Arial", "Georgia", "Impact", "Tahoma", "Times New Roman", "Verdana"],
-    //   onChange: handleFontChange,
-    // },
-    // fontSize: {
-    //   options: [8, 10, 12, 14, 18, 24, 30, 36],
-    //   onChange: handleFontSizeChange,
-    // },
-  };
-  const convertToHtmlCustom = (contentState: any) => {
-    return convertToHTML({
-      entityToHTML: (entity, originalText) => {
-        if (entity.type === "IMAGE") {
-          const { src, alt, height, width } = entity.data;
-          return `<img src="${src}" alt="${alt}" height="${height}" width="${width}" />`;
-        } else if (entity.type === "LINK") {
-          const { url } = entity.data;
-          return `<a href="${url}">${originalText}</a>`;
-        }
-        return originalText;
-      },
-    })(contentState);
   };
 
   useEffect(() => {
-    const html = convertToHtmlCustom(editorState.getCurrentContent());
+    const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
     onChange(html);
   }, [editorState]);
   return (

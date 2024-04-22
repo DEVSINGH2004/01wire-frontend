@@ -36,9 +36,10 @@ interface Props {
   data?: any;
   refetch?: () => void;
   disabled?: any;
+  setSaveData?: any;
 }
 
-function Media({ cb, saveData, data, refetch, disabled = false }: Props): JSX.Element {
+function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: Props): JSX.Element {
   const {
     control,
     formState: { errors, isDirty },
@@ -100,6 +101,7 @@ function Media({ cb, saveData, data, refetch, disabled = false }: Props): JSX.El
       .catch((err: any) => {
         console.log("error in saving data", err);
         setLoading(false);
+        setSaveData(false);
         toast.error(err?.message);
       });
   };

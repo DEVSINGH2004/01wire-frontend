@@ -48,8 +48,16 @@ interface Props {
   data?: any;
   refetch?: () => void;
   disabled?: any;
+  setSaveData?: any;
 }
-function PlanNPayment({ data, cb, saveData, refetch, disabled = false }: Props): JSX.Element {
+function PlanNPayment({
+  data,
+  cb,
+  saveData,
+  refetch,
+  disabled = false,
+  setSaveData,
+}: Props): JSX.Element {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
@@ -135,6 +143,7 @@ function PlanNPayment({ data, cb, saveData, refetch, disabled = false }: Props):
           setLoading(false);
           toast.error(err?.message);
           console.log("error in saving data", err);
+          setSaveData(false);
         });
     } else {
       cb();

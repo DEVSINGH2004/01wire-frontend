@@ -35,16 +35,39 @@ function getStepContent(
   saveData: boolean,
   handleNext: any,
   article: any,
-  fetchData: any
+  fetchData: any,
+  setSaveData: any
 ): JSX.Element {
   switch (stepIndex) {
     case 0:
-      return <AddPress cb={handleNext} saveData={saveData} data={article} refetch={fetchData} />;
+      return (
+        <AddPress
+          cb={handleNext}
+          saveData={saveData}
+          data={article}
+          refetch={fetchData}
+          setSaveData={setSaveData}
+        />
+      );
     case 1:
-      return <Media cb={handleNext} saveData={saveData} data={article} refetch={fetchData} />;
+      return (
+        <Media
+          cb={handleNext}
+          saveData={saveData}
+          data={article}
+          refetch={fetchData}
+          setSaveData={setSaveData}
+        />
+      );
     case 2:
       return (
-        <PlanNPayment cb={handleNext} saveData={saveData} data={article} refetch={fetchData} />
+        <PlanNPayment
+          cb={handleNext}
+          saveData={saveData}
+          data={article}
+          refetch={fetchData}
+          setSaveData={setSaveData}
+        />
       );
     case 3:
       return <ReviewNPublish data={article} />;
@@ -121,7 +144,7 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
             <MDCircularLoader startLoader />
           ) : (
             <>
-              {getStepContent(activeStep, saveData, handleNext, article, fetchData)}
+              {getStepContent(activeStep, saveData, handleNext, article, fetchData, setSaveData)}
               <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
                 {activeStep === 0 ? (
                   <MDBox />
