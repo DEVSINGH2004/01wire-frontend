@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import { useQuery } from "@apollo/client";
+import { IGetArticleStats, GET_ARTICLE_STATS } from "graphql/queries/getArticleStats";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -13,7 +15,6 @@ import Footer from "examples/Footer";
 // Images
 import homeDecor1 from "assets/images/home-decor-1.jpg";
 import homeDecor3 from "assets/images/home-decor-3.jpg";
-import homeDecor4 from "assets/images/home-decor-4.jpeg";
 import ERIcon from "assets/images/ER.svg";
 import AAIcon from "assets/images/AA.svg";
 import ScheduledIcon from "assets/images/Scheduled.svg";
@@ -21,6 +22,15 @@ import RejectedIcon from "assets/images/Rejected.svg";
 import TiltArrowIcon from "assets/images/TiltArrow.svg";
 
 function Overview(): JSX.Element {
+  const { data } = useQuery<IGetArticleStats>(GET_ARTICLE_STATS, {
+    fetchPolicy: "network-only",
+  });
+  const editorialReview = data?.getArticleStats?.find((one: any) => one?.status === "IN_REVIEW");
+  const awaitingApproval = data?.getArticleStats?.find(
+    (one: any) => one?.status === "AWAITING_APPROVAL"
+  );
+  const scheduled = data?.getArticleStats?.find((one: any) => one?.status === "SCHEDULED");
+  const rejected = data?.getArticleStats?.find((one: any) => one?.status === "REJECTED");
   return (
     <>
       <MDTypography mt={1} variant="h6" fontWeight="medium">
@@ -36,7 +46,7 @@ function Overview(): JSX.Element {
                   Editorial Review
                 </MDTypography>
                 <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
-                  1
+                  {editorialReview || 0}
                 </MDTypography>
               </MDBox>
             </MDBox>
@@ -51,7 +61,7 @@ function Overview(): JSX.Element {
                   Awaiting Approval
                 </MDTypography>
                 <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
-                  0
+                  {awaitingApproval || 0}
                 </MDTypography>
               </MDBox>
             </MDBox>
@@ -66,7 +76,7 @@ function Overview(): JSX.Element {
                   Scheduled
                 </MDTypography>
                 <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
-                  9
+                  {scheduled || 0}
                 </MDTypography>
               </MDBox>
             </MDBox>
@@ -81,7 +91,7 @@ function Overview(): JSX.Element {
                   Rejected
                 </MDTypography>
                 <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
-                  12
+                  {rejected || 0}
                 </MDTypography>
               </MDBox>
             </MDBox>
