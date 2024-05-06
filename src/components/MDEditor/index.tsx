@@ -61,7 +61,7 @@ function MDEditor({
     image: {
       uploadCallback: uploadCallback,
       previewImage: true,
-      alignmentEnabled: true,
+      alignmentEnabled: false,
       alt: { present: true, mandatory: true },
       inputAccept: "image/jpeg,image/jpg,image/png,image/svg",
     },

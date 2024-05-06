@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import { Grid, InputAdornment, Divider, Paper } from "@mui/material";
+import { Grid, InputAdornment } from "@mui/material";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -12,14 +12,11 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import MDCircularLoader from "components/MDCircularLoader";
 import { useMaterialUIController } from "context";
-import { Theme } from "@mui/material/styles";
-
 import PageLayout from "examples/LayoutContainers/PageLayout";
 import { MuiOtpInput } from "mui-one-time-password-input";
 
 // Image
-import bgImage from "assets/images/loginBg.png";
-import loginLogo from "assets/images/loginLogo.png";
+import OneWireLogo from "assets/images/OneWireLogo_1.svg";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -160,7 +157,7 @@ function SignIn(): JSX.Element {
           toast.error(err?.response?.data?.message || "Error fetching email data");
         });
     } else {
-      toast.error(`Please enter the ${!fullName ? "name":"password"}`);
+      toast.error(`Please enter the ${!fullName ? "name" : "password"}`);
     }
   };
 
@@ -225,13 +222,12 @@ function SignIn(): JSX.Element {
     else if (showOtp) handleVerifyOtp();
     else if (!showOtp && forgotPsw) handleResetPassword();
     else handleEmailSubmit();
-    
-  }
+  };
 
   const onKeyDownHandler = (e: any) => {
     if (e?.keyCode === 13) {
       e?.target?.blur();
-    e?.preventDefault()
+      e?.preventDefault();
       handleSubmit();
     }
   };
@@ -249,18 +245,19 @@ function SignIn(): JSX.Element {
         <Grid item xs={12} lg={6}>
           <MDBox
             display={{ xs: "none", lg: "flex" }}
+            alignItems="center"
+            justifyContent="center"
             width="calc(100% - 2rem)"
             height="calc(100vh - 2rem)"
             borderRadius="lg"
             ml={2}
             mt={2}
             sx={{
-              backgroundSize: "cover",
-              backgroundImage: `url(${bgImage})`,
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
+              background: "#313235",
             }}
-          />
+          >
+            <img src={OneWireLogo} height="198px" width="371px" alt="logo" />
+          </MDBox>
         </Grid>
         <Grid item xs={11} sm={8} md={6} lg={4} xl={3} sx={{ mx: "auto" }}>
           <MDBox display="flex" flexDirection="column" justifyContent="center" height="100vh">
@@ -439,12 +436,7 @@ function SignIn(): JSX.Element {
                 )}
 
                 <MDBox mt={4}>
-                  <MDButton
-                    onClick={handleSubmit}
-                    color="secondary"
-                    size="large"
-                    fullWidth
-                  >
+                  <MDButton onClick={handleSubmit} color="secondary" size="large" fullWidth>
                     {showOtp || showPassword || forgotPsw ? "Submit" : " Next"}
                   </MDButton>
                 </MDBox>
