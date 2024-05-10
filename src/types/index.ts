@@ -107,7 +107,29 @@ export interface ArticleData {
   data: ArticleType[];
   paginationInfo: PaginationInfo;
 }
-
+export interface WalletType {
+  id: string;
+  userId: string;
+  balance: number;
+  createdAt: string;
+  updatedAt: string;
+}
+export type UserType = {
+  id: string;
+  fullName: string;
+  type: string;
+  email: string;
+  phoneNumber: string;
+  isEmailVerified: boolean;
+  isKycVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  walletInfo: WalletType;
+};
+export interface UsersData {
+  data: UserType[];
+  paginationInfo: PaginationInfo;
+}
 export type ClientSocialType = {
   facebook: string;
   instagram: string;

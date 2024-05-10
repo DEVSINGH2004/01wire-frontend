@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
-import { DeleteOutline as DeleteOutlineIcon } from "@mui/icons-material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import EditIcon from "@mui/icons-material/Edit";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import MDAvatar from "components/MDAvatar";
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
@@ -19,13 +18,14 @@ import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filte
 import MDCircularLoader from "components/MDCircularLoader";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ClientProfile from "./components/ClientProfile";
+import EditIcon from "assets/images/icons/editIcon.svg";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
     {actions?.map((one: any, i: any) => {
       return (
         <IconButton key={i} onClick={one?.onClick}>
-          {one?.Icon}
+          {one?.imgIcon ? <img src={one.imgIcon} height="36px" width="36px" /> : one?.Icon}
         </IconButton>
       );
     })}
@@ -35,23 +35,22 @@ const columns = [
   {
     Header: "name",
     accessor: "name",
-    width: "90%",
+    width: "95%",
     Cell: ({ value }: any) => {
       return (
         <MDBox display="flex" alignItems="center">
-          <MDBox
-            mr={2}
-            component="img"
-            src={
-              value?.logo ? `${process.env.REACT_APP_IMAGE_BASE_URL}${value?.logo}` : productImage
-            }
-            alt="Product Image"
-            borderRadius="lg"
-            shadow="sm"
-            width="127px"
-            height="53px"
-            position="relative"
-          />
+          <MDBox mr={2} width="227px">
+            <MDAvatar
+              src={
+                value?.logo ? `${process.env.REACT_APP_IMAGE_BASE_URL}${value?.logo}` : productImage
+              }
+              variant="rounded"
+              size="xxl"
+              sx={{
+                borderRadius: "4px",
+              }}
+            />
+          </MDBox>
           <MDTypography fontSize="16px">{value.title}</MDTypography>
         </MDBox>
       );
@@ -60,7 +59,7 @@ const columns = [
   {
     Header: "",
     accessor: "actions",
-    width: "10%",
+    width: "5%",
     Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
   },
 ];
@@ -98,7 +97,7 @@ function Clients(): JSX.Element {
           name: one,
           actions: [
             {
-              Icon: <EditIcon fontSize="small" />,
+              imgIcon: EditIcon,
               onClick: () => {
                 navigate(`/clients/${one?.id}`);
               },
@@ -109,12 +108,6 @@ function Clients(): JSX.Element {
                 setOpen(one?.id);
               },
             },
-            // {
-            //   Icon: <DeleteOutlineIcon fontSize="small" />,
-            //   onClick: () => {
-            //     console.log("delete clicked");
-            //   },
-            // },
           ],
         };
       });

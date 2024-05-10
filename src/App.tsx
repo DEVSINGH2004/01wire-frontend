@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, JSXElementConstructor, Key, ReactElement } from "react";
+import { useState, useEffect, JSXElementConstructor, Key, ReactElement } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,11 +13,11 @@ import "slick-carousel/slick/slick-theme.css";
 // Material Dashboard 2 PRO React TS Dark Mode themes
 import themeDark from "assets/theme-dark";
 import routes from "routes";
+import adminRoutes from "adminRoutes";
 import { useMaterialUIController, setMiniSidenav } from "context";
 // Images
 import brandLogo from "assets/images/wireLogo.png";
 import SignIn from "layouts/authentication/sign-in";
-import ClientForm from "layouts/pages/clients/components/ClientForm";
 import PaymentSuccess from "layouts/pages/myCredits/components/PaymentSuccess";
 import PaymentFailed from "layouts/pages/myCredits/components/PaymentFailed";
 import Releases from "layouts/pages/releases";
@@ -26,6 +26,7 @@ import Profile from "layouts/pages/profile";
 
 export default function App() {
   const token = localStorage.getItem("token");
+  const role: any = localStorage.getItem("role");
 
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, direction, layout, sidenavColor, darkMode } = controller;
@@ -91,7 +92,7 @@ export default function App() {
                 color={sidenavColor}
                 brand={brandLogo}
                 brandName="Dashboard"
-                routes={routes}
+                routes={role === "ADMIN" ? adminRoutes : routes}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
               />
@@ -101,8 +102,7 @@ export default function App() {
           <DashboardLayout>
             <DashboardNavbar />
             <Routes>
-              {getRoutes(routes)}
-
+              {getRoutes(role === "ADMIN" ? adminRoutes : routes)}
               <Route path="/profile" element={<Profile />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />

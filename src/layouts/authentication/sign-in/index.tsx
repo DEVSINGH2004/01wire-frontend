@@ -125,6 +125,7 @@ function SignIn(): JSX.Element {
           .then((res: any) => {
             if (res.data) {
               localStorage.setItem("token", res.data.login.token);
+              localStorage.setItem("role", res.data.login.type);
               toast.success("Login Successful!!");
               navigate("/");
             }

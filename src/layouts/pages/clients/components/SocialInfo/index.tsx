@@ -17,6 +17,14 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import FormField from "layouts/pages/releases/components/FormField";
 import { Divider } from "@mui/material";
 
+function removeEmptyFields(obj: { [key: string]: any }): { [key: string]: any } {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] === "") {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
 function SocialInfo({
   data,
   cb,
@@ -39,6 +47,7 @@ function SocialInfo({
   const [loading, setLoading] = useState<boolean>(false);
   const [updateClient] = useMutation<IUpdateClientVars>(UPDATE_CLIENT);
   const onSubmit = (formVals: any) => {
+    formVals = removeEmptyFields(formVals);
     setLoading(true);
     if (data?.id) {
       updateClient({

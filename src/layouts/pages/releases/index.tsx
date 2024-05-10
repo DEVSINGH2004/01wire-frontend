@@ -1,8 +1,10 @@
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
+import EditIcon from "assets/images/icons/editIcon.svg";
+import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -22,13 +24,14 @@ import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRou
 
 // Data
 import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import {
   GET_ARTICLES,
   IGetArticles,
   IGetArticlesVars,
 } from "graphql/queries/filterArticlesPaginated";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
+import { DELETE_ARTICLE, IDeleteArticleVars } from "graphql/mutations/deleteArticle";
 
 const ReleaseTypeOptions = [
   { label: "Draft", value: "DRAFT" },
@@ -45,7 +48,7 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
     {actions?.map((one: any, i: any) => {
       return (
         <IconButton key={i} onClick={one?.onClick}>
-          <EditIcon fontSize="small" />
+          <img src={one?.Icon} height="36px" width="36px" />
         </IconButton>
       );
     })}
@@ -61,15 +64,39 @@ const columns = [
       <MDAvatar
         src={value}
         variant="rounded"
+        size="xxl"
         sx={{
-          height: "53px",
-          width: "127px",
+          // height: "53px",
+          // width: "127px",
           borderRadius: "4px",
         }}
       />
     ),
   },
-  { Header: "title", accessor: "title", width: "50%" },
+  {
+    Header: "title",
+    accessor: "title",
+    width: "50%",
+    Cell: ({ value }: { value: any }) => (
+      <MDBox display="flex" alignItems="center">
+        <MDTypography>{value?.title}</MDTypography>
+        {value?.desc && (
+          <MDTypography
+            fontSize="16px"
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: value?.desc?.length > 60 ? "550px" : "auto",
+              color: "#B2B2B2",
+            }}
+          >
+            &nbsp;{`- ${value.desc}`}
+          </MDTypography>
+        )}
+      </MDBox>
+    ),
+  },
   {
     Header: "status",
     accessor: "status",
@@ -108,8 +135,13 @@ function Releases(): JSX.Element {
   const [filter, setFilter] = useState<any>({});
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns });
+  const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
 
-  const { data: articlesData, loading } = useQuery<IGetArticles, IGetArticlesVars>(GET_ARTICLES, {
+  const {
+    data: articlesData,
+    loading,
+    refetch,
+  } = useQuery<IGetArticles, IGetArticlesVars>(GET_ARTICLES, {
     variables: {
       filterInput: {
         ...filter,
@@ -150,7 +182,10 @@ function Releases(): JSX.Element {
       rows = articles?.map((one) => {
         return {
           featureImage: `${process.env.REACT_APP_IMAGE_BASE_URL}${one?.featureImage}`,
-          title: one?.title,
+          title: {
+            title: one?.title,
+            desc: one?.summary,
+          },
           status: one?.status,
           actions: [
             {
@@ -158,6 +193,23 @@ function Releases(): JSX.Element {
               onClick: () => {
                 navigate(`/releases/${one?.id}`);
                 setOpenForm(one?.id);
+              },
+            },
+            {
+              Icon: DeleteIcon,
+              onClick: () => {
+                deleteArticle({
+                  variables: {
+                    id: one?.id,
+                  },
+                })
+                  .then(() => {
+                    refetch();
+                    toast.success("Deleted Successfully");
+                  })
+                  .catch((err) => {
+                    toast.error(err?.message);
+                  });
               },
             },
           ],

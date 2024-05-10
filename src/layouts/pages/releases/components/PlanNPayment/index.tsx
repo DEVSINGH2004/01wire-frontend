@@ -72,7 +72,7 @@ function PlanNPayment({
     slidesToShow: 3,
     slidesToScroll: 3,
     className: "center",
-    infinite: true,
+    infinite: false,
     centerPadding: "60px",
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
@@ -154,63 +154,97 @@ function PlanNPayment({
       onSubmit();
     }
   }, [saveData]);
+  const groupedData: any = bundlesData?.filterBundlesPaginated?.data?.reduce((acc: any, obj) => {
+    const { category, ...rest } = obj;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(rest);
+    return acc;
+  }, {});
+  console.log("groupedData", groupedData);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
-      <MDTypography variant="h5">Bundles</MDTypography>
-      <MDBox bgColor={"grey-200"} borderRadius="lg" p={"24px 60px 24px 70px"} mb={1} mt={2}>
-        <Slider {...settings}>
-          {bundlesData?.filterBundlesPaginated?.data?.map((one, i) => {
-            return (
-              <MDBox key={i} width={"290px !important"}>
-                <DefaultPricingCard
-                  color={darkMode ? "dark" : "white"}
-                  badge={{
-                    color: one?.type === "PREMIUM" ? "primary" : "rgba(222, 226, 232, 1)",
-                    label: one?.type,
+      {groupedData &&
+        Object.keys(groupedData)?.map((category: any) => {
+          return (
+            <MDBox key={category}>
+              <MDBox display="flex" alignItems="center">
+                <MDTypography variant="h5">Bundles</MDTypography>
+                <MDBox
+                  sx={{
+                    height: "34px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                  price={{ currency: "$", value: one?.price?.toString(), type: "mo" }}
-                  specifications={[
-                    { label: "2 team members", includes: true },
-                    { label: "20GB Cloud storage", includes: true },
-                    { label: "Integration help", includes: false },
-                    { label: "Sketch Files", includes: false },
-                    { label: "API Access", includes: false },
-                    { label: "Complete documentation", includes: false },
-                  ]}
-                  action={{
-                    type: "internal",
-                    route: "/",
-                    color: darkMode ? "warning" : "dark",
-                    label: "join",
-                  }}
-                  shadow={darkMode}
-                  totalPublications={one?.publicationIds?.length}
-                  reach={one?.traffic || ""}
-                  handleChange={handleChange}
-                  selected={selected}
-                  id={one?.id}
-                  pIds={one?.publicationIds}
-                  disabled={disabled}
-                />
+                  ml={1}
+                  borderRadius="section"
+                  px="12px"
+                  bgColor="#4579DE"
+                >
+                  <MDTypography variant="caption" fontWeight="regular" sx={{ color: "#fff" }}>
+                    {category}
+                  </MDTypography>
+                </MDBox>
               </MDBox>
-            );
-          })}
-        </Slider>
-      </MDBox>
+              <MDBox bgColor={"grey-200"} borderRadius="lg" p={"24px 60px 24px 70px"} mb={1} mt={2}>
+                <Slider {...settings}>
+                  {groupedData?.[category]?.map((one: any, i: number) => {
+                    return (
+                      <MDBox key={i} width={"290px !important"}>
+                        <DefaultPricingCard
+                          color={darkMode ? "dark" : "white"}
+                          badge={{
+                            color: one?.type === "PREMIUM" ? "primary" : "rgba(222, 226, 232, 1)",
+                            label: one?.type,
+                          }}
+                          price={{ currency: "$", value: one?.price?.toString(), type: "mo" }}
+                          specifications={[
+                            { label: "2 team members", includes: true },
+                            { label: "20GB Cloud storage", includes: true },
+                            { label: "Integration help", includes: false },
+                            { label: "Sketch Files", includes: false },
+                            { label: "API Access", includes: false },
+                            { label: "Complete documentation", includes: false },
+                          ]}
+                          action={{
+                            type: "internal",
+                            route: "/",
+                            color: darkMode ? "warning" : "dark",
+                            label: "join",
+                          }}
+                          shadow={darkMode}
+                          totalPublications={one?.publicationIds?.length}
+                          reach={one?.traffic || ""}
+                          handleChange={handleChange}
+                          selected={selected}
+                          id={one?.id}
+                          pIds={one?.publicationIds}
+                          disabled={disabled}
+                        />
+                      </MDBox>
+                    );
+                  })}
+                </Slider>
+              </MDBox>
+            </MDBox>
+          );
+        })}
       <MDBox py={2} display="flex" justifyContent="space-between">
         <MDTypography variant="h5">Publications</MDTypography>
-        <MDBox width="173px" ml="auto">
+        {/* <MDBox width="173px" ml="auto">
           <MDInput
             placeholder="Search..."
             size="small"
             fullWidth
-            // onChange={({ currentTarget }: any) => {
-            //   setSearch(search);
-            //   onSearchChange(currentTarget.value);
-            // }}
+            onChange={({ currentTarget }: any) => {
+              setSearch(search);
+              onSearchChange(currentTarget.value);
+            }}
           />
-        </MDBox>
+        </MDBox> */}
       </MDBox>
       <MDBox mt={5}>
         <Grid container spacing={3}>
