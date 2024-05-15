@@ -65,7 +65,7 @@ function PlanNPayment({
   const [publicationIds, setPublicationIds] = useState<any>(
     data?.publicationIds ? data?.publicationIds : []
   );
-  const [selected, setSelected] = useState<any>(data?.bundleIds[0]);
+  const [selected, setSelected] = useState<any>(data?.bundleInfo);
   const [bundlePids, setBundlePids] = useState<any>([]);
   const settings = {
     speed: 500,
@@ -84,6 +84,7 @@ function PlanNPayment({
         perPage: 200,
       },
     },
+    skip: disabled,
   });
   const { data: publicationsData } = useQuery<IGetPublications, IGetPublicationsVars>(
     GET_PUBLICATIONS,
@@ -97,18 +98,48 @@ function PlanNPayment({
           perPage: 200,
         },
       },
+      skip: disabled,
     }
   );
-  const handleChange = (e: any, pIds: any) => {
-    if (e?.target?.value) {
-      setSelected(e.target.value);
-      setBundlePids(pIds);
-    } else {
-      setSelected("");
-      const newPids = bundlePids?.filter((one: any) => !pIds.includes(one));
-      setBundlePids(newPids);
-    }
+  const currentPublications: any =
+    (disabled && data?.publicationInfo) ||
+    publicationsData?.filterPublicationsPaginated?.data ||
+    [];
+  const handleChange = (category: any, bundle: any) => {
+    const { id, publicationIds } = bundle;
+    setSelected((prevBundles: any) => {
+      // Filter out bundles of the same category
+      const updatedBundles = prevBundles.filter((b: any) => b.category !== category);
+
+      // If bundle is already selected, remove it
+      if (prevBundles.some((b: any) => b.id === id)) {
+        return updatedBundles;
+      }
+
+      // Add the new bundle for the category
+      return [...updatedBundles, { ...bundle, category }];
+    });
+
+    setBundlePids((prevPublications: any) => {
+      // If bundle is already selected, remove its publication IDs
+      if (selected.some((b: any) => b.id === id)) {
+        return prevPublications.filter((pubId: any) => !publicationIds.includes(pubId));
+      }
+
+      // Add the new publication IDs
+      return [...prevPublications, ...publicationIds];
+    });
   };
+  // const handleChange = (e: any, pIds: any, category: any) => {
+  //   if (e?.target?.value) {
+  //     setSelected(e.target.value);
+  //     setBundlePids(pIds);
+  //   } else {
+  //     setSelected("");
+  //     const newPids = bundlePids?.filter((one: any) => !pIds.includes(one));
+  //     setBundlePids(newPids);
+  //   }
+  // };
   const handlePublicationClick = (id: any) => {
     if (publicationIds?.indexOf(id) !== -1) {
       const newIds = publicationIds?.filter((one: any) => one !== id);
@@ -117,18 +148,20 @@ function PlanNPayment({
       setPublicationIds((oldVal: any) => [...oldVal, id]);
     }
   };
+
   const onSubmit = () => {
+    const selectedBundleIds = selected.map((bundle: any) => bundle.id);
     if (
-      JSON.stringify([...publicationIds, ...bundlePids]) !== JSON.stringify(publicationIds) &&
-      data?.bundleIds[0] !== selected
+      JSON.stringify(selectedBundleIds) !== JSON.stringify(data?.bundleIds) ||
+      JSON.stringify(publicationIds) !== JSON.stringify(data?.publicationIds)
     ) {
       setLoading(true);
       updateArticle({
         variables: {
           params: {
             id: data?.id,
-            bundleIds: selected ? [selected] : [],
-            publicationIds: [...publicationIds, ...bundlePids],
+            bundleIds: selectedBundleIds || [],
+            publicationIds: publicationIds || [],
           },
         },
       })
@@ -154,19 +187,82 @@ function PlanNPayment({
       onSubmit();
     }
   }, [saveData]);
-  const groupedData: any = bundlesData?.filterBundlesPaginated?.data?.reduce((acc: any, obj) => {
-    const { category, ...rest } = obj;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(rest);
-    return acc;
-  }, {});
-  console.log("groupedData", groupedData);
+
+  const groupedData: any = bundlesData?.filterBundlesPaginated?.data?.reduce(
+    (acc: any, obj: any) => {
+      const { category, ...rest } = obj;
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(rest);
+      return acc;
+    },
+    {}
+  );
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
-      {groupedData &&
+      {disabled && data?.bundleInfo?.length > 0 && (
+        <MDBox>
+          <MDTypography variant="h5">Bundles</MDTypography>
+          <MDBox
+            sx={{
+              "& .slick-track": {
+                transform: "none !important",
+              },
+            }}
+            bgColor={"grey-200"}
+            borderRadius="lg"
+            p={"24px 60px 24px 70px"}
+            mb={1}
+            mt={2}
+          >
+            <Slider {...settings}>
+              {data.bundleInfo.map((one: any, i: number) => {
+                return (
+                  <MDBox key={i} width={"290px !important"}>
+                    <DefaultPricingCard
+                      color={darkMode ? "dark" : "white"}
+                      badge={{
+                        color: one?.type === "PREMIUM" ? "primary" : "rgba(222, 226, 232, 1)",
+                        label: one?.type,
+                      }}
+                      price={{ currency: "$", value: one?.price?.toString(), type: "mo" }}
+                      specifications={[
+                        { label: "2 team members", includes: true },
+                        { label: "20GB Cloud storage", includes: true },
+                        { label: "Integration help", includes: false },
+                        { label: "Sketch Files", includes: false },
+                        { label: "API Access", includes: false },
+                        { label: "Complete documentation", includes: false },
+                      ]}
+                      action={{
+                        type: "internal",
+                        route: "/",
+                        color: darkMode ? "warning" : "dark",
+                        label: "join",
+                      }}
+                      shadow={darkMode}
+                      totalPublications={one?.publicationIds?.length}
+                      reach={one?.traffic || ""}
+                      handleChange={handleChange}
+                      selected={selected}
+                      id={one?.id}
+                      showCatgeory={one?.category}
+                      pIds={one?.publicationIds}
+                      disabled={disabled}
+                      category={one?.category}
+                      bundle={one}
+                    />
+                  </MDBox>
+                );
+              })}
+            </Slider>
+          </MDBox>
+        </MDBox>
+      )}
+      {!disabled &&
+        groupedData &&
         Object.keys(groupedData)?.map((category: any) => {
           return (
             <MDBox key={category}>
@@ -223,6 +319,8 @@ function PlanNPayment({
                           id={one?.id}
                           pIds={one?.publicationIds}
                           disabled={disabled}
+                          category={category}
+                          bundle={one}
                         />
                       </MDBox>
                     );
@@ -232,9 +330,11 @@ function PlanNPayment({
             </MDBox>
           );
         })}
-      <MDBox py={2} display="flex" justifyContent="space-between">
-        <MDTypography variant="h5">Publications</MDTypography>
-        {/* <MDBox width="173px" ml="auto">
+      {currentPublications?.length > 0 && (
+        <MDBox>
+          <MDBox py={2} display="flex" justifyContent="space-between">
+            <MDTypography variant="h5">Publications</MDTypography>
+            {/* <MDBox width="173px" ml="auto">
           <MDInput
             placeholder="Search..."
             size="small"
@@ -245,39 +345,55 @@ function PlanNPayment({
             }}
           />
         </MDBox> */}
-      </MDBox>
-      <MDBox mt={5}>
-        <Grid container spacing={3}>
-          {publicationsData?.filterPublicationsPaginated?.data?.map((one, i) => {
-            return (
-              <Grid key={i} item xs={12} md={6} lg={6}>
-                <MDBox my={1.5} variant="gradient">
-                  <ComplexProjectCard
-                    image={one?.image}
-                    title={one?.title}
-                    description="If everything I did failed - which it doesn't, I think that it actually succeeds."
-                    dateTime="02.03.22"
-                    stats={[
-                      { title: "DA", value: one?.stats?.da },
-                      { title: "DR", value: one?.stats?.dr },
-                      { title: "PA", value: one?.stats?.pa },
-                      { title: "UR", value: one?.stats?.ur },
-                    ]}
-                    traffic={one?.stats?.traffic}
-                    linkType={one?.linkType?.split("_")?.join(" ")}
-                    timeLine={one?.timeline?.split("_")?.join(" ")}
-                    credits={one?.price}
-                    categories={one?.categories?.join(" / ")}
-                    onClick={disabled ? () => {} : handlePublicationClick}
-                    selected={publicationIds?.length && publicationIds?.indexOf(one?.id) !== -1}
-                    id={one?.id}
-                  />
-                </MDBox>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </MDBox>
+          </MDBox>
+          <MDBox mt={5}>
+            <Grid container spacing={3}>
+              {currentPublications?.map((one: any, i: number) => {
+                return (
+                  <Grid key={i} item xs={12} md={6} lg={6}>
+                    <MDBox my={1.5} variant="gradient">
+                      <ComplexProjectCard
+                        image={one?.image}
+                        title={one?.title}
+                        description="If everything I did failed - which it doesn't, I think that it actually succeeds."
+                        dateTime="02.03.22"
+                        stats={[
+                          { title: "DA", value: one?.stats?.da },
+                          { title: "DR", value: one?.stats?.dr },
+                          { title: "PA", value: one?.stats?.pa },
+                          { title: "UR", value: one?.stats?.ur },
+                        ]}
+                        traffic={one?.stats?.traffic}
+                        linkType={one?.linkType?.split("_")?.join(" ")}
+                        timeLine={
+                          (one?.timeline &&
+                            (one?.timeline === "W1"
+                              ? "WITHIN ONE WEEK"
+                              : one?.timeline === "W2"
+                              ? "WITHIN TWO WEEKS"
+                              : one?.timeline === "D1"
+                              ? "WITHIN ONE DAY"
+                              : one?.timeline === "D2"
+                              ? "WITHIN TWO DAYS"
+                              : one?.timeline === "D5"
+                              ? "WITHIN FIVE DAYS"
+                              : `WITHIN ${one?.timeline}`)) ||
+                          ""
+                        }
+                        credits={one?.price}
+                        categories={one?.categories?.join(" / ")}
+                        onClick={disabled ? () => {} : handlePublicationClick}
+                        selected={publicationIds?.length && publicationIds?.indexOf(one?.id) !== -1}
+                        id={one?.id}
+                      />
+                    </MDBox>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </MDBox>
+        </MDBox>
+      )}
     </MDBox>
   );
 }

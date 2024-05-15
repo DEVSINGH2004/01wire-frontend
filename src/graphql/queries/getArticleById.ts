@@ -28,7 +28,16 @@ export const GET_ARTICLE_BY_ID = gql`
       publishType
       timezone
       notes
+      totalCredits
       publishAt
+      bundleInfo {
+        id
+        category
+        publicationIds
+      }
+      publicationInfo {
+        id
+      }
       mediaContact {
         name
         email

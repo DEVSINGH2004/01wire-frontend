@@ -75,6 +75,9 @@ function DefaultPricingCard({
   selected,
   pIds,
   disabled = false,
+  category,
+  showCatgeory = false,
+  bundle,
 }: Props): JSX.Element {
   const renderSpecifications = specifications.map(({ label, includes }) => (
     <MDBox key={label} display="flex" alignItems="center" p={1}>
@@ -104,41 +107,49 @@ function DefaultPricingCard({
       </MDTypography>
     </MDBox>
   ));
-  const handleClick = (e: any) => {
-    console.log("eVal", e?.target?.value, "selected", selected);
-    if (selected === e?.target?.value) {
-      e.stopPropagation(); // Prevent the default behavior of the click event
-      handleChange(null, pIds); // Unselect the radio button
-    } else {
-      handleChange(e, pIds); // Select the radio button
-    }
+  const handleClick = () => {
+    handleChange(category, bundle);
   };
+  const checked = selected.some((b: any) => b.id === id);
   return (
     <Card
       sx={{
         boxShadow: ({ boxShadows: { lg } }) => (shadow ? lg : "none"),
-        border: selected === id && "1px solid #EE5C61",
+        border: checked && "1px solid #EE5C61",
       }}
     >
       <MDBox bgColor={color} variant={"gradient"} borderRadius="xl">
-        <MDBox
-          bgColor={badge.color}
-          width="122px"
-          textAlign={"center"}
-          height="25px"
-          mx="auto"
-          mt={-1.375}
-          borderRadius="section"
-          lineHeight={1}
-        >
-          <MDTypography
-            variant="caption"
-            textTransform="uppercase"
-            fontWeight="medium"
-            color={badge.color === "rgba(222, 226, 232, 1)" ? "dark" : "white"}
+        <MDBox mt={-1.375} display="flex" alignItems="center" justifyContent={"center"}>
+          <MDBox
+            bgColor={badge.color}
+            width="122px"
+            textAlign={"center"}
+            height="25px"
+            borderRadius="section"
+            lineHeight={1}
           >
-            {badge.label}
-          </MDTypography>
+            <MDTypography
+              variant="caption"
+              textTransform="uppercase"
+              fontWeight="medium"
+              color={badge.color === "rgba(222, 226, 232, 1)" ? "dark" : "white"}
+            >
+              {badge.label}
+            </MDTypography>
+          </MDBox>
+          {showCatgeory && (
+            <MDBox
+              height="25px"
+              // borderRadius="section"
+              lineHeight={1}
+              px="12px"
+              sx={{ background: "#4579DE", ml: "-10px", borderRadius: "0px 20px 20px 0" }}
+            >
+              <MDTypography variant="caption" fontWeight="regular" sx={{ color: "#fff" }}>
+                {showCatgeory}
+              </MDTypography>
+            </MDBox>
+          )}
         </MDBox>
         <MDBox pt={3} pb={2} px={2} textAlign="center">
           <MDBox my={1}>
@@ -220,7 +231,7 @@ function DefaultPricingCard({
             >
               <Radio
                 color="primary"
-                checked={selected === id}
+                checked={checked}
                 onClick={handleClick}
                 disabled={disabled}
                 value={id}
@@ -228,7 +239,7 @@ function DefaultPricingCard({
               <MDTypography
                 fontSize="14px"
                 fontWeight="regular"
-                sx={{ color: selected === id ? "#EE5C61" : "#84878E" }}
+                sx={{ color: checked ? "#EE5C61" : "#84878E" }}
               >
                 Select
               </MDTypography>

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 // @mui material components
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -12,15 +14,18 @@ import AddPress from "../AddPress";
 import Media from "../Media";
 import PlanNPayment from "../PlanNPayment";
 import ReviewNPublish from "../ReviewNPublish";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   GET_ARTICLE_BY_ID,
   IGetArticleByIdVars,
   IGetArticleById,
 } from "graphql/queries/getArticleById";
-import { useParams } from "react-router-dom";
 import MDTypography from "components/MDTypography";
-
+import { GET_USER_WALLET, IGetUserWallet } from "graphql/queries/getUserWallet";
+import {
+  UPDATE_ARTICLE_STATUS,
+  IUpdateArticleStatusVars,
+} from "graphql/mutations/updateArticleStatus";
 interface Props {
   onClose?: (p: boolean) => void;
   idVal?: any;
@@ -70,13 +75,14 @@ function getStepContent(
         />
       );
     case 3:
-      return <ReviewNPublish data={article} />;
+      return <ReviewNPublish id={article?.id} />;
     default:
       return null;
   }
 }
 
 function ReleaseForm({ idVal }: Props): JSX.Element {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [saveData, setSaveData] = useState<boolean>(false);
   const [articleId, setId] = useState<string>(idVal && idVal !== true && idVal);
@@ -94,8 +100,11 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
     if (saveData) setSaveData(false);
     setActiveStep(activeStep - 1);
   };
-
+  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [getArticleById] = useLazyQuery<IGetArticleById, IGetArticleByIdVars>(GET_ARTICLE_BY_ID, {
+    fetchPolicy: "network-only",
+  });
+  const { data: userWallet } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
     fetchPolicy: "network-only",
   });
   const fetchData = () => {
@@ -119,6 +128,25 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
       fetchData();
     }
   }, [articleId]);
+  const handleSend = () => {
+    updateArticleStatus({
+      variables: {
+        params: {
+          id: article?.id,
+          status: "PUBLISHED",
+        },
+      },
+    })
+      .then(() => {
+        toast.success("Submitted successfully");
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+      });
+  };
+  const handleAddCredits = () => {
+    navigate("/my-credits");
+  };
   return (
     <>
       <MDBox mt={-3} mb={3} mx={2}>
@@ -163,9 +191,19 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
                 )}
                 <MDButton
                   color="primary"
-                  onClick={!isLastStep ? () => setSaveData(true) : undefined}
+                  onClick={
+                    !isLastStep
+                      ? () => setSaveData(true)
+                      : article?.totalCredits <= userWallet?.getUserWallet?.balance
+                      ? handleSend
+                      : handleAddCredits
+                  }
                 >
-                  {isLastStep ? "send" : "next"}
+                  {isLastStep
+                    ? article?.totalCredits <= userWallet?.getUserWallet?.balance
+                      ? "send"
+                      : "Add Credits"
+                    : "next"}
                 </MDButton>
               </MDBox>
             </>

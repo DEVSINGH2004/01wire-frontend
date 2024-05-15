@@ -43,7 +43,21 @@ function Overview(): JSX.Element {
       fetchPolicy: "network-only",
     }
   );
-  console.log("articlesData", articlesData);
+  const { data: hArticlesData, loading: hLoading } = useQuery<IGetArticles, IGetArticlesVars>(
+    GET_ARTICLES,
+    {
+      variables: {
+        filterInput: {
+          status: "PUBLISHED",
+        },
+        paginationInput: {
+          currentPage: 0,
+          perPage: 3,
+        },
+      },
+      fetchPolicy: "network-only",
+    }
+  );
   const { data, loading } = useQuery<IGetArticleStats>(GET_ARTICLE_STATS, {
     fetchPolicy: "network-only",
   });
@@ -55,7 +69,7 @@ function Overview(): JSX.Element {
   const rejected = data?.getArticleStats?.find((one: any) => one?.status === "REJECTED");
   return (
     <>
-      {aLoading || loading ? (
+      {aLoading || loading || hLoading ? (
         <MDCircularLoader startLoader />
       ) : (
         <>
@@ -145,7 +159,7 @@ function Overview(): JSX.Element {
                         src={one?.featureImage}
                         height="121px"
                         width="160px"
-                        alt="Paella dish"
+                        alt="PR Image"
                         styles={{ borderRadius: "8.99px" }}
                       />
                       <CardContent sx={{ ml: 1, mt: 2, p: 0 }}>
@@ -199,63 +213,77 @@ function Overview(): JSX.Element {
             </MDTypography>
           </MDBox>
           <Grid mt={1} container spacing={2}>
-            {Array.from({ length: 3 })?.map((one: any, i: any) => {
-              return (
-                <Grid item xs={12} md={4} key={one + i}>
-                  <Card
-                    sx={{
-                      p: 1,
-                      height: "307px",
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={homeDecor3}
-                      alt="Paella dish"
+            {hArticlesData?.filterArticlesPaginated?.data?.length > 0 ? (
+              hArticlesData?.filterArticlesPaginated?.data?.map((one: any, i: any) => {
+                return (
+                  <Grid item xs={12} md={4} key={one + i}>
+                    <Card
                       sx={{
-                        height: "212px",
-                        borderRadius: "8.99px",
-                        margin: 0,
-                      }}
-                    />
-                    <CardContent
-                      sx={{
-                        m: 1,
-                        p: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        p: 1,
+                        height: "307px",
                       }}
                     >
-                      <MDBox>
-                        <MDTypography
-                          fontSize="16px"
-                          fontWeight="regular"
-                          sx={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            width: "250px",
+                      <DisplayImage
+                        src={one?.featureImage}
+                        height="212px"
+                        width="100%"
+                        alt="History PR Image"
+                        styles={{ borderRadius: "8.99px" }}
+                      />
+                      <CardContent
+                        sx={{
+                          m: 1,
+                          p: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <MDBox>
+                          <MDTypography
+                            fontSize="16px"
+                            fontWeight="regular"
+                            sx={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              width: "250px",
+                            }}
+                          >
+                            {one?.title}
+                          </MDTypography>
+                          <MDTypography
+                            variant="body2"
+                            sx={{ mt: 1, color: "rgba(123, 128, 154, 1)" }}
+                          >
+                            {dayjs(one?.createdAt).format("DD MMM YYYY, h:mm A")}
+                          </MDTypography>
+                        </MDBox>
+                        <IconButton
+                          size="small"
+                          color="inherit"
+                          sx={{ mt: 1 }}
+                          onClick={() => {
+                            navigate(`/releases/${one?.id}`);
                           }}
                         >
-                          EU Drafts New Rules for all the new press releases.All Press releases
-                          should be according to the new draft rules.
-                        </MDTypography>
-                        <MDTypography
-                          variant="body2"
-                          sx={{ mt: 1, color: "rgba(123, 128, 154, 1)" }}
-                        >
-                          {dayjs("2024-02-16T14:33:00").format("DD MMM YYYY, h:mm A")}
-                        </MDTypography>
-                      </MDBox>
-                      <IconButton size="small" color="inherit" sx={{ mt: 1 }} onClick={() => {}}>
-                        <img src={TiltArrowIcon} height="36px" width="36px" alt="Tilt Arrow Icon" />
-                      </IconButton>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
+                          <img
+                            src={TiltArrowIcon}
+                            height="36px"
+                            width="36px"
+                            alt="Tilt Arrow Icon"
+                          />
+                        </IconButton>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })
+            ) : (
+              <MDBox m="auto">
+                <MDTypography variant="h6">No History Found</MDTypography>
+              </MDBox>
+            )}
           </Grid>
           <MDBox mt="100px">
             <Footer />
