@@ -65,7 +65,7 @@ function PlanNPayment({
   const [publicationIds, setPublicationIds] = useState<any>(
     data?.publicationIds ? data?.publicationIds : []
   );
-  const [selected, setSelected] = useState<any>(data?.bundleInfo);
+  const [selected, setSelected] = useState<any>(data?.bundleInfo || []);
   const [bundlePids, setBundlePids] = useState<any>([]);
   const settings = {
     speed: 500,
@@ -112,7 +112,7 @@ function PlanNPayment({
       const updatedBundles = prevBundles.filter((b: any) => b.category !== category);
 
       // If bundle is already selected, remove it
-      if (prevBundles.some((b: any) => b.id === id)) {
+      if (prevBundles?.some((b: any) => b.id === id)) {
         return updatedBundles;
       }
 
@@ -122,7 +122,7 @@ function PlanNPayment({
 
     setBundlePids((prevPublications: any) => {
       // If bundle is already selected, remove its publication IDs
-      if (selected.some((b: any) => b.id === id)) {
+      if (selected?.some((b: any) => b.id === id)) {
         return prevPublications.filter((pubId: any) => !publicationIds.includes(pubId));
       }
 
@@ -150,7 +150,7 @@ function PlanNPayment({
   };
 
   const onSubmit = () => {
-    const selectedBundleIds = selected.map((bundle: any) => bundle.id);
+    const selectedBundleIds = selected?.map((bundle: any) => bundle.id);
     if (
       JSON.stringify(selectedBundleIds) !== JSON.stringify(data?.bundleIds) ||
       JSON.stringify(publicationIds) !== JSON.stringify(data?.publicationIds)

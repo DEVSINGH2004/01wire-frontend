@@ -259,3 +259,15 @@ export const TermsAndConditionsList = [
   "Support is available for any credit purchase inquiries or issues at hello@rizely.net",
 ];
 export const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+export const TimelineOptions = [
+  { label: "Within One Day", value: "D1" },
+  { label: "Within Two Days", value: "D2" },
+  { label: "Within Five Days", value: "D5" },
+  { label: "Within One Week", value: "W1" },
+  { label: "Within Two Weeks", value: "W2" },
+];
+export const LinkTypeOptions = [
+  { label: "Do Follow", value: "DO_FOLLOW" },
+  { label: "No Follow", value: "NO_FOLLOW" },
+];
+export const CategoryOptions = [{ label: "General", value: "GENERAL" }];

@@ -23,6 +23,7 @@ import PaymentFailed from "layouts/pages/myCredits/components/PaymentFailed";
 import Releases from "layouts/pages/releases";
 import Clients from "layouts/pages/clients";
 import Profile from "layouts/pages/profile";
+import Publications from "layouts/pages/publications";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -108,6 +109,7 @@ export default function App() {
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/clients/:id" element={<Clients />} />
               <Route path="/releases/:id" element={<Releases />} />
+              <Route path="/publications/:id" element={<Publications />} />
               <Route path="*" element={<Navigate to="/dashboards" />} />
             </Routes>
           </DashboardLayout>

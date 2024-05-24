@@ -110,7 +110,7 @@ function DefaultPricingCard({
   const handleClick = () => {
     handleChange(category, bundle);
   };
-  const checked = selected.some((b: any) => b.id === id);
+  const checked = selected?.some((b: any) => b.id === id);
   return (
     <Card
       sx={{
