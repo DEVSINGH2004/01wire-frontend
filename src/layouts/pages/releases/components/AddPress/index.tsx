@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_ARTICLE, ICreateArticleVars } from "graphql/mutations/createArticle";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
+import { genericValidations } from "utils/helpers";
 
 interface Props {
   cb?: any;
@@ -35,10 +36,10 @@ function AddPress({
   setSaveData,
 }: Props): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
-  const { title, content, summary, featureImage, featureImageDesc } = data;
+  const { title, content, summary, featureImage, featureImageDesc } = data || {};
   const {
     control,
-    formState: { isDirty },
+    formState: { isDirty, errors },
     reset,
     handleSubmit,
   } = useForm({
@@ -132,6 +133,8 @@ function AddPress({
               options={clientsObj}
               variant="outlined"
               disabled={disabled}
+              errors={errors}
+              rules={genericValidations.dropdown}
             />
 
             <FormField
@@ -141,6 +144,8 @@ function AddPress({
               control={control}
               variant="outlined"
               disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
             />
             <FormField
               type="text"
@@ -151,6 +156,8 @@ function AddPress({
               rows={4}
               variant="outlined"
               disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
             />
           </Grid>
           <Grid item xs={12} sm={5}>
@@ -162,6 +169,8 @@ function AddPress({
               control={control}
               defaultValue={data?.featureImage}
               disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
             />
             <FormField
               type="text"
@@ -209,6 +218,8 @@ function AddPress({
               rows={4}
               variant="outlined"
               disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
             />
           </Grid>
         </Grid>

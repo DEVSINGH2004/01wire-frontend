@@ -79,7 +79,17 @@ const columns = [
     width: "50%",
     Cell: ({ value }: { value: any }) => (
       <MDBox display="flex" alignItems="center">
-        <MDTypography>{value?.title}</MDTypography>
+        <MDTypography
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            width: value?.desc?.length > 60 ? "350px" : "auto",
+            color: "#B2B2B2",
+          }}
+        >
+          {value?.title}
+        </MDTypography>
         {value?.desc && (
           <MDTypography
             fontSize="16px"
@@ -87,7 +97,7 @@ const columns = [
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
-              width: value?.desc?.length > 60 ? "550px" : "auto",
+              width: value?.desc?.length > 60 ? "250px" : "auto",
               color: "#B2B2B2",
             }}
           >

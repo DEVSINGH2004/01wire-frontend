@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 import MDInput from "components/MDInput";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -32,7 +33,10 @@ function FormField({
   options,
   defaultValue,
   control,
+  rules = {},
+  errors = "",
   disabled = false,
+  required = false,
   ...rest
 }: Props): JSX.Element {
   switch (type) {
@@ -44,6 +48,7 @@ function FormField({
             <Controller
               name={name}
               control={control}
+              rules={rules}
               render={({ field: { onChange, value } }) => (
                 <Autocomplete
                   id="combo-box-demo"
@@ -58,7 +63,51 @@ function FormField({
               )}
             />
           </FormControl>
-          {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
+      );
+    }
+    case "multiSelect": {
+      return (
+        <MDBox mb={2}>
+          {label && <MDLabel label={label} />}
+          <FormControl fullWidth>
+            <Controller
+              name={name}
+              control={control}
+              rules={rules}
+              render={({ field: { onChange, value } }) => (
+                <Autocomplete
+                  id="combo-box-demo"
+                  multiple
+                  options={options}
+                  value={value}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip
+                        key={index}
+                        variant="outlined"
+                        label={option.label}
+                        size="small"
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  onChange={(event, newValue) => {
+                    onChange(newValue);
+                  }}
+                  disabled={disabled}
+                  renderInput={(params) => <MDInput {...params} variant="outlined" />}
+                />
+              )}
+            />
+          </FormControl>
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
           {subLabel && (
             <MDTypography fontWeight="regular" fontSize="13px">
               {subLabel}
@@ -75,6 +124,7 @@ function FormField({
             <Controller
               name={name}
               control={control}
+              rules={rules}
               defaultValue={defaultValue}
               render={({ field: { onChange, value } }) => (
                 <MDBox
@@ -91,7 +141,7 @@ function FormField({
               )}
             />
           </FormControl>
-          {/* <FormHelperText error={true}>textsjwkehk</FormHelperText> */}
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
           {subLabel && (
             <MDBox display="flex" bgColor={"grey-200"} borderRadius="lg" p={1} mt={1}>
               <InfoIcon sx={{ mr: 1 }} color="action" />{" "}
@@ -111,12 +161,13 @@ function FormField({
             <Controller
               name={name}
               control={control}
+              rules={rules}
               render={({ field: { onChange, value } }) => (
                 <MDEditor disabled={disabled} onChange={onChange} value={value} />
               )}
             />
           </FormControl>
-          {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
           {subLabel && (
             <MDTypography fontWeight="regular" fontSize="13px">
               {subLabel}
@@ -128,23 +179,26 @@ function FormField({
     default: {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={required} />}
           <FormControl fullWidth>
             <Controller
               name={name}
               control={control}
+              rules={rules}
               render={({ field: { onChange, value } }) => (
                 <MDInput
                   type={type}
                   disabled={disabled}
-                  onChange={onChange}
+                  onChange={
+                    type === "number" ? (e: any) => onChange(Number(e?.target?.value)) : onChange
+                  }
                   value={value}
                   {...rest}
                 />
               )}
             />
           </FormControl>
-          {/* <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText> */}
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
           {subLabel && (
             <MDTypography fontWeight="regular" fontSize="13px">
               {subLabel}

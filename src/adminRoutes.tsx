@@ -16,6 +16,7 @@
 // Material Dashboard 2 PRO React layouts
 import Dashboards from "layouts/pages/dashboards";
 import UserManagement from "layouts/pages/user-management";
+import Publications from "layouts/pages/publications";
 import Releases from "layouts/pages/releases";
 // Material Dashboard 2 PRO React TS components
 import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
@@ -50,7 +51,7 @@ const adminRoutes = [
     key: "publications",
     noCollapse: true,
     route: "/publications",
-    component: <Dashboards />,
+    component: <Publications />,
   },
   {
     type: "collapse",
