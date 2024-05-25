@@ -18,6 +18,7 @@ import Dashboards from "layouts/pages/dashboards";
 import UserManagement from "layouts/pages/user-management";
 import Publications from "layouts/pages/publications";
 import Releases from "layouts/pages/releases";
+import Bundles from "layouts/pages/bundles";
 // Material Dashboard 2 PRO React TS components
 import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
 import UserIcon from "assets/images/account_box.svg";
@@ -60,7 +61,7 @@ const adminRoutes = [
     key: "bundles",
     noCollapse: true,
     route: "/bundles",
-    component: <Dashboards />,
+    component: <Bundles />,
   },
   {
     type: "collapse",
