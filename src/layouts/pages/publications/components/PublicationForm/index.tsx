@@ -161,7 +161,7 @@ const PublicationForm = ({
         </IconButton>
         <MDTypography variant="h5">Create Publication</MDTypography>
       </MDBox>
-      {loading || (fetchLoading && <MDCircularLoader overlayloader startLoader />)}
+      {(loading || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
       <MDBox mt={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -293,12 +293,12 @@ const PublicationForm = ({
       </MDBox>
       <Divider
         sx={{
-          borderColor: "rgba(0, 0, 0, 0.12)",
+          borderColor: "#B2B2B2",
           borderStyle: "dotted",
         }}
       />
       <MDBox display="flex" alignItems="center" justifyContent="space-between">
-        <MDButton color="white" variant="contained" onClick={onClose}>
+        <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
           Cancel
         </MDButton>
         <MDButton color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>

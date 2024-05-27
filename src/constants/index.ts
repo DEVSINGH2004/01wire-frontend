@@ -271,3 +271,13 @@ export const LinkTypeOptions = [
   { label: "No Follow", value: "NO_FOLLOW" },
 ];
 export const CategoryOptions = [{ label: "General", value: "GENERAL" }];
+export const BundleCategoryOptions = [
+  { label: "Web3", value: "WEB3" },
+  { label: "Yahoo", value: "YAHOO" },
+];
+export const BundleTypeOptions = [
+  { label: "Standard", value: "STANDARD" },
+  { label: "Premium", value: "PREMIUM" },
+  { label: "Gold", value: "GOLD" },
+  { label: "Diamond", value: "DIAMOND" },
+];

@@ -21,40 +21,42 @@ import PublicationForm from "./components/PublicationForm";
 const columns = [
   {
     Header: "Title",
-    accessor: "title",
-    width: "25%",
+    accessor: "logo",
+    width: "15%",
     Cell: ({ value }: { value: any }) => (
-      <MDBox display="flex" alignItems="center">
-        <MDBox mr={2} width="227px">
-          <MDAvatar
-            src={value?.logo && `${process.env.REACT_APP_IMAGE_BASE_URL}${value?.logo}`}
-            variant="rounded"
-            size="xxl"
-            sx={{
-              borderRadius: "4px",
-            }}
-          />
-        </MDBox>
-        <MDTypography fontSize="16px">{value?.title}</MDTypography>
+      <MDBox>
+        <MDAvatar
+          src={value && `${process.env.REACT_APP_IMAGE_BASE_URL}${value}`}
+          variant="rounded"
+          size="xxl"
+          sx={{
+            borderRadius: "4px",
+          }}
+        />
       </MDBox>
     ),
   },
   {
+    accessor: "title",
+    width: "20%",
+    Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
+  },
+  {
     Header: "Traffic",
     accessor: "traffic",
-    width: "25%",
+    width: "10%",
     Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
   },
   {
     Header: "Gurranted Publications",
     accessor: "gurrantedPublications",
-    width: "25%",
+    width: "15%",
     Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
   },
   {
     Header: "Link Type",
     accessor: "linkType",
-    width: "25%",
+    width: "15%",
     Cell: ({ value }: { value: string }) => (
       <MDTypography fontSize="16px">
         {value === "DO_FOLLOW" ? "Do Follow" : "No Follow"}
@@ -64,13 +66,13 @@ const columns = [
   {
     Header: "Price",
     accessor: "price",
-    width: "25%",
+    width: "10%",
     Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
   },
   {
     Header: "Check",
     accessor: "actions",
-    width: "20%",
+    width: "15%",
     Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
   },
 ];
@@ -97,13 +99,15 @@ const Publications = () => {
   useEffect(() => {
     setLoader(true);
     const publications = data?.filterPublicationsPaginated?.data;
+    const totalPublications = data?.filterPublicationsPaginated?.paginationInfo?.itemCount;
     let rows: any = [];
     if (publications?.length) {
       rows = publications?.map((one) => {
         return {
-          title: { title: one?.title, logo: one?.image },
+          logo: one?.image,
+          title: one?.title,
           traffic: one?.stats?.traffic,
-          gurrantedPublications: 24,
+          gurrantedPublications: totalPublications || 0,
           linkType: one?.linkType,
           price: one?.price,
           actions: [

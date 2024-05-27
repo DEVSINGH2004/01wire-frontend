@@ -24,6 +24,7 @@ import Releases from "layouts/pages/releases";
 import Clients from "layouts/pages/clients";
 import Profile from "layouts/pages/profile";
 import Publications from "layouts/pages/publications";
+import Bundles from "layouts/pages/bundles";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -110,6 +111,7 @@ export default function App() {
               <Route path="/clients/:id" element={<Clients />} />
               <Route path="/releases/:id" element={<Releases />} />
               <Route path="/publications/:id" element={<Publications />} />
+              <Route path="/bundles/:id" element={<Bundles />} />
               <Route path="*" element={<Navigate to="/dashboards" />} />
             </Routes>
           </DashboardLayout>
