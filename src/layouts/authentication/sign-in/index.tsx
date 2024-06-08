@@ -127,7 +127,7 @@ function SignIn(): JSX.Element {
               const roleVal = res?.data?.login?.type;
               localStorage.setItem("token", res.data.login.token);
               localStorage.setItem("role", roleVal);
-              const routeVal = roleVal === "ADMIN" ? "/pr-management" : "/";
+              const routeVal = roleVal === "ADMIN" ? "/orders" : "/";
               toast.success("Login Successful!!");
               navigate(routeVal);
             }

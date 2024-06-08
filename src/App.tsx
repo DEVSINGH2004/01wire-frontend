@@ -112,7 +112,11 @@ export default function App() {
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />
               <Route path="/bundles/:id" element={<Bundles />} />
-              <Route path="*" element={<Navigate to="/dashboards" />} />
+              {role === "ADMIN" ? (
+                <Route path="*" element={<Navigate to="/orders" />} />
+              ) : (
+                <Route path="*" element={<Navigate to="/dashboards" />} />
+              )}
             </Routes>
           </DashboardLayout>
         </>
