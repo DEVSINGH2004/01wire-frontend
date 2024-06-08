@@ -5,7 +5,6 @@ import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "assets/images/icons/editIcon.svg";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
-
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -13,15 +12,12 @@ import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
-
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import Autocomplete from "@mui/material/Autocomplete";
-
 import ReleaseForm from "./components/ReleaseForm";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-
 // Data
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
@@ -80,11 +76,8 @@ const columns = [
     Cell: ({ value }: { value: any }) => (
       <MDBox display="flex" alignItems="center">
         <MDTypography
+          width={value?.title?.length > 60 ? "250px" : "auto"}
           sx={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            width: value?.desc?.length > 60 ? "350px" : "auto",
             color: "#B2B2B2",
           }}
         >
@@ -93,11 +86,8 @@ const columns = [
         {value?.desc && (
           <MDTypography
             fontSize="16px"
+            width={value?.desc?.length > 60 ? "250px" : "auto"}
             sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              width: value?.desc?.length > 60 ? "250px" : "auto",
               color: "#B2B2B2",
             }}
           >
@@ -302,7 +292,6 @@ function Releases(): JSX.Element {
           </MDBox>
         </>
       )}
-
       <MDBox pt={openForm ? 6 : 2} pb={3}>
         <Card sx={{ minHeight: "300px" }}>
           {loading || loader ? (

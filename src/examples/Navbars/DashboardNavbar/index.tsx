@@ -31,6 +31,7 @@ import {
   setOpenConfigurator,
 } from "context";
 import MDTypography from "components/MDTypography";
+import { Theme } from "@mui/material/styles";
 
 // Declaring prop types for DashboardNavbar
 interface Props {
@@ -41,6 +42,7 @@ interface Props {
 
 function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
   const { white, grey } = colors;
+  const role: any = localStorage.getItem("role");
   const { borderWidth } = borders;
   const [navbarType, setNavbarType] = useState<
     "fixed" | "absolute" | "relative" | "static" | "sticky"
@@ -52,6 +54,7 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
   const route = useLocation().pathname.split("/").slice(1);
   const { data } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
     fetchPolicy: "network-only",
+    skip: role === "ADMIN",
   });
   // useEffect(() => {
   //   let url;
@@ -159,25 +162,30 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
       sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
     >
       <Toolbar sx={navbarContainer}>
-        <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
+        <MDBox
+          color="inherit"
+          mb={{ xs: 1, md: 0 }}
+          sx={(theme: Theme) => navbarRow(theme, { isMini })}
+        >
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
         {isMini ? null : (
-          <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox
-              py={1}
-              px={2}
-              sx={{
-                borderRadius: "8px",
-                backgroundColor: white.main,
-                border: `${borderWidth[1]} solid ${grey[400]}`,
-              }}
-            >
-              <MDTypography fontWeight="bold" fontSize="1rem" color="primary">
-                {`${data?.getUserWallet?.balance || 0} Credits`}
-              </MDTypography>
-            </MDBox>
-
+          <MDBox sx={(theme: Theme) => navbarRow(theme, { isMini })}>
+            {role === "USER" && (
+              <MDBox
+                py={1}
+                px={2}
+                sx={{
+                  borderRadius: "8px",
+                  backgroundColor: white.main,
+                  border: `${borderWidth[1]} solid ${grey[400]}`,
+                }}
+              >
+                <MDTypography fontWeight="bold" fontSize="1rem" color="primary">
+                  {`${data?.getUserWallet?.balance || 0} Credits`}
+                </MDTypography>
+              </MDBox>
+            )}
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton
                 size="small"

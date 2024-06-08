@@ -1,26 +1,18 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
 export default styled(Typography)(({ theme, ownerState }: any): any => {
   const { palette, typography, functions }: any = theme;
-  const { color, textTransform, verticalAlign, fontWeight, opacity, textGradient, darkMode } =
-    ownerState;
+  const {
+    color,
+    textTransform,
+    verticalAlign,
+    fontWeight,
+    opacity,
+    textGradient,
+    darkMode,
+    width,
+  } = ownerState;
 
   const { gradients, transparent, white } = palette;
   const { fontWeightLight, fontWeightRegular, fontWeightMedium, fontWeightBold } = typography;
@@ -46,6 +38,12 @@ export default styled(Typography)(({ theme, ownerState }: any): any => {
     position: "relative",
     zIndex: 1,
   });
+  const textEllipsisStyles = () => ({
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    width,
+  });
 
   // color value
   let colorValue = color === "inherit" || !palette[color] ? "inherit" : palette[color].main;
@@ -62,5 +60,6 @@ export default styled(Typography)(({ theme, ownerState }: any): any => {
     color: colorValue,
     fontWeight: fontWeights[fontWeight] && fontWeights[fontWeight],
     ...(textGradient && gradientStyles()),
+    ...(width !== "auto" && textEllipsisStyles()),
   };
 });

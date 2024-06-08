@@ -1,28 +1,8 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useEffect, ReactNode } from "react";
-
-// react-router-dom components
 import { useLocation } from "react-router-dom";
-
-// Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
-
-// Material Dashboard 2 PRO React context
 import { useMaterialUIController, setLayout } from "context";
+import { Theme } from "@mui/material/styles";
 
 function DashboardLayout({ children }: { children: ReactNode }): JSX.Element {
   const [controller, dispatch] = useMaterialUIController();
@@ -35,15 +15,14 @@ function DashboardLayout({ children }: { children: ReactNode }): JSX.Element {
 
   return (
     <MDBox
-      sx={({ breakpoints, transitions, functions: { pxToRem } }) => ({
+      sx={(theme: Theme) => ({
         p: 3,
         position: "relative",
-
-        [breakpoints.up("xl")]: {
-          marginLeft: miniSidenav ? pxToRem(120) : pxToRem(274),
-          transition: transitions.create(["margin-left", "margin-right"], {
-            easing: transitions.easing.easeInOut,
-            duration: transitions.duration.standard,
+        [theme.breakpoints.up("xl")]: {
+          marginLeft: miniSidenav ? theme.spacing(15) : theme.spacing(35),
+          transition: theme.transitions.create(["margin-left", "margin-right"], {
+            easing: theme.transitions.easing.easeInOut,
+            duration: theme.transitions.duration.standard,
           }),
         },
       })}

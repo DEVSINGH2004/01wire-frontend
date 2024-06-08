@@ -1,20 +1,5 @@
-/* eslint-disable no-unused-vars */
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { ReactNode } from "react";
+import { Theme } from "@mui/material/styles";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -60,8 +45,8 @@ function ComplexProjectCard({
         src={member}
         alt="member profile"
         size="xs"
-        sx={({ borders: { borderWidth }, palette: { white } }) => ({
-          border: `${borderWidth[2]} solid ${white.main}`,
+        sx={({ borders, palette }: Theme) => ({
+          border: `${borders.borderWidth[2]} solid ${palette.white.main}`,
           cursor: "pointer",
           position: "relative",
 
@@ -87,7 +72,11 @@ function ComplexProjectCard({
             size="xl"
             variant="rounded"
             bgColor={color}
-            sx={{ p: 1, mt: -6, borderRadius: ({ borders: { borderRadius } }) => borderRadius.xl }}
+            sx={({ borders }: Theme) => ({
+              p: 1,
+              mt: -6,
+              borderRadius: borders.borderRadius.xl,
+            })}
           />
           <MDBox ml={2} mt={-2} lineHeight={0}>
             <MDTypography variant="h6" textTransform="capitalize" fontWeight="medium">

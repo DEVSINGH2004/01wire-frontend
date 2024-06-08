@@ -65,14 +65,14 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
       youtube,
       others,
       category,
-      notes,
+      instructions,
     } = formVals;
     updateArticle({
       variables: {
         params: {
           id: data?.id,
           category: category?.value,
-          notes,
+          instructions,
           mediaContact: {
             name,
             email,
@@ -114,11 +114,11 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
   }, [saveData, isDirty]);
   useEffect(() => {
     if (data?.id) {
-      const { category, notes, mediaContact } = data;
+      const { category, instructions, mediaContact } = data;
       const filteredCategory = CategoryOptions?.find((one) => one.value === category);
       const defaultValues = {
         category: filteredCategory,
-        notes,
+        instructions,
         ...mediaContact,
       };
       reset(defaultValues);
@@ -145,7 +145,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
             <FormField
               type="text"
               label="Special Instructions"
-              name="notes"
+              name="instructions"
               control={control}
               multiline
               rows={6}

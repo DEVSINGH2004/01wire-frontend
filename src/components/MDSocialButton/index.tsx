@@ -1,19 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 PRO React TS - v1.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-2-pro-react-ts
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { FC, ReactNode, forwardRef } from "react";
+import { forwardRef, ReactNode } from "react";
 
 // @mui material components
 import { ButtonProps } from "@mui/material";
@@ -21,7 +6,7 @@ import { ButtonProps } from "@mui/material";
 // Custom styles for MDSocialButton
 import MDSocialButtonRoot from "components/MDSocialButton/MDSocialButtonRoot";
 
-// Declaring props types for MDButton
+// Declaring props types for MDSocialButton
 interface Props extends Omit<ButtonProps, "color" | "variant"> {
   color?:
     | "facebook"
@@ -43,7 +28,7 @@ interface Props extends Omit<ButtonProps, "color" | "variant"> {
   [key: string]: any;
 }
 
-const MDSocialButton: FC<Props> = forwardRef(
+const MDSocialButton = forwardRef<HTMLButtonElement, Props>(
   ({ color, size, iconOnly, circular, children, ...rest }, ref) => (
     <MDSocialButtonRoot
       {...rest}

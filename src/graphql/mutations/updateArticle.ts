@@ -16,6 +16,7 @@ export interface ArticleUpdateInput {
   publishAt: string;
   timezone: string;
   notes: string;
+  instructions: string;
   bundleIds: string[];
   publicationIds: string[];
   mediaContact: {

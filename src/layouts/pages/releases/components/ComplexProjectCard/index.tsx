@@ -1,5 +1,6 @@
 import { Key, ReactNode } from "react";
 import Card from "@mui/material/Card";
+import { Theme } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -50,7 +51,7 @@ function ComplexProjectCard({
         src={member}
         alt="member profile"
         size="xs"
-        sx={({ borders: { borderWidth }, palette: { white } }) => ({
+        sx={({ borders: { borderWidth }, palette: { white } }: Theme) => ({
           border: `${borderWidth[2]} solid ${white.main}`,
           cursor: "pointer",
           position: "relative",

@@ -133,7 +133,7 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
       variables: {
         params: {
           id: article?.id,
-          status: "PUBLISHED",
+          status: "SUBMITTED",
         },
       },
     })

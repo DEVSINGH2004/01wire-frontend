@@ -59,7 +59,17 @@ interface Props extends TypographyProps {
 
 const MDTypography: FC<Props | any> = forwardRef(
   (
-    { color, fontWeight, textTransform, verticalAlign, textGradient, opacity, children, ...rest },
+    {
+      color,
+      width,
+      fontWeight,
+      textTransform,
+      verticalAlign,
+      textGradient,
+      opacity,
+      children,
+      ...rest
+    },
     ref
   ) => {
     const [controller] = useMaterialUIController();
@@ -77,6 +87,7 @@ const MDTypography: FC<Props | any> = forwardRef(
           opacity,
           textGradient,
           darkMode,
+          width,
         }}
       >
         {children}
@@ -93,6 +104,7 @@ MDTypography.defaultProps = {
   verticalAlign: "unset",
   textGradient: false,
   opacity: 1,
+  width: "auto",
 };
 
 export default MDTypography;

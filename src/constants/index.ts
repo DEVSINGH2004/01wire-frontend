@@ -281,3 +281,8 @@ export const BundleTypeOptions = [
   { label: "Gold", value: "GOLD" },
   { label: "Diamond", value: "DIAMOND" },
 ];
+export const StatusOptions = [
+  { label: "Scheduled", value: "SCHEDULED" },
+  { label: "Accepted", value: "PUBLISHED" },
+  { label: "Rejected", value: "REJECTED" },
+];

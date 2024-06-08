@@ -42,8 +42,13 @@ export const GET_ARTICLES = gql`
         publishType
         timezone
         notes
+        instructions
         publishAt
         createdAt
+        bundleInfo {
+          id
+          type
+        }
         mediaContact {
           name
           email

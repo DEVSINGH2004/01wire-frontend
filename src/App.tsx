@@ -10,8 +10,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import theme from "assets/theme";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// Material Dashboard 2 PRO React TS Dark Mode themes
-import themeDark from "assets/theme-dark";
 import routes from "routes";
 import adminRoutes from "adminRoutes";
 import { useMaterialUIController, setMiniSidenav } from "context";
@@ -25,6 +23,7 @@ import Clients from "layouts/pages/clients";
 import Profile from "layouts/pages/profile";
 import Publications from "layouts/pages/publications";
 import Bundles from "layouts/pages/bundles";
+import PRManagement from "layouts/pages/pr-management";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -82,7 +81,7 @@ export default function App() {
       }
     );
   return (
-    <ThemeProvider theme={darkMode ? themeDark : theme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       {!token ? (
         <SignIn />
@@ -111,6 +110,7 @@ export default function App() {
               <Route path="/clients/:id" element={<Clients />} />
               <Route path="/releases/:id" element={<Releases />} />
               <Route path="/publications/:id" element={<Publications />} />
+              <Route path="/pr-management/:id" element={<PRManagement />} />
               <Route path="/bundles/:id" element={<Bundles />} />
               <Route path="*" element={<Navigate to="/dashboards" />} />
             </Routes>

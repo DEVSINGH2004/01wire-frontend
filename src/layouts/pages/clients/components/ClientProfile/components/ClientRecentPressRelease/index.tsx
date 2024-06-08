@@ -42,16 +42,7 @@ const ClientRecentPR = ({ data = [] }: { data: any }) => {
                       styles={{ borderRadius: "8.99px" }}
                     />
                     <CardContent sx={{ ml: 1, mt: 2, p: 0 }}>
-                      <MDTypography
-                        fontSize="16px"
-                        fontWeight="regular"
-                        sx={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          width: "150px",
-                        }}
-                      >
+                      <MDTypography fontSize="16px" fontWeight="regular" width="150px">
                         {one?.title}
                       </MDTypography>
                       <MDTypography variant="body2" sx={{ mt: 1, color: "rgba(123, 128, 154, 1)" }}>

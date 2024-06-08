@@ -124,10 +124,12 @@ function SignIn(): JSX.Element {
         })
           .then((res: any) => {
             if (res.data) {
+              const roleVal = res?.data?.login?.type;
               localStorage.setItem("token", res.data.login.token);
-              localStorage.setItem("role", res.data.login.type);
+              localStorage.setItem("role", roleVal);
+              const routeVal = roleVal === "ADMIN" ? "/pr-management" : "/";
               toast.success("Login Successful!!");
-              navigate("/");
+              navigate(routeVal);
             }
           })
           .catch((err) => {

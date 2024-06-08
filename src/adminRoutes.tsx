@@ -14,13 +14,15 @@
   10. The `component` key is used to store the component of its route.
 */
 // Material Dashboard 2 PRO React layouts
-import Dashboards from "layouts/pages/dashboards";
 import UserManagement from "layouts/pages/user-management";
 import Publications from "layouts/pages/publications";
-import Releases from "layouts/pages/releases";
 import Bundles from "layouts/pages/bundles";
+import PublishedOrders from "layouts/pages/publishedOrder";
+import PRManagement from "layouts/pages/pr-management";
+import OrderManagement from "layouts/pages/orders";
 // Material Dashboard 2 PRO React TS components
 import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
+import OrdersIcon from "assets/images/icons/ordersIcon.svg";
 import UserIcon from "assets/images/account_box.svg";
 import PublicationIcon from "assets/images/publicationIcon.svg";
 import BundleIcon from "assets/images/bundle.svg";
@@ -29,18 +31,27 @@ import PublishedOrder from "assets/images/published.svg";
 const adminRoutes = [
   {
     type: "collapse",
-    name: "PR Management",
-    icon: <img src={ReleaseIcon} width="24px" height="24px" />,
-    key: "releases",
+    name: "Manage Orders",
+    icon: <img src={OrdersIcon} width="24px" height="24px" />,
+    key: "orders",
     noCollapse: true,
-    route: "/releases",
-    component: <Releases />,
+    route: "/orders",
+    component: <OrderManagement />,
   },
   {
     type: "collapse",
-    name: "User Management",
+    name: "Manage Articles",
+    icon: <img src={ReleaseIcon} width="24px" height="24px" />,
+    key: "pr-management",
+    noCollapse: true,
+    route: "/pr-management",
+    component: <PRManagement />,
+  },
+  {
+    type: "collapse",
+    name: "Manage Users",
     icon: <img src={UserIcon} width="24px" height="24px" />,
-    key: "userManagement",
+    key: "user-management",
     noCollapse: true,
     route: "/user-management",
     component: <UserManagement />,
@@ -67,10 +78,10 @@ const adminRoutes = [
     type: "collapse",
     name: "Published Order",
     icon: <img src={PublishedOrder} width="24px" height="24px" />,
-    key: "publishedOrder",
+    key: "published-order",
     noCollapse: true,
     route: "/published-order",
-    component: <Dashboards />,
+    component: <PublishedOrders />,
   },
 ];
 

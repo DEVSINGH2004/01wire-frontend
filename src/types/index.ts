@@ -97,6 +97,7 @@ export type ArticleType = {
   notes: string;
   bundleIds: string[];
   publicationIds: string[];
+  bundleInfo: Bundle[];
   mediaContact: ArticleMediaContactType;
   publishAt: string;
   createdAt: string;
@@ -105,6 +106,26 @@ export type ArticleType = {
 
 export interface ArticleData {
   data: ArticleType[];
+  paginationInfo: PaginationInfo;
+}
+export type OrderType = {
+  id: string;
+  userId: string;
+  articleId: string;
+  publicationId: string;
+  bundleId: string;
+  status: string;
+  notes: string;
+  publishAt: string;
+  publishBy: string;
+  createdAt: string;
+  updatedAt: string;
+  articleInfo: ArticleType;
+  publicationInfo: Publication;
+  bundleInfo: Bundle;
+};
+export interface OrderData {
+  data: OrderType[];
   paginationInfo: PaginationInfo;
 }
 export interface WalletType {

@@ -28,6 +28,7 @@ export const GET_ARTICLE_BY_ID = gql`
       publishType
       timezone
       notes
+      instructions
       totalCredits
       publishAt
       bundleInfo {

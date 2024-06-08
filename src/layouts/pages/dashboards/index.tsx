@@ -21,7 +21,6 @@ import DisplayImage from "components/DisplayImage";
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
 // Images
-import homeDecor3 from "assets/images/home-decor-3.jpg";
 import ERIcon from "assets/images/ER.svg";
 import AAIcon from "assets/images/AA.svg";
 import ScheduledIcon from "assets/images/Scheduled.svg";
@@ -163,16 +162,7 @@ function Overview(): JSX.Element {
                         styles={{ borderRadius: "8.99px" }}
                       />
                       <CardContent sx={{ ml: 1, mt: 2, p: 0 }}>
-                        <MDTypography
-                          fontSize="16px"
-                          fontWeight="regular"
-                          sx={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            width: "150px",
-                          }}
-                        >
+                        <MDTypography fontSize="16px" fontWeight="regular" width="150px">
                           {one?.title}
                         </MDTypography>
                         <MDTypography
@@ -240,16 +230,7 @@ function Overview(): JSX.Element {
                         }}
                       >
                         <MDBox>
-                          <MDTypography
-                            fontSize="16px"
-                            fontWeight="regular"
-                            sx={{
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              width: "250px",
-                            }}
-                          >
+                          <MDTypography fontSize="16px" fontWeight="regular" width="250px">
                             {one?.title}
                           </MDTypography>
                           <MDTypography

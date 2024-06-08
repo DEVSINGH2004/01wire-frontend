@@ -28,6 +28,7 @@ export const GET_ARTICLE_BY_ID_RNP = gql`
       publishType
       timezone
       notes
+      instructions
       publishAt
       totalCredits
       bundleInfo {
