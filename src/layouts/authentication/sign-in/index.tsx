@@ -16,7 +16,7 @@ import PageLayout from "examples/LayoutContainers/PageLayout";
 import { MuiOtpInput } from "mui-one-time-password-input";
 
 // Image
-import OneWireLogo from "assets/images/OneWireLogo_1.svg";
+import OneWireLogo from "assets/images/OneWireLogo_2.svg";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -249,18 +249,56 @@ function SignIn(): JSX.Element {
           <MDBox
             display={{ xs: "none", lg: "flex" }}
             alignItems="center"
-            justifyContent="center"
+            justifyContent="space-between"
             width="calc(100% - 2rem)"
             height="calc(100vh - 2rem)"
             borderRadius="lg"
             ml={2}
             mt={2}
+          >
+            {/* <img src={OneWireLogo} height="198px" width="371px" alt="logo" /> */}
+            <MDBox
+              display={{ xs: "none", lg: "flex" }}
+              alignItems="center"
+              justifyContent="center"
+              width="calc(80% - 2rem)"
+              height="calc(100vh - 2rem)"
+              sx={{
+                background: "#FFFFFF",
+                borderTopLeftRadius: "16px",
+                borderBottomLeftRadius: "16px",
+              }}
+            >
+              {/* <img src={OneWireLogo} height="198px" width="371px" alt="logo" /> */}
+            </MDBox>
+            <MDBox
+              display={{ xs: "none", lg: "flex" }}
+              alignItems="center"
+              justifyContent="center"
+              width="calc(100% - 2rem)"
+              height="calc(100vh - 2rem)"
+              sx={{
+                background: "#313235",
+                borderTopRightRadius: "16px",
+                borderBottomRightRadius: "16px",
+              }}
+            >
+              {/* <img src={OneWireLogo} height="198px" width="371px" alt="logo" /> */}
+            </MDBox>
+          </MDBox>
+          <Grid
+            item
+            xs={12}
+            lg={12}
             sx={{
-              background: "#313235",
+              position: "absolute",
+              top: "50%",
+              left: "25%",
+              transform: "translate(-50%, -50%)",
             }}
           >
-            <img src={OneWireLogo} height="198px" width="371px" alt="logo" />
-          </MDBox>
+              <img src={OneWireLogo} height="198px" width="295px" alt="logo" />
+          </Grid>
         </Grid>
         <Grid item xs={11} sm={8} md={6} lg={4} xl={3} sx={{ mx: "auto" }}>
           <MDBox display="flex" flexDirection="column" justifyContent="center" height="100vh">
