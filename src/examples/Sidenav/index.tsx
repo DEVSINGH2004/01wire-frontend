@@ -293,7 +293,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
         </MDBox>
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
           {brand && (
-            <MDBox component="img" src={brand} alt="Brand" height="2rem" width="3.875rem" />
+            <MDBox component="img" src={brand} alt="Brand" height="40px" width="80px" />
           )}
           <MDBox
             width={!brandName && "100%"}
