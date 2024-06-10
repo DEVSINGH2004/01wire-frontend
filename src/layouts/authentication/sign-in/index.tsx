@@ -256,7 +256,6 @@ function SignIn(): JSX.Element {
             ml={2}
             mt={2}
           >
-            {/* <img src={OneWireLogo} height="198px" width="371px" alt="logo" /> */}
             <MDBox
               display={{ xs: "none", lg: "flex" }}
               alignItems="center"
@@ -264,12 +263,11 @@ function SignIn(): JSX.Element {
               width="calc(80% - 2rem)"
               height="calc(100vh - 2rem)"
               sx={{
-                background: "#FFFFFF",
+                background: "#313235",
                 borderTopLeftRadius: "16px",
                 borderBottomLeftRadius: "16px",
               }}
             >
-              {/* <img src={OneWireLogo} height="198px" width="371px" alt="logo" /> */}
             </MDBox>
             <MDBox
               display={{ xs: "none", lg: "flex" }}
@@ -278,12 +276,11 @@ function SignIn(): JSX.Element {
               width="calc(100% - 2rem)"
               height="calc(100vh - 2rem)"
               sx={{
-                background: "#313235",
+                background: "#FFFFFF",
                 borderTopRightRadius: "16px",
                 borderBottomRightRadius: "16px",
               }}
             >
-              {/* <img src={OneWireLogo} height="198px" width="371px" alt="logo" /> */}
             </MDBox>
           </MDBox>
           <Grid
@@ -297,7 +294,7 @@ function SignIn(): JSX.Element {
               transform: "translate(-50%, -50%)",
             }}
           >
-              <img src={OneWireLogo} height="198px" width="295px" alt="logo" />
+              <img src={OneWireLogo} height="198px" width="296px" alt="logo" />
           </Grid>
         </Grid>
         <Grid item xs={11} sm={8} md={6} lg={4} xl={3} sx={{ mx: "auto" }}>
