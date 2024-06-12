@@ -76,3 +76,12 @@ export const genericValidations = {
     required: "Please fill value",
   },
 };
+
+export function removeEmptyFields(obj: { [key: string]: any }): { [key: string]: any } {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] === "") {
+      delete obj[key];
+    }
+  }
+  return obj;
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -16,9 +17,13 @@ import { useQuery } from "@apollo/client";
 import productImage from "assets/images/products/product-11.jpg";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import MDCircularLoader from "components/MDCircularLoader";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import ClientProfile from "./components/ClientProfile";
+import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import EditIcon from "assets/images/icons/editIcon.svg";
+import FBIcon from "assets/images/FB.svg";
+import InstaIcon from "assets/images/insta.svg";
+import TwitterIcon from "assets/images/twitter.svg";
+import YtIcon from "assets/images/yt.svg";
+import LinkedInIcon from "assets/images/LinkedIn.svg";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -31,35 +36,75 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
     })}
   </MDBox>
 );
+const SocialMediaLink = ({ url, Icon }: { url: string | undefined; Icon: any }) => {
+  return (
+    <Link
+      sx={{
+        "& img": {
+          filter: !url ? "grayscale(100%)" : "none",
+        },
+      }}
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img src={Icon} height="36px" width="36px" alt="facebookIcon" />
+    </Link>
+  );
+};
 const columns = [
   {
-    Header: "name",
-    accessor: "name",
-    width: "95%",
+    Header: "Title",
+    accessor: "logo",
+    width: "10%",
     Cell: ({ value }: any) => {
       return (
-        <MDBox display="flex" alignItems="center">
-          <MDBox mr={2} width="227px">
-            <MDAvatar
-              src={
-                value?.logo ? `${process.env.REACT_APP_IMAGE_BASE_URL}${value?.logo}` : productImage
-              }
-              variant="rounded"
-              size="xxl"
-              sx={{
-                borderRadius: "4px",
-              }}
-            />
-          </MDBox>
-          <MDTypography fontSize="16px">{value.title}</MDTypography>
+        <MDBox mr={2}>
+          <MDAvatar
+            src={value ? `${process.env.REACT_APP_IMAGE_BASE_URL}${value}` : productImage}
+            variant="rounded"
+            size="xxl"
+            sx={{
+              borderRadius: "4px",
+            }}
+          />
         </MDBox>
       );
     },
   },
   {
     Header: "",
+    accessor: "title",
+    width: "50%",
+    Cell: ({ value }: any) => {
+      return (
+        <MDTypography fontSize="16px" fontWeight="regular">
+          {value}
+        </MDTypography>
+      );
+    },
+  },
+  {
+    Header: "Social Media",
+    accessor: "socialMedia",
+    width: "30%",
+    Cell: ({ value = {} }: any) => {
+      const { facebook, instagram, twitter, youtube, linkedIn } = value;
+      return (
+        <MDBox display="flex" alignItems="center" justifyContent="space-between" width={"250px"}>
+          <SocialMediaLink url={facebook} Icon={FBIcon} />
+          <SocialMediaLink url={linkedIn} Icon={LinkedInIcon} />
+          <SocialMediaLink url={twitter} Icon={TwitterIcon} />
+          <SocialMediaLink url={instagram} Icon={InstaIcon} />
+          <SocialMediaLink url={youtube} Icon={YtIcon} />
+        </MDBox>
+      );
+    },
+  },
+  {
+    Header: "Action",
     accessor: "actions",
-    width: "5%",
+    width: "10%",
     Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
   },
 ];
@@ -68,7 +113,6 @@ function Clients(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
   const [openForm, setOpenForm] = useState<any>(false);
-  const [openClientProfile, setOpen] = useState<any>(false);
   const [loader, setLoader] = useState<boolean>(true);
   const [tableData, setData] = useState<any>([]);
 
@@ -94,7 +138,9 @@ function Clients(): JSX.Element {
     if (clients?.length) {
       rows = clients?.map((one) => {
         return {
-          name: one,
+          logo: one?.logo,
+          title: one?.title,
+          socialMedia: one?.social,
           actions: [
             {
               imgIcon: EditIcon,
@@ -103,10 +149,8 @@ function Clients(): JSX.Element {
               },
             },
             {
-              Icon: <VisibilityIcon fontSize="small" />,
-              onClick: () => {
-                setOpen(one?.id);
-              },
+              imgIcon: DeleteIcon,
+              onClick: () => {},
             },
           ],
         };
@@ -123,10 +167,9 @@ function Clients(): JSX.Element {
       setOpenForm(false);
     }
   }, [id]);
-  console.log("loading", loading, "loader", loader);
   return (
     <>
-      {!openForm && !openClientProfile && (
+      {!openForm && (
         <MDBox display="flex" alignItems="center" justifyContent="flex-end" pt={2}>
           <MDButton
             variant="contained"
@@ -139,23 +182,19 @@ function Clients(): JSX.Element {
         </MDBox>
       )}
       <MDBox pt={openForm ? 6 : 2} pb={3}>
-        {openClientProfile && !id ? (
-          <ClientProfile id={openClientProfile} />
-        ) : (
-          <Card sx={{ minHeight: "400px" }}>
-            {loading || loader ? (
-              <MDCircularLoader overlayloader startLoader />
-            ) : openForm ? (
-              <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
-            ) : tableData?.rows?.length ? (
-              <DataTable showHeader={false} table={tableData} />
-            ) : (
-              <MDBox m={"auto"}>
-                <MDTypography variant="h6">No data found</MDTypography>
-              </MDBox>
-            )}
-          </Card>
-        )}
+        <Card sx={{ minHeight: "400px" }}>
+          {loading || loader ? (
+            <MDCircularLoader overlayloader startLoader />
+          ) : openForm ? (
+            <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+          ) : tableData?.rows?.length ? (
+            <DataTable showHeader={false} table={tableData} />
+          ) : (
+            <MDBox m="auto">
+              <MDTypography variant="h6">No data found</MDTypography>
+            </MDBox>
+          )}
+        </Card>
       </MDBox>
       <Footer />
     </>
