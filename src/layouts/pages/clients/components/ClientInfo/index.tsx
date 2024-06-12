@@ -61,20 +61,8 @@ function ClientInfo({
   const navigate = useNavigate();
   useEffect(() => {
     if (data?.id) {
-      const {
-        title,
-        logo,
-        type,
-        email,
-        website,
-        category,
-        facebook,
-        instagram,
-        youtube,
-        twitter,
-        others,
-        linkedIn,
-      } = data;
+      const { title, logo, type, email, website, category, social = {} } = data;
+      const { facebook, instagram, youtube, twitter, others, linkedIn } = social;
       const defaultValues = {
         title,
         type: type && ComanyTypeOptions?.find((one) => one?.value === type),
@@ -166,7 +154,6 @@ function ClientInfo({
       {loading && <MDCircularLoader overlayloader startLoader />}
       <MDBox mt={2} display="flex" alignItems="center">
         <MDTypography variant="h5">Client Info</MDTypography>
-        <Divider sx={{ width: "80%", p: 0 }} orientation="horizontal" />
       </MDBox>
       <MDBox>
         <Grid container spacing={3}>
@@ -233,12 +220,21 @@ function ClientInfo({
               label="Logo"
               control={control}
             />
+            <FormField
+              type="text"
+              label="Notes"
+              name="notes"
+              control={control}
+              multiline
+              rows={6}
+              variant="outlined"
+            />
           </Grid>
         </Grid>
       </MDBox>
       <MDBox mt={2} display="flex" alignItems="center">
         <MDTypography variant="h5">Social Media Info</MDTypography>
-        <Divider sx={{ width: "80%", p: 0 }} orientation="horizontal" />
+        <Divider sx={{ ml: 1, flexGrow: 1, mr: 2, bgcolor: "#000", height: "1px" }} />
       </MDBox>
       <MDBox>
         <Grid container spacing={6}>

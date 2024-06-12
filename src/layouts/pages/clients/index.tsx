@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
-import { styled } from "@mui/material/styles";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -19,7 +18,6 @@ import productImage from "assets/images/products/product-11.jpg";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import MDCircularLoader from "components/MDCircularLoader";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
-import ClientProfile from "./components/ClientProfile";
 import EditIcon from "assets/images/icons/editIcon.svg";
 import FBIcon from "assets/images/FB.svg";
 import InstaIcon from "assets/images/insta.svg";
