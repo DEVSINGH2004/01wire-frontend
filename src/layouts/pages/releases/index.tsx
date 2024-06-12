@@ -229,7 +229,7 @@ function Releases(): JSX.Element {
 
   return (
     <>
-   <DashboardNavbar text="ADD PR" onsubmit={!openForm ? () => setOpenForm(true) : undefined} />
+      <DashboardNavbar text="ADD PR" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
         {!openForm && (
           <>
