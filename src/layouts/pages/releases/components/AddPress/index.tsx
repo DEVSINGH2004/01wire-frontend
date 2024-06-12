@@ -197,7 +197,7 @@ function AddPress({
               </MDTypography>
               <MDButton
                 startIcon={<InfoIcon />}
-                sx={{ ml: 1, borderRadius: "32px", height: "34px" }}
+                sx={{ ml: 1, borderRadius: "32px", height: "34px", background: "#ee5c61" }}
                 color="info"
                 onClick={() => setOpen(true)}
               >
