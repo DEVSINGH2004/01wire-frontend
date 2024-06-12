@@ -101,7 +101,7 @@ const Bundles = () => {
   }, [data]);
   return (
     <>
-    <DashboardNavbar text="Add Bundle" onsubmit={() => setOpenForm(true)} />
+    <DashboardNavbar text="Add Bundle" onsubmit={!openForm ? () => setOpenForm(true) : undefined} />
     <MDBox px={2}>
       {!openForm && (
         <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">

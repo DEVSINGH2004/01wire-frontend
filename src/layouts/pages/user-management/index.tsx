@@ -68,27 +68,27 @@ const UserManagement = () => {
   }, [data]);
   return (
     <>
-    <DashboardNavbar />
-    <MDBox px={2}>
-      <MDBox pt={2}>
-        <MDTypography fontWeight="bold" fontSize="20px">
-          User Management
-        </MDTypography>
+      <DashboardNavbar />
+      <MDBox px={2}>
+        <MDBox pt={2}>
+          <MDTypography fontWeight="bold" fontSize="20px">
+            User Management
+          </MDTypography>
+        </MDBox>
+        <MDBox pt={2} pb={3}>
+          <Card sx={{ minHeight: "300px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : tableData?.rows?.length ? (
+              <DataTable table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
+        </MDBox>
       </MDBox>
-      <MDBox pt={2} pb={3}>
-        <Card sx={{ minHeight: "300px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : tableData?.rows?.length ? (
-            <DataTable table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
-      </MDBox>
-    </MDBox>
     </>
   );
 };
