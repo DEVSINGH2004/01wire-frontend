@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLazyQuery } from "@apollo/client";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import ClientInfo from "../ClientInfo";
-import SocialInfo from "../SocialInfo";
 import {
   GET_CLIENT_BY_ID,
   IGetClientByIdVars,
