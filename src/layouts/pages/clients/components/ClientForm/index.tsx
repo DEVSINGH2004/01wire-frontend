@@ -35,16 +35,6 @@ function getStepContent(
   setSaveData: any
 ): JSX.Element {
   switch (stepIndex) {
-    case 0:
-      return (
-        <ClientInfo
-          saveData={saveData}
-          cb={handleNext}
-          data={client}
-          refetch={refetch}
-          setSaveData={setSaveData}
-        />
-      );
     case 1:
       return (
         <SocialInfo
@@ -81,10 +71,10 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
     setSaveData(false);
     setActiveStep(activeStep + 1);
   };
-  const handleBack = () => {
-    if (saveData) setSaveData(false);
-    setActiveStep(activeStep - 1);
-  };
+  // const handleBack = () => {
+  //   if (saveData) setSaveData(false);
+  //   setActiveStep(activeStep - 1);
+  // };
   const fetchData = (resId?: any) => {
     console.log("fetchData", resId);
     setLoading(true);
@@ -117,51 +107,23 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
   };
   return (
     <>
-      <MDBox mt={-3} mb={3} mx={2}>
-        <Stepper
-          activeStep={activeStep}
-          alternativeLabel
-          sx={{
-            background: `
-          linear-gradient(180deg, #F7595F 0%, #F8303C 100%)
-          `,
-          }}
-        >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-      </MDBox>
       <MDBox p={2}>
         <MDBox>
           {loading ? (
             <MDCircularLoader startLoader />
           ) : (
-            getStepContent(
-              activeStep,
-              saveData,
-              handleNext,
-              client,
-              fetchData,
-              handleLastClick,
-              setSaveData
-            )
+            <ClientInfo
+              saveData={saveData}
+              data={client}
+              refetch={refetchList}
+              onClose={onClose}
+              setSaveData={setSaveData}
+            />
           )}
           {!loading && (
             <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
-              {activeStep === 0 ? (
-                <MDBox />
-              ) : (
-                <MDButton color="white" onClick={handleBack}>
-                  <MDTypography fontSize="16px" sx={{ fontWeight: 400, fontFamily: "Roboto" }}>
-                    {"< Back"}
-                  </MDTypography>
-                </MDButton>
-              )}
               <MDButton color="primary" onClick={() => setSaveData(true)}>
-                {isLastStep ? "save" : "next"}
+                Save
               </MDButton>
             </MDBox>
           )}
