@@ -3,11 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 import MDAvatar from "components/MDAvatar";
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
@@ -24,6 +22,7 @@ import InstaIcon from "assets/images/insta.svg";
 import TwitterIcon from "assets/images/twitter.svg";
 import YtIcon from "assets/images/yt.svg";
 import LinkedInIcon from "assets/images/LinkedIn.svg";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -169,34 +168,25 @@ function Clients(): JSX.Element {
   }, [id]);
   return (
     <>
-      {!openForm && (
-        <MDBox display="flex" alignItems="center" justifyContent="flex-end" pt={2}>
-          <MDButton
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={() => setOpenForm(true)}
-          >
-            Add New Client <AddCircleOutlineRoundedIcon sx={{ ml: 0.5 }} />
-          </MDButton>
+      <DashboardNavbar text="Add New Client" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <MDBox px={2}>
+        <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "570px" }}>
+          <Card sx={{ minHeight: "400px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : openForm ? (
+              <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+            ) : tableData?.rows?.length ? (
+              <DataTable showHeader={false} table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
         </MDBox>
-      )}
-      <MDBox pt={openForm ? 6 : 2} pb={3}>
-        <Card sx={{ minHeight: "400px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : openForm ? (
-            <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
-          ) : tableData?.rows?.length ? (
-            <DataTable showHeader={false} table={tableData} />
-          ) : (
-            <MDBox m="auto">
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
+        <Footer />
       </MDBox>
-      <Footer />
     </>
   );
 }

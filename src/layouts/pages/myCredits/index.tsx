@@ -4,6 +4,7 @@ import BillingInformation from "./components/BillingInformation";
 import TopUpPackages from "./components/TopUpPackages";
 import { useQuery } from "@apollo/client";
 import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function MyCredits(): JSX.Element {
   const { data, loading, refetch } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
@@ -11,7 +12,9 @@ function MyCredits(): JSX.Element {
   });
 
   return (
-    <MDBox mt={4}>
+    <>
+    <DashboardNavbar />
+    <MDBox mt={4} px={2}>
       <MDBox mb={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={5}>
@@ -23,6 +26,8 @@ function MyCredits(): JSX.Element {
         </Grid>
       </MDBox>
     </MDBox>
+    </>
+
   );
 }
 

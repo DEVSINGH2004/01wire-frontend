@@ -6,6 +6,7 @@ import MDCircularLoader from "components/MDCircularLoader";
 import DataTable from "examples/Tables/DataTable";
 import { useQuery } from "@apollo/client";
 import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsersPaginated";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -66,7 +67,9 @@ const UserManagement = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
+    <>
+    <DashboardNavbar />
+    <MDBox px={2}>
       <MDBox pt={2}>
         <MDTypography fontWeight="bold" fontSize="20px">
           User Management
@@ -86,6 +89,7 @@ const UserManagement = () => {
         </Card>
       </MDBox>
     </MDBox>
+    </>
   );
 };
 export default UserManagement;

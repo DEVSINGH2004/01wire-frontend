@@ -47,17 +47,7 @@ function Breadcrumbs({ icon, title, route, light }: Props): JSX.Element {
           },
         }}
       >
-        <Link to="/">
-          <MDTypography
-            component="span"
-            variant="body2"
-            color={light ? "white" : "dark"}
-            opacity={light ? 0.8 : 0.5}
-            sx={{ lineHeight: 0 }}
-          >
-            <Icon>{icon}</Icon>
-          </MDTypography>
-        </Link>
+        
         {routes.map((el: string) => (
           <Link to={`/${el}`} key={el}>
             <MDTypography

@@ -26,22 +26,10 @@ import AAIcon from "assets/images/AA.svg";
 import ScheduledIcon from "assets/images/Scheduled.svg";
 import RejectedIcon from "assets/images/Rejected.svg";
 import TiltArrowIcon from "assets/images/TiltArrow.svg";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function Overview(): JSX.Element {
   const navigate = useNavigate();
-  const { data: articlesData, loading: aLoading } = useQuery<IGetArticles, IGetArticlesVars>(
-    GET_ARTICLES,
-    {
-      variables: {
-        filterInput: {},
-        paginationInput: {
-          currentPage: 0,
-          perPage: 3,
-        },
-      },
-      fetchPolicy: "network-only",
-    }
-  );
   const { data: hArticlesData, loading: hLoading } = useQuery<IGetArticles, IGetArticlesVars>(
     GET_ARTICLES,
     {
@@ -68,10 +56,11 @@ function Overview(): JSX.Element {
   const rejected = data?.getArticleStats?.find((one: any) => one?.status === "REJECTED");
   return (
     <>
-      {aLoading || loading || hLoading ? (
+    <DashboardNavbar />
+      { loading || hLoading ? (
         <MDCircularLoader startLoader />
       ) : (
-        <>
+        <MDBox px={2}>
           <MDTypography mt={1} variant="h6" fontWeight="medium">
             Current Status
           </MDTypography>
@@ -137,74 +126,12 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
           </Grid>
-
-          {/* <MDTypography mt={3} variant="h6" fontWeight="medium">
-            Recent Press Release
-          </MDTypography> */}
-          {/* <Grid mt={1} container spacing={2}>
-            {articlesData?.filterArticlesPaginated?.data?.length > 0 ? (
-              articlesData?.filterArticlesPaginated?.data?.map((one: any, i: any) => {
-                return (
-                  <Grid item xs={12} md={4} key={one + i}>
-                    <Card
-                      sx={{
-                        p: 1,
-                        display: "flex",
-                        flexDirection: "row",
-                        height: "137px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <DisplayImage
-                        src={one?.featureImage}
-                        height="121px"
-                        width="160px"
-                        alt="PR Image"
-                        styles={{ borderRadius: "8.99px" }}
-                      />
-                      <CardContent sx={{ ml: 1, mt: 2, p: 0 }}>
-                        <MDTypography fontSize="16px" fontWeight="regular" width="150px">
-                          {one?.title}
-                        </MDTypography>
-                        <MDTypography
-                          variant="body2"
-                          sx={{ mt: 1, color: "rgba(123, 128, 154, 1)" }}
-                        >
-                          {dayjs(one?.createdAt).format("DD MMM YYYY, h:mm A")}
-                        </MDTypography>
-                        <IconButton
-                          size="small"
-                          color="inherit"
-                          sx={{ mt: 1 }}
-                          onClick={() => {
-                            navigate(`/releases/${one?.id}`);
-                          }}
-                        >
-                          <img
-                            src={TiltArrowIcon}
-                            height="36px"
-                            width="36px"
-                            alt="Tilt Arrow Icon"
-                          />
-                        </IconButton>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })
-            ) : (
-              <MDBox m="auto">
-                <MDTypography variant="h6">No Recent Press Release Found</MDTypography>
-              </MDBox>
-            )}
-          </Grid> */}
-          
           <MDBox mt={3} display="flex" alignItems="center" justifyContent="space-between">
             <MDTypography variant="h6" fontWeight="medium">
               History
             </MDTypography>
           </MDBox>
-          <Grid mt={1} container spacing={2}>
+          <Grid mt={1} container spacing={2} sx={{ minHeight: '280px' }}>
             {hArticlesData?.filterArticlesPaginated?.data?.length > 0 ? (
               hArticlesData?.filterArticlesPaginated?.data?.map((one: any, i: any) => {
                 return (
@@ -271,7 +198,7 @@ function Overview(): JSX.Element {
           <MDBox mt="100px">
             <Footer />
           </MDBox>
-        </>
+        </MDBox>
       )}
     </>
   );

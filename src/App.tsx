@@ -101,7 +101,6 @@ export default function App() {
           )}
           {layout === "vr"}
           <DashboardLayout>
-            <DashboardNavbar />
             <Routes>
               {getRoutes(role === "ADMIN" ? adminRoutes : routes)}
               <Route path="/profile" element={<Profile />} />

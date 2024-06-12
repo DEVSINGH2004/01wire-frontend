@@ -28,6 +28,7 @@ import {
 } from "graphql/queries/filterArticlesPaginated";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { DELETE_ARTICLE, IDeleteArticleVars } from "graphql/mutations/deleteArticle";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const ReleaseTypeOptions = [
   { label: "Draft", value: "DRAFT" },
@@ -228,6 +229,8 @@ function Releases(): JSX.Element {
 
   return (
     <>
+    <DashboardNavbar text="ADD PR" onsubmit={() => setOpenForm(true)}  />
+    <MDBox px={2}>
       {!openForm && (
         <>
           <MDBox display="flex" alignItems="center" justifyContent="space-between" pt={2}>
@@ -275,15 +278,6 @@ function Releases(): JSX.Element {
                 />
               </MDBox>
             </MDBox>
-            <MDButton
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => setOpenForm(true)}
-            >
-              Add PR
-              <AddCircleOutlineRoundedIcon sx={{ ml: 0.5 }} />
-            </MDButton>
           </MDBox>
           <MDBox pt={2}>
             <MDTypography fontWeight="bold" fontSize="20px">
@@ -292,7 +286,7 @@ function Releases(): JSX.Element {
           </MDBox>
         </>
       )}
-      <MDBox pt={openForm ? 6 : 2} pb={3}>
+      <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: '520px' }}>
         <Card sx={{ minHeight: "300px" }}>
           {loading || loader ? (
             <MDCircularLoader overlayloader startLoader />
@@ -308,6 +302,7 @@ function Releases(): JSX.Element {
         </Card>
       </MDBox>
       <Footer />
+    </MDBox>
     </>
   );
 }

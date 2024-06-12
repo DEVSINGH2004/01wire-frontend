@@ -17,6 +17,7 @@ import EditIcon from "assets/images/icons/penCircle.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import PublicationForm from "./components/PublicationForm";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -129,26 +130,17 @@ const Publications = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
+    <>
+    <DashboardNavbar text="Add Publication" onsubmit={() => setOpenForm(true)} />
+    <MDBox px={2}>
       {!openForm && (
         <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
           <MDTypography fontWeight="bold" fontSize="20px">
             Publications
           </MDTypography>
-          <MDBox>
-            <MDButton
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => setOpenForm(true)}
-            >
-              Add Publication
-              <AddCircleOutlineRoundedIcon sx={{ ml: 0.5 }} />
-            </MDButton>
-          </MDBox>
         </MDBox>
       )}
-      <MDBox pt={openForm ? 3 : 2} pb={3}>
+      <MDBox pt={openForm ? 3 : 2} pb={3}>   
         <Card sx={{ minHeight: "300px" }}>
           {loading || loader ? (
             <MDCircularLoader overlayloader startLoader />
@@ -164,6 +156,7 @@ const Publications = () => {
         </Card>
       </MDBox>
     </MDBox>
+    </>
   );
 };
 export default Publications;
