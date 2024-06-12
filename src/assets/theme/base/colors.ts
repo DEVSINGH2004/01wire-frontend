@@ -190,8 +190,9 @@ const colors: Types = {
     focus: "#EE5C61",
   },
 
+  // this color change
   info: {
-    main: "#1A73E8",
+    main: "#ee5c61",
     focus: "#1662C4",
   },
 

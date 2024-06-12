@@ -79,9 +79,9 @@ export default styled(Button)(({ theme, ownerState }: { theme?: Theme | any; own
       boxShadow: boxShadowValue,
 
       "&:hover": {
-        backgroundColor: "#f8414a",
+        backgroundColor: backgroundValue,
         color: colorValue,
-        boxShadow: "#f8414a",
+        boxShadow: hoveredBoxShadowValue,
       },
 
       "&:focus:not(:hover)": {
