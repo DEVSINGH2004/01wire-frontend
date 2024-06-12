@@ -12,6 +12,7 @@ import { GET_ORDERS, IGetOrders, IGetOrdersVars } from "graphql/queries/filterOr
 import EditIcon from "assets/images/icons/penCircle.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import OrderDetail from "./components/orderDetail";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -104,7 +105,9 @@ const OrderManagement = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
+    <>
+    <DashboardNavbar />
+    <MDBox px={2}>
       {!openForm && (
         <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
           <MDTypography fontWeight="bold" fontSize="20px">
@@ -128,6 +131,8 @@ const OrderManagement = () => {
         </Card>
       </MDBox>
     </MDBox>
+    </>
+
   );
 };
 export default OrderManagement;

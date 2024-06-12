@@ -14,7 +14,7 @@ import routes from "routes";
 import adminRoutes from "adminRoutes";
 import { useMaterialUIController, setMiniSidenav } from "context";
 // Images
-import brandLogo from "assets/images/wireLogo.png";
+import brandLogo from "assets/images/OneWireLogo_2.svg";
 import SignIn from "layouts/authentication/sign-in";
 import PaymentSuccess from "layouts/pages/myCredits/components/PaymentSuccess";
 import PaymentFailed from "layouts/pages/myCredits/components/PaymentFailed";
@@ -101,7 +101,6 @@ export default function App() {
           )}
           {layout === "vr"}
           <DashboardLayout>
-            <DashboardNavbar />
             <Routes>
               {getRoutes(role === "ADMIN" ? adminRoutes : routes)}
               <Route path="/profile" element={<Profile />} />

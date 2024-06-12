@@ -12,6 +12,7 @@ import EditIcon from "assets/images/icons/penCircle.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import BundleForm from "./components/BundleForm";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -99,48 +100,40 @@ const Bundles = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
-      {!openForm && (
-        <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-          <MDTypography fontWeight="bold" fontSize="20px">
-            Bundles
-          </MDTypography>
-          <MDBox>
-            <MDButton
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => setOpenForm(true)}
-            >
-              Add Bundle
-              <AddCircleOutlineRoundedIcon sx={{ ml: 0.5 }} />
-            </MDButton>
+    <>
+      <DashboardNavbar text="Add Bundle" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <MDBox px={2}>
+        {!openForm && (
+          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
+            <MDTypography fontWeight="bold" fontSize="20px">
+              Bundles
+            </MDTypography>
           </MDBox>
+        )}
+        <MDBox pt={openForm ? 3 : 2} pb={3}>
+          <Card sx={{ minHeight: "300px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : openForm ? (
+              <BundleForm
+                onClose={() => {
+                  navigate("/bundles");
+                  setOpenForm(false);
+                }}
+                refetch={refetch}
+                id={openForm}
+              />
+            ) : tableData?.rows?.length ? (
+              <DataTable canSearch table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
         </MDBox>
-      )}
-      <MDBox pt={openForm ? 3 : 2} pb={3}>
-        <Card sx={{ minHeight: "300px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : openForm ? (
-            <BundleForm
-              onClose={() => {
-                navigate("/bundles");
-                setOpenForm(false);
-              }}
-              refetch={refetch}
-              id={openForm}
-            />
-          ) : tableData?.rows?.length ? (
-            <DataTable canSearch table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
       </MDBox>
-    </MDBox>
+    </>
   );
 };
 export default Bundles;

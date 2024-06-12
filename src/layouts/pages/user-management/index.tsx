@@ -6,6 +6,7 @@ import MDCircularLoader from "components/MDCircularLoader";
 import DataTable from "examples/Tables/DataTable";
 import { useQuery } from "@apollo/client";
 import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsersPaginated";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -66,26 +67,29 @@ const UserManagement = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
-      <MDBox pt={2}>
-        <MDTypography fontWeight="bold" fontSize="20px">
-          User Management
-        </MDTypography>
+    <>
+      <DashboardNavbar />
+      <MDBox px={2}>
+        <MDBox pt={2}>
+          <MDTypography fontWeight="bold" fontSize="20px">
+            User Management
+          </MDTypography>
+        </MDBox>
+        <MDBox pt={2} pb={3}>
+          <Card sx={{ minHeight: "300px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : tableData?.rows?.length ? (
+              <DataTable table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
+        </MDBox>
       </MDBox>
-      <MDBox pt={2} pb={3}>
-        <Card sx={{ minHeight: "300px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : tableData?.rows?.length ? (
-            <DataTable table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
-      </MDBox>
-    </MDBox>
+    </>
   );
 };
 export default UserManagement;

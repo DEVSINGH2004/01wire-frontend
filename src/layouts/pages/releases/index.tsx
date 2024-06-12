@@ -28,6 +28,7 @@ import {
 } from "graphql/queries/filterArticlesPaginated";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { DELETE_ARTICLE, IDeleteArticleVars } from "graphql/mutations/deleteArticle";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const ReleaseTypeOptions = [
   { label: "Draft", value: "DRAFT" },
@@ -228,86 +229,80 @@ function Releases(): JSX.Element {
 
   return (
     <>
-      {!openForm && (
-        <>
-          <MDBox display="flex" alignItems="center" justifyContent="space-between" pt={2}>
-            <MDBox display="flex">
-              <Autocomplete
-                disableClearable
-                value={
-                  filter?.clientId &&
-                  clientsOptions?.find((one: any) => one?.value === filter?.clientId)
-                }
-                options={clientsOptions}
-                onChange={(event, option: any) => {
-                  if (option?.value) {
-                    setFilter({ ...filter, clientId: option?.value });
-                  } else {
-                    const newFilter = { ...filter };
-                    delete newFilter?.clientId;
-                    setFilter(newFilter);
-                  }
-                }}
-                size="small"
-                sx={{ width: "12rem" }}
-                renderInput={(params) => <MDInput label="Select Client" {...params} />}
-              />
-              <MDBox pl={2}>
+      <DashboardNavbar text="ADD PR" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <MDBox px={2}>
+        {!openForm && (
+          <>
+            <MDBox display="flex" alignItems="center" justifyContent="space-between" pt={2}>
+              <MDBox display="flex">
                 <Autocomplete
                   disableClearable
                   value={
-                    filter?.status &&
-                    ReleaseTypeOptions?.find((one: any) => one?.value === filter?.status)
+                    filter?.clientId &&
+                    clientsOptions?.find((one: any) => one?.value === filter?.clientId)
                   }
-                  options={ReleaseTypeOptions}
-                  onChange={(event, option) => {
+                  options={clientsOptions}
+                  onChange={(event, option: any) => {
                     if (option?.value) {
-                      setFilter({ ...filter, status: option?.value });
+                      setFilter({ ...filter, clientId: option?.value });
                     } else {
                       const newFilter = { ...filter };
-                      delete newFilter?.status;
+                      delete newFilter?.clientId;
                       setFilter(newFilter);
                     }
                   }}
                   size="small"
-                  sx={{ width: "10rem" }}
-                  renderInput={(params) => <MDInput label="Select Type" {...params} />}
+                  sx={{ width: "12rem" }}
+                  renderInput={(params) => <MDInput label="Select Client" {...params} />}
                 />
+                <MDBox pl={2}>
+                  <Autocomplete
+                    disableClearable
+                    value={
+                      filter?.status &&
+                      ReleaseTypeOptions?.find((one: any) => one?.value === filter?.status)
+                    }
+                    options={ReleaseTypeOptions}
+                    onChange={(event, option) => {
+                      if (option?.value) {
+                        setFilter({ ...filter, status: option?.value });
+                      } else {
+                        const newFilter = { ...filter };
+                        delete newFilter?.status;
+                        setFilter(newFilter);
+                      }
+                    }}
+                    size="small"
+                    sx={{ width: "10rem" }}
+                    renderInput={(params) => <MDInput label="Select Type" {...params} />}
+                  />
+                </MDBox>
               </MDBox>
             </MDBox>
-            <MDButton
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => setOpenForm(true)}
-            >
-              Add PR
-              <AddCircleOutlineRoundedIcon sx={{ ml: 0.5 }} />
-            </MDButton>
-          </MDBox>
-          <MDBox pt={2}>
-            <MDTypography fontWeight="bold" fontSize="20px">
-              Manage Press Release
-            </MDTypography>
-          </MDBox>
-        </>
-      )}
-      <MDBox pt={openForm ? 6 : 2} pb={3}>
-        <Card sx={{ minHeight: "300px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : openForm ? (
-            <ReleaseForm idVal={openForm} />
-          ) : tableData?.rows?.length ? (
-            <DataTable table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
+            <MDBox pt={2}>
+              <MDTypography fontWeight="bold" fontSize="20px">
+                Manage Press Release
+              </MDTypography>
             </MDBox>
-          )}
-        </Card>
+          </>
+        )}
+        <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "520px" }}>
+          <Card sx={{ minHeight: "300px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : openForm ? (
+              <ReleaseForm idVal={openForm} />
+            ) : tableData?.rows?.length ? (
+              <DataTable table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
+        </MDBox>
+        <Footer />
       </MDBox>
-      <Footer />
     </>
   );
 }

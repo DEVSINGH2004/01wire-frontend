@@ -16,6 +16,7 @@ import {
 } from "graphql/queries/filterArticlesPaginated";
 import TiltArrowIcon from "assets/images/TiltArrow.svg";
 import { ActionsCellRenderer } from "utils/helpers";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -126,11 +127,13 @@ const PublishedOrders = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
+    <>
+    <DashboardNavbar/>
+    <MDBox px={2}>
       {!openForm && (
         <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-          <MDTypography fontWeight="bold" fontSize="20px">
-            Published Order
+          <MDTypography fontWeight="bold" fontSize="20px"> 
+            Published Order 
           </MDTypography>
         </MDBox>
       )}
@@ -148,6 +151,7 @@ const PublishedOrders = () => {
         </Card>
       </MDBox>
     </MDBox>
+    </>
   );
 };
 export default PublishedOrders;

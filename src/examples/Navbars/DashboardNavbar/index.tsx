@@ -16,6 +16,9 @@ import borders from "assets/theme/base/borders";
 // Material Dashboard 2 PRO React TS examples components
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import MDButton from "components/MDButton";
+
 // Custom styles for DashboardNavbar
 import {
   navbar,
@@ -38,9 +41,11 @@ interface Props {
   absolute?: boolean;
   light?: boolean;
   isMini?: boolean;
+  onsubmit?: any;
+  text?: string;
 }
 
-function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
+function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JSX.Element {
   const { white, grey } = colors;
   const role: any = localStorage.getItem("role");
   const { borderWidth } = borders;
@@ -169,8 +174,28 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
         >
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
+
         {isMini ? null : (
           <MDBox sx={(theme: Theme) => navbarRow(theme, { isMini })}>
+            {onsubmit && (
+              <MDBox
+                py={1}
+                px={2}
+                mr={2}
+                sx={{
+                  borderRadius: "8px",
+                  backgroundColor: "#ee5c61",
+                  border: `${borderWidth[1]} solid ${grey[400]}`,
+                  cursor: "pointer",
+                }}
+                onClick={onsubmit}
+              >
+                <MDTypography fontSize="0.8rem" color="white" sx={{ display: "flex" }}>
+                  {text}
+                  <AddCircleOutlineRoundedIcon sx={{ ml: 0.5, mt: 0.4 }} />
+                </MDTypography>
+              </MDBox>
+            )}
             {role === "USER" && (
               <MDBox
                 py={1}

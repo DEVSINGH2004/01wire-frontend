@@ -275,9 +275,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
     <SidenavRoot
       {...rest}
       variant="permanent"
+      // sx={{ '&.MuiPaper-root': { margin: '0px !important'} }}
       ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
     >
-      <MDBox pt={3} pb={1} px={4} textAlign="center">
+      <MDBox textAlign="center" mb={3}>
         <MDBox
           display={{ xs: "block", xl: "none" }}
           position="absolute"
@@ -291,9 +292,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
         </MDBox>
-        <MDBox component={NavLink} to="/" display="flex" alignItems="center">
+        <MDBox component={NavLink} to="/" pl={4} pb={2} pt={2.25} display="flex" alignItems="center"
+         sx={{
+          background: "#404040",
+          width: "100%"
+        }}>
           {brand && (
-            <MDBox component="img" src={brand} alt="Brand" height="2rem" width="3.875rem" />
+            <MDBox component="img" src={brand} alt="Brand" height="40px" width="80px" />
           )}
           <MDBox
             width={!brandName && "100%"}
@@ -305,12 +310,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
           </MDBox>
         </MDBox>
       </MDBox>
-      <Divider
-        light={
-          (!darkMode && !whiteSidenav && !transparentSidenav) ||
-          (darkMode && !transparentSidenav && whiteSidenav)
-        }
-      />
       <List>{renderRoutes}</List>
     </SidenavRoot>
   );

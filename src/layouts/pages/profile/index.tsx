@@ -10,6 +10,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import ProfileBg from "assets/images/profileBg.png";
 import { GET_ME, IGetMe } from "graphql/queries/getMe";
 import ChangePassword from "./components/ChangePassword";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const Profile = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -17,7 +18,9 @@ const Profile = () => {
     fetchPolicy: "network-only",
   });
   return (
-    <MDBox>
+    <>
+    <DashboardNavbar />
+    <MDBox p={2}>
       {open && <ChangePassword onClose={() => setOpen(false)} />}
       <Card sx={{ height: "374px", borderRadius: "12px" }}>
         <img
@@ -68,6 +71,7 @@ const Profile = () => {
         </MDBox>
       </Card>
     </MDBox>
+    </>
   );
 };
 export default Profile;

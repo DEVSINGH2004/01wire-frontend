@@ -16,10 +16,10 @@ function DashboardLayout({ children }: { children: ReactNode }): JSX.Element {
   return (
     <MDBox
       sx={(theme: Theme) => ({
-        p: 3,
+        p: 0,
         position: "relative",
         [theme.breakpoints.up("xl")]: {
-          marginLeft: miniSidenav ? theme.spacing(15) : theme.spacing(35),
+          marginLeft: miniSidenav ? theme.spacing(15) : theme.spacing(31.25),
           transition: theme.transitions.create(["margin-left", "margin-right"], {
             easing: theme.transitions.easing.easeInOut,
             duration: theme.transitions.duration.standard,

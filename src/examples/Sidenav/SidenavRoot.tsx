@@ -85,6 +85,10 @@ export default styled(Drawer)(({ theme, ownerState }: { theme?: Theme | any; own
     "& .MuiDrawer-paper": {
       boxShadow: xxl,
       border: "none",
+      borderRadius: 0,
+      margin: "0px !important",
+      height: "100vh", 
+      width: miniSidenav ? pxToRem(96) : sidebarWidth,
 
       ...(miniSidenav ? drawerCloseStyles() : drawerOpenStyles()),
     },

@@ -43,7 +43,6 @@ function Footer({ company, links }: Props): JSX.Element {
       flexDirection={{ xs: "column", lg: "row" }}
       justifyContent="space-between"
       alignItems="center"
-      px={1.5}
     >
       <MDBox
         display="flex"
@@ -52,7 +51,6 @@ function Footer({ company, links }: Props): JSX.Element {
         flexWrap="wrap"
         color="text"
         fontSize={size.sm}
-        px={1.5}
       >
         &copy; {new Date().getFullYear()}, One wire
       </MDBox>

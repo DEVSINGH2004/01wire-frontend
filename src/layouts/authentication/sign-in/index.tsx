@@ -239,17 +239,12 @@ function SignIn(): JSX.Element {
     <PageLayout>
       <Grid
         container
-        // sx={{
-        //   backgroundColor: ({ palette: { background, white } }) =>
-        //     darkMode ? background.default : white.main,
-        // }}
       >
         {loading && <MDCircularLoader overlayloader startLoader />}
         <Grid item xs={12} lg={6}>
           <MDBox
             display={{ xs: "none", lg: "flex" }}
             alignItems="center"
-            justifyContent="space-between"
             width="calc(100% - 2rem)"
             height="calc(100vh - 2rem)"
             borderRadius="lg"

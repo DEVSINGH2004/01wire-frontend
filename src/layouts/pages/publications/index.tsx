@@ -17,6 +17,7 @@ import EditIcon from "assets/images/icons/penCircle.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import PublicationForm from "./components/PublicationForm";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -129,41 +130,33 @@ const Publications = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
-      {!openForm && (
-        <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-          <MDTypography fontWeight="bold" fontSize="20px">
-            Publications
-          </MDTypography>
-          <MDBox>
-            <MDButton
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => setOpenForm(true)}
-            >
-              Add Publication
-              <AddCircleOutlineRoundedIcon sx={{ ml: 0.5 }} />
-            </MDButton>
+    <>
+      <DashboardNavbar text="Add Publication" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <MDBox px={2}>
+        {!openForm && (
+          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
+            <MDTypography fontWeight="bold" fontSize="20px">
+              Publications
+            </MDTypography>
           </MDBox>
+        )}
+        <MDBox pt={openForm ? 3 : 2} pb={3}>
+          <Card sx={{ minHeight: "300px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : openForm ? (
+              <PublicationForm onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
+            ) : tableData?.rows?.length ? (
+              <DataTable canSearch table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
         </MDBox>
-      )}
-      <MDBox pt={openForm ? 3 : 2} pb={3}>
-        <Card sx={{ minHeight: "300px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : openForm ? (
-            <PublicationForm onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
-          ) : tableData?.rows?.length ? (
-            <DataTable canSearch table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
       </MDBox>
-    </MDBox>
+    </>
   );
 };
 export default Publications;

@@ -17,6 +17,7 @@ import {
 import EditIcon from "assets/images/icons/penCircle.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import PRDetail from "./components/PRDetail";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const columns = [
   {
@@ -129,7 +130,9 @@ const PRManagement = () => {
     setLoader(false);
   }, [data]);
   return (
-    <MDBox>
+    <>
+    <DashboardNavbar />
+    <MDBox px={2}>
       {!openForm && (
         <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
           <MDTypography fontWeight="bold" fontSize="20px">
@@ -153,6 +156,7 @@ const PRManagement = () => {
         </Card>
       </MDBox>
     </MDBox>
+    </>
   );
 };
 export default PRManagement;
