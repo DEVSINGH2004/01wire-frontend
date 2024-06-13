@@ -19,7 +19,8 @@ export interface IGetArticles {
   filterArticlesPaginated: ArticleData;
 }
 
-export const GET_ARTICLES = gql`
+export const
+  GET_ARTICLES = gql`
   query filterArticlesPaginated(
     $paginationInput: PaginationInput!
     $filterInput: ArticleFilterInput!
@@ -30,6 +31,7 @@ export const GET_ARTICLES = gql`
         userId
         clientId
         title
+        prId
         content
         language
         summary
@@ -40,6 +42,9 @@ export const GET_ARTICLES = gql`
         status
         category
         publishType
+        user {
+          email
+        }
         timezone
         notes
         instructions
