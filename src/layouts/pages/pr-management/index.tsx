@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -13,8 +13,7 @@ import {
 } from "graphql/queries/filterArticlesPaginated";
 import PRDetail from "./components/PRDetail";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import { makeColumns } from './components/makeColumns';
-
+import { makeColumns } from "./components/makeColumns";
 
 const PRManagement = () => {
   const { id } = useParams();
@@ -31,15 +30,14 @@ const PRManagement = () => {
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
-  
-  const onSelect = () => {};
 
+  const onSelect = () => {};
 
   useEffect(() => {
     setLoader(true);
     const articles = data?.filterArticlesPaginated?.data;
-    let rows: any = articles || [];
-    let columns = makeColumns(onSelect);
+    const rows: any = articles || [];
+    const columns = makeColumns(onSelect);
 
     setData({ rows, columns });
     setLoader(false);
@@ -50,12 +48,7 @@ const PRManagement = () => {
       <DashboardNavbar />
       <MDBox px={2}>
         {!openForm && (
-          <MDBox
-            pt={2}
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
+          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
             <MDTypography fontWeight="bold" fontSize="20px">
               PR Management
             </MDTypography>
@@ -68,11 +61,7 @@ const PRManagement = () => {
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <PRDetail
-                onClose={() => setOpenForm(false)}
-                refetch={refetch}
-                id={openForm}
-              />
+              <PRDetail onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
             </Card>
           ) : tableData?.rows?.length ? (
             <DataTable canSearch table={tableData} showHeader />
@@ -89,4 +78,3 @@ const PRManagement = () => {
   );
 };
 export default PRManagement;
-
