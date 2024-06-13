@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useMutation } from "@apollo/client";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
@@ -23,6 +25,7 @@ import TwitterIcon from "assets/images/twitter.svg";
 import YtIcon from "assets/images/yt.svg";
 import LinkedInIcon from "assets/images/LinkedIn.svg";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { DELETE_CLIENT, IDeleteClientVars } from "graphql/mutations/deleteClient";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -114,7 +117,7 @@ function Clients(): JSX.Element {
   const [openForm, setOpenForm] = useState<any>(false);
   const [loader, setLoader] = useState<boolean>(true);
   const [tableData, setData] = useState<any>([]);
-
+  const [deleteClient] = useMutation<IDeleteClientVars>(DELETE_CLIENT);
   const {
     data: clientsData,
     loading,
@@ -149,7 +152,9 @@ function Clients(): JSX.Element {
             },
             {
               imgIcon: DeleteIcon,
-              onClick: () => {},
+              onClick: () => {
+                handleDeleteClient(one?.id);
+              },
             },
           ],
         };
@@ -166,6 +171,21 @@ function Clients(): JSX.Element {
       setOpenForm(false);
     }
   }, [id]);
+  const handleDeleteClient = (clientId: string | undefined) => {
+    if (!clientId) return;
+    deleteClient({
+      variables: {
+        id: clientId,
+      },
+    })
+      .then(() => {
+        refetch();
+        toast.success("Deleted Successfully");
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+      });
+  };
   return (
     <>
       <DashboardNavbar text="Add New Client" onsubmit={!openForm && (() => setOpenForm(true))} />

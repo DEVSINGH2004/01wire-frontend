@@ -19,6 +19,7 @@ export const GET_CLIENT_BY_ID = gql`
       category
       email
       website
+      notes
       ticker
       logo
       social {
