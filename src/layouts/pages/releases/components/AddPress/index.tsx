@@ -153,9 +153,9 @@ function AddPress({
               name="summary"
               control={control}
               multiline
-              rows={4}
               variant="outlined"
               disabled={disabled}
+              rows={!disabled && 4}
               errors={errors}
               rules={genericValidations.text}
             />
@@ -198,7 +198,7 @@ function AddPress({
               <MDButton
                 startIcon={<InfoIcon />}
                 sx={{ ml: 1, borderRadius: "32px", height: "34px" }}
-                color="info"
+                color="primary"
                 onClick={() => setOpen(true)}
               >
                 <MDTypography

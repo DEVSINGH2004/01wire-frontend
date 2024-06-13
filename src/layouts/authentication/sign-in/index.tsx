@@ -28,8 +28,8 @@ import { GET_AUTH_STATUS, IGetAuthStatusVars, IGetAuthStatus } from "graphql/que
 import { LOGIN_VIA_OTP, ILoginOtpVars } from "graphql/mutations/loginViaOtp";
 import { VERIFY_OTP, IVerifyOtpVars } from "graphql/mutations/verifyOtp";
 import { RESET_PASSWORD, IResetPasswordVars } from "graphql/mutations/resetPassword";
-
 import { validateEmail } from "../utils";
+import { brandName } from "constants/index"
 
 function SignIn(): JSX.Element {
   const navigate = useNavigate();
@@ -234,7 +234,6 @@ function SignIn(): JSX.Element {
       handleSubmit();
     }
   };
-
   return (
     <PageLayout>
       <Grid
@@ -255,10 +254,10 @@ function SignIn(): JSX.Element {
               display={{ xs: "none", lg: "flex" }}
               alignItems="center"
               justifyContent="center"
-              width="calc(80% - 2rem)"
+              width="45%"
               height="calc(100vh - 2rem)"
+              bgColor="grey-800"
               sx={{
-                background: "#313235",
                 borderTopLeftRadius: "16px",
                 borderBottomLeftRadius: "16px",
               }}
@@ -268,29 +267,21 @@ function SignIn(): JSX.Element {
               display={{ xs: "none", lg: "flex" }}
               alignItems="center"
               justifyContent="center"
-              width="calc(100% - 2rem)"
+              width="55%"
               height="calc(100vh - 2rem)"
+              bgColor="white"
               sx={{
-                background: "#FFFFFF",
                 borderTopRightRadius: "16px",
                 borderBottomRightRadius: "16px",
+                
               }}
             >
+              
+              <img src={OneWireLogo} alt="logo"
+               style={{width:'20%', position:'absolute', marginLeft:'-20.5%'}}
+               />
             </MDBox>
           </MDBox>
-          <Grid
-            item
-            xs={12}
-            lg={12}
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "25%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-              <img src={OneWireLogo} height="198px" width="296px" alt="logo" />
-          </Grid>
         </Grid>
         <Grid item xs={11} sm={8} md={6} lg={4} xl={3} sx={{ mx: "auto" }}>
           <MDBox display="flex" flexDirection="column" justifyContent="center" height="100vh">
@@ -302,7 +293,7 @@ function SignIn(): JSX.Element {
                       ? "Confirmation Awaits!"
                       : forgotPsw
                       ? "Secure Access"
-                      : "Welcome to OneWire!"}
+                      : `Welcome to ${brandName}`}
                   </MDTypography>
                 </MDBox>
 
