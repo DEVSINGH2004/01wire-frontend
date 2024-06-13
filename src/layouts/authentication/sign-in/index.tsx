@@ -234,7 +234,7 @@ function SignIn(): JSX.Element {
       handleSubmit();
     }
   };
-
+  const text = "01Wire!"
   return (
     <PageLayout>
       <Grid
@@ -257,8 +257,8 @@ function SignIn(): JSX.Element {
               justifyContent="center"
               width="45%"
               height="calc(100vh - 2rem)"
+              bgColor="grey-800"
               sx={{
-                background: "#313235",
                 borderTopLeftRadius: "16px",
                 borderBottomLeftRadius: "16px",
               }}
@@ -270,8 +270,8 @@ function SignIn(): JSX.Element {
               justifyContent="center"
               width="55%"
               height="calc(100vh - 2rem)"
+              bgColor="white"
               sx={{
-                background: "#FFFFFF",
                 borderTopRightRadius: "16px",
                 borderBottomRightRadius: "16px",
                 
@@ -293,7 +293,7 @@ function SignIn(): JSX.Element {
                       ? "Confirmation Awaits!"
                       : forgotPsw
                       ? "Secure Access"
-                      : "Welcome to 01Wire!"}
+                      : `Welcome to ${text}`}
                   </MDTypography>
                 </MDBox>
 
