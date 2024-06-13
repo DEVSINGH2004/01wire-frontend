@@ -8,6 +8,7 @@ export interface ClientCreateInput {
   website: string;
   ticker: string;
   logo: string;
+  notes: string;
   social: {
     facebook: string;
     instagram: string;

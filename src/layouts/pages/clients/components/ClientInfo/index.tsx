@@ -61,7 +61,7 @@ function ClientInfo({
   const navigate = useNavigate();
   useEffect(() => {
     if (data?.id) {
-      const { title, logo, type, email, website, category, social = {} } = data;
+      const { title, logo, type, email, website, category, notes, social = {} } = data;
       const { facebook, instagram, youtube, twitter, others, linkedIn } = social;
       const defaultValues = {
         title,
@@ -69,6 +69,7 @@ function ClientInfo({
         category: category && IndustryTypeOptions?.find((one) => one?.value === category),
         email,
         logo,
+        notes,
         website,
         facebook,
         instagram,
@@ -85,8 +86,19 @@ function ClientInfo({
     formVals = removeEmptyFields(formVals);
     setLoading(true);
     let res: any;
-    const { title, logo, email, website, facebook, youtube, linkedIn, twitter, instagram, others } =
-      formVals;
+    const {
+      title,
+      logo,
+      email,
+      website,
+      facebook,
+      youtube,
+      linkedIn,
+      twitter,
+      instagram,
+      others,
+      notes,
+    } = formVals;
     let social: any = {
       facebook,
       youtube,
@@ -106,6 +118,7 @@ function ClientInfo({
               logo,
               email,
               website,
+              notes,
               type: formVals?.type?.value,
               category: formVals?.category?.value,
               social,
@@ -123,6 +136,7 @@ function ClientInfo({
               type: formVals?.type?.value,
               category: formVals?.category?.value,
               social,
+              notes,
             },
           },
         });

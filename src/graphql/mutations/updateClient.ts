@@ -1,9 +1,15 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export interface ClientUpdateInput {
-  id: string
+  id: string;
   title: string;
-  phone: string;
+  type: string;
+  category: string;
+  email: string;
+  website: string;
+  ticker: string;
+  logo: string;
+  notes: string;
 }
 export interface IUpdateClientVars {
   params: ClientUpdateInput;
@@ -11,7 +17,7 @@ export interface IUpdateClientVars {
 export const UPDATE_CLIENT = gql`
   mutation updateClient($params: ClientUpdateInput!) {
     updateClient(params: $params) {
-     id
+      id
     }
   }
 `;

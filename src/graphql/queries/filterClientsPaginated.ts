@@ -32,6 +32,7 @@ export const GET_CLIENTS = gql`
         email
         website
         ticker
+        notes
         logo
         social {
           facebook
