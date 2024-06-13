@@ -287,4 +287,4 @@ export const StatusOptions = [
   { label: "Rejected", value: "REJECTED" },
 ];
 
-export const brandName = "01wire!"
+export const brandName = "01Wire!";
