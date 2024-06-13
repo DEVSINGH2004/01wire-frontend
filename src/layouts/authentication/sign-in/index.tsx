@@ -28,8 +28,8 @@ import { GET_AUTH_STATUS, IGetAuthStatusVars, IGetAuthStatus } from "graphql/que
 import { LOGIN_VIA_OTP, ILoginOtpVars } from "graphql/mutations/loginViaOtp";
 import { VERIFY_OTP, IVerifyOtpVars } from "graphql/mutations/verifyOtp";
 import { RESET_PASSWORD, IResetPasswordVars } from "graphql/mutations/resetPassword";
-
 import { validateEmail } from "../utils";
+import { brandName } from "constants/index"
 
 function SignIn(): JSX.Element {
   const navigate = useNavigate();
@@ -234,7 +234,6 @@ function SignIn(): JSX.Element {
       handleSubmit();
     }
   };
-  const text = "01Wire!"
   return (
     <PageLayout>
       <Grid
@@ -277,6 +276,7 @@ function SignIn(): JSX.Element {
                 
               }}
             >
+              
               <img src={OneWireLogo} alt="logo"
                style={{width:'20%', position:'absolute', marginLeft:'-20.5%'}}
                />
@@ -293,7 +293,7 @@ function SignIn(): JSX.Element {
                       ? "Confirmation Awaits!"
                       : forgotPsw
                       ? "Secure Access"
-                      : `Welcome to ${text}`}
+                      : `Welcome to ${brandName}`}
                   </MDTypography>
                 </MDBox>
 

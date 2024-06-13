@@ -286,3 +286,5 @@ export const StatusOptions = [
   { label: "Accepted", value: "PUBLISHED" },
   { label: "Rejected", value: "REJECTED" },
 ];
+
+export const brandName = "01wire!"
