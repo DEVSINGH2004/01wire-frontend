@@ -155,6 +155,7 @@ function AddPress({
               multiline
               variant="outlined"
               disabled={disabled}
+              rows={!disabled && 4}
               errors={errors}
               rules={genericValidations.text}
             />
