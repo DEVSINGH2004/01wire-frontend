@@ -12,7 +12,7 @@ import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { truncateString } from "utils/helpers";
 
-const statusOptions = [
+export const statusOptions = [
   {
     value: "DRAFT",
     label: "Draft",
@@ -21,38 +21,27 @@ const statusOptions = [
   {
     value: "SUBMITTED",
     label: "Submitted",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),
-    linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),
-    linear-gradient(0deg, #747474, #747474),
-    linear-gradient(0deg, #01B7F3, #01B7F3)`,
+    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #747474, #747474),linear-gradient(0deg, #01B7F3, #01B7F3)`,
   },
   {
     value: "REVIEW",
     label: "Review",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),
-    linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),
-    linear-gradient(0deg, #747474, #747474)`,
+    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #747474, #747474)`,
   },
   {
     value: "AWAITING_APPROVAL",
     label: "Awaiting Approval",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),
-    linear-gradient(180deg, #439DEE 0%, #1E78E9 100%)`,
+    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%)`,
   },
   {
     value: "SCHEDULED",
     label: "Scheduled",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),
-  linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),
-  linear-gradient(0deg, #747474, #747474),
-  linear-gradient(0deg, #FF9900, #FF9900)`,
+    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #747474, #747474),linear-gradient(0deg, #FF9900, #FF9900)`,
   },
   {
     value: "REJECTED",
     label: "Rejected",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),
-    linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),
-    linear-gradient(0deg, #FF4D53, #FF4D53)`,
+    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #FF4D53, #FF4D53)`,
   },
   {
     value: "PUBLISHED",
@@ -61,7 +50,13 @@ const statusOptions = [
   },
 ];
 
-export const makeColumns = (onSelect) => {
+export const makeColumns = (
+  handleAction,
+  handleUpdateStatus,
+  handleFilters,
+  setEmail,
+  setOptions,
+) => {
   const columns = [
     {
       Header: "PR ID",
@@ -91,10 +86,16 @@ export const makeColumns = (onSelect) => {
       Header: "Email",
       accessor: "user.email",
       width: "20%",
-      Cell: ({ value }) => {
-        console.log("value", value);
+      Cell: ({ value, row }) => {
         return (
-          <MDBox sx={{ display: "flex", alignItems: "center" }}>
+          <MDBox
+            sx={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
               {truncateString(value, 15)}
             </MDTypography>
@@ -106,7 +107,16 @@ export const makeColumns = (onSelect) => {
               bgColor="#FFDBDD"
               borderRadius={4}
             >
-              <FilterListOutlinedIcon />
+              {" "}
+              <IconButton
+                onClick={() => {
+                  setEmail(value);
+                  setOptions([{ userId: row.original.userId, email: value }]);
+                  handleFilters("userId", row.original.userId);
+                }}
+              >
+                <FilterListOutlinedIcon />
+              </IconButton>
             </MDBox>
           </MDBox>
         );
@@ -160,13 +170,18 @@ export const makeColumns = (onSelect) => {
       Header: "Status",
       width: "12%",
       accessor: "status",
-      Cell: ({ value }) => {
+      Cell: ({ value, row }) => {
         const selectedStatus = value;
-        console.log("selectedStatus", selectedStatus);
         const selected = statusOptions.find(
           (el) => selectedStatus === el?.value,
         );
-        console.log("selected", selected);
+
+        const menuOptions =
+          selectedStatus === "SCHEDULED"
+            ? ["SCHEDULED", "REJECTED", "PUBLISHED"]
+            : selectedStatus === "SUBMITTED"
+              ? ["SUBMITTED", "AWAITING_APPROVAL", "SCHEDULED"]
+              : ["REVIEW", "AWAITING_APPROVAL", "SCHEDULED"];
         return (
           <MDBox>
             {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(
@@ -183,6 +198,8 @@ export const makeColumns = (onSelect) => {
                   backgroundImage: selected?.background,
                   color: "white",
                   backgroundBlendMode: "overlay",
+                  width: "152px",
+                  height: "22px",
                 }}
               >
                 <MDTypography
@@ -196,40 +213,34 @@ export const makeColumns = (onSelect) => {
                 </MDTypography>
               </MDBox>
             ) : (
-              <FormControl sx={{ minWidth: 90 }} size="medium">
+              <FormControl
+                sx={{ width: "152px", height: "22px" }}
+                size="medium"
+              >
                 <Select
                   id="demo-select-small"
+                  displayEmpty
                   value={selectedStatus}
                   sx={{
                     backgroundImage: selected?.background,
                     color: "white",
                     textAlign: "center",
                   }}
-                  onChange={(e) => onSelect(e.target.value)}
+                  renderValue={(selected) => {
+                    if (selectedStatus === "") {
+                      return <em>Select an option</em>;
+                    }
+                    return selectedStatus ? selectedStatus : "";
+                  }}
+                  onChange={(e) => handleUpdateStatus(row, e.target.value)}
                 >
-                  {selectedStatus === "SCHEDULED" ? (
-                    <>
-                      <MenuItem value={"SCHEDULED"}>SCHEDULED</MenuItem>
-                      <MenuItem value={"REJECTED"}>REJECTED</MenuItem>
-                      <MenuItem value={"PUBLISHED"}>PUBLISHED</MenuItem>
-                    </>
-                  ) : selectedStatus === "SUBMITTED" ? (
-                    <>
-                      <MenuItem value={"SUBMITTED"}>SUBMITTED</MenuItem>
-                      <MenuItem value={"AWAITING_APPROVAL"}>
-                        AWAITING_APPROVAL
+                  {menuOptions
+                    .filter((option) => option !== selectedStatus) // Filter out the selected value
+                    .map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
                       </MenuItem>
-                      <MenuItem value={"SCHEDULED"}>SCHEDULED</MenuItem>
-                    </>
-                  ) : (
-                    <>
-                      <MenuItem value={"REVIEW"}>REVIEW</MenuItem>
-                      <MenuItem value={"AWAITING_APPROVAL"}>
-                        AWAITING_APPROVAL
-                      </MenuItem>
-                      <MenuItem value={"SCHEDULED"}>SCHEDULED</MenuItem>
-                    </>
-                  )}
+                    ))}
                 </Select>
               </FormControl>
             )}
@@ -249,7 +260,7 @@ export const makeColumns = (onSelect) => {
             }}
           >
             <>
-              <IconButton>
+              <IconButton onClick={() => handleAction("navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />
               </IconButton>
               <IconButton>

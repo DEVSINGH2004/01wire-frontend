@@ -21,6 +21,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 // Material Dashboard 2 PRO React TS Context Provider
 import { MaterialUIControllerProvider } from "context";
@@ -31,7 +33,9 @@ root.render(
     <MaterialUIControllerProvider>
       <Provider>
         <ToastContainer />
-        <App />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <App />
+          </LocalizationProvider>
       </Provider>
     </MaterialUIControllerProvider>
   </BrowserRouter>
