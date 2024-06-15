@@ -22,6 +22,7 @@ export const GET_BUNDLES = gql`
         category
         traffic
         price
+        image
         createdAt
         updatedAt
         publicationInfo {

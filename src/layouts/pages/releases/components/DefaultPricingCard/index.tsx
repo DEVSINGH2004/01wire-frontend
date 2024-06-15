@@ -14,6 +14,7 @@ import MDButton from "components/MDButton";
 
 import Guaranteed from "assets/images/icons/guaranteeIcon.png";
 import TrendingUpIcon from "assets/images/icons/trendingIcon.png";
+import BundleSample from "assets/images/bundlesSample.svg";
 
 // Declaring props types for DefaultPricingCard
 interface Props {
@@ -99,7 +100,8 @@ function DefaultPricingCard({
         </MDTypography>
       </MDBox>
       <MDTypography
-        variant="body2"
+        // variant="body2"
+        fontSize="12px"
         color={color === "white" ? "text" : "white"}
         fontWeight="regular"
       >
@@ -118,12 +120,12 @@ function DefaultPricingCard({
         border: checked && "1px solid #EE5C61",
       }}
     >
-      <MDBox bgColor={color} variant={"gradient"} borderRadius="xl">
+      <MDBox bgColor={color} variant="gradient" borderRadius="xl">
         <MDBox mt={-1.375} display="flex" alignItems="center" justifyContent={"center"}>
           <MDBox
             bgColor={badge.color}
             width="122px"
-            textAlign={"center"}
+            textAlign="center"
             height="25px"
             borderRadius="section"
             lineHeight={1}
@@ -137,16 +139,15 @@ function DefaultPricingCard({
               {badge.label}
             </MDTypography>
           </MDBox>
-          {showCatgeory && (
+          {category && (
             <MDBox
               height="25px"
-              // borderRadius="section"
               lineHeight={1}
               px="12px"
               sx={{ background: "#4579DE", ml: "-10px", borderRadius: "0px 20px 20px 0" }}
             >
               <MDTypography variant="caption" fontWeight="regular" sx={{ color: "#fff" }}>
-                {showCatgeory}
+                {category}
               </MDTypography>
             </MDBox>
           )}
@@ -206,6 +207,14 @@ function DefaultPricingCard({
         </MDBox>
         <MDBox pb={3} px={3}>
           {renderSpecifications}
+        </MDBox>
+        <MDBox
+          bgColor="grey-100"
+          m={"auto"}
+          py={1}
+          sx={{ height: "115px", width: "90%", borderRadius: "8px" }}
+        >
+          <img src={bundle?.image || BundleSample} height="100%" width="100%" />
         </MDBox>
         <MDBox pb={3} px={3} display="flex" alignItems="center" justifyContent="space-between">
           <MDBox mt={3}>

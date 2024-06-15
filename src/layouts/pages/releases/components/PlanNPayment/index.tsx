@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 // @mui material components
 import Grid from "@mui/material/Grid";
+import Chip from "@mui/material/Chip";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -24,6 +25,8 @@ import {
   IGetPublicationsVars,
 } from "graphql/queries/filterPublicationsPaginated";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
+import DisplayBundles from "../DisplayBundles";
+import PublicationsList from "../PublicationsList";
 
 // Custom arrow component for previous button
 const PrevArrow = ({ onClick }: { onClick?: any }) => {
@@ -67,6 +70,7 @@ function PlanNPayment({
   );
   const [selected, setSelected] = useState<any>(data?.bundleInfo || []);
   const [bundlePids, setBundlePids] = useState<any>([]);
+  const [selectedCategory, setCategory] = useState<string | null>();
   const settings = {
     speed: 500,
     slidesToShow: 3,
@@ -199,6 +203,14 @@ function PlanNPayment({
     },
     {}
   );
+  const handleCategorySelection = (value: string) => {
+    setCategory(value);
+  };
+  useEffect(() => {
+    if (!selectedCategory && bundlesData?.filterBundlesPaginated?.data?.length) {
+      setCategory(bundlesData?.filterBundlesPaginated?.data?.[0]?.category);
+    }
+  }, [bundlesData]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -261,30 +273,47 @@ function PlanNPayment({
           </MDBox>
         </MDBox>
       )}
-      {!disabled &&
+      {!disabled && groupedData && (
+        <MDBox
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 3,
+          }}
+        >
+          {Object.keys(groupedData)?.map((category: any, i: number) => {
+            return (
+              <Chip
+                key={i}
+                label={category}
+                color={selectedCategory === category ? "primary" : "default"}
+                variant={selectedCategory === category ? "filled" : "outlined"}
+                onClick={() => handleCategorySelection(category)}
+              />
+            );
+          })}
+        </MDBox>
+      )}
+      {console.log("groupedData", groupedData)}
+      {groupedData && (
+        <MDBox mt={3}>
+          <MDTypography variant="h6">Select Bundles</MDTypography>
+          <DisplayBundles
+            bundles={disabled ? data.bundleInfo : groupedData[selectedCategory]}
+            handleChange={handleChange}
+            selected={selected}
+            disabled={disabled}
+            category={selectedCategory}
+          />
+        </MDBox>
+      )}
+
+      {/* {!disabled &&
         groupedData &&
         Object.keys(groupedData)?.map((category: any) => {
           return (
-            <MDBox key={category}>
-              <MDBox display="flex" alignItems="center">
-                <MDTypography variant="h5">Bundles</MDTypography>
-                <MDBox
-                  sx={{
-                    height: "34px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  ml={1}
-                  borderRadius="section"
-                  px="12px"
-                  bgColor="#4579DE"
-                >
-                  <MDTypography variant="caption" fontWeight="regular" sx={{ color: "#fff" }}>
-                    {category}
-                  </MDTypography>
-                </MDBox>
-              </MDBox>
+            <MDBox mt={3} key={category}>
+              <MDTypography variant="h6">Select Bundles</MDTypography>
               <MDBox bgColor={"grey-200"} borderRadius="lg" p={"24px 60px 24px 70px"} mb={1} mt={2}>
                 <Slider {...settings}>
                   {groupedData?.[category]?.map((one: any, i: number) => {
@@ -329,7 +358,7 @@ function PlanNPayment({
               </MDBox>
             </MDBox>
           );
-        })}
+        })} */}
       {currentPublications?.length > 0 && (
         <MDBox>
           <MDBox py={2} display="flex" justifyContent="space-between">
@@ -345,6 +374,9 @@ function PlanNPayment({
             }}
           />
         </MDBox> */}
+          </MDBox>
+          <MDBox mt={3}>
+            <PublicationsList publications={currentPublications} />
           </MDBox>
           <MDBox mt={5}>
             <Grid container spacing={3}>
