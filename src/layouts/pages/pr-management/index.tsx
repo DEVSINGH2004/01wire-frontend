@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import DataTable from "./components/DataTable";
-import { useQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import {
   GET_ARTICLES,
   IGetArticles,
@@ -14,37 +15,134 @@ import {
 import PRDetail from "./components/PRDetail";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { makeColumns } from "./components/makeColumns";
+import {
+  UPDATE_ARTICLE_STATUS,
+  IUpdateArticleStatusVars,
+} from "graphql/mutations/updateArticleStatus";
+import NoteModal from "./components/NoteModal";
+import Filters from "./components/Filters";
+
+const PER_PAGE = 3;
 
 const PRManagement = () => {
   const { id } = useParams();
-  const { data, loading, refetch } = useQuery<IGetArticles, IGetArticlesVars>(GET_ARTICLES, {
-    variables: {
-      filterInput: {},
-      paginationInput: {
-        currentPage: 0,
-        perPage: 200,
-      },
-    },
+  const [filters, setFilters] = useState<any>({});
+  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(
+    UPDATE_ARTICLE_STATUS,
+  );
+
+  const [getArticles, { data, loading, refetch }] = useLazyQuery<
+    IGetArticles,
+    IGetArticlesVars
+  >(GET_ARTICLES, {
     fetchPolicy: "network-only",
   });
+
   const [loader, setLoader] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [options, setOptions] = useState<any>([]);
+  const [noteModal, setNoteModal] = useState<any>(null);
+
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
 
-  const onSelect = () => {};
+  useEffect(() => {
+    getArticles({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: 0,
+        },
+        filterInput: {},
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (filters) {
+      getArticles({
+        variables: {
+          paginationInput: {
+            perPage: PER_PAGE,
+            currentPage: 0,
+          },
+          filterInput: {
+            ...filters,
+          },
+        },
+      });
+    }
+  }, [filters]);
+
+  const handleUpdateStatus = (row: any, status: string, notes?: string) => {
+    const id = row?.original?.id;
+    if (status === "AWAITING_APPROVAL" && !notes) {
+      setNoteModal({ ...row, status });
+      return;
+    }
+    setLoader(true);
+    updateArticleStatus({
+      variables: {
+        params: {
+          id,
+          status,
+          notes,
+        },
+      },
+    })
+      .then(() => {
+        setLoader(false);
+        refetch();
+        toast.success("Status Updated successfully");
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+        setLoader(false);
+      });
+  };
+
+  const handleAction = () => {};
+
+  const handleFilters = (key: string, val: any) => {
+    setFilters({
+      ...filters,
+      [key]: val,
+    });
+  };
 
   useEffect(() => {
     setLoader(true);
     const articles = data?.filterArticlesPaginated?.data;
     const rows: any = articles || [];
-    const columns = makeColumns(onSelect);
+    const columns = makeColumns(
+      handleAction,
+      handleUpdateStatus,
+      handleFilters,
+      setEmail,
+      setOptions,
+    );
 
     setData({ rows, columns });
     setLoader(false);
   }, [data]);
 
+  const handlePagination = (page: number) => {
+    getArticles({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: page,
+        },
+        filterInput: {
+          ...filters,
+        },
+      },
+    });
+  };
+
   return (
     <>
+      {loader && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar />
       <MDBox px={2}>
         {!openForm && (
@@ -54,8 +152,19 @@ const PRManagement = () => {
             </MDTypography>
           </MDBox>
         )}
+
         <MDBox pt={openForm ? 3 : 2} pb={3}>
-          {loading || loader ? (
+          <Filters
+            setFilters={setFilters}
+            email={email}
+            setEmail={setEmail}
+            handleFilters={handleFilters}
+            filters={filters}
+            options={options}
+            setOptions={setOptions}
+          />
+
+          {loading && tableData?.rows?.length === 0 ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
             </Card>
@@ -64,7 +173,17 @@ const PRManagement = () => {
               <PRDetail onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
             </Card>
           ) : tableData?.rows?.length ? (
-            <DataTable canSearch table={tableData} showHeader />
+            <>
+              <DataTable
+                handlePagination={handlePagination}
+                canSearch
+                table={tableData}
+                showHeader
+                paginationInfo={
+                  data?.filterArticlesPaginated?.paginationInfo || {}
+                }
+              />
+            </>
           ) : (
             <Card sx={{ minHeight: "300px" }}>
               <MDBox m={"auto"}>
@@ -74,6 +193,15 @@ const PRManagement = () => {
           )}
         </MDBox>
       </MDBox>
+      {noteModal && (
+        <NoteModal
+          onClose={() => setNoteModal(null)}
+          handleSubmit={(note: string) => {
+            handleUpdateStatus(noteModal, noteModal.status, note);
+            setNoteModal(null);
+          }}
+        />
+      )}
     </>
   );
 };
