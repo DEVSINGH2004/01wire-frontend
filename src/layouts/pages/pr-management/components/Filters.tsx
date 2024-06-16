@@ -54,8 +54,6 @@ const Filters = ({
     fetchPolicy: "network-only",
   });
 
-  console.log("email, options", email, options);
-
   useEffect(() => {
     if (to && from) {
       setFilters({
@@ -66,7 +64,6 @@ const Filters = ({
     }
   }, [to, from]);
 
-  console.log("to", to);
 
   useEffect(() => {
     if (email) {
@@ -165,7 +162,12 @@ const Filters = ({
                 onChange={handleEmailChange}
                 label=""
                 value={email}
-                sx={{ height: "42px" }}
+                sx={{
+                  height: "42px",
+                  "& .MuiInputBase-root": {
+                    height: "42px",
+                  }
+                }}
                 placeholder="Search By Email"
                 // value={filters?.prId}
                 InputProps={{

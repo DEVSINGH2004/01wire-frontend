@@ -4,6 +4,7 @@ import MDTypography from "components/MDTypography";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import MDBox from "components/MDBox";
+import Box from "@mui/material/Box";
 import dayjs from "dayjs";
 import FormControl from "@mui/material/FormControl";
 import DownloadIcon from "assets/images/icons/downloadIcon.svg";
@@ -88,7 +89,7 @@ export const makeColumns = (
       width: "20%",
       Cell: ({ value, row }) => {
         return (
-          <MDBox
+          <Box
             sx={{
               display: "flex",
               width: "100%",
@@ -118,7 +119,7 @@ export const makeColumns = (
                 <FilterListOutlinedIcon />
               </IconButton>
             </MDBox>
-          </MDBox>
+          </Box>
         );
       },
     },
@@ -221,10 +222,19 @@ export const makeColumns = (
                   id="demo-select-small"
                   displayEmpty
                   value={selectedStatus}
-                  sx={{
-                    backgroundImage: selected?.background,
-                    color: "white",
-                    textAlign: "center",
+                 
+                    sx={{
+                      textAlign: "center",
+                      borderRadius: "21px",
+                    '& .MuiOutlinedInput-input': {
+                      padding: '10px',        
+                      color: 'white',         
+                      fontSize: '12px',
+                      fontWeight: "400",
+                      borderRadius: "21px",
+                      border: "none",
+                      backgroundImage: selected?.background, 
+                    },
                   }}
                   renderValue={(selected) => {
                     if (selectedStatus === "") {

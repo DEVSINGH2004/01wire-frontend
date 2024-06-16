@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Card from "@mui/material/Card";
+import Box from "@mui/material/Box";
+
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
@@ -22,21 +24,23 @@ import {
 import NoteModal from "./components/NoteModal";
 import Filters from "./components/Filters";
 
-const PER_PAGE = 3;
+const PER_PAGE = 10;
 
 const PRManagement = () => {
   const { id } = useParams();
   const [filters, setFilters] = useState<any>({});
-  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(
-    UPDATE_ARTICLE_STATUS,
-  );
+  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
 
-  const [getArticles, { data, loading, refetch }] = useLazyQuery<
-    IGetArticles,
-    IGetArticlesVars
-  >(GET_ARTICLES, {
-    fetchPolicy: "network-only",
-  });
+  const [getArticles, { data, loading, refetch }] = useLazyQuery<IGetArticles, IGetArticlesVars>(
+    GET_ARTICLES,
+    {
+      fetchPolicy: "network-only",
+      onCompleted: (res) => {
+        setPaginationInfo(res?.filterArticlesPaginated?.paginationInfo);
+      },
+    }
+  );
 
   const [loader, setLoader] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
@@ -119,7 +123,7 @@ const PRManagement = () => {
       handleUpdateStatus,
       handleFilters,
       setEmail,
-      setOptions,
+      setOptions
     );
 
     setData({ rows, columns });
@@ -144,27 +148,26 @@ const PRManagement = () => {
     <>
       {loader && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar />
-      <MDBox px={2}>
+      <MDBox sx={{ overFlow: "hidden", display: "flex", flexDirection: "column" }}>
         {!openForm && (
-          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
+          <MDBox px={2} pt={2} display="flex" alignItems="center" justifyContent="space-between">
             <MDTypography fontWeight="bold" fontSize="20px">
               PR Management
             </MDTypography>
           </MDBox>
         )}
 
-        <MDBox pt={openForm ? 3 : 2} pb={3}>
-          <Filters
-            setFilters={setFilters}
-            email={email}
-            setEmail={setEmail}
-            handleFilters={handleFilters}
-            filters={filters}
-            options={options}
-            setOptions={setOptions}
-          />
-
-          {loading && tableData?.rows?.length === 0 ? (
+        <Filters
+          setFilters={setFilters}
+          email={email}
+          setEmail={setEmail}
+          handleFilters={handleFilters}
+          filters={filters}
+          options={options}
+          setOptions={setOptions}
+        />
+        <MDBox px={2} pt={openForm ? 3 : 2} pb={3} sx={{ flex: 1, overflow: "auto" }}>
+          {loading && data?.filterArticlesPaginated?.data?.length === 0 ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
             </Card>
@@ -172,18 +175,20 @@ const PRManagement = () => {
             <Card sx={{ minHeight: "300px" }}>
               <PRDetail onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
             </Card>
-          ) : tableData?.rows?.length ? (
-            <>
+          ) : data?.filterArticlesPaginated?.data?.length ? (
+            <Box
+            // sx={{
+            //   height: "70vh",
+            // }}
+            >
               <DataTable
                 handlePagination={handlePagination}
                 canSearch
                 table={tableData}
                 showHeader
-                paginationInfo={
-                  data?.filterArticlesPaginated?.paginationInfo || {}
-                }
+                paginationInfo={paginationInfo || {}}
               />
-            </>
+            </Box>
           ) : (
             <Card sx={{ minHeight: "300px" }}>
               <MDBox m={"auto"}>

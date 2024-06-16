@@ -1,12 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 // react-table components
-import {
-  useTable,
-  usePagination,
-  useGlobalFilter,
-  useAsyncDebounce,
-  useSortBy,
-} from "react-table";
+import { useTable, usePagination, useGlobalFilter, useAsyncDebounce, useSortBy } from "react-table";
 
 // @mui material components
 import Table from "@mui/material/Table";
@@ -30,6 +24,7 @@ import Pagination from "@mui/material/Pagination";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MDTypography from "components/MDTypography";
+import MDCircularLoader from "components/MDCircularLoader";
 
 // Declaring props types for DataTable
 interface Props {
@@ -47,24 +42,18 @@ interface Props {
   };
   pagination?: {
     variant: "contained" | "gradient";
-    color:
-      | "primary"
-      | "secondary"
-      | "info"
-      | "success"
-      | "warning"
-      | "error"
-      | "dark"
-      | "light";
+    color: "primary" | "secondary" | "info" | "success" | "warning" | "error" | "dark" | "light";
   };
   isSorted?: boolean;
   noEndBorder?: boolean;
   showHeader?: boolean;
   paginationInfo: any;
   handlePagination: any;
+  loading?: boolean;
 }
 
 function DataTable({
+  loading,
   entriesPerPage,
   canSearch,
   showTotalEntries,
@@ -80,12 +69,8 @@ function DataTable({
   let entries: any[];
 
   if (entriesPerPage) {
-    defaultValue = entriesPerPage.defaultValue
-      ? entriesPerPage.defaultValue
-      : "10";
-    entries = entriesPerPage.entries
-      ? entriesPerPage.entries
-      : ["10", "25", "50", "100"];
+    defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : "10";
+    entries = entriesPerPage.entries ? entriesPerPage.entries : ["10", "25", "50", "100"];
   }
 
   const columns = useMemo<any>(() => table?.columns, [table]) || [];
@@ -95,7 +80,7 @@ function DataTable({
     { columns, data, initialState: { pageIndex: 0 } },
     useGlobalFilter,
     useSortBy,
-    usePagination,
+    usePagination
   );
 
   // const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -117,7 +102,9 @@ function DataTable({
     state: { pageIndex, pageSize, globalFilter },
   }: any = tableInstance;
 
-  const canPreviousPage = paginationInfo?.currentPage > 0;
+  console.log("paginationInfo", paginationInfo);
+
+  const canPreviousPage = paginationInfo?.currentPage > 1;
   const canNextPage = paginationInfo?.currentPage < paginationInfo?.pageCount;
 
   // Set the default value for the entries per page when component mounts
@@ -130,19 +117,15 @@ function DataTable({
 
   // Handler for the input to set the pagination index
   const handleInputPagination = ({ target: { value } }: any) =>
-    value > pageOptions.length || value < 0
-      ? gotoPage(0)
-      : gotoPage(Number(value));
+    value > pageOptions.length || value < 0 ? gotoPage(0) : gotoPage(Number(value));
 
   // Customized page options starting from 1
   const customizedPageOptions = pageOptions.map((option: any) => option + 1);
 
   // Setting value for the pagination input
-  const handleInputPaginationValue = ({ target: value }: any) =>
-    gotoPage(Number(value.value - 1));
+  const handleInputPaginationValue = ({ target: value }: any) => gotoPage(Number(value.value - 1));
 
-  const entriesStart =
-    pageIndex === 0 ? pageIndex + 1 : pageIndex * pageSize + 1;
+  const entriesStart = pageIndex === 0 ? pageIndex + 1 : pageIndex * pageSize + 1;
 
   // Setting the entries ending point
   let entriesEnd;
@@ -157,6 +140,7 @@ function DataTable({
   return (
     <>
       <Card sx={{ minHeight: "300px" }}>
+        {loading && <MDCircularLoader overlayloader startLoader />}
         <TableContainer sx={{ boxShadow: "none" }}>
           <Table {...getTableProps()}>
             {showHeader && (
@@ -212,57 +196,59 @@ function DataTable({
         </TableContainer>
       </Card>
 
-      <MDBox
-        display="flex"
-        flexDirection={{ xs: "column", sm: "row" }}
-        justifyContent="space-between"
-        alignItems={{ xs: "flex-start", sm: "center" }}
-        p={!showTotalEntries && pageOptions.length === 1 ? 0 : 3}
-      >
-        <MDButton size="small" variant="contained" disabled={!canPreviousPage} onClick={() => handlePagination(paginationInfo?.currentPage -1)}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            color="#fff"
+      {paginationInfo?.pageCount > 1 && (
+        <MDBox
+          component="footer"
+          display="flex"
+          flexDirection={{ xs: "column", sm: "row", position: "sticky" }}
+          justifyContent="space-between"
+          alignItems={{ xs: "flex-start", sm: "center" }}
+          py={2}
+        >
+          <MDButton
+            sx={{ visibility: !canPreviousPage && "collapse" }}
+            size="small"
+            variant="contained"
+            disabled={!canPreviousPage}
+            onClick={() => handlePagination(paginationInfo?.currentPage - 1)}
           >
-            <Icon sx={{ fontWeight: "bold", mr: 1, color: "#000" }}>
-              chevron_left
-            </Icon>
-            <MDTypography sx={{ fontsize: "12px", fontWeight: "800" }}>
-              PREV
-            </MDTypography>
-          </Box>
-        </MDButton>
+            <Box display="flex" justifyContent="center" alignItems="center" color="#fff">
+              <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
+                chevron_left
+              </Icon>
+              <MDTypography sx={{ fontsize: "12px", fontWeight: "600" }}>PREV</MDTypography>
+            </Box>
+          </MDButton>
 
-        {paginationInfo?.pageCount > 2 && (
           <Pagination
-            page={paginationInfo?.currentPage}
+            page={paginationInfo?.currentPage + 1}
             hideNextButton
             hidePrevButton
             count={paginationInfo?.pageCount}
             variant="outlined"
             shape="rounded"
-            onChange={(e: any, page: number) => handlePagination(page)}
+            color={"primary"}
+            onChange={(e: any, page: number) => handlePagination(page - 1)}
           />
-        )}
 
-        <MDButton size="small" variant="contained" disabled={!canNextPage} onClick={() => handlePagination(paginationInfo?.currentPage +1)}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            color="#fff"
+          <MDButton
+            sx={{ visibility: !canNextPage && "collapse" }}
+            size="small"
+            variant="contained"
+            disabled={!canNextPage}
+            onClick={() => handlePagination(paginationInfo?.currentPage + 1)}
           >
-            <MDTypography sx={{ fontsize: "12px", fontWeight: "800" }}>
-              Next
-            </MDTypography>
-          </Box>
-          <Icon sx={{ fontWeight: "bold", ml: 1, color: "#000" }}>
-            chevron_right
-          </Icon>
-        </MDButton>
-      </MDBox>
+            <Box display="flex" justifyContent="center" alignItems="center" color="#fff">
+              <MDTypography sx={{ fontsize: "12px", fontWeight: "700", color: "black" }}>
+                Next
+              </MDTypography>
+            </Box>
+            <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
+              chevron_right
+            </Icon>
+          </MDButton>
+        </MDBox>
+      )}
     </>
   );
 }
