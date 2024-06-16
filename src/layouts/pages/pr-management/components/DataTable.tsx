@@ -1,24 +1,21 @@
 import { useMemo, useEffect, useState } from "react";
 // react-table components
-import { useTable, usePagination, useGlobalFilter, useAsyncDebounce, useSortBy } from "react-table";
-
+import { useTable, usePagination, useGlobalFilter, useSortBy } from "react-table";
 // @mui material components
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import Checkbox from "@mui/material/Checkbox";
 import Icon from "@mui/material/Icon";
 import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
-
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
-import MDPagination from "components/MDPagination";
 import MDButton from "components/MDButton";
 
 // Material Dashboard 2 PRO React TS examples components
-import DataTableHeadCell from "examples/Tables/DataTable/DataTableHeadCell";
 import DataTableBodyCell from "examples/Tables/DataTable/DataTableBodyCell";
 import Pagination from "@mui/material/Pagination";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -48,8 +45,10 @@ interface Props {
   noEndBorder?: boolean;
   showHeader?: boolean;
   paginationInfo: any;
-  handlePagination: any;
   loading?: boolean;
+  handlePagination?: any;
+  onSelectedRowsChange?: (selectedRows: any[]) => void;
+  defaultSelectedRows?: any;
 }
 
 function DataTable({
@@ -64,6 +63,8 @@ function DataTable({
   showHeader,
   paginationInfo,
   handlePagination,
+  onSelectedRowsChange,
+  defaultSelectedRows = [],
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -72,7 +73,6 @@ function DataTable({
     defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : "10";
     entries = entriesPerPage.entries ? entriesPerPage.entries : ["10", "25", "50", "100"];
   }
-
   const columns = useMemo<any>(() => table?.columns, [table]) || [];
   const data = useMemo<any>(() => table.rows, [table]);
 
@@ -82,9 +82,6 @@ function DataTable({
     useSortBy,
     usePagination
   );
-
-  // const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-  // useTable({ columns, data: data });
 
   const {
     getTableProps,
@@ -137,6 +134,36 @@ function DataTable({
   } else {
     entriesEnd = pageSize * (pageIndex + 1);
   }
+  // State for selected rows
+  const [selectedRows, setSelectedRows] = useState<any[]>(defaultSelectedRows || []);
+  // Handle checkbox change
+  const handleCheckboxChange = (row: any) => {
+    const newSelectedRows = JSON.stringify(selectedRows).includes(row.original?.id)
+      ? selectedRows.filter((selectedRow) => selectedRow?.id !== row.original?.id)
+      : [...selectedRows, row.original];
+    setSelectedRows(newSelectedRows);
+    onSelectedRowsChange(newSelectedRows); // Pass the selected rows to the parent
+  };
+
+  // Check if all rows are selected
+  const isAllRowsSelected = page.every((row: any) =>
+    JSON.stringify(selectedRows).includes(row.original?.id)
+  );
+
+  // Handle select all checkbox change
+  const handleSelectAllCheckboxChange = () => {
+    const newSelectedRows = isAllRowsSelected
+      ? []
+      : [...selectedRows, ...page.map((row: any) => row.original)];
+
+    setSelectedRows(newSelectedRows);
+    onSelectedRowsChange(newSelectedRows); // Pass the selected rows to the parent
+  };
+
+  // Update selected rows when defaultSelectedRows prop changes
+  useEffect(() => {
+    setSelectedRows(defaultSelectedRows);
+  }, [defaultSelectedRows]);
   return (
     <>
       <Card sx={{ minHeight: "300px" }}>
@@ -147,6 +174,15 @@ function DataTable({
               <MDBox component="thead" bgColor="#F8F8FC">
                 {headerGroups.map((headerGroup: any, key: any) => (
                   <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
+                    {onSelectedRowsChange && (
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          indeterminate={!isAllRowsSelected && selectedRows.length > 0}
+                          checked={isAllRowsSelected}
+                          onChange={handleSelectAllCheckboxChange}
+                        />
+                      </TableCell>
+                    )}
                     {headerGroup.headers.map((column: any, key: any) => (
                       <MDBox
                         key={key}
@@ -178,6 +214,23 @@ function DataTable({
                 prepareRow(row);
                 return (
                   <TableRow key={key} {...row.getRowProps()}>
+                    {onSelectedRowsChange && (
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={JSON.stringify(selectedRows).includes(row.original?.id)}
+                          onChange={() => handleCheckboxChange(row)}
+                          sx={{
+                            color: "blue",
+                            "&.Mui-checked": {
+                              color: "green",
+                            },
+                            "&.MuiCheckbox-indeterminate": {
+                              color: "orange",
+                            },
+                          }}
+                        />
+                      </TableCell>
+                    )}
                     {row.cells.map((cell: any, key: any) => (
                       <DataTableBodyCell
                         key={key}
@@ -195,7 +248,6 @@ function DataTable({
           </Table>
         </TableContainer>
       </Card>
-
       {paginationInfo?.pageCount > 1 && (
         <MDBox
           component="footer"
