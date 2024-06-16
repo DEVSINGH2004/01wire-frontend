@@ -50,7 +50,18 @@ const DisplayBundles = ({
   console.log("selectedCategoryBundles", bundles);
   return (
     <>
-      <MDBox bgColor="grey-100" borderRadius="lg" p="24px 60px 24px 70px" mb={1} mt={2}>
+      <MDBox
+        sx={{
+          "& .slick-track": {
+            transform: disabled && "none !important",
+          },
+        }}
+        bgColor="grey-100"
+        borderRadius="lg"
+        p="24px 60px 24px 70px"
+        mb={1}
+        mt={2}
+      >
         <Slider {...settings}>
           {bundles?.map((one: any, i: number) => {
             return (

@@ -216,11 +216,19 @@ function DefaultPricingCard({
         >
           <img src={bundle?.image || BundleSample} height="100%" width="100%" />
         </MDBox>
-        <MDBox pb={3} px={3} display="flex" alignItems="center" justifyContent="space-between">
+        <MDBox
+          pb={3}
+          px={3}
+          display="flex"
+          alignItems="center"
+          justifyContent={disabled ? "center" : "space-between"}
+        >
           <MDBox mt={3}>
             <Link
               component="button"
               variant="body2"
+              color="#4579DE"
+              underline="always"
               onClick={() => {
                 console.info("I'm a button.");
               }}
@@ -228,32 +236,34 @@ function DefaultPricingCard({
               Read More
             </Link>
           </MDBox>
-          <MDBox mt={3}>
-            <MDBox
-              px={1}
-              width="115px"
-              bgColor="grey-200"
-              borderRadius="lg"
-              display="flex"
-              justifyContent="space-around"
-              alignItems="center"
-            >
-              <Radio
-                color="primary"
-                checked={checked}
-                onClick={handleClick}
-                disabled={disabled}
-                value={id}
-              />
-              <MDTypography
-                fontSize="14px"
-                fontWeight="regular"
-                sx={{ color: checked ? "#EE5C61" : "#84878E" }}
+          {!disabled && (
+            <MDBox mt={3}>
+              <MDBox
+                px={1}
+                width="115px"
+                bgColor="grey-200"
+                borderRadius="lg"
+                display="flex"
+                justifyContent="space-around"
+                alignItems="center"
               >
-                Select
-              </MDTypography>
+                <Radio
+                  color="primary"
+                  checked={checked}
+                  onClick={handleClick}
+                  disabled={disabled}
+                  value={id}
+                />
+                <MDTypography
+                  fontSize="14px"
+                  fontWeight="regular"
+                  sx={{ color: checked ? "#EE5C61" : "#84878E" }}
+                >
+                  Select
+                </MDTypography>
+              </MDBox>
             </MDBox>
-          </MDBox>
+          )}
         </MDBox>
       </MDBox>
     </Card>
