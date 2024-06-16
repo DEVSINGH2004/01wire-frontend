@@ -192,7 +192,7 @@ function DataTable({
         </MDBox>
       ) : null}
       <Table {...getTableProps()}>
-        {false && (
+        {showHeader && (
           <MDBox component="thead">
             {headerGroups.map((headerGroup: any, key: any) => (
               <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>

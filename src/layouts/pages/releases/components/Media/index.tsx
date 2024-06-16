@@ -148,9 +148,9 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               name="instructions"
               control={control}
               multiline
-              rows={6}
               variant="outlined"
               disabled={disabled}
+              rows={!disabled && 4}
             />
           </Grid>
         </Grid>

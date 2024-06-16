@@ -85,3 +85,10 @@ export function removeEmptyFields(obj: { [key: string]: any }): { [key: string]:
   }
   return obj;
 }
+
+export const truncateString = (str: string, maxLength: number) => {
+  if (str.length > maxLength) {
+    return str.slice(0, maxLength - 3) + '...';
+  }
+  return str;
+}
