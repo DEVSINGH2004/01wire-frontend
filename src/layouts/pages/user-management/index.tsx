@@ -1,92 +1,137 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
-import DataTable from "examples/Tables/DataTable";
-import { useQuery } from "@apollo/client";
+import DataTable from "../pr-management/components/DataTable";
+import { useLazyQuery } from "@apollo/client";
 import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsersPaginated";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { makeColumns } from "./components/makeColumns";
+import MDInput from "components/MDInput";
 
-const columns = [
-  {
-    // Header: "User Email",
-    accessor: "userEmail",
-    width: "25%",
-    Cell: ({ value }: { value: string }) => <MDTypography>{value}</MDTypography>,
-  },
-  {
-    Header: "User Name",
-    accessor: "userName",
-    width: "25%",
-    Cell: ({ value }: { value: string }) => <MDTypography>{value}</MDTypography>,
-  },
-  {
-    Header: "Wallet Balance",
-    accessor: "walletBalance",
-    width: "25%",
-    Cell: ({ value }: { value: string }) => <MDTypography>{value}</MDTypography>,
-  },
-  {
-    Header: "Total PR",
-    accessor: "totalPR",
-    width: "25%",
-    Cell: ({ value }: { value: string }) => <MDTypography>{value}</MDTypography>,
-  },
-];
+import debounce from "lodash.debounce";
 
+const PER_PAGE = 10;
 const UserManagement = () => {
-  const { data, loading } = useQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
-    variables: {
-      filterInput: {},
-      paginationInput: {
-        currentPage: 0,
-        perPage: 200,
-      },
-    },
+  const [filters, setFilters] = useState<any>({});
+  const [q, setQ] = useState<any>("");
+  const [tableData, setData] = useState<any>({ rows: [], columns: [] });
+  const [intLoader, setInitLoader] = useState<boolean>(false);
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
+
+  const [getUsers, { data, loading }] = useLazyQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
     fetchPolicy: "network-only",
+    onCompleted: (res) => {
+      setPaginationInfo(res?.filterUsersPaginated?.paginationInfo);
+    },
   });
-  console.log("data", data);
-  const [tableData, setData] = useState<any>({ rows: [], columns });
-  const [loader, setLoader] = useState<boolean>(false);
+
   useEffect(() => {
-    setLoader(true);
-    const articles = data?.filterUsersPaginated?.data;
-    let rows: any = [];
-    if (articles?.length) {
-      rows = articles?.map((one) => {
-        return {
-          userEmail: one?.email,
-          userName: one?.fullName,
-          walletBalance: one?.walletInfo?.balance,
-          totalPR: "10",
-        };
+    if (filters) {
+      getUsers({
+        variables: {
+          paginationInput: {
+            perPage: PER_PAGE,
+            currentPage: 0,
+          },
+          filterInput: {
+            ...filters,
+          },
+        },
       });
     }
+  }, [filters]);
+
+  useEffect(() => {
+    setInitLoader(true);
+    getUsers({
+      variables: {
+        filterInput: {},
+        paginationInput: {
+          currentPage: 0,
+          perPage: PER_PAGE,
+        },
+      },
+    }).then(() => {
+      setInitLoader(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    const rows = data?.filterUsersPaginated?.data || [];
+    const columns = makeColumns();
+    // setPaginationInfo(data?.filterUsersPaginated?.paginationInfo);
     setData({ rows, columns });
-    setLoader(false);
   }, [data]);
+
+  const checkPrIdAvail = useCallback(
+    debounce((val: string) => {
+      setFilters({ fullName: val });
+    }, 500),
+    []
+  );
+  const handleInputChange = (evt: any) => {
+    const searchTerm = evt.target.value || "";
+    setQ(searchTerm);
+    checkPrIdAvail(searchTerm);
+  };
+
+  const handlePagination = (page: number) => {
+    getUsers({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: page,
+        },
+        filterInput: {
+          ...filters,
+        },
+      },
+    });
+  };
+
   return (
     <>
       <DashboardNavbar />
-      <MDBox px={2}>
-        <MDBox pt={2}>
+      <MDBox>
+        <MDBox pt={2} px={2}>
           <MDTypography fontWeight="bold" fontSize="20px">
             User Management
           </MDTypography>
         </MDBox>
-        <MDBox pt={2} pb={3}>
-          <Card sx={{ minHeight: "300px" }}>
-            {loading || loader ? (
+
+        <MDBox pt={2} pb={3} px={2}>
+          <MDBox mb={2}>
+            <MDInput
+              sx={{ width: 252 }}
+              fullWidth
+              type="text"
+              onChange={handleInputChange}
+              value={q}
+              placeholder="Search User"
+            />
+          </MDBox>
+          {intLoader ? (
+            <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
-            ) : tableData?.rows?.length ? (
-              <DataTable table={tableData} />
-            ) : (
-              <MDBox m={"auto"}>
-                <MDTypography variant="h6">No data found</MDTypography>
-              </MDBox>
-            )}
-          </Card>
+            </Card>
+          ) : (
+            <DataTable
+              loading={loading}
+              handlePagination={handlePagination}
+              canSearch
+              table={tableData}
+              showHeader
+              paginationInfo={paginationInfo}
+            />
+            // ) : (
+            //   <Card sx={{ minHeight: "300px" }}>
+            //     <MDBox m={"auto"}>
+            //       <MDTypography variant="h6">No data found</MDTypography>
+            //     </MDBox>
+            //   </Card>
+          )}
         </MDBox>
       </MDBox>
     </>
