@@ -6,8 +6,7 @@ import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
-import DataTable from "examples/Tables/DataTable";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import {
   GET_PUBLICATIONS,
   IGetPublications,
@@ -18,120 +17,93 @@ import { ActionsCellRenderer } from "utils/helpers";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import PublicationForm from "./components/PublicationForm";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { makeColumns } from "./components/makeColumns";
+import DataTable from "../pr-management/components/DataTable";
+import Filters from "./components/Filters";
 
-const columns = [
-  {
-    Header: "Title",
-    accessor: "logo",
-    width: "15%",
-    Cell: ({ value }: { value: any }) => (
-      <MDBox>
-        <MDAvatar
-          src={value && `${process.env.REACT_APP_IMAGE_BASE_URL}${value}`}
-          variant="rounded"
-          size="xxl"
-          sx={{
-            borderRadius: "4px",
-          }}
-        />
-      </MDBox>
-    ),
-  },
-  {
-    accessor: "title",
-    width: "20%",
-    Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
-  },
-  {
-    Header: "Traffic",
-    accessor: "traffic",
-    width: "10%",
-    Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
-  },
-  {
-    Header: "Gurranted Publications",
-    accessor: "gurrantedPublications",
-    width: "15%",
-    Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
-  },
-  {
-    Header: "Link Type",
-    accessor: "linkType",
-    width: "15%",
-    Cell: ({ value }: { value: string }) => (
-      <MDTypography fontSize="16px">
-        {value === "DO_FOLLOW" ? "Do Follow" : "No Follow"}
-      </MDTypography>
-    ),
-  },
-  {
-    Header: "Price",
-    accessor: "price",
-    width: "10%",
-    Cell: ({ value }: { value: string }) => <MDTypography fontSize="16px">{value}</MDTypography>,
-  },
-  {
-    Header: "Check",
-    accessor: "actions",
-    width: "15%",
-    Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
-  },
-];
-
+const PER_PAGE = 10;
 const Publications = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data, loading, refetch } = useQuery<IGetPublications, IGetPublicationsVars>(
-    GET_PUBLICATIONS,
-    {
+
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
+
+  const [tableData, setData] = useState<any>({ rows: [], columns: [] });
+  const [loader, setLoader] = useState<boolean>(false);
+  const [openForm, setOpenForm] = useState<any>(id || false);
+  const [filters, setFilters] = useState<any>({});
+
+  const [getPulications, { data, loading, refetch }] = useLazyQuery<
+    IGetPublications,
+    IGetPublicationsVars
+  >(GET_PUBLICATIONS, {
+    fetchPolicy: "network-only",
+    onCompleted: (res) => {
+      setPaginationInfo(res.filterPublicationsPaginated.paginationInfo);
+    },
+  });
+
+  useEffect(() => {
+    setLoader(true);
+    getPulications({
       variables: {
         filterInput: {},
         paginationInput: {
           currentPage: 0,
-          perPage: 200,
+          perPage: PER_PAGE,
         },
       },
-      fetchPolicy: "network-only",
-    }
-  );
-  const [tableData, setData] = useState<any>({ rows: [], columns });
-  const [loader, setLoader] = useState<boolean>(false);
-  const [openForm, setOpenForm] = useState<any>(id || false);
-  useEffect(() => {
-    setLoader(true);
-    const publications = data?.filterPublicationsPaginated?.data;
-    const totalPublications = data?.filterPublicationsPaginated?.paginationInfo?.itemCount;
-    let rows: any = [];
-    if (publications?.length) {
-      rows = publications?.map((one) => {
-        return {
-          logo: one?.image,
-          title: one?.title,
-          traffic: one?.stats?.traffic,
-          gurrantedPublications: totalPublications || 0,
-          linkType: one?.linkType,
-          price: one?.price,
-          actions: [
-            {
-              Icon: EditIcon,
-              height: "16px",
-              width: "16px",
-              label: "Edit",
-              onClick: () => {
-                navigate(`/publications/${one?.id}`);
-                setOpenForm(one?.id);
-              },
-            },
-          ],
-        };
-      });
-    }
-    setData({ rows, columns });
+    });
     setLoader(false);
   }, [data]);
+  useEffect(() => {
+    const rows = data?.filterPublicationsPaginated?.data || [];
+    const columns = makeColumns();
+
+    setData({ rows, columns });
+  }, [data]);
+
+  useEffect(() => {
+    if (filters) {
+      getPulications({
+        variables: {
+          paginationInput: {
+            perPage: PER_PAGE,
+            currentPage: 0,
+          },
+          filterInput: {
+            ...filters,
+          },
+        },
+      });
+    }
+  }, [filters]);
+
+  const handlePagination = (page: number) => {
+    getPulications({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: page,
+        },
+        filterInput: {
+          ...filters,
+        },
+      },
+    });
+  };
+
+  const handleFilters = (key: string, val: any) => {
+    setFilters({
+      ...filters,
+      [key]: val,
+    });
+  };
+
   return (
     <>
       <DashboardNavbar text="Add Publication" onsubmit={!openForm && (() => setOpenForm(true))} />
+
       <MDBox px={2}>
         {!openForm && (
           <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
@@ -140,20 +112,33 @@ const Publications = () => {
             </MDTypography>
           </MDBox>
         )}
+        <Filters handleFilters={handleFilters} filters={filters} />
+
         <MDBox pt={openForm ? 3 : 2} pb={3}>
-          <Card sx={{ minHeight: "300px" }}>
-            {loading || loader ? (
+          {loader ? (
+            <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
-            ) : openForm ? (
+            </Card>
+          ) : openForm ? (
+            <Card sx={{ minHeight: "300px" }}>
               <PublicationForm onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
-            ) : tableData?.rows?.length ? (
-              <DataTable canSearch table={tableData} />
-            ) : (
+            </Card>
+          ) : data?.filterPublicationsPaginated?.data?.length ? (
+            <DataTable
+              loading={loading}
+              handlePagination={handlePagination}
+              canSearch
+              table={tableData}
+              showHeader
+              paginationInfo={paginationInfo || {}}
+            />
+          ) : (
+            <Card sx={{ minHeight: "300px" }}>
               <MDBox m={"auto"}>
                 <MDTypography variant="h6">No data found</MDTypography>
               </MDBox>
-            )}
-          </Card>
+            </Card>
+          )}
         </MDBox>
       </MDBox>
     </>
