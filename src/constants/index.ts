@@ -288,3 +288,20 @@ export const StatusOptions = [
 ];
 
 export const brandName = "01Wire!";
+
+export const visibilityOptions =  [ {
+  value: "SUPPRESSED",
+  label: "Suppressed",
+  background: "#F9565C",
+},
+{
+  value: "PUBLISHED",
+  label: "Published",
+  background: "#47C94C",
+},
+{
+  value: "PRIVATE",
+  label: "Private",
+  background: "#FCD404",
+},
+];

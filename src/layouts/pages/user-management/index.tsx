@@ -9,6 +9,8 @@ import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsers
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { makeColumns } from "./components/makeColumns";
 import MDInput from "components/MDInput";
+import SearchIcon from "assets/images/icons/searchIcon.svg";
+import InputAdornment from "@mui/material/InputAdornment";
 
 import debounce from "lodash.debounce";
 
@@ -110,6 +112,13 @@ const UserManagement = () => {
               onChange={handleInputChange}
               value={q}
               placeholder="Search User"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <img height={15} width={15} src={SearchIcon} alt="Search" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </MDBox>
           {intLoader ? (

@@ -7,8 +7,9 @@ import Select from "@mui/material/Select";
 import MDInput from "components/MDInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "assets/images/icons/searchIcon.svg";
 import debounce from "lodash.debounce";
+import { visibilityOptions } from "../../../../constants";
 
 const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any }) => {
   const [q, setQ] = useState<string>("");
@@ -36,30 +37,14 @@ const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any 
           value={q}
           placeholder="Search Publications"
           InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                {filters?.prId ? (
-                  <CloseIcon
-                    fontSize="small"
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  />
-                ) : (
-                  <SearchIcon
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  />
-                )}
+            startAdornment: (
+              <InputAdornment position="start">
+                <img height={15} width={15} src={SearchIcon} alt="Search" />
               </InputAdornment>
             ),
           }}
         />
-
-        <FormControl sx={{ width: "150px", height: "42px", mr: 2 }}>
+        <FormControl sx={{ width: "150px", height: "42px" }}>
           <Select
             id="demo-select-small"
             displayEmpty
@@ -70,9 +55,12 @@ const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any 
               background: "#fff",
               height: "42px",
             }}
-            onChange={(e) => handleFilters("status", e.target.value)}
+            onChange={(e) => e.target.value && handleFilters("visibility", e.target.value)}
           >
-            {statusOptions.map((option) => (
+            <MenuItem value="" disabled>
+              Visibility
+            </MenuItem>
+            {visibilityOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>

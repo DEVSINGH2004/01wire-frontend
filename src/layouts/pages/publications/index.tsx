@@ -3,8 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
-import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
 import { useLazyQuery } from "@apollo/client";
 import {
@@ -12,9 +10,6 @@ import {
   IGetPublications,
   IGetPublicationsVars,
 } from "graphql/queries/filterPublicationsPaginated";
-import EditIcon from "assets/images/icons/penCircle.svg";
-import { ActionsCellRenderer } from "utils/helpers";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import PublicationForm from "./components/PublicationForm";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { makeColumns } from "./components/makeColumns";
@@ -33,7 +28,7 @@ const Publications = () => {
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [filters, setFilters] = useState<any>({});
 
-  const [getPulications, { data, loading, refetch }] = useLazyQuery<
+  const [getPublications, { data, loading, refetch }] = useLazyQuery<
     IGetPublications,
     IGetPublicationsVars
   >(GET_PUBLICATIONS, {
@@ -45,7 +40,7 @@ const Publications = () => {
 
   useEffect(() => {
     setLoader(true);
-    getPulications({
+    getPublications({
       variables: {
         filterInput: {},
         paginationInput: {
@@ -55,7 +50,7 @@ const Publications = () => {
       },
     });
     setLoader(false);
-  }, [data]);
+  }, []);
   useEffect(() => {
     const rows = data?.filterPublicationsPaginated?.data || [];
     const columns = makeColumns();
@@ -65,7 +60,7 @@ const Publications = () => {
 
   useEffect(() => {
     if (filters) {
-      getPulications({
+      getPublications({
         variables: {
           paginationInput: {
             perPage: PER_PAGE,
@@ -80,7 +75,7 @@ const Publications = () => {
   }, [filters]);
 
   const handlePagination = (page: number) => {
-    getPulications({
+    getPublications({
       variables: {
         paginationInput: {
           perPage: PER_PAGE,

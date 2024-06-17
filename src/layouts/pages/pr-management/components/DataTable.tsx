@@ -161,14 +161,14 @@ function DataTable({
   };
 
   // Update selected rows when defaultSelectedRows prop changes
-  useEffect(() => {
-    setSelectedRows(defaultSelectedRows);
-  }, [defaultSelectedRows]);
+  // useEffect(() => {
+  //   setSelectedRows(defaultSelectedRows);
+  // }, [defaultSelectedRows]);
   return (
     <>
-      <Card sx={{ minHeight: "300px" }}>
+      <Card sx={{ minHeight: "300px", flex: 1, overflow: "hidden" }}>
         {loading && <MDCircularLoader overlayloader startLoader />}
-        <TableContainer sx={{ boxShadow: "none" }}>
+        <TableContainer sx={{ boxShadow: "none", overflow: "auto" }}>
           <Table {...getTableProps()}>
             {showHeader && (
               <MDBox component="thead" bgColor="#F8F8FC">
