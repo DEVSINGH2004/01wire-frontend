@@ -254,7 +254,7 @@ function PlanNPayment({
           </MDBox>
           <MDBox mt={3}>
             <PublicationsList
-              publications={filteredPublications || currentPublications}
+              publications={searchTerm ? filteredPublications : currentPublications}
               updatePage={setPage}
               paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
               onSelect={!disabled && handleSelectedRowsChange}
