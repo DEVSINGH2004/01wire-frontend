@@ -173,16 +173,7 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
           ) : (
             <>
               {getStepContent(activeStep, saveData, handleNext, article, fetchData, setSaveData)}
-              <MDBox mt={3} width="100%" display="flex" justifyContent="space-between"
-              bgColor="white"
-              sx={{
-                position: "sticky",
-                bottom: 0,
-                left: 0,
-                padding: "1rem",
-                zIndex: 1000,
-              }}
-              >
+              <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
                 {activeStep === 0 ? (
                   <MDBox />
                 ) : (

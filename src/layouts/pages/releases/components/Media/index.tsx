@@ -144,7 +144,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               variant="outlined"
               disabled={disabled}
             />
-            <FormField
+            {/* <FormField
               type="radio"
               label1="Immedately"
               label2="Scheduled"
@@ -161,7 +161,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               options={CategoryOptions}
               variant="outlined"
               disabled={disabled}
-            />
+            /> */}
             
           </Grid>
           <Grid item xs={12} sm={6}>

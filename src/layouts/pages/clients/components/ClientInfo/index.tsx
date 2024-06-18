@@ -88,6 +88,7 @@ function ClientInfo({
     let res: any;
     const {
       title,
+      type,
       logo,
       email,
       website,
@@ -115,11 +116,11 @@ function ClientInfo({
             params: {
               id: data.id,
               title,
+              type,
               logo,
               email,
               website,
               notes,
-              type: formVals?.type?.value,
               category: formVals?.category?.value,
               social,
             },
@@ -133,7 +134,7 @@ function ClientInfo({
               logo,
               email,
               website,
-              type: formVals?.type?.value,
+              type,
               category: formVals?.category?.value,
               social,
               notes,
