@@ -179,13 +179,22 @@ function ClientInfo({
               control={control}
               variant="outlined"
             />
-            <FormField
+            {/* <FormField
               type="dropdown"
               placeholder="Select Company Tye"
               label="Company Type"
               name="type"
               control={control}
               options={ComanyTypeOptions}
+              variant="outlined"
+            /> */}
+            <FormField
+              type="radio"
+              placeholder="Select Company Tye"
+              label="Company Type"
+              name="type"
+              control={control}
+              opt={ComanyTypeOptions}
               variant="outlined"
             />
             <FormField

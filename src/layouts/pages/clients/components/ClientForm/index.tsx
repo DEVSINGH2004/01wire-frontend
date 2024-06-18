@@ -70,7 +70,20 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
             />
           )}
           {!loading && (
-            <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
+            <MDBox
+              mt={3}
+              width="100%"
+              display="flex"
+              justifyContent="space-between"
+              bgColor="white"
+              sx={{
+                position: "sticky",
+                bottom: 0,
+                left: 0,
+                padding: "1rem",
+                zIndex: 1000,
+              }}
+            >
               <MDButton color="white" onClick={handleCloseForm}>
                 <MDTypography fontSize="16px" fontWeight="regular" sx={{ fontFamily: "Roboto" }}>
                   {"< Back"}
