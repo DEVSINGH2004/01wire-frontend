@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 // @mui material components
 import Chip from "@mui/material/Chip";
+import InputAdornment from "@mui/material/InputAdornment";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 // import MDInput from "components/MDInput";
 import MDCircularLoader from "components/MDCircularLoader";
+import MDInput from "components/MDInput";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import {
@@ -17,6 +19,7 @@ import {
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import DisplayBundles from "../DisplayBundles";
 import PublicationsList from "../PublicationsList";
+import SearchIcon from "assets/images/icons/searchIcon.svg";
 
 const perPage = 10;
 interface Props {
@@ -50,6 +53,8 @@ function PlanNPayment({
   const [bundlePids, setBundlePids] = useState<any>(savedBundlePids);
   const [selectedCategory, setCategory] = useState<string | null>();
   const [currentPage, setPage] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPublications, setFilteredPublications] = useState(null);
 
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
@@ -163,11 +168,20 @@ function PlanNPayment({
   const handleCategorySelection = (value: string) => {
     setCategory(value);
   };
+  const handleSearchChange = (event: any) => {
+    setSearchTerm(event.target.value);
+  };
   useEffect(() => {
     if (!selectedCategory && bundlesData?.filterBundlesPaginated?.data?.length) {
       setCategory(bundlesData?.filterBundlesPaginated?.data?.[0]?.category);
     }
   }, [bundlesData]);
+  useEffect(() => {
+    const filteredItems = currentPublications.filter((item: any) =>
+      item?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredPublications(filteredItems);
+  }, [searchTerm]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -221,21 +235,26 @@ function PlanNPayment({
                 label={`${publicationIds?.length} Selected`}
               />
             </MDBox>
-            {/* <MDBox width="173px" ml="auto">
-                <MDInput
-                  placeholder="Search..."
-                  size="small"
-                  fullWidth
-                  onChange={({ currentTarget }: any) => {
-                    setSearch(search);
-                    onSearchChange(currentTarget.value);
-                  }}
-                />
-              </MDBox> */}
+            <MDInput
+              sx={{ width: 268 }}
+              fullWidth
+              type="text"
+              size="small"
+              onChange={handleSearchChange}
+              value={searchTerm}
+              placeholder="Search Publications"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <img height={15} width={15} src={SearchIcon} alt="Search" />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </MDBox>
           <MDBox mt={3}>
             <PublicationsList
-              publications={currentPublications}
+              publications={filteredPublications || currentPublications}
               updatePage={setPage}
               paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
               onSelect={!disabled && handleSelectedRowsChange}
