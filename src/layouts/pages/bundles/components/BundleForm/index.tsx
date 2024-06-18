@@ -3,7 +3,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import { Divider } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
@@ -132,7 +131,7 @@ const BundleForm = ({
   };
   return (
     <>
-    <MDBox p={2} bgColor="white" sx={{borderRadius:'5px'}}>
+    <MDBox p={2}>
       <MDBox display="flex" alignItems="center">
         <IconButton onClick={onClose}>
           <ArrowBackIosIcon />
@@ -231,12 +230,6 @@ const BundleForm = ({
           })}
         </Grid>
       </MDBox>
-      {/* <Divider
-        sx={{
-          borderColor: "#B2B2B2",
-          borderStyle: "dotted",
-        }}
-      /> */}
       
     </MDBox>
     <MDBox display="flex" alignItems="center" justifyContent="space-between"
@@ -248,7 +241,6 @@ const BundleForm = ({
        marginLeft: "-1.2%",
        padding: "2rem 1rem",
        boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-       zIndex: 1000,
      }}
     >
         <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
