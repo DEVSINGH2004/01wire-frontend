@@ -3,7 +3,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
-import { Divider } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
@@ -154,6 +153,7 @@ const PublicationForm = ({
     }
   }, [data]);
   return (
+    <>
     <MDBox p={2}>
       <MDBox display="flex" alignItems="center">
         <IconButton onClick={onClose}>
@@ -291,13 +291,22 @@ const PublicationForm = ({
           </Grid>
         </Grid>
       </MDBox>
-      <Divider
+    </MDBox>
+    <MDBox
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        bgColor="white"
+        width="102.47%"
+
         sx={{
-          borderColor: "#B2B2B2",
-          borderStyle: "dotted",
+          position: "sticky",
+          bottom: 0,
+          marginLeft: "-1.2%",
+          padding: "2rem 1rem",
+          boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
         }}
-      />
-      <MDBox display="flex" alignItems="center" justifyContent="space-between">
+      >
         <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
           Cancel
         </MDButton>
@@ -305,7 +314,8 @@ const PublicationForm = ({
           Submit
         </MDButton>
       </MDBox>
-    </MDBox>
+    </>
+
   );
 };
 export default PublicationForm;

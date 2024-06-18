@@ -30,6 +30,10 @@ const CategoryOptions = [
   { label: "Partnership", value: "PARTNERSHIP" },
   { label: "Fund Raising", value: "FUND_RAISING" },
 ];
+const pulishOptions = [
+  { label: "Immedately", value: "IMMEDATELY" },
+  { label: "Scheduled", value: "SCHEDULED" },
+];
 interface Props {
   cb?: any;
   saveData?: boolean;
@@ -140,6 +144,25 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               variant="outlined"
               disabled={disabled}
             />
+            {/* <FormField
+              type="radio"
+              label1="Immedately"
+              label2="Scheduled"
+              label="Select Date & Time"
+              name="type"
+              control={control}
+              opt={pulishOptions}
+              variant="outlined"
+            />
+            <FormField
+              type="Date"
+              name="category"
+              control={control}
+              options={CategoryOptions}
+              variant="outlined"
+              disabled={disabled}
+            /> */}
+            
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormField
@@ -150,7 +173,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               multiline
               variant="outlined"
               disabled={disabled}
-              rows={!disabled && 4}
+              rows={!disabled && 7}
             />
           </Grid>
         </Grid>

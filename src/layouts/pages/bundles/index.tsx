@@ -82,6 +82,7 @@ const Bundles = () => {
               <MDCircularLoader overlayloader startLoader />
             </Card>
           ) : openForm ? (
+            <Card>
             <BundleForm
               onClose={() => {
                 navigate("/bundles");
@@ -90,6 +91,7 @@ const Bundles = () => {
               refetch={refetch}
               id={openForm}
             />
+            </Card>
           ) : data?.filterBundlesPaginated?.data?.length ? (
             <DataTable
               loading={loading}
