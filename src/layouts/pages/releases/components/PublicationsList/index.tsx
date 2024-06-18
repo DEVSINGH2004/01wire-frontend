@@ -33,7 +33,7 @@ const PublicationsList = ({
           <MDAvatar
             src={`${process.env.REACT_APP_IMAGE_BASE_URL}${value}`}
             variant="rounded"
-            size="xxl"
+            size="lg"
             sx={{
               borderRadius: "4px",
             }}
