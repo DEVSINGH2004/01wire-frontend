@@ -28,7 +28,7 @@ const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any 
 
   return (
     <>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+      <Box display="flex" alignItems="center" justifyContent="space-between" pt={3}>
         <MDInput
           sx={{ width: 252 }}
           fullWidth

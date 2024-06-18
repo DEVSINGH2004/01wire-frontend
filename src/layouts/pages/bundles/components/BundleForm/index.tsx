@@ -131,7 +131,8 @@ const BundleForm = ({
     }
   };
   return (
-    <MDBox p={2}>
+    <>
+    <MDBox p={2} bgColor="white" sx={{borderRadius:'5px'}}>
       <MDBox display="flex" alignItems="center">
         <IconButton onClick={onClose}>
           <ArrowBackIosIcon />
@@ -230,13 +231,26 @@ const BundleForm = ({
           })}
         </Grid>
       </MDBox>
-      <Divider
+      {/* <Divider
         sx={{
           borderColor: "#B2B2B2",
           borderStyle: "dotted",
         }}
-      />
-      <MDBox display="flex" alignItems="center" justifyContent="space-between">
+      /> */}
+      
+    </MDBox>
+    <MDBox display="flex" alignItems="center" justifyContent="space-between"
+     width="102.47%"
+     bgColor="white"
+     sx={{
+       position: "sticky",
+       bottom: 0,
+       marginLeft: "-1.2%",
+       padding: "2rem 1rem",
+       boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+       zIndex: 1000,
+     }}
+    >
         <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
           Cancel
         </MDButton>
@@ -244,7 +258,7 @@ const BundleForm = ({
           Submit
         </MDButton>
       </MDBox>
-    </MDBox>
+    </>
   );
 };
 export default BundleForm;

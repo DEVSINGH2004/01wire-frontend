@@ -69,45 +69,44 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
               setSaveData={setSaveData}
             />
           )}
-          {!loading && (
-            <MDBox
-              mt={3}
-              width="100%"
-              display="flex"
-              justifyContent="space-between"
-              bgColor="white"
-              sx={{
-                position: "sticky",
-                bottom: 0,
-                left: 0,
-                padding: "2rem 1rem",
-                boxShadow:
-                  "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-                borderRadius: "5px",
-              }}
-            >
-                <MDTypography
-                  fontSize="16px"
-                  fontWeight="regular"
-                  sx={{
-                    fontFamily: "Roboto",
-                    boxShadow:
-                      "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-                    borderRadius: "5px",
-                    padding: "0.5rem 1rem",
-                    cursor:'pointer'
-                  }}
-                  onClick={handleCloseForm}
-                >
-                  {"< Back"}
-                </MDTypography>
-              <MDButton color="primary" onClick={() => setSaveData(true)}>
-                Save
-              </MDButton>
-            </MDBox>
-          )}
         </MDBox>
       </MDBox>
+      {!loading && (
+        <MDBox
+          mt={3}
+          width="102.47%"
+          display="flex"
+          justifyContent="space-between"
+          bgColor="white"
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            marginLeft:'-1.2%',
+            padding: "2rem 1rem",
+            boxShadow:
+              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+          }}
+        >
+          <MDTypography
+            fontSize="16px"
+            fontWeight="regular"
+            sx={{
+              fontFamily: "Roboto",
+              boxShadow:
+                "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+              borderRadius: "5px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+            }}
+            onClick={handleCloseForm}
+          >
+            {"< Back"}
+          </MDTypography>
+          <MDButton color="primary" onClick={() => setSaveData(true)}>
+            Save
+          </MDButton>
+        </MDBox>
+      )}
     </>
   );
 }
