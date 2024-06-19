@@ -48,8 +48,9 @@ const Publications = () => {
           perPage: PER_PAGE,
         },
       },
-    });
-    setLoader(false);
+    })
+      .then(() => setLoader(false))
+      .catch(() => setLoader(false));
   }, []);
   useEffect(() => {
     const rows = data?.filterPublicationsPaginated?.data || [];

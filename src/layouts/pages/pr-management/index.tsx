@@ -29,8 +29,8 @@ const PER_PAGE = 10;
 const PRManagement = () => {
   const { id } = useParams();
   const [filters, setFilters] = useState<any>({});
-  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
 
   const [getArticles, { data, loading, refetch }] = useLazyQuery<IGetArticles, IGetArticlesVars>(
     GET_ARTICLES,

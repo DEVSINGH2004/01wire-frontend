@@ -1,0 +1,113 @@
+/* eslint-disable react/prop-types */
+import { TableCell as MuiTableCell, IconButton } from "@mui/material";
+import MDTypography from "components/MDTypography";
+import MDBox from "components/MDBox";
+import { truncateString } from "utils/helpers";
+import DeleteIcon from "assets/images/icons/deleteIcon.svg";
+import EditIcon from "assets/images/icons/editIcon.svg";
+import FBIcon from "assets/images/FB.svg";
+import InstaIcon from "assets/images/insta.svg";
+import TwitterIcon from "assets/images/twitter.svg";
+import YtIcon from "assets/images/yt.svg";
+import LinkedInIcon from "assets/images/LinkedIn.svg";
+import MDAvatar from "components/MDAvatar";
+import Link from "@mui/material/Link";
+import productImage from "assets/images/products/product-11.jpg";
+
+const SocialMediaLink = ({ url, Icon }) => {
+  return (
+    <Link
+      sx={{
+        cursor: "pointer",
+        "& img": {
+          filter: !url ? "grayscale(100%)" : "none",
+        },
+      }}
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img src={Icon} height="36px" width="36px" alt="facebookIcon" />
+    </Link>
+  );
+};
+
+export const makeColumns = (handleAction) => {
+  const columns = [
+    {
+      Header: "Title",
+      accessor: "logo",
+      width: "10%",
+      Cell: ({ value }) => {
+        return (
+          <MDBox mr={2}>
+            <MDAvatar
+              src={value ? `${process.env.REACT_APP_IMAGE_BASE_URL}${value}` : productImage}
+              variant="rounded"
+              size="xl"
+              sx={{
+                width: "127px",
+                height: "53px",
+                borderRadius: "4px",
+              }}
+            />
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "",
+      accessor: "title",
+      width: "30%",
+      Cell: ({ value }) => {
+        return (
+          <MDBox>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+              {truncateString(value, 25)}
+            </MDTypography>
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "Social Media",
+      accessor: "socialMedia",
+      width: "50%",
+      Cell: ({ value = {} }) => {
+        const { facebook, instagram, twitter, youtube, linkedIn } = value;
+        return (
+          <MDBox display="flex" alignItems="center" justifyContent="space-between" width={"250px"}>
+            <SocialMediaLink url={facebook} Icon={FBIcon} />
+            <SocialMediaLink url={linkedIn} Icon={LinkedInIcon} />
+            <SocialMediaLink url={twitter} Icon={TwitterIcon} />
+            <SocialMediaLink url={instagram} Icon={InstaIcon} />
+            <SocialMediaLink url={youtube} Icon={YtIcon} />
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "Action",
+      accessor: "actions",
+      width: "10%",
+      Cell: ({ value, row }) => (
+        <MDBox
+          sx={{
+            display: "flex",
+          }}
+        >
+          <>
+            <IconButton onClick={() => handleAction(row?.original?.id, "edit")}>
+              <img width={36} height={36} alt="navigate" src={EditIcon} />
+            </IconButton>
+            <IconButton onClick={() => handleAction(row?.original?.id, "delete")}>
+              <img width={36} height={36} alt="navigate" src={DeleteIcon} />
+            </IconButton>
+          </>
+        </MDBox>
+      ),
+    },
+  ];
+
+  return columns;
+};

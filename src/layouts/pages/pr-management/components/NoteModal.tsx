@@ -11,46 +11,43 @@ import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 
-
-const NoteModal = ({
-  handleSubmit,
-  onClose,
-}: {
-  onClose: any;
-  handleSubmit: any;
-  }) => {
-  const [note, setNote]  = useState<String>("");
+const NoteModal = ({ handleSubmit, onClose }: { onClose: any; handleSubmit: any }) => {
+  const [note, setNote] = useState<String>("");
 
   return (
     <>
-      <Dialog maxWidth="sm"  open onClose={onClose}>
+      <Dialog maxWidth="sm" open onClose={onClose}>
         <MDBox display="flex" alignItems="center" justifyContent="space-between">
           <DialogTitle>
             <MDTypography fontSize="16px" fontWeight="medium">
-Update Order Status            </MDTypography>
+              Update Order Status{" "}
+            </MDTypography>
           </DialogTitle>
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </MDBox>
-        <DialogContent >
+        <DialogContent sx={{ width: "454px" }}>
           <MDTypography
-      component="label"
-      sx={{ mb: "1rem", fontWeight: "500" }}
-    fontSize="14px"
-    color="textSecondary">URL/Notes</MDTypography>
-            <MDInput
-              fullWidth
-                  type="text"
-                  onChange={
-                    (e: any) => setNote(e.target.value)
-                  }
-                  value={note}
-                />
+            component="label"
+            sx={{ mb: "1rem", fontWeight: "500" }}
+            fontSize="14px"
+            color="textSecondary"
+          >
+            URL/Notes
+          </MDTypography>
+          <MDInput
+            fullWidth
+            type="text"
+            onChange={(e: any) => setNote(e.target.value)}
+            value={note}
+          />
         </DialogContent>
         <Divider />
-        <DialogActions sx={{ display: "flex",  alignItems: "center", justifyContent: "space-between" }}>
-        <MDButton
+        <DialogActions
+          sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+        >
+          <MDButton
             sx={{ margin: "auto" }}
             variant="outlined"
             color="primary"
@@ -64,10 +61,9 @@ Update Order Status            </MDTypography>
             color="primary"
             disabled={!note}
             onClick={() => {
-              handleSubmit(note)
-              onClose()
-            }
-            }
+              handleSubmit(note);
+              onClose();
+            }}
           >
             Submit
           </MDButton>
