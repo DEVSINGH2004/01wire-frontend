@@ -60,6 +60,7 @@ interface Props {
   [key: string]: any;
   totalPublications?: number;
   reach: string;
+  onclick?:any
 }
 
 function DefaultPricingCard({
@@ -79,6 +80,7 @@ function DefaultPricingCard({
   category,
   showCatgeory = false,
   bundle,
+  onclick,
 }: Props): JSX.Element {
   const renderSpecifications = specifications.map(({ label, includes }) => (
     <MDBox key={label} display="flex" alignItems="center" p={1}>
@@ -229,9 +231,7 @@ function DefaultPricingCard({
               variant="body2"
               color="#4579DE"
               underline="always"
-              onClick={() => {
-                console.info("I'm a button.");
-              }}
+              onClick={onclick && onclick}
             >
               Read More
             </Link>

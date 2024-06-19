@@ -4,6 +4,8 @@ import Slider from "react-slick";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import IconButton from "@mui/material/IconButton";
+import BundlePublicationModal from "../BundlePublicationModal";
+import { useEffect, useState } from "react";
 
 // Custom arrow component for previous button
 const PrevArrow = ({ onClick }: { onClick?: any }) => {
@@ -47,7 +49,7 @@ const DisplayBundles = ({
   disabled: boolean;
   category: string;
 }) => {
-  console.log("selectedCategoryBundles", bundles);
+  const [open, setOpen] = useState<any>(false);
   return (
     <>
       <MDBox
@@ -93,12 +95,19 @@ const DisplayBundles = ({
                   disabled={disabled}
                   category={category}
                   bundle={one}
+                  onclick={() => setOpen(one)}
                 />
               </MDBox>
             );
           })}
         </Slider>
       </MDBox>
+      {open && (
+        <BundlePublicationModal
+          onClose={() => setOpen(false)}
+          currentPublications={open?.publicationInfo}
+        />
+      )}
     </>
   );
 };
