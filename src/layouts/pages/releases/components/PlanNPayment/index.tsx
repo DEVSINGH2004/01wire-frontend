@@ -60,7 +60,6 @@ function PlanNPayment({
     },
     skip: disabled,
   });
-  console.log("bundleData",bundlesData)
   const {
     data: publicationsData,
     refetch: refetchPublications,
@@ -135,7 +134,6 @@ function PlanNPayment({
         .catch((err: any) => {
           setLoading(false);
           toast.error(err?.message);
-          console.log("error in saving data", err);
           setSaveData(false);
         });
     } else {

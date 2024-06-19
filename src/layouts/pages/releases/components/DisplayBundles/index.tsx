@@ -50,7 +50,7 @@ const DisplayBundles = ({
   category: string;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any>([]);
   useEffect(() => {
     bundles?.map((item:any) => {
       setData(item?.publicationInfo)
