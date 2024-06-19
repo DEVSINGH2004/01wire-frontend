@@ -60,6 +60,7 @@ function PlanNPayment({
     },
     skip: disabled,
   });
+  console.log("bundleData",bundlesData)
   const {
     data: publicationsData,
     refetch: refetchPublications,

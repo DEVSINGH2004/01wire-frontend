@@ -173,6 +173,7 @@ const PublicationsList = ({
           credits: one?.price,
         };
       });
+      
       setData({ rows, columns });
     }
   }, [publications]);
