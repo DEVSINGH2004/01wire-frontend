@@ -48,20 +48,14 @@ const DisplayBundles = ({
   selected: any;
   disabled: boolean;
   category: string;
-
 }) => {
-  console.log("selectedCategoryBundles", bundles);
   const [open, setOpen] = useState<boolean>(false);
-  const [data, setData] = useState<any>([]);
-
-
+  const [data, setData] = useState([]);
   useEffect(() => {
     bundles?.map((item:any) => {
-         setData(item?.publicationInfo)
+      setData(item?.publicationInfo)
     })
   },[bundles])
-
-  console.log(data,"data")
   return (
     <>
       <MDBox
