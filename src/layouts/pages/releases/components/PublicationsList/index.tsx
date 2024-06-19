@@ -69,7 +69,7 @@ const PublicationsList = ({
     },
     {
       Header: "Traffic",
-      accessor: "trafic",
+      accessor: "traffic",
       width: "5%",
       Cell: ({ value }: { value: any }) => {
         return (
