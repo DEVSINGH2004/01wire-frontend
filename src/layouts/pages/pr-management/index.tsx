@@ -43,6 +43,8 @@ const PRManagement = () => {
   );
 
   const [loader, setLoader] = useState<boolean>(false);
+  const [initLoading, setInitLoader] = useState<boolean>(false);
+
   const [email, setEmail] = useState<string>("");
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
@@ -51,6 +53,7 @@ const PRManagement = () => {
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
 
   useEffect(() => {
+    setInitLoader(true);
     getArticles({
       variables: {
         paginationInput: {
@@ -59,7 +62,9 @@ const PRManagement = () => {
         },
         filterInput: {},
       },
-    });
+    })
+      .then(() => setInitLoader(false))
+      .catch(() => setInitLoader(false));
   }, []);
 
   useEffect(() => {
@@ -105,13 +110,17 @@ const PRManagement = () => {
       });
   };
 
-  const handleAction = () => {};
-
   const handleFilters = (key: string, val: any) => {
     setFilters({
       ...filters,
       [key]: val,
     });
+  };
+
+  const handleAction = (id: string, action: string) => {
+    if (action === "edit") {
+      setOpenForm(id);
+    }
   };
 
   useEffect(() => {
@@ -150,30 +159,40 @@ const PRManagement = () => {
       <DashboardNavbar />
       <MDBox sx={{ display: "flex", flexDirection: "column" }}>
         {!openForm && (
-          <MDBox px={2} pt={2} display="flex" alignItems="center" justifyContent="space-between">
-            <MDTypography fontWeight="bold" fontSize="20px">
-              PR Management
-            </MDTypography>
-          </MDBox>
+          <>
+            <MDBox px={2} pt={2} display="flex" alignItems="center" justifyContent="space-between">
+              <MDTypography fontWeight="bold" fontSize="20px">
+                PR Management
+              </MDTypography>
+            </MDBox>
+
+            <Filters
+              setFilters={setFilters}
+              email={email}
+              setEmail={setEmail}
+              handleFilters={handleFilters}
+              filters={filters}
+              options={options}
+              setOptions={setOptions}
+            />
+          </>
         )}
 
-        <Filters
-          setFilters={setFilters}
-          email={email}
-          setEmail={setEmail}
-          handleFilters={handleFilters}
-          filters={filters}
-          options={options}
-          setOptions={setOptions}
-        />
         <MDBox px={2} pt={openForm ? 3 : 2} pb={3} sx={{ flex: 1 }}>
-          {loading && data?.filterArticlesPaginated?.data?.length === 0 ? (
+          {initLoading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <PRDetail onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
+              <PRDetail
+                onClose={() => {
+                  setOpenForm(false);
+                  refetch();
+                }}
+                refetch={refetch}
+                id={openForm}
+              />
             </Card>
           ) : data?.filterArticlesPaginated?.data?.length ? (
             <Box
@@ -187,6 +206,7 @@ const PRManagement = () => {
                 canSearch
                 table={tableData}
                 showHeader
+                loading={loading}
                 paginationInfo={paginationInfo || {}}
               />
             </Box>
