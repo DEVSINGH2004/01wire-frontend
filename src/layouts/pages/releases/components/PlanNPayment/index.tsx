@@ -134,6 +134,7 @@ function PlanNPayment({
         .catch((err: any) => {
           setLoading(false);
           toast.error(err?.message);
+          console.log("error in saving data", err);
           setSaveData(false);
         });
     } else {
