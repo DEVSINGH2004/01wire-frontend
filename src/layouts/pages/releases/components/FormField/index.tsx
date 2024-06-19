@@ -12,7 +12,19 @@ import FormHelperText from "@mui/material/FormHelperText";
 import MDEditor from "components/MDEditor";
 import FileUpload from "./FileUpload";
 import InfoIcon from "@mui/icons-material/Info";
+import RadioGroup from "@mui/material/RadioGroup";
+import Radio from "@mui/material/Radio";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import dayjs, { Dayjs } from "dayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
+interface Option {
+  label: string;
+  value: string;
+}
 // Declaring props types for FormField
 interface Props {
   label?: string;
@@ -23,10 +35,12 @@ interface Props {
   options?: any;
   defaultValue?: any;
   [key: string]: any;
+  opt?: Option[];
 }
 
 function FormField({
   label,
+  opt,
   subLabel,
   name,
   type,
@@ -60,6 +74,46 @@ function FormField({
                   disabled={disabled}
                   renderInput={(params) => <MDInput {...params} variant="outlined" />}
                 />
+              )}
+            />
+          </FormControl>
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
+      );
+    }
+    case "radio": {
+      return (
+        <MDBox mb={2}>
+          {label && <MDLabel label={label} />}
+          <FormControl>
+            <Controller
+              name={name}
+              control={control}
+              rules={rules}
+              render={({ field: { onChange, value } }) => (
+                <RadioGroup
+                  value={value}
+                  onChange={(event) => {
+                    onChange(event.target.value);
+                  }}
+                  row
+                  sx={{ paddingLeft: "2rem" }}
+                >
+                  {opt?.map((option) => (
+                    <FormControlLabel
+                      key={option.value}
+                      value={option.value}
+                      control={<Radio />}
+                      label={option.label}
+                      disabled={disabled}
+                    />
+                  ))}
+                </RadioGroup>
               )}
             />
           </FormControl>
@@ -164,6 +218,38 @@ function FormField({
               rules={rules}
               render={({ field: { onChange, value } }) => (
                 <MDEditor disabled={disabled} onChange={onChange} value={value} />
+              )}
+            />
+          </FormControl>
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
+      );
+    }
+    case "Date": {
+      return (
+        <MDBox mb={2}>
+          {label && <MDLabel label={label} />}
+          <FormControl fullWidth>
+            <Controller
+              name={name}
+              control={control}
+              rules={rules}
+              render={({ field: { onChange, value } }) => (
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
+                    <DateTimePicker
+                      label="Select Date & Time"
+                      // onChange={ onChange}
+                      // value={value}
+                      // {...rest}
+                    />
+                  </DemoContainer>
+                </LocalizationProvider>
               )}
             />
           </FormControl>

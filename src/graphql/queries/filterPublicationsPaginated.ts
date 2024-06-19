@@ -32,6 +32,7 @@ export const GET_PUBLICATIONS = gql`
           traffic
         }
         categories
+        visibility
         linkType
         url
         timeline

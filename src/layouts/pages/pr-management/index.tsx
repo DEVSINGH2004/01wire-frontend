@@ -29,8 +29,8 @@ const PER_PAGE = 10;
 const PRManagement = () => {
   const { id } = useParams();
   const [filters, setFilters] = useState<any>({});
-  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
 
   const [getArticles, { data, loading, refetch }] = useLazyQuery<IGetArticles, IGetArticlesVars>(
     GET_ARTICLES,
@@ -148,7 +148,7 @@ const PRManagement = () => {
     <>
       {loader && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar />
-      <MDBox sx={{ overFlow: "hidden", display: "flex", flexDirection: "column" }}>
+      <MDBox sx={{ display: "flex", flexDirection: "column" }}>
         {!openForm && (
           <MDBox px={2} pt={2} display="flex" alignItems="center" justifyContent="space-between">
             <MDTypography fontWeight="bold" fontSize="20px">
@@ -166,7 +166,7 @@ const PRManagement = () => {
           options={options}
           setOptions={setOptions}
         />
-        <MDBox px={2} pt={openForm ? 3 : 2} pb={3} sx={{ flex: 1, overflow: "auto" }}>
+        <MDBox px={2} pt={openForm ? 3 : 2} pb={3} sx={{ flex: 1 }}>
           {loading && data?.filterArticlesPaginated?.data?.length === 0 ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
@@ -177,9 +177,10 @@ const PRManagement = () => {
             </Card>
           ) : data?.filterArticlesPaginated?.data?.length ? (
             <Box
-            // sx={{
-            //   height: "70vh",
-            // }}
+              sx={{
+                flex: 1,
+                // height: "70vh",
+              }}
             >
               <DataTable
                 handlePagination={handlePagination}

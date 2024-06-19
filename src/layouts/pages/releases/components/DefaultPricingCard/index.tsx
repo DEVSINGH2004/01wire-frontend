@@ -14,6 +14,7 @@ import MDButton from "components/MDButton";
 
 import Guaranteed from "assets/images/icons/guaranteeIcon.png";
 import TrendingUpIcon from "assets/images/icons/trendingIcon.png";
+import BundleSample from "assets/images/bundlesSample.svg";
 
 // Declaring props types for DefaultPricingCard
 interface Props {
@@ -59,6 +60,7 @@ interface Props {
   [key: string]: any;
   totalPublications?: number;
   reach: string;
+  onclick?:any
 }
 
 function DefaultPricingCard({
@@ -78,6 +80,7 @@ function DefaultPricingCard({
   category,
   showCatgeory = false,
   bundle,
+  onclick,
 }: Props): JSX.Element {
   const renderSpecifications = specifications.map(({ label, includes }) => (
     <MDBox key={label} display="flex" alignItems="center" p={1}>
@@ -99,7 +102,8 @@ function DefaultPricingCard({
         </MDTypography>
       </MDBox>
       <MDTypography
-        variant="body2"
+        // variant="body2"
+        fontSize="12px"
         color={color === "white" ? "text" : "white"}
         fontWeight="regular"
       >
@@ -118,12 +122,12 @@ function DefaultPricingCard({
         border: checked && "1px solid #EE5C61",
       }}
     >
-      <MDBox bgColor={color} variant={"gradient"} borderRadius="xl">
+      <MDBox bgColor={color} variant="gradient" borderRadius="xl">
         <MDBox mt={-1.375} display="flex" alignItems="center" justifyContent={"center"}>
           <MDBox
             bgColor={badge.color}
             width="122px"
-            textAlign={"center"}
+            textAlign="center"
             height="25px"
             borderRadius="section"
             lineHeight={1}
@@ -137,16 +141,15 @@ function DefaultPricingCard({
               {badge.label}
             </MDTypography>
           </MDBox>
-          {showCatgeory && (
+          {category && (
             <MDBox
               height="25px"
-              // borderRadius="section"
               lineHeight={1}
               px="12px"
               sx={{ background: "#4579DE", ml: "-10px", borderRadius: "0px 20px 20px 0" }}
             >
               <MDTypography variant="caption" fontWeight="regular" sx={{ color: "#fff" }}>
-                {showCatgeory}
+                {category}
               </MDTypography>
             </MDBox>
           )}
@@ -207,44 +210,60 @@ function DefaultPricingCard({
         <MDBox pb={3} px={3}>
           {renderSpecifications}
         </MDBox>
-        <MDBox pb={3} px={3} display="flex" alignItems="center" justifyContent="space-between">
+        <MDBox
+          bgColor="grey-100"
+          m={"auto"}
+          py={1}
+          sx={{ height: "115px", width: "90%", borderRadius: "8px" }}
+        >
+          <img src={bundle?.image || BundleSample} height="100%" width="100%" />
+        </MDBox>
+        <MDBox
+          pb={3}
+          px={3}
+          display="flex"
+          alignItems="center"
+          justifyContent={disabled ? "center" : "space-between"}
+        >
           <MDBox mt={3}>
             <Link
               component="button"
               variant="body2"
-              onClick={() => {
-                console.info("I'm a button.");
-              }}
+              color="#4579DE"
+              underline="always"
+              onClick={onclick && onclick}
             >
               Read More
             </Link>
           </MDBox>
-          <MDBox mt={3}>
-            <MDBox
-              px={1}
-              width="115px"
-              bgColor="grey-200"
-              borderRadius="lg"
-              display="flex"
-              justifyContent="space-around"
-              alignItems="center"
-            >
-              <Radio
-                color="primary"
-                checked={checked}
-                onClick={handleClick}
-                disabled={disabled}
-                value={id}
-              />
-              <MDTypography
-                fontSize="14px"
-                fontWeight="regular"
-                sx={{ color: checked ? "#EE5C61" : "#84878E" }}
+          {!disabled && (
+            <MDBox mt={3}>
+              <MDBox
+                px={1}
+                width="115px"
+                bgColor="grey-200"
+                borderRadius="lg"
+                display="flex"
+                justifyContent="space-around"
+                alignItems="center"
               >
-                Select
-              </MDTypography>
+                <Radio
+                  color="primary"
+                  checked={checked}
+                  onClick={handleClick}
+                  disabled={disabled}
+                  value={id}
+                />
+                <MDTypography
+                  fontSize="14px"
+                  fontWeight="regular"
+                  sx={{ color: checked ? "#EE5C61" : "#84878E" }}
+                >
+                  Select
+                </MDTypography>
+              </MDBox>
             </MDBox>
-          </MDBox>
+          )}
         </MDBox>
       </MDBox>
     </Card>

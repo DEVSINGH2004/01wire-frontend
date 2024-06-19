@@ -11,16 +11,12 @@ import Select from "@mui/material/Select";
 import MDInput from "components/MDInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
 import debounce from "lodash.debounce";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
+import SearchIcon from "assets/images/icons/searchIcon.svg";
 
-import {
-  IGetUsers,
-  IGetUsersVars,
-  GET_USERS,
-} from "graphql/queries/filterUsersPaginated";
+import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsersPaginated";
 
 import EastIcon from "@mui/icons-material/East";
 import dayjs, { Dayjs } from "dayjs";
@@ -47,10 +43,7 @@ const Filters = ({
   const [from, setFrom] = useState<Dayjs | null>(filters?.startTime || null);
   const [to, setTo] = useState<Dayjs | null>(filters?.endTime || null);
 
-  const [getUsers, { data, loading, refetch }] = useLazyQuery<
-    IGetUsers,
-    IGetUsersVars
-  >(GET_USERS, {
+  const [getUsers, { data, loading, refetch }] = useLazyQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
     fetchPolicy: "network-only",
   });
 
@@ -63,7 +56,6 @@ const Filters = ({
       });
     }
   }, [to, from]);
-
 
   useEffect(() => {
     if (email) {
@@ -105,7 +97,7 @@ const Filters = ({
     debounce((val: string) => {
       handleFilters("prId", Number(val));
     }, 500),
-    [],
+    []
   );
   const handleInputChange = (evt: any) => {
     const searchTerm = evt.target.value || "";
@@ -117,7 +109,7 @@ const Filters = ({
     debounce((val: string) => {
       // handleFilters("prId", val);
     }, 500),
-    [],
+    []
   );
   const handleEmailChange = (evt: any) => {
     const searchTerm = evt.target.value || "";
@@ -131,12 +123,7 @@ const Filters = ({
 
   return (
     <>
-      <Box
-        p={2}
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Box p={2} display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
           <Autocomplete
             id="asynchronous-demo"
@@ -150,9 +137,7 @@ const Filters = ({
               setOpen(false);
             }}
             onChange={selectEmail}
-            isOptionEqualToValue={(option, value) =>
-              option?.email === value?.email
-            }
+            isOptionEqualToValue={(option, value) => option?.email === value?.email}
             getOptionLabel={(option: any) => option?.email}
             options={options}
             loading={loading}
@@ -166,17 +151,20 @@ const Filters = ({
                   height: "42px",
                   "& .MuiInputBase-root": {
                     height: "42px",
-                  }
+                  },
                 }}
                 placeholder="Search By Email"
                 // value={filters?.prId}
                 InputProps={{
                   ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment sx={{ ml: "6px" }} position="start">
+                      <img height={15} width={15} src={SearchIcon} alt="Search" />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
                       {params.InputProps.endAdornment}
                     </>
                   ),
@@ -189,16 +177,12 @@ const Filters = ({
             fullWidth
             type="text"
             onChange={handleInputChange}
-            value={filters?.prId}
+            value={q}
             placeholder="Search PR ID"
             InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {filters?.prId ? (
-                    <CloseIcon fontSize="small" />
-                  ) : (
-                    <SearchIcon />
-                  )}
+              startAdornment: (
+                <InputAdornment position="start">
+                  <img height={15} width={15} src={SearchIcon} alt="Search" />
                 </InputAdornment>
               ),
             }}
@@ -255,13 +239,24 @@ const Filters = ({
                   textField: {
                     size: "small",
                     variant: "standard",
+                    sx: {
+                      "& .MuiInput-underline:before": {
+                        borderBottom: "none", // Remove bottom border when not focused
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottom: "none", // Remove bottom border when focused
+                      },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                        borderBottom: "none", // Remove bottom border on hover (when not disabled)
+                      },
+                    },
                   },
                 }}
                 label=""
               />
             </Box>
             <Box mx={1}>
-              <EastIcon />
+              <EastIcon fontSize="small" />
             </Box>
             <Box>
               <MDTypography
@@ -275,7 +270,21 @@ const Filters = ({
                 value={to ? dayjs(to) : null}
                 onChange={(newValue) => setTo(newValue)}
                 slotProps={{
-                  textField: { size: "small", variant: "standard" },
+                  textField: {
+                    size: "small",
+                    variant: "standard",
+                    sx: {
+                      "& .MuiInput-underline:before": {
+                        borderBottom: "none", // Remove bottom border when not focused
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottom: "none", // Remove bottom border when focused
+                      },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                        borderBottom: "none", // Remove bottom border on hover (when not disabled)
+                      },
+                    },
+                  },
                 }}
                 label=""
               />

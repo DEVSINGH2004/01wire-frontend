@@ -171,44 +171,56 @@ function ReleaseForm({ idVal }: Props): JSX.Element {
           {loading ? (
             <MDCircularLoader startLoader />
           ) : (
-            <>
-              {getStepContent(activeStep, saveData, handleNext, article, fetchData, setSaveData)}
-              <MDBox mt={3} width="100%" display="flex" justifyContent="space-between">
-                {activeStep === 0 ? (
-                  <MDBox />
-                ) : (
-                  <MDButton
-                    color="white"
-                    onClick={handleBack}
-                    sx={{
-                      boxShadow: "0px 1px 5px 0px #0000001F",
-                    }}
-                  >
-                    <MDTypography fontSize="16px" sx={{ fontWeight: 400, fontFamily: "Roboto" }}>
-                      {"< Back"}
-                    </MDTypography>
-                  </MDButton>
-                )}
-                <MDButton
-                  color="primary"
-                  onClick={
-                    !isLastStep
-                      ? () => setSaveData(true)
-                      : article?.totalCredits <= userWallet?.getUserWallet?.balance
-                      ? handleSend
-                      : handleAddCredits
-                  }
-                >
-                  {isLastStep
-                    ? article?.totalCredits <= userWallet?.getUserWallet?.balance
-                      ? "send"
-                      : "Add Credits"
-                    : "next"}
-                </MDButton>
-              </MDBox>
-            </>
+            <>{getStepContent(activeStep, saveData, handleNext, article, fetchData, setSaveData)}</>
           )}
         </MDBox>
+      </MDBox>
+      <MDBox
+        mt={3}
+        width="102.47%"
+        display="flex"
+        justifyContent="space-between"
+        bgColor="white"
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          marginLeft: "-1.2%",
+          padding: "2rem 1rem",
+          boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+          zIndex: 1000,
+        }}
+      >
+        {activeStep === 0 ? (
+          <MDBox />
+        ) : (
+          <MDButton
+            color="white"
+            onClick={handleBack}
+            sx={{
+              boxShadow: "0px 1px 5px 0px #0000001F",
+            }}
+          >
+            <MDTypography fontSize="16px" sx={{ fontWeight: 400, fontFamily: "Roboto" }}>
+              {"< Back"}
+            </MDTypography>
+          </MDButton>
+        )}
+        <MDButton
+          color="primary"
+          onClick={
+            !isLastStep
+              ? () => setSaveData(true)
+              : article?.totalCredits <= userWallet?.getUserWallet?.balance
+              ? handleSend
+              : handleAddCredits
+          }
+        >
+          {isLastStep
+            ? article?.totalCredits <= userWallet?.getUserWallet?.balance
+              ? "send"
+              : "Add Credits"
+            : "next"}
+        </MDButton>
       </MDBox>
     </>
   );

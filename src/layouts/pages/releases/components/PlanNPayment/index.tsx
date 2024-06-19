@@ -1,21 +1,14 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 // @mui material components
-import Grid from "@mui/material/Grid";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import IconButton from "@mui/material/IconButton";
+import Chip from "@mui/material/Chip";
+import InputAdornment from "@mui/material/InputAdornment";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
+// import MDInput from "components/MDInput";
 import MDCircularLoader from "components/MDCircularLoader";
-import DefaultPricingCard from "../DefaultPricingCard";
-import ComplexProjectCard from "../ComplexProjectCard";
-import { useMaterialUIController } from "context";
+import MDInput from "components/MDInput";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import {
@@ -24,24 +17,11 @@ import {
   IGetPublicationsVars,
 } from "graphql/queries/filterPublicationsPaginated";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
+import DisplayBundles from "../DisplayBundles";
+import PublicationsList from "../PublicationsList";
+import SearchIcon from "assets/images/icons/searchIcon.svg";
 
-// Custom arrow component for previous button
-const PrevArrow = ({ onClick }: { onClick?: any }) => {
-  return (
-    <IconButton style={{ position: "absolute", top: "50%", left: "-50px", background: "#fff" }}>
-      <KeyboardArrowLeftIcon onClick={onClick} />
-    </IconButton>
-  );
-};
-
-// Custom arrow component for next button
-const NextArrow = ({ onClick }: { onClick?: any }) => {
-  return (
-    <IconButton style={{ position: "absolute", top: "50%", right: "-38px", background: "#fff" }}>
-      <KeyboardArrowRightIcon onClick={onClick} />
-    </IconButton>
-  );
-};
+const perPage = 10;
 interface Props {
   cb?: any;
   saveData?: boolean;
@@ -58,25 +38,24 @@ function PlanNPayment({
   disabled = false,
   setSaveData,
 }: Props): JSX.Element {
-  const [controller] = useMaterialUIController();
-  const { darkMode } = controller;
+  const savedBundlePids =
+    data?.bundleInfo?.length > 0
+      ? [...new Set(data.bundleInfo?.flatMap((bundle: any) => bundle.publicationIds))]
+      : [];
+
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const [loading, setLoading] = useState<boolean>(false);
   const [publicationIds, setPublicationIds] = useState<any>(
     data?.publicationIds ? data?.publicationIds : []
   );
+  const [selecetdP, setSelectedP] = useState<any>(data?.publicationInfo || []);
   const [selected, setSelected] = useState<any>(data?.bundleInfo || []);
-  const [bundlePids, setBundlePids] = useState<any>([]);
-  const settings = {
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    className: "center",
-    infinite: false,
-    centerPadding: "60px",
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
-  };
+  const [bundlePids, setBundlePids] = useState<any>(savedBundlePids);
+  const [selectedCategory, setCategory] = useState<string | null>();
+  const [currentPage, setPage] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPublications, setFilteredPublications] = useState(null);
+
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
       paginationInput: {
@@ -86,21 +65,22 @@ function PlanNPayment({
     },
     skip: disabled,
   });
-  const { data: publicationsData } = useQuery<IGetPublications, IGetPublicationsVars>(
-    GET_PUBLICATIONS,
-    {
-      variables: {
-        filterInput: {
-          filterIds: bundlePids,
-        },
-        paginationInput: {
-          currentPage: 0,
-          perPage: 200,
-        },
+  const {
+    data: publicationsData,
+    refetch: refetchPublications,
+    loading: pLoading,
+  } = useQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
+    variables: {
+      filterInput: {
+        filterIds: bundlePids,
       },
-      skip: disabled,
-    }
-  );
+      paginationInput: {
+        currentPage: currentPage,
+        perPage: perPage,
+      },
+    },
+    skip: disabled,
+  });
   const currentPublications: any =
     (disabled && data?.publicationInfo) ||
     publicationsData?.filterPublicationsPaginated?.data ||
@@ -119,36 +99,20 @@ function PlanNPayment({
       // Add the new bundle for the category
       return [...updatedBundles, { ...bundle, category }];
     });
-
     setBundlePids((prevPublications: any) => {
       // If bundle is already selected, remove its publication IDs
       if (selected?.some((b: any) => b.id === id)) {
         return prevPublications.filter((pubId: any) => !publicationIds.includes(pubId));
       }
-
       // Add the new publication IDs
       return [...prevPublications, ...publicationIds];
     });
   };
-  // const handleChange = (e: any, pIds: any, category: any) => {
-  //   if (e?.target?.value) {
-  //     setSelected(e.target.value);
-  //     setBundlePids(pIds);
-  //   } else {
-  //     setSelected("");
-  //     const newPids = bundlePids?.filter((one: any) => !pIds.includes(one));
-  //     setBundlePids(newPids);
-  //   }
-  // };
-  const handlePublicationClick = (id: any) => {
-    if (publicationIds?.indexOf(id) !== -1) {
-      const newIds = publicationIds?.filter((one: any) => one !== id);
-      setPublicationIds(newIds);
-    } else {
-      setPublicationIds((oldVal: any) => [...oldVal, id]);
-    }
+  const handleSelectedRowsChange = (newSelectedRows: any[]) => {
+    setSelectedP(newSelectedRows);
+    const ids = newSelectedRows?.length > 0 ? newSelectedRows.map((item: any) => item.id) : [];
+    setPublicationIds(ids);
   };
-
   const onSubmit = () => {
     const selectedBundleIds = selected?.map((bundle: any) => bundle.id);
     if (
@@ -187,7 +151,9 @@ function PlanNPayment({
       onSubmit();
     }
   }, [saveData]);
-
+  useEffect(() => {
+    refetchPublications();
+  }, [currentPage, refetchPublications]);
   const groupedData: any = bundlesData?.filterBundlesPaginated?.data?.reduce(
     (acc: any, obj: any) => {
       const { category, ...rest } = obj;
@@ -199,198 +165,103 @@ function PlanNPayment({
     },
     {}
   );
+  const handleCategorySelection = (value: string) => {
+    setCategory(value);
+  };
+  const handleSearchChange = (event: any) => {
+    setSearchTerm(event.target.value);
+  };
+  useEffect(() => {
+    if (!selectedCategory && bundlesData?.filterBundlesPaginated?.data?.length) {
+      setCategory(bundlesData?.filterBundlesPaginated?.data?.[0]?.category);
+    }
+  }, [bundlesData]);
+  useEffect(() => {
+    const filteredItems = currentPublications.filter((item: any) =>
+      item?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredPublications(filteredItems);
+  }, [searchTerm]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
-      {disabled && data?.bundleInfo?.length > 0 && (
-        <MDBox>
-          <MDTypography variant="h5">Bundles</MDTypography>
-          <MDBox
-            sx={{
-              "& .slick-track": {
-                transform: "none !important",
-              },
-            }}
-            bgColor={"grey-200"}
-            borderRadius="lg"
-            p={"24px 60px 24px 70px"}
-            mb={1}
-            mt={2}
-          >
-            <Slider {...settings}>
-              {data.bundleInfo.map((one: any, i: number) => {
-                return (
-                  <MDBox key={i} width={"290px !important"}>
-                    <DefaultPricingCard
-                      color={darkMode ? "dark" : "white"}
-                      badge={{
-                        color: one?.type === "PREMIUM" ? "primary" : "rgba(222, 226, 232, 1)",
-                        label: one?.type,
-                      }}
-                      price={{ currency: "$", value: one?.price?.toString(), type: "mo" }}
-                      specifications={[
-                        { label: "2 team members", includes: true },
-                        { label: "20GB Cloud storage", includes: true },
-                        { label: "Integration help", includes: false },
-                        { label: "Sketch Files", includes: false },
-                        { label: "API Access", includes: false },
-                        { label: "Complete documentation", includes: false },
-                      ]}
-                      action={{
-                        type: "internal",
-                        route: "/",
-                        color: darkMode ? "warning" : "dark",
-                        label: "join",
-                      }}
-                      shadow={darkMode}
-                      totalPublications={one?.publicationIds?.length}
-                      reach={one?.traffic || ""}
-                      handleChange={handleChange}
-                      selected={selected}
-                      id={one?.id}
-                      showCatgeory={one?.category}
-                      pIds={one?.publicationIds}
-                      disabled={disabled}
-                      category={one?.category}
-                      bundle={one}
-                    />
-                  </MDBox>
-                );
-              })}
-            </Slider>
-          </MDBox>
+      {!disabled && groupedData && (
+        <MDBox
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 3,
+          }}
+        >
+          {Object.keys(groupedData)?.map((category: any, i: number) => {
+            return (
+              <Chip
+                key={i}
+                label={category}
+                color={selectedCategory === category ? "primary" : "default"}
+                variant={selectedCategory === category ? "filled" : "outlined"}
+                onClick={() => handleCategorySelection(category)}
+              />
+            );
+          })}
         </MDBox>
       )}
-      {!disabled &&
-        groupedData &&
-        Object.keys(groupedData)?.map((category: any) => {
-          return (
-            <MDBox key={category}>
-              <MDBox display="flex" alignItems="center">
-                <MDTypography variant="h5">Bundles</MDTypography>
-                <MDBox
-                  sx={{
-                    height: "34px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  ml={1}
-                  borderRadius="section"
-                  px="12px"
-                  bgColor="#4579DE"
-                >
-                  <MDTypography variant="caption" fontWeight="regular" sx={{ color: "#fff" }}>
-                    {category}
-                  </MDTypography>
-                </MDBox>
-              </MDBox>
-              <MDBox bgColor={"grey-200"} borderRadius="lg" p={"24px 60px 24px 70px"} mb={1} mt={2}>
-                <Slider {...settings}>
-                  {groupedData?.[category]?.map((one: any, i: number) => {
-                    return (
-                      <MDBox key={i} width={"290px !important"}>
-                        <DefaultPricingCard
-                          color={darkMode ? "dark" : "white"}
-                          badge={{
-                            color: one?.type === "PREMIUM" ? "primary" : "rgba(222, 226, 232, 1)",
-                            label: one?.type,
-                          }}
-                          price={{ currency: "$", value: one?.price?.toString(), type: "mo" }}
-                          specifications={[
-                            { label: "2 team members", includes: true },
-                            { label: "20GB Cloud storage", includes: true },
-                            { label: "Integration help", includes: false },
-                            { label: "Sketch Files", includes: false },
-                            { label: "API Access", includes: false },
-                            { label: "Complete documentation", includes: false },
-                          ]}
-                          action={{
-                            type: "internal",
-                            route: "/",
-                            color: darkMode ? "warning" : "dark",
-                            label: "join",
-                          }}
-                          shadow={darkMode}
-                          totalPublications={one?.publicationIds?.length}
-                          reach={one?.traffic || ""}
-                          handleChange={handleChange}
-                          selected={selected}
-                          id={one?.id}
-                          pIds={one?.publicationIds}
-                          disabled={disabled}
-                          category={category}
-                          bundle={one}
-                        />
-                      </MDBox>
-                    );
-                  })}
-                </Slider>
-              </MDBox>
-            </MDBox>
-          );
-        })}
-      {currentPublications?.length > 0 && (
+      {(groupedData || (disabled && data?.bundleInfo?.length > 0)) && (
+        <MDBox mt={3}>
+          <MDTypography variant="h6">
+            {disabled ? "Selected Bundle" : "Select Bundles"}
+          </MDTypography>
+          <DisplayBundles
+            bundles={disabled ? data.bundleInfo : groupedData[selectedCategory]}
+            handleChange={handleChange}
+            selected={selected}
+            disabled={disabled}
+            category={selectedCategory}
+          />
+        </MDBox>
+      )}
+
+      {((disabled && currentPublications?.length > 0) || !disabled) && (
         <MDBox>
           <MDBox py={2} display="flex" justifyContent="space-between">
-            <MDTypography variant="h5">Publications</MDTypography>
-            {/* <MDBox width="173px" ml="auto">
-          <MDInput
-            placeholder="Search..."
-            size="small"
-            fullWidth
-            onChange={({ currentTarget }: any) => {
-              setSearch(search);
-              onSearchChange(currentTarget.value);
-            }}
-          />
-        </MDBox> */}
+            <MDBox display="flex" alignItems="center">
+              <MDTypography variant="h6">
+                {disabled ? "Selected Publications" : "Select Publications"}
+              </MDTypography>
+              <Chip
+                sx={{ ml: 2 }}
+                color="primary"
+                variant="outlined"
+                label={`${publicationIds?.length} Selected`}
+              />
+            </MDBox>
+            <MDInput
+              sx={{ width: 268 }}
+              fullWidth
+              type="text"
+              size="small"
+              onChange={handleSearchChange}
+              value={searchTerm}
+              placeholder="Search Publications"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <img height={15} width={15} src={SearchIcon} alt="Search" />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </MDBox>
-          <MDBox mt={5}>
-            <Grid container spacing={3}>
-              {currentPublications?.map((one: any, i: number) => {
-                return (
-                  <Grid key={i} item xs={12} md={6} lg={6}>
-                    <MDBox my={1.5} variant="gradient">
-                      <ComplexProjectCard
-                        image={one?.image}
-                        title={one?.title}
-                        description="If everything I did failed - which it doesn't, I think that it actually succeeds."
-                        dateTime="02.03.22"
-                        stats={[
-                          { title: "DA", value: one?.stats?.da },
-                          { title: "DR", value: one?.stats?.dr },
-                          { title: "PA", value: one?.stats?.pa },
-                          { title: "UR", value: one?.stats?.ur },
-                        ]}
-                        traffic={one?.stats?.traffic}
-                        linkType={one?.linkType?.split("_")?.join(" ")}
-                        timeLine={
-                          (one?.timeline &&
-                            (one?.timeline === "W1"
-                              ? "WITHIN ONE WEEK"
-                              : one?.timeline === "W2"
-                              ? "WITHIN TWO WEEKS"
-                              : one?.timeline === "D1"
-                              ? "WITHIN ONE DAY"
-                              : one?.timeline === "D2"
-                              ? "WITHIN TWO DAYS"
-                              : one?.timeline === "D5"
-                              ? "WITHIN FIVE DAYS"
-                              : `WITHIN ${one?.timeline}`)) ||
-                          ""
-                        }
-                        credits={one?.price}
-                        categories={one?.categories?.join(" / ")}
-                        onClick={disabled ? () => {} : handlePublicationClick}
-                        selected={publicationIds?.length && publicationIds?.indexOf(one?.id) !== -1}
-                        id={one?.id}
-                      />
-                    </MDBox>
-                  </Grid>
-                );
-              })}
-            </Grid>
+          <MDBox mt={3}>
+            <PublicationsList
+              publications={searchTerm ? filteredPublications : currentPublications}
+              updatePage={setPage}
+              paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
+              onSelect={!disabled && handleSelectedRowsChange}
+              selectedP={selecetdP}
+              loading={pLoading}
+              disabled={disabled}
+            />
           </MDBox>
         </MDBox>
       )}

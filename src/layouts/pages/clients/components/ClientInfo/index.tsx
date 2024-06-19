@@ -88,6 +88,7 @@ function ClientInfo({
     let res: any;
     const {
       title,
+      type,
       logo,
       email,
       website,
@@ -115,11 +116,11 @@ function ClientInfo({
             params: {
               id: data.id,
               title,
+              type,
               logo,
               email,
               website,
               notes,
-              type: formVals?.type?.value,
               category: formVals?.category?.value,
               social,
             },
@@ -133,7 +134,7 @@ function ClientInfo({
               logo,
               email,
               website,
-              type: formVals?.type?.value,
+              type,
               category: formVals?.category?.value,
               social,
               notes,
@@ -179,13 +180,22 @@ function ClientInfo({
               control={control}
               variant="outlined"
             />
-            <FormField
+            {/* <FormField
               type="dropdown"
               placeholder="Select Company Tye"
               label="Company Type"
               name="type"
               control={control}
               options={ComanyTypeOptions}
+              variant="outlined"
+            /> */}
+            <FormField
+              type="radio"
+              placeholder="Select Company Tye"
+              label="Company Type"
+              name="type"
+              control={control}
+              opt={ComanyTypeOptions}
               variant="outlined"
             />
             <FormField

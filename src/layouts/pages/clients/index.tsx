@@ -4,28 +4,25 @@ import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 import ClientForm from "./components/ClientForm";
-import { useQuery } from "@apollo/client";
-import productImage from "assets/images/products/product-11.jpg";
+import { useLazyQuery } from "@apollo/client";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import MDCircularLoader from "components/MDCircularLoader";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import EditIcon from "assets/images/icons/editIcon.svg";
-import FBIcon from "assets/images/FB.svg";
-import InstaIcon from "assets/images/insta.svg";
-import TwitterIcon from "assets/images/twitter.svg";
-import YtIcon from "assets/images/yt.svg";
-import LinkedInIcon from "assets/images/LinkedIn.svg";
+
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { DELETE_CLIENT, IDeleteClientVars } from "graphql/mutations/deleteClient";
+import DataTable from "../pr-management/components/DataTable";
+import { makeColumns } from "./components/makeColumns";
+import DeleteModal from "examples/DeleteModal";
+
+const PER_PAGE = 10;
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -38,78 +35,6 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
     })}
   </MDBox>
 );
-const SocialMediaLink = ({ url, Icon }: { url: string | undefined; Icon: any }) => {
-  return (
-    <Link
-      sx={{
-        "& img": {
-          filter: !url ? "grayscale(100%)" : "none",
-        },
-      }}
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img src={Icon} height="36px" width="36px" alt="facebookIcon" />
-    </Link>
-  );
-};
-const columns = [
-  {
-    Header: "Title",
-    accessor: "logo",
-    width: "10%",
-    Cell: ({ value }: any) => {
-      return (
-        <MDBox mr={2}>
-          <MDAvatar
-            src={value ? `${process.env.REACT_APP_IMAGE_BASE_URL}${value}` : productImage}
-            variant="rounded"
-            size="xxl"
-            sx={{
-              borderRadius: "4px",
-            }}
-          />
-        </MDBox>
-      );
-    },
-  },
-  {
-    Header: "",
-    accessor: "title",
-    width: "50%",
-    Cell: ({ value }: any) => {
-      return (
-        <MDTypography fontSize="16px" fontWeight="regular">
-          {value}
-        </MDTypography>
-      );
-    },
-  },
-  {
-    Header: "Social Media",
-    accessor: "socialMedia",
-    width: "30%",
-    Cell: ({ value = {} }: any) => {
-      const { facebook, instagram, twitter, youtube, linkedIn } = value;
-      return (
-        <MDBox display="flex" alignItems="center" justifyContent="space-between" width={"250px"}>
-          <SocialMediaLink url={facebook} Icon={FBIcon} />
-          <SocialMediaLink url={linkedIn} Icon={LinkedInIcon} />
-          <SocialMediaLink url={twitter} Icon={TwitterIcon} />
-          <SocialMediaLink url={instagram} Icon={InstaIcon} />
-          <SocialMediaLink url={youtube} Icon={YtIcon} />
-        </MDBox>
-      );
-    },
-  },
-  {
-    Header: "Action",
-    accessor: "actions",
-    width: "10%",
-    Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
-  },
-];
 
 function Clients(): JSX.Element {
   const { id } = useParams();
@@ -117,51 +42,47 @@ function Clients(): JSX.Element {
   const [openForm, setOpenForm] = useState<any>(false);
   const [loader, setLoader] = useState<boolean>(true);
   const [tableData, setData] = useState<any>([]);
-  const [deleteClient] = useMutation<IDeleteClientVars>(DELETE_CLIENT);
-  const {
-    data: clientsData,
-    loading,
-    refetch,
-  } = useQuery<IGetClients, IGetClientsVars>(GET_CLIENTS, {
-    variables: {
-      filterInput: {},
-      paginationInput: {
-        currentPage: 0,
-        perPage: 200,
-      },
-    },
-    skip: !!id,
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [deleteConf, setDeleteConf] = useState<any>(null);
+  const [deleteClient, { loading: deleteLoader }] = useMutation<IDeleteClientVars>(DELETE_CLIENT);
+  const [getClients, { data: clientsData, loading, refetch }] = useLazyQuery<
+    IGetClients,
+    IGetClientsVars
+  >(GET_CLIENTS, {
+    // skip: !!id,
     fetchPolicy: "network-only",
+    onCompleted: (res) => {
+      setPaginationInfo(res?.filterClientsPaginated?.paginationInfo);
+    },
   });
 
   useEffect(() => {
-    const clients = clientsData?.filterClientsPaginated?.data;
-    let rows: any = [];
-    if (clients?.length) {
-      rows = clients?.map((one) => {
-        return {
-          logo: one?.logo,
-          title: one?.title,
-          socialMedia: one?.social,
-          actions: [
-            {
-              imgIcon: EditIcon,
-              onClick: () => {
-                navigate(`/clients/${one?.id}`);
-              },
-            },
-            {
-              imgIcon: DeleteIcon,
-              onClick: () => {
-                handleDeleteClient(one?.id);
-              },
-            },
-          ],
-        };
-      });
+    setLoader(true);
+    getClients({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: 0,
+        },
+        filterInput: {},
+      },
+    })
+      .then(() => setLoader(false))
+      .catch(() => setLoader(false));
+  }, []);
+
+  const handleAction = (id: string, action: string) => {
+    if (action === "edit") {
+      setOpenForm(id);
+    } else {
+      setDeleteConf(id);
     }
+  };
+
+  useEffect(() => {
+    const rows = clientsData?.filterClientsPaginated?.data || [];
+    const columns = makeColumns(handleAction);
     setData({ rows, columns });
-    setLoader(false);
   }, [clientsData]);
 
   useEffect(() => {
@@ -186,27 +107,58 @@ function Clients(): JSX.Element {
         toast.error(err?.message);
       });
   };
+
+  const handlePagination = (page: number) => {
+    getClients({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: page,
+        },
+        filterInput: {},
+      },
+    });
+  };
+
   return (
     <>
+      {deleteLoader && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar text="Add New Client" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
         <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "570px" }}>
-          <Card sx={{ minHeight: "400px" }}>
-            {loading || loader ? (
+          {loader ? (
+            <Card sx={{ minHeight: "400px" }}>
               <MDCircularLoader overlayloader startLoader />
-            ) : openForm ? (
-              <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
-            ) : tableData?.rows?.length ? (
-              <DataTable showHeader={false} table={tableData} />
-            ) : (
+            </Card>
+          ) : openForm ? (
+            <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+          ) : clientsData?.filterClientsPaginated?.data?.length ? (
+            <DataTable
+              loading={loading}
+              handlePagination={handlePagination}
+              table={tableData}
+              showHeader
+              paginationInfo={paginationInfo || {}}
+            />
+          ) : (
+            <Card sx={{ minHeight: "400px" }}>
               <MDBox m={"auto"}>
                 <MDTypography variant="h6">No data found</MDTypography>
               </MDBox>
-            )}
-          </Card>
+            </Card>
+          )}
         </MDBox>
         <Footer />
       </MDBox>
+      {deleteConf && (
+        <DeleteModal
+          onClose={() => setDeleteConf(null)}
+          handleSubmit={() => {
+            handleDeleteClient(deleteConf);
+            setDeleteConf(null);
+          }}
+        />
+      )}
     </>
   );
 }
