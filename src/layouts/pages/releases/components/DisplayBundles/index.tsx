@@ -49,13 +49,7 @@ const DisplayBundles = ({
   disabled: boolean;
   category: string;
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [data, setData] = useState<any>([]);
-  useEffect(() => {
-    bundles?.map((item:any) => {
-      setData(item?.publicationInfo)
-    })
-  },[bundles])
+  const [open, setOpen] = useState<any>(false);
   return (
     <>
       <MDBox
@@ -101,18 +95,19 @@ const DisplayBundles = ({
                   disabled={disabled}
                   category={category}
                   bundle={one}
-                  onclick={() => setOpen(true)}
+                  onclick={() => setOpen(one)}
                 />
               </MDBox>
             );
           })}
         </Slider>
       </MDBox>
-      <BundlePublicationModal
-        open={open}
-        onclick={() => setOpen(false)}
-        currentPublications={data}
-      />
+      {open && (
+        <BundlePublicationModal
+          onClose={() => setOpen(false)}
+          currentPublications={open?.publicationInfo}
+        />
+      )}
     </>
   );
 };

@@ -10,11 +10,10 @@ import MDTypography from "components/MDTypography";
 import PublicationsList from "../PublicationsList";
 
 interface Props {
-  onclick?: any;
-  open: boolean;
+  onClose?: any;
   currentPublications: string[];
 }
-const BundlePublicationModal = ({ onclick, open, currentPublications }: Props) => {
+const BundlePublicationModal = ({ onClose, currentPublications }: Props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -28,8 +27,8 @@ const BundlePublicationModal = ({ onclick, open, currentPublications }: Props) =
           border: "0.5px solid rgba(0, 0, 0, 0.2)",
         },
       }}
-      open={open}
-      onClose={onclick}
+      open
+      onClose={onClose}
     >
       <MDBox display="flex" alignItems="center" justifyContent="space-between">
         <DialogTitle>
@@ -37,7 +36,7 @@ const BundlePublicationModal = ({ onclick, open, currentPublications }: Props) =
             Publications
           </MDTypography>
         </DialogTitle>
-        <IconButton onClick={onclick}>
+        <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </MDBox>
@@ -46,14 +45,7 @@ const BundlePublicationModal = ({ onclick, open, currentPublications }: Props) =
           textAlign: "center",
         }}
       >
-        <PublicationsList
-          publications={currentPublications}
-          updatePage={""}
-          paginationInfo={""}
-          selectedP={""}
-          loading={false}
-          disabled={false}
-        />
+        <PublicationsList publications={currentPublications} />
       </DialogContent>
     </Dialog>
   );

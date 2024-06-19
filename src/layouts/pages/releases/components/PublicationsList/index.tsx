@@ -16,12 +16,12 @@ const PublicationsList = ({
   disabled = false,
 }: {
   publications: any;
-  updatePage: any;
-  paginationInfo: any;
+  updatePage?: any;
+  paginationInfo?: any;
   onSelect?: any;
-  selectedP: any;
-  loading: boolean;
-  disabled: boolean;
+  selectedP?: any;
+  loading?: boolean;
+  disabled?: boolean;
 }) => {
   const columns = [
     {
