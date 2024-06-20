@@ -56,7 +56,7 @@ export const makeColumns = (
   handleUpdateStatus,
   handleFilters,
   setEmail,
-  setOptions,
+  setOptions
 ) => {
   const columns = [
     {
@@ -65,16 +65,14 @@ export const makeColumns = (
       width: "10%",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {value}
-          </MDTypography>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
         </MDBox>
       ),
     },
     {
       Header: "Title",
       accessor: "title",
-      width: "18%",
+      width: "15%",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
@@ -92,17 +90,17 @@ export const makeColumns = (
           <Box
             sx={{
               display: "flex",
-              width: "100%",
+              width: "150px",
               alignItems: "center",
               justifyContent: "space-between",
             }}
           >
             <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-              {truncateString(value, 15)}
+              {truncateString(value, 17)}
             </MDTypography>
             <MDBox
               alignItems="center"
-              ml={1}
+              ml={0.3}
               justifyContent="center"
               sx={{ height: "24px", width: "22px", display: "flex" }}
               bgColor="#FFDBDD"
@@ -128,11 +126,11 @@ export const makeColumns = (
       accessor: "bundleInfo",
       width: "5%",
       Cell: ({ value, row }) => {
-        const info = `${row.original.publicationIds.length}/${row.original.bundleInfo.length}`;
+        // const info = `${row.original.publicationIds.length}/${row.original.bundleInfo.length}`;
         return (
           <MDBox>
             <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-              {info}
+              <strong>{row.original.publicationIds.length}</strong>/{row.original.bundleInfo.length}
             </MDTypography>
           </MDBox>
         );
@@ -169,25 +167,21 @@ export const makeColumns = (
     },
     {
       Header: "Status",
-      width: "12%",
+      width: "15%",
       accessor: "status",
       Cell: ({ value, row }) => {
         const selectedStatus = value;
-        const selected = statusOptions.find(
-          (el) => selectedStatus === el?.value,
-        );
+        const selected = statusOptions.find((el) => selectedStatus === el?.value);
 
         const menuOptions =
           selectedStatus === "SCHEDULED"
             ? ["SCHEDULED", "REJECTED", "PUBLISHED"]
             : selectedStatus === "SUBMITTED"
-              ? ["SUBMITTED", "AWAITING_APPROVAL", "SCHEDULED"]
-              : ["REVIEW", "AWAITING_APPROVAL", "SCHEDULED"];
+            ? ["SUBMITTED", "AWAITING_APPROVAL", "SCHEDULED"]
+            : ["REVIEW", "AWAITING_APPROVAL", "SCHEDULED"];
         return (
           <MDBox>
-            {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(
-              selectedStatus,
-            ) ? (
+            {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(selectedStatus) ? (
               <MDBox
                 px={1}
                 borderRadius="21px"
@@ -199,7 +193,7 @@ export const makeColumns = (
                   backgroundImage: selected?.background,
                   color: "white",
                   backgroundBlendMode: "overlay",
-                  width: "152px",
+                  width: "140px",
                   height: "22px",
                 }}
               >
@@ -214,26 +208,22 @@ export const makeColumns = (
                 </MDTypography>
               </MDBox>
             ) : (
-              <FormControl
-                sx={{ width: "152px", height: "22px" }}
-                size="medium"
-              >
+              <FormControl sx={{ width: "152px", height: "22px" }} size="medium">
                 <Select
                   id="demo-select-small"
                   displayEmpty
                   value={selectedStatus}
-                 
-                    sx={{
-                      textAlign: "center",
-                      borderRadius: "21px",
-                    '& .MuiOutlinedInput-input': {
-                      padding: '10px',        
-                      color: 'white',         
-                      fontSize: '12px',
+                  sx={{
+                    textAlign: "center",
+                    borderRadius: "21px",
+                    "& .MuiOutlinedInput-input": {
+                      padding: "10px",
+                      color: "white",
+                      fontSize: "12px",
                       fontWeight: "400",
                       borderRadius: "21px",
                       border: "none",
-                      backgroundImage: selected?.background, 
+                      backgroundImage: selected?.background,
                     },
                   }}
                   renderValue={(selected) => {
@@ -262,24 +252,31 @@ export const makeColumns = (
       Header: "Action",
       Align: "right",
       width: "15%",
-      Cell: ({ value }) => {
+      Cell: ({ value, row }) => {
         return (
           <MDBox
             sx={{
               display: "flex",
             }}
           >
-            <>
-              <IconButton onClick={() => handleAction("navigate")}>
-                <img width={36} height={36} alt="navigate" src={DownloadIcon} />
-              </IconButton>
-              <IconButton>
-                <img width={36} height={36} alt="navigate" src={ViewIcon} />
-              </IconButton>
-              <IconButton>
-                <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-              </IconButton>
-            </>
+            <IconButton
+              onClick={() => handleAction("navigate")}
+              sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
+            >
+              <img width={36} height={36} alt="navigate" src={DownloadIcon} />
+            </IconButton>
+            <IconButton
+              sx={{
+                visibility: !["PUBLISHED", "SCHEDULED"].includes(row.original.status)
+                  ? "collapse"
+                  : "",
+              }}
+            >
+              <img width={36} height={36} alt="navigate" src={ViewIcon} />
+            </IconButton>
+            <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
+            </IconButton>
           </MDBox>
         );
       },

@@ -10,7 +10,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import MDInput from "components/MDInput";
 import InputAdornment from "@mui/material/InputAdornment";
-import CloseIcon from "@mui/icons-material/Close";
 import debounce from "lodash.debounce";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -121,6 +120,8 @@ const Filters = ({
     handleFilters("userId", values?.userId);
   };
 
+  console.log("userId", filters);
+
   return (
     <>
       <Box p={2} display="flex" alignItems="center" justifyContent="space-between">
@@ -146,7 +147,7 @@ const Filters = ({
                 {...params}
                 onChange={handleEmailChange}
                 label=""
-                value={email}
+                value={filters?.userId ? filters?.userId : ""}
                 sx={{
                   height: "42px",
                   "& .MuiInputBase-root": {
@@ -191,17 +192,20 @@ const Filters = ({
 
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <Box>
-            <FormControl sx={{ width: "150px", height: "42px", mr: 2 }}>
+            <FormControl sx={{ width: "140px", height: "42px", mr: 2 }}>
               <Select
                 id="demo-select-small"
                 displayEmpty
                 placeholder="Status"
-                value={filters?.status || ""}
+                value={filters?.status}
                 sx={{
                   textAlign: "center",
                   background: "#fff",
                   height: "42px",
                 }}
+                renderValue={
+                  filters?.status !== "" ? undefined : () => <MDTypography>Status</MDTypography>
+                }
                 onChange={(e) => handleFilters("status", e.target.value)}
               >
                 {statusOptions.map((option) => (

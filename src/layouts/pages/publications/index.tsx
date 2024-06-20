@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
+import { toast } from "react-toastify";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   GET_PUBLICATIONS,
   IGetPublications,
@@ -15,6 +16,12 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { makeColumns } from "./components/makeColumns";
 import DataTable from "../pr-management/components/DataTable";
 import Filters from "./components/Filters";
+import DeleteModal from "examples/DeleteModal";
+import { DELETE_PUBLICATION, IDeletePublicationVars } from "graphql/mutations/deletePublication";
+import {
+  UPDATE_PUBLICATION_VISIBILITY,
+  IUpdatePublicationVisVars,
+} from "graphql/mutations/updatePublicationVisibility";
 
 const PER_PAGE = 10;
 const Publications = () => {
@@ -27,6 +34,14 @@ const Publications = () => {
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [filters, setFilters] = useState<any>({});
+  const [deleteConf, setDeleteConf] = useState<any>(null);
+
+  const [updateVisibility, { loading: updateLoader }] = useMutation<IUpdatePublicationVisVars>(
+    UPDATE_PUBLICATION_VISIBILITY
+  );
+
+  const [deletePublication, { loading: deleteLoader }] =
+    useMutation<IDeletePublicationVars>(DELETE_PUBLICATION);
 
   const [getPublications, { data, loading, refetch }] = useLazyQuery<
     IGetPublications,
@@ -52,9 +67,35 @@ const Publications = () => {
       .then(() => setLoader(false))
       .catch(() => setLoader(false));
   }, []);
+
+  const handleAction = (id: string, action: string) => {
+    if (action === "edit") {
+      setOpenForm(id);
+    } else {
+      setDeleteConf(id);
+    }
+  };
+
+  const handleUpdateStatus = (row: any, visibility: string) => {
+    const id = row?.original?.id;
+    updateVisibility({
+      variables: {
+        id,
+        visibility,
+      },
+    })
+      .then(() => {
+        refetch();
+        toast.success("Status Updated successfully");
+      })
+      .catch((err: any) => {
+        toast.error(err?.message);
+      });
+  };
+
   useEffect(() => {
     const rows = data?.filterPublicationsPaginated?.data || [];
-    const columns = makeColumns();
+    const columns = makeColumns(handleAction, handleUpdateStatus);
 
     setData({ rows, columns });
   }, [data]);
@@ -96,19 +137,37 @@ const Publications = () => {
     });
   };
 
+  const handleDelete = (id: string | undefined) => {
+    if (!id) return;
+    deletePublication({
+      variables: {
+        id,
+      },
+    })
+      .then(() => {
+        refetch();
+        toast.success("Deleted Successfully");
+      })
+      .catch((err: any) => {
+        toast.error(err?.message);
+      });
+  };
+
   return (
     <>
+      {(deleteLoader || updateLoader) && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar text="Add Publication" onsubmit={!openForm && (() => setOpenForm(true))} />
-
       <MDBox px={2}>
         {!openForm && (
-          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-            <MDTypography fontWeight="bold" fontSize="20px">
-              Publications
-            </MDTypography>
-          </MDBox>
+          <>
+            <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
+              <MDTypography fontWeight="bold" fontSize="20px">
+                Publications
+              </MDTypography>
+            </MDBox>
+            <Filters handleFilters={handleFilters} filters={filters} />
+          </>
         )}
-        <Filters handleFilters={handleFilters} filters={filters} />
 
         <MDBox pt={openForm ? 3 : 2} pb={3}>
           {loader ? (
@@ -117,7 +176,14 @@ const Publications = () => {
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <PublicationForm onClose={() => setOpenForm(false)} refetch={refetch} id={openForm} />
+              <PublicationForm
+                onClose={() => {
+                  setOpenForm(false);
+                  refetch();
+                }}
+                refetch={refetch}
+                id={openForm}
+              />
             </Card>
           ) : data?.filterPublicationsPaginated?.data?.length ? (
             <DataTable
@@ -137,6 +203,15 @@ const Publications = () => {
           )}
         </MDBox>
       </MDBox>
+      {deleteConf && (
+        <DeleteModal
+          onClose={() => setDeleteConf(null)}
+          handleSubmit={() => {
+            handleDelete(deleteConf);
+            setDeleteConf(null);
+          }}
+        />
+      )}
     </>
   );
 };

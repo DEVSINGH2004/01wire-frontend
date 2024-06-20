@@ -74,15 +74,15 @@ const adminRoutes = [
     route: "/bundles",
     component: <Bundles />,
   },
-  {
-    type: "collapse",
-    name: "Published Order",
-    icon: <img src={PublishedOrder} width="24px" height="24px" />,
-    key: "published-order",
-    noCollapse: true,
-    route: "/published-order",
-    component: <PublishedOrders />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Published Order",
+  //   icon: <img src={PublishedOrder} width="24px" height="24px" />,
+  //   key: "published-order",
+  //   noCollapse: true,
+  //   route: "/published-order",
+  //   component: <PublishedOrders />,
+  // },
 ];
 
 export default adminRoutes;
