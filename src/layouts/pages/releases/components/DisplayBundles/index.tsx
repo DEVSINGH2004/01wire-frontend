@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import DefaultPricingCard from "../DefaultPricingCard";
 import MDBox from "components/MDBox";
 import Slider from "react-slick";
@@ -5,7 +6,6 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import IconButton from "@mui/material/IconButton";
 import BundlePublicationModal from "../BundlePublicationModal";
-import { useEffect, useState } from "react";
 
 // Custom arrow component for previous button
 const PrevArrow = ({ onClick }: { onClick?: any }) => {
@@ -50,6 +50,12 @@ const DisplayBundles = ({
   category: string;
 }) => {
   const [open, setOpen] = useState<any>(false);
+  const sliderRef = useRef(null);
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(0);
+    }
+  }, [category]);
   return (
     <>
       <MDBox
@@ -64,7 +70,7 @@ const DisplayBundles = ({
         mb={1}
         mt={2}
       >
-        <Slider {...settings}>
+        <Slider ref={sliderRef} {...settings}>
           {bundles?.map((one: any, i: number) => {
             return (
               <MDBox key={i} width="300px !important">
