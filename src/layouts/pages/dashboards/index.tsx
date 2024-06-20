@@ -48,16 +48,18 @@ function Overview(): JSX.Element {
   const { data, loading } = useQuery<IGetArticleStats>(GET_ARTICLE_STATS, {
     fetchPolicy: "network-only",
   });
-  const editorialReview = data?.getArticleStats?.find((one: any) => one?.status === "IN_REVIEW");
+  const editorialReview = data?.getArticleStats?.find(
+    (one: any) => one?.status === "IN_REVIEW"
+  )?.count;
   const awaitingApproval = data?.getArticleStats?.find(
     (one: any) => one?.status === "AWAITING_APPROVAL"
-  );
-  const scheduled = data?.getArticleStats?.find((one: any) => one?.status === "SCHEDULED");
-  const rejected = data?.getArticleStats?.find((one: any) => one?.status === "REJECTED");
+  )?.count;
+  const scheduled = data?.getArticleStats?.find((one: any) => one?.status === "SCHEDULED")?.count;
+  const rejected = data?.getArticleStats?.find((one: any) => one?.status === "REJECTED")?.count;
   return (
     <>
-    <DashboardNavbar />
-      { loading || hLoading ? (
+      <DashboardNavbar />
+      {loading || hLoading ? (
         <MDCircularLoader startLoader />
       ) : (
         <MDBox px={2}>
@@ -131,7 +133,7 @@ function Overview(): JSX.Element {
               History
             </MDTypography>
           </MDBox>
-          <Grid mt={1} container spacing={2} sx={{ minHeight: '280px' }}>
+          <Grid mt={1} container spacing={2} sx={{ minHeight: "280px" }}>
             {hArticlesData?.filterArticlesPaginated?.data?.length > 0 ? (
               hArticlesData?.filterArticlesPaginated?.data?.map((one: any, i: any) => {
                 return (

@@ -117,6 +117,8 @@ const Filters = ({
   };
 
   const selectEmail = (event: any, values: any) => {
+    console.log("userIds", values);
+
     handleFilters("userId", values?.userId);
   };
 
@@ -142,6 +144,9 @@ const Filters = ({
             getOptionLabel={(option: any) => option?.email}
             options={options}
             loading={loading}
+            value={
+              filters?.userId ? options?.find((el: any) => el.userId === filters?.userId) : null
+            }
             renderInput={(params) => (
               <MDInput
                 {...params}

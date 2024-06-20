@@ -185,7 +185,7 @@ const Publications = () => {
                 id={openForm}
               />
             </Card>
-          ) : data?.filterPublicationsPaginated?.data?.length ? (
+          ) : loading || !!data?.filterPublicationsPaginated?.data?.length ? (
             <DataTable
               loading={loading}
               handlePagination={handlePagination}

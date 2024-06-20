@@ -11,11 +11,13 @@ import { makeColumns } from "./components/makeColumns";
 import MDInput from "components/MDInput";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
 import InputAdornment from "@mui/material/InputAdornment";
-
+import { useNavigate } from "react-router-dom";
 import debounce from "lodash.debounce";
 
 const PER_PAGE = 10;
 const UserManagement = () => {
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState<any>({});
   const [q, setQ] = useState<any>("");
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
@@ -62,8 +64,7 @@ const UserManagement = () => {
 
   useEffect(() => {
     const rows = data?.filterUsersPaginated?.data || [];
-    const columns = makeColumns();
-    // setPaginationInfo(data?.filterUsersPaginated?.paginationInfo);
+    const columns = makeColumns(navigate);
     setData({ rows, columns });
   }, [data]);
 
@@ -125,7 +126,7 @@ const UserManagement = () => {
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
             </Card>
-          ) : (
+          ) : loading || !!data?.filterUsersPaginated?.data?.length ? (
             <DataTable
               loading={loading}
               handlePagination={handlePagination}
@@ -134,12 +135,12 @@ const UserManagement = () => {
               showHeader
               paginationInfo={paginationInfo}
             />
-            // ) : (
-            //   <Card sx={{ minHeight: "300px" }}>
-            //     <MDBox m={"auto"}>
-            //       <MDTypography variant="h6">No data found</MDTypography>
-            //     </MDBox>
-            //   </Card>
+          ) : (
+            <Card sx={{ minHeight: "300px" }}>
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            </Card>
           )}
         </MDBox>
       </MDBox>

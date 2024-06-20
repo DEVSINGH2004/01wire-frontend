@@ -13,8 +13,6 @@ import ClientForm from "./components/ClientForm";
 import { useLazyQuery } from "@apollo/client";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import MDCircularLoader from "components/MDCircularLoader";
-import DeleteIcon from "assets/images/icons/deleteIcon.svg";
-import EditIcon from "assets/images/icons/editIcon.svg";
 
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { DELETE_CLIENT, IDeleteClientVars } from "graphql/mutations/deleteClient";
@@ -132,7 +130,7 @@ function Clients(): JSX.Element {
             </Card>
           ) : openForm ? (
             <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
-          ) : clientsData?.filterClientsPaginated?.data?.length ? (
+          ) : loading || clientsData?.filterClientsPaginated?.data?.length ? (
             <DataTable
               loading={loading}
               handlePagination={handlePagination}

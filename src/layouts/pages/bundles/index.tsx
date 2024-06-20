@@ -84,12 +84,10 @@ const Bundles = () => {
   };
 
   useEffect(() => {
-    setLoader(true);
     const rows = data?.filterBundlesPaginated?.data || [];
     const columns = makeColumns(handleAction, handleUpdateStatus);
 
     setData({ rows, columns });
-    setLoader(false);
   }, [data]);
 
   const handlePagination = (page: number) => {
@@ -132,7 +130,7 @@ const Bundles = () => {
           </MDBox>
         )}
         <MDBox pt={openForm ? 3 : 2} pb={3}>
-          {loading || loader ? (
+          {loader ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
             </Card>
@@ -148,7 +146,7 @@ const Bundles = () => {
                 id={openForm}
               />
             </Card>
-          ) : data?.filterBundlesPaginated?.data?.length ? (
+          ) : loading || !!data?.filterBundlesPaginated?.data?.length ? (
             <DataTable
               loading={loading}
               handlePagination={handlePagination}
