@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "react-router-dom";
 // @mui material components
 import Chip from "@mui/material/Chip";
 import InputAdornment from "@mui/material/InputAdornment";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
 // import MDInput from "components/MDInput";
 import MDCircularLoader from "components/MDCircularLoader";
 import MDInput from "components/MDInput";
@@ -29,6 +31,7 @@ interface Props {
   refetch?: () => void;
   disabled?: any;
   setSaveData?: any;
+  createEstimate?: any;
 }
 function PlanNPayment({
   data,
@@ -37,7 +40,11 @@ function PlanNPayment({
   refetch,
   disabled = false,
   setSaveData,
+  createEstimate = false,
 }: Props): JSX.Element {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const estimation = location?.state?.estimation || {};
   const savedBundlePids =
     data?.bundleInfo?.length > 0
       ? [...new Set(data.bundleInfo?.flatMap((bundle: any) => bundle.publicationIds))]
@@ -46,10 +53,13 @@ function PlanNPayment({
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const [loading, setLoading] = useState<boolean>(false);
   const [publicationIds, setPublicationIds] = useState<any>(
-    data?.publicationIds ? data?.publicationIds : []
+    data?.publicationIds ? data?.publicationIds : estimation?.publicationIds || []
   );
-  const [selecetdP, setSelectedP] = useState<any>(data?.publicationInfo || []);
-  const [selected, setSelected] = useState<any>(data?.bundleInfo || []);
+  const [totalCredits, setCredits] = useState<number>(0);
+  const [selecetedP, setSelectedP] = useState<any>(data?.publicationInfo || []);
+  const [selected, setSelected] = useState<any>(
+    data?.bundleInfo || estimation?.selectedBundles || []
+  );
   const [bundlePids, setBundlePids] = useState<any>(savedBundlePids);
   const [selectedCategory, setCategory] = useState<string | null>();
   const [currentPage, setPage] = useState<number>(0);
@@ -63,6 +73,7 @@ function PlanNPayment({
         perPage: 200,
       },
     },
+    fetchPolicy: "network-only",
     skip: disabled,
   });
   const {
@@ -86,16 +97,14 @@ function PlanNPayment({
     publicationsData?.filterPublicationsPaginated?.data ||
     [];
   const handleChange = (category: any, bundle: any) => {
-    const { id, publicationIds } = bundle;
+    const { id, publicationIds, price } = bundle;
     setSelected((prevBundles: any) => {
       // Filter out bundles of the same category
       const updatedBundles = prevBundles.filter((b: any) => b.category !== category);
-
       // If bundle is already selected, remove it
       if (prevBundles?.some((b: any) => b.id === id)) {
         return updatedBundles;
       }
-
       // Add the new bundle for the category
       return [...updatedBundles, { ...bundle, category }];
     });
@@ -182,6 +191,15 @@ function PlanNPayment({
     );
     setFilteredPublications(filteredItems);
   }, [searchTerm]);
+
+  function calculateTotalPrice(arr: any[], type: any): number {
+    return arr.reduce((total, one) => total + one?.[type], 0);
+  }
+  useEffect(() => {
+    const bCredits = calculateTotalPrice(selected, "price");
+    const pCredits = calculateTotalPrice(selecetedP, "credits");
+    setCredits(bCredits + pCredits);
+  }, [selecetedP, selected]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -258,10 +276,67 @@ function PlanNPayment({
               updatePage={setPage}
               paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
               onSelect={!disabled && handleSelectedRowsChange}
-              selectedP={selecetdP}
+              selectedP={selecetedP}
               loading={pLoading}
               disabled={disabled}
             />
+          </MDBox>
+        </MDBox>
+      )}
+      {createEstimate && (
+        <MDBox
+          mt={3}
+          width="102.47%"
+          display="flex"
+          justifyContent="space-between"
+          bgColor="white"
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            marginLeft: "-1.2%",
+            padding: "2rem 1rem",
+            boxShadow:
+              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+          }}
+        >
+          <MDBox>
+            <MDTypography variant="h6">Estimated Amount in Credits</MDTypography>
+            <MDTypography fontWeight="bold" fontSize="20px" color="primary">
+              {totalCredits > 0 ? totalCredits : 0}
+            </MDTypography>
+          </MDBox>
+          <MDBox>
+            <MDButton
+              variant="outlined"
+              color="primary"
+              sx={{ mr: 3 }}
+              disabled={!selected?.length && !publicationIds?.length}
+              onClick={() => {
+                const selectedBundleIds = selected?.map((bundle: any) => bundle.id);
+                createEstimate({
+                  bundleIds: selectedBundleIds || [],
+                  publicationIds: publicationIds || [],
+                });
+              }}
+            >
+              Save Estimate
+            </MDButton>
+            <MDButton
+              color="primary"
+              disabled={!selected?.length && !publicationIds?.length}
+              onClick={() => {
+                navigate("/releases", {
+                  state: {
+                    estimation: {
+                      selectedBundles: selected,
+                      publicationIds,
+                    },
+                  },
+                });
+              }}
+            >
+              Create PR
+            </MDButton>
           </MDBox>
         </MDBox>
       )}

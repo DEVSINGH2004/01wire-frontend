@@ -64,9 +64,11 @@ function Releases(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const estimation = location?.state?.estimation;
+
   const [loader, setLoader] = useState<boolean>(false);
   const [filter, setFilter] = useState<any>({});
-  const [openForm, setOpenForm] = useState<any>(id || false);
+  const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [filters, setFilters] = useState<any>({});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
@@ -221,11 +223,11 @@ function Releases(): JSX.Element {
     setData({ rows, columns });
   }, [articlesData]);
 
-  useEffect(() => {
-    if (location?.pathname === "/releases") {
-      setOpenForm(false);
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if (location?.pathname === "/releases") {
+  //     setOpenForm(false);
+  //   }
+  // }, [location]);
 
   const handlePagination = (page: number) => {
     getArticles({
