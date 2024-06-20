@@ -26,7 +26,6 @@ const CreateEstimation = ({ onClose, values }: { onClose: any; values: any }) =>
 
   const [createEstimate] = useMutation<ICreateEstimateVars>(CREATE_ESTIMATE);
   const onSubmit = () => {
-    console.log("values", values);
     setLoader(true);
     createEstimate({
       variables: {

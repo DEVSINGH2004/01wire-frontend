@@ -97,7 +97,7 @@ function PlanNPayment({
     publicationsData?.filterPublicationsPaginated?.data ||
     [];
   const handleChange = (category: any, bundle: any) => {
-    const { id, publicationIds, price } = bundle;
+    const { id, publicationIds } = bundle;
     setSelected((prevBundles: any) => {
       // Filter out bundles of the same category
       const updatedBundles = prevBundles.filter((b: any) => b.category !== category);

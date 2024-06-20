@@ -65,7 +65,6 @@ function Releases(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation;
-
   const [loader, setLoader] = useState<boolean>(false);
   const [filter, setFilter] = useState<any>({});
   const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
