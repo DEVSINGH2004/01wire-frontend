@@ -54,6 +54,7 @@ const BundleForm = ({
       category: null,
       type: null,
       price: null,
+      image:null
     },
   });
   const [createBundle] = useMutation<ICreateBundleVars>(CREATE_BUNDLE);
@@ -120,13 +121,14 @@ const BundleForm = ({
   };
   useEffect(() => {
     if (data?.getBundleById) {
-      const { category, type, price, publicationIds } = data.getBundleById;
+      const { category, type, price, publicationIds, image } = data.getBundleById;
       const typeObj = BundleTypeOptions?.find((el) => el?.value === type);
       const categoryObj = BundleCategoryOptions?.find((el) => el?.value === category);
       reset({
         category: categoryObj?.label,
         type: typeObj?.label,
         price,
+        image,
       });
       setPublicationIds(publicationIds);
     }
@@ -137,7 +139,6 @@ const BundleForm = ({
     const ids = newSelectedRows?.length > 0 ? newSelectedRows.map((item: any) => item.id) : [];
     setPublicationIds(ids);
   };
-
   const handleSearchChange = (event: any) => {
     setSearchTerm(event.target.value);
   };
