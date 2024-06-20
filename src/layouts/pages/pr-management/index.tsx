@@ -34,7 +34,6 @@ const PRManagement = () => {
   const uEmail = queryParams.get("email") || "";
   const uId = queryParams.get("userID") || "";
 
-  console.log("uEmail", uEmail);
   const [filters, setFilters] = useState<any>({});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
