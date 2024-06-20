@@ -26,6 +26,7 @@ export const GET_ORDERS = gql`
     filterOrdersPaginated(paginationInput: $paginationInput, filterInput: $filterInput) {
       data {
         id
+        prId
         userId
         articleId
         publicationId
@@ -36,9 +37,16 @@ export const GET_ORDERS = gql`
         publishBy
         createdAt
         updatedAt
+        user {
+          email
+        }
         articleInfo {
           id
           title
+          userId
+          mediaContact {
+            email
+          }
         }
         bundleInfo {
           id

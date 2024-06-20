@@ -4,21 +4,15 @@ import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 
-
-export const makeColumns = (
-
-) => {
-  
-   const columns = [
+export const makeColumns = (navigate) => {
+  const columns = [
     {
       Header: "User Email",
       accessor: "email",
       width: "20%",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {value}
-          </MDTypography>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
         </MDBox>
       ),
     },
@@ -28,9 +22,7 @@ export const makeColumns = (
       width: "20%",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {value}
-          </MDTypography>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
         </MDBox>
       ),
     },
@@ -40,9 +32,7 @@ export const makeColumns = (
       width: "20%",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {value}
-          </MDTypography>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
         </MDBox>
       ),
     },
@@ -52,9 +42,7 @@ export const makeColumns = (
       width: "20%",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            10
-          </MDTypography>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>10</MDTypography>
         </MDBox>
       ),
     },
@@ -62,16 +50,20 @@ export const makeColumns = (
       Header: "Action",
       Align: "right",
       width: "20%",
-      Cell: ({ value }) => {
+      Cell: ({ value, row }) => {
         return (
           <MDBox
             sx={{
               display: "flex",
             }}
           >
-              <IconButton>
-                <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-              </IconButton>
+            <IconButton
+              onClick={() =>
+                navigate(`/pr-management?userID=${row.original.id}&email=${row.original.email}`)
+              }
+            >
+              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
+            </IconButton>
           </MDBox>
         );
       },

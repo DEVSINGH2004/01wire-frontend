@@ -23,11 +23,18 @@ import {
 } from "graphql/mutations/updateArticleStatus";
 import NoteModal from "./components/NoteModal";
 import Filters from "./components/Filters";
+import { useLocation } from "react-router-dom";
 
 const PER_PAGE = 10;
 
 const PRManagement = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const uEmail = queryParams.get("email") || "";
+  const uId = queryParams.get("userID") || "";
+
+  console.log("uEmail", uEmail);
   const [filters, setFilters] = useState<any>({});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
@@ -51,6 +58,22 @@ const PRManagement = () => {
 
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
+
+  useEffect(() => {
+    if (uId && uEmail) {
+      setOptions({
+        userId: uId,
+        email: uEmail,
+      });
+      setEmail(uEmail);
+      setFilters([
+        {
+          ...filters,
+          userId: uId,
+        },
+      ]);
+    }
+  }, [uEmail, uId]);
 
   useEffect(() => {
     setInitLoader(true);
@@ -132,7 +155,8 @@ const PRManagement = () => {
       handleUpdateStatus,
       handleFilters,
       setEmail,
-      setOptions
+      setOptions,
+      filters
     );
 
     setData({ rows, columns });
@@ -194,7 +218,7 @@ const PRManagement = () => {
                 id={openForm}
               />
             </Card>
-          ) : data?.filterArticlesPaginated?.data?.length ? (
+          ) : loading || !!data?.filterArticlesPaginated?.data?.length ? (
             <Box
               sx={{
                 flex: 1,

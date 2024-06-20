@@ -56,7 +56,8 @@ export const makeColumns = (
   handleUpdateStatus,
   handleFilters,
   setEmail,
-  setOptions
+  setOptions,
+  filters
 ) => {
   const columns = [
     {
@@ -98,25 +99,27 @@ export const makeColumns = (
             <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
               {truncateString(value, 17)}
             </MDTypography>
-            <MDBox
-              alignItems="center"
-              ml={0.3}
-              justifyContent="center"
-              sx={{ height: "24px", width: "22px", display: "flex" }}
-              bgColor="#FFDBDD"
-              borderRadius={4}
-            >
-              {" "}
-              <IconButton
-                onClick={() => {
-                  setEmail(value);
-                  setOptions([{ userId: row.original.userId, email: value }]);
-                  handleFilters("userId", row.original.userId);
-                }}
+            {!filters?.userId && (
+              <MDBox
+                alignItems="center"
+                ml={0.3}
+                justifyContent="center"
+                sx={{ height: "24px", width: "22px", display: "flex" }}
+                bgColor="#FFDBDD"
+                borderRadius={4}
               >
-                <FilterListOutlinedIcon />
-              </IconButton>
-            </MDBox>
+                {" "}
+                <IconButton
+                  onClick={() => {
+                    setEmail(value);
+                    setOptions([{ userId: row.original.userId, email: value }]);
+                    handleFilters("userId", row.original.userId);
+                  }}
+                >
+                  <FilterListOutlinedIcon />
+                </IconButton>
+              </MDBox>
+            )}
           </Box>
         );
       },
