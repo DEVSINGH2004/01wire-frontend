@@ -44,8 +44,6 @@ const BundleForm = ({
   const [currentPage, setPage] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPublications, setFilteredPublications] = useState(null);
-
-
   const {
     control,
     formState: { isDirty, errors },
@@ -97,7 +95,6 @@ const BundleForm = ({
       price: formVals?.price,
       image: formVals?.image,
     };
-    console.log(paramsValue,"paramsValue")
     const mutationToCall = id && id !== true ? updateBundle : createBundle;
     mutationToCall({
       variables: {
