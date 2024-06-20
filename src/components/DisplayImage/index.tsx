@@ -8,7 +8,7 @@ const DisplayImage = ({
   src: string;
   height: string;
   width: string;
-  styles: object;
+  styles?: object;
   [key: string]: any;
 }) => {
   return (

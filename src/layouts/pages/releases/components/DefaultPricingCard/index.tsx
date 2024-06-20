@@ -11,6 +11,7 @@ import Radio from "@mui/material/Radio";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import DisplayImage from "components/DisplayImage";
 
 import Guaranteed from "assets/images/icons/guaranteeIcon.png";
 import TrendingUpIcon from "assets/images/icons/trendingIcon.png";
@@ -60,7 +61,7 @@ interface Props {
   [key: string]: any;
   totalPublications?: number;
   reach: string;
-  onclick?:any
+  onclick?: any;
 }
 
 function DefaultPricingCard({
@@ -216,7 +217,7 @@ function DefaultPricingCard({
           py={1}
           sx={{ height: "115px", width: "90%", borderRadius: "8px" }}
         >
-          <img src={bundle?.image || BundleSample} height="100%" width="100%" />
+          <DisplayImage src={bundle?.image} alt="bundleImage" height="100%" width="100%" />
         </MDBox>
         <MDBox
           pb={3}
