@@ -76,6 +76,7 @@ export const
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

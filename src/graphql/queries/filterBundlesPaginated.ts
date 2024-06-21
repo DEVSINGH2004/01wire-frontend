@@ -52,6 +52,7 @@ export const GET_BUNDLES = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

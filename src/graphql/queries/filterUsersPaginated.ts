@@ -45,6 +45,7 @@ export const GET_USERS = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

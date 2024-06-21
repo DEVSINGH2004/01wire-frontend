@@ -28,7 +28,7 @@ import PublicationIcon from "assets/images/publicationIcon.svg";
 import BundleIcon from "assets/images/bundle.svg";
 import PublishedOrder from "assets/images/published.svg";
 
-const adminRoutes = [
+export const adminRoutes = [
   {
     type: "collapse",
     name: "Manage Orders",

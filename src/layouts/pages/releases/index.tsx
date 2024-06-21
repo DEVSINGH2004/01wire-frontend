@@ -36,6 +36,7 @@ import {
   UPDATE_ARTICLE_STATUS,
   IUpdateArticleStatusVars,
 } from "graphql/mutations/updateArticleStatus";
+import ArticleBundleModal from "./components/ArticleBundleModal";
 
 const ReleaseTypeOptions = [
   { label: "Draft", value: "DRAFT" },
@@ -73,6 +74,7 @@ function Releases(): JSX.Element {
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [noteModal, setNoteModal] = useState<any>(null);
+  const [viewModal, setViewModal] = useState<any>(null);
 
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
@@ -175,6 +177,8 @@ function Releases(): JSX.Element {
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
       setOpenForm(id);
+    } else if (action === "view") {
+      setViewModal(id);
     }
   };
 
@@ -295,6 +299,7 @@ function Releases(): JSX.Element {
           }}
         />
       )}
+      {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
     </>
   );
 }

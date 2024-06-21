@@ -122,13 +122,6 @@ const Bundles = () => {
       {(deleteLoader || updateLoader) && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar text="Add Bundle" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
-        {!openForm && (
-          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-            <MDTypography fontWeight="bold" fontSize="20px">
-              Bundles
-            </MDTypography>
-          </MDBox>
-        )}
         <MDBox pt={openForm ? 3 : 2} pb={3}>
           {loader ? (
             <Card sx={{ minHeight: "300px" }}>

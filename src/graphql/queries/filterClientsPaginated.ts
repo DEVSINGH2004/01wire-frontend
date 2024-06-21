@@ -51,6 +51,7 @@ export const GET_CLIENTS = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

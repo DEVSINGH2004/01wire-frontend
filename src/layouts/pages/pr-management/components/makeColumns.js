@@ -12,42 +12,48 @@ import ViewIcon from "assets/images/icons/viewIcon.svg";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { truncateString } from "utils/helpers";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export const statusOptions = [
   {
     value: "DRAFT",
     label: "Draft",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #000000, #000000)`,
+    background: `#000000`,
   },
   {
     value: "SUBMITTED",
     label: "Submitted",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #747474, #747474),linear-gradient(0deg, #01B7F3, #01B7F3)`,
+    background: "#01B7F3",
   },
   {
     value: "REVIEW",
     label: "Review",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #747474, #747474)`,
+    background: "#747474",
   },
   {
     value: "AWAITING_APPROVAL",
     label: "Awaiting Approval",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%)`,
+    background: "#439DEE",
   },
   {
     value: "SCHEDULED",
     label: "Scheduled",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #747474, #747474),linear-gradient(0deg, #FF9900, #FF9900)`,
+    background: "#FF9900",
   },
   {
     value: "REJECTED",
     label: "Rejected",
-    background: `linear-gradient(0deg, #F8F8FC, #F8F8FC),linear-gradient(180deg, #439DEE 0%, #1E78E9 100%),linear-gradient(0deg, #FF4D53, #FF4D53)`,
+    background: "#FF4D53",
   },
   {
     value: "PUBLISHED",
     label: "Published",
-    background: `linear-gradient(0deg, #000000, #000000),linear-gradient(0deg, #47BC4C, #47BC4C)`,
+    background: "#47BC4C",
+  },
+  {
+    value: "PENDING",
+    label: "Pending",
+    background: "#FCD404",
   },
 ];
 
@@ -216,17 +222,18 @@ export const makeColumns = (
                   id="demo-select-small"
                   displayEmpty
                   value={selectedStatus}
+                  IconComponent={KeyboardArrowDownIcon}
                   sx={{
                     textAlign: "center",
                     borderRadius: "21px",
                     "& .MuiOutlinedInput-input": {
                       padding: "10px",
-                      color: "white",
+                      color: "#fff",
                       fontSize: "12px",
                       fontWeight: "400",
                       borderRadius: "21px",
                       border: "none",
-                      backgroundImage: selected?.background,
+                      background: selected?.background,
                     },
                   }}
                   renderValue={(selected) => {

@@ -160,11 +160,6 @@ const Publications = () => {
       <MDBox px={2}>
         {!openForm && (
           <>
-            <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-              <MDTypography fontWeight="bold" fontSize="20px">
-                Publications
-              </MDTypography>
-            </MDBox>
             <Filters handleFilters={handleFilters} filters={filters} />
           </>
         )}

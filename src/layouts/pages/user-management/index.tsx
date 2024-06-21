@@ -98,12 +98,6 @@ const UserManagement = () => {
     <>
       <DashboardNavbar />
       <MDBox>
-        <MDBox pt={2} px={2}>
-          <MDTypography fontWeight="bold" fontSize="20px">
-            User Management
-          </MDTypography>
-        </MDBox>
-
         <MDBox pt={2} pb={3} px={2}>
           <MDBox mb={2}>
             <MDInput

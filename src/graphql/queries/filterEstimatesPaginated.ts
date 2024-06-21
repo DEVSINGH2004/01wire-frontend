@@ -50,6 +50,7 @@ export const GET_ESTIMATES = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

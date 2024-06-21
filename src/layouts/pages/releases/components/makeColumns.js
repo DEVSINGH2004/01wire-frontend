@@ -8,7 +8,9 @@ import dayjs from "dayjs";
 import FormControl from "@mui/material/FormControl";
 import DownloadIcon from "assets/images/icons/downloadIcon.svg";
 import ViewIcon from "assets/images/icons/viewIcon.svg";
+import EditIcon from "assets/images/icons/editIcon.svg";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
+import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import { truncateString } from "utils/helpers";
 import { statusOptions } from "../../pr-management/components/makeColumns";
 
@@ -123,7 +125,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                       fontWeight: "400",
                       borderRadius: "21px",
                       border: "none",
-                      backgroundImage: selected?.background,
+                      background: selected?.background,
                     },
                   }}
                   renderValue={(selected) => {
@@ -159,24 +161,31 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
               display: "flex",
             }}
           >
-            <IconButton
-              onClick={() => handleAction("navigate")}
-              sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
-            >
-              <img width={36} height={36} alt="navigate" src={DownloadIcon} />
-            </IconButton>
-            <IconButton
-              sx={{
-                visibility: !["PUBLISHED", "SCHEDULED"].includes(row.original.status)
-                  ? "collapse"
-                  : "",
-              }}
-            >
-              <img width={36} height={36} alt="navigate" src={ViewIcon} />
-            </IconButton>
-            <IconButton onClick={() => handleAction(row.original.id, "edit")}>
-              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-            </IconButton>
+            {row.original.status === "PUBLISHED" && (
+              <IconButton onClick={() => handleAction("navigate")}>
+                <img width={36} height={36} alt="navigate" src={DownloadIcon} />
+              </IconButton>
+            )}
+            {["DRAFT", "AWAITING_APPROVAL"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+                <img width={36} height={36} alt="navigate" src={EditIcon} />
+              </IconButton>
+            )}
+            {["PUBLISHED", "SCHEDULED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "view")}>
+                <img width={36} height={36} alt="navigate" src={ViewIcon} />
+              </IconButton>
+            )}
+            {["DRAFT", "REJECTED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "delete")}>
+                <img width={36} height={36} alt="navigate" src={DeleteIcon} />
+              </IconButton>
+            )}
+            {["PUBLISHED", "REVIEW", "SCHEDULED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+                <img width={36} height={36} alt="navigate" src={NavigateIcon} />
+              </IconButton>
+            )}
           </MDBox>
         );
       },

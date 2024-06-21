@@ -18,6 +18,7 @@ import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import MDButton from "components/MDButton";
+import { adminRoutes } from "adminRoutes";
 
 // Custom styles for DashboardNavbar
 import {
@@ -160,6 +161,9 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
       return colorValue;
     },
   });
+
+  const title =
+    adminRoutes.find((el) => el?.key === route[route.length - 1])?.name || route[route.length - 1];
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -172,7 +176,7 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
           mb={{ xs: 1, md: 0 }}
           sx={(theme: Theme) => navbarRow(theme, { isMini })}
         >
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+          <Breadcrumbs icon="home" title={title} route={route} light={light} />
         </MDBox>
 
         {isMini ? null : (
