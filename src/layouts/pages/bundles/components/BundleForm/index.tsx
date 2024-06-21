@@ -20,8 +20,14 @@ import { CREATE_BUNDLE, ICreateBundleVars } from "graphql/mutations/createBundle
 import { UPDATE_BUNDLE, IUpdateBundleVars } from "graphql/mutations/updateBundle";
 import { genericValidations } from "utils/helpers";
 import { BundleCategoryOptions, BundleTypeOptions } from "constants/index";
-import ComplexProjectCard from "layouts/pages/releases/components/ComplexProjectCard";
+import { Chip } from "@mui/material";
+import PublicationsList from "layouts/pages/releases/components/PublicationsList";
+import MDInput from "components/MDInput";
+import SearchIcon from "assets/images/icons/searchIcon.svg";
+import InputAdornment from "@mui/material/InputAdornment";
+import BundlePublicationModal from "layouts/pages/releases/components/BundlePublicationModal";
 
+const perPage = 10;
 const BundleForm = ({
   onClose,
   disabled = false,
@@ -34,6 +40,12 @@ const BundleForm = ({
   id: any;
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [selecetdP, setSelectedP] = useState<any>([]);
+  const [currentPage, setPage] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPublications, setFilteredPublications] = useState(null);
+
+
   const {
     control,
     formState: { isDirty, errors },
@@ -46,7 +58,6 @@ const BundleForm = ({
       price: null,
     },
   });
-
   const [createBundle] = useMutation<ICreateBundleVars>(CREATE_BUNDLE);
   const [updateBundle] = useMutation<IUpdateBundleVars>(UPDATE_BUNDLE);
   const { data, loading: fetchLoading } = useQuery<IGetBundleByIdVars>(GET_BUNDLE_BY_ID, {
@@ -63,14 +74,15 @@ const BundleForm = ({
     variables: {
       filterInput: {},
       paginationInput: {
-        currentPage: 0,
-        perPage: 200,
+        currentPage: currentPage,
+        perPage: perPage,
       },
     },
     skip: disabled,
   });
 
   const [publicationIds, setPublicationIds] = useState<any>([]);
+  const [open, setOpen] = useState<any>(false);
 
   const onSubmit = async (formVals: any) => {
     if (!isDirty && publicationIds === data?.getBundleById?.publicationIds) {
@@ -83,7 +95,9 @@ const BundleForm = ({
       category: formVals?.category?.value,
       publicationIds,
       price: formVals?.price,
+      image: formVals?.image,
     };
+    console.log(paramsValue,"paramsValue")
     const mutationToCall = id && id !== true ? updateBundle : createBundle;
     mutationToCall({
       variables: {
@@ -121,128 +135,146 @@ const BundleForm = ({
     }
   }, [data]);
   const currentPublications: any = publicationsData?.filterPublicationsPaginated?.data || [];
-  const handlePublicationClick = (id: any) => {
-    if (publicationIds?.indexOf(id) !== -1) {
-      const newIds = publicationIds?.filter((one: any) => one !== id);
-      setPublicationIds(newIds);
-    } else {
-      setPublicationIds((oldVal: any) => [...oldVal, id]);
-    }
+  const handleSelectedRowsChange = (newSelectedRows: any[]) => {
+    setSelectedP(newSelectedRows);
+    const ids = newSelectedRows?.length > 0 ? newSelectedRows.map((item: any) => item.id) : [];
+    setPublicationIds(ids);
   };
+
+  const handleSearchChange = (event: any) => {
+    setSearchTerm(event.target.value);
+  };
+  useEffect(() => {
+    const filteredItems = currentPublications.filter((item: any) =>
+      item?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredPublications(filteredItems);
+  }, [searchTerm]);
   return (
     <>
-    <MDBox p={2}>
-      <MDBox display="flex" alignItems="center">
-        <IconButton onClick={onClose}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <MDTypography variant="h5">Create Bundle</MDTypography>
-      </MDBox>
-      {(loading || pLoader || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
-      <MDBox mt={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
-            <FormField
-              type="dropdown"
-              placeholder="Bundle Category"
-              label="Category"
-              name="category"
-              control={control}
-              options={BundleCategoryOptions}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.dropdown}
-            />
+      <MDBox p={2}>
+        <MDBox display="flex" alignItems="center">
+          <IconButton onClick={onClose}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <MDTypography variant="h5">Create Bundles</MDTypography>
+        </MDBox>
+        {(loading || pLoader || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
+        <MDBox mt={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={7}>
+              <FormField
+                type="dropdown"
+                placeholder="Enter Title"
+                label="Bundle Category"
+                name="category"
+                control={control}
+                options={BundleCategoryOptions}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.dropdown}
+              />
+              <FormField
+                type="dropdown"
+                placeholder="Bundle Type"
+                label="Bundle Type"
+                name="type"
+                control={control}
+                options={BundleTypeOptions}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.dropdown}
+              />
+              <FormField
+                type="number"
+                label="Price"
+                name="price"
+                errors={errors}
+                rules={genericValidations.number}
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
+            </Grid>
+            <Grid item xs={12} sm={5}>
+              <FormField
+                type="file"
+                subLabel="JPEG, PNG, JPG(max. 3MB)"
+                name="image"
+                label="Image"
+                control={control}
+                defaultValue={data?.featureImage}
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.text}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type="dropdown"
-              placeholder="Bundle Type"
-              label="Type"
-              name="type"
-              control={control}
-              options={BundleTypeOptions}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.dropdown}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type="number"
-              label="Price"
-              name="price"
-              errors={errors}
-              rules={genericValidations.number}
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
-          </Grid>
-        </Grid>
-      </MDBox>
-      <MDBox mt={5}>
-        <MDTypography variant="h5">Publications</MDTypography>
-        <Grid container spacing={3}>
-          {currentPublications?.map((one: any, i: number) => {
-            return (
-              <Grid key={i} item xs={12} md={6} lg={6}>
-                <MDBox my={1.5} variant="gradient">
-                  <ComplexProjectCard
-                    image={one?.image}
-                    title={one?.title}
-                    description="If everything I did failed - which it doesn't, I think that it actually succeeds."
-                    dateTime="02.03.22"
-                    stats={[
-                      { title: "DA", value: one?.stats?.da },
-                      { title: "DR", value: one?.stats?.dr },
-                      { title: "PA", value: one?.stats?.pa },
-                      { title: "UR", value: one?.stats?.ur },
-                    ]}
-                    traffic={one?.stats?.traffic}
-                    linkType={one?.linkType?.split("_")?.join(" ")}
-                    timeLine={
-                      (one?.timeline &&
-                        (one?.timeline === "W1"
-                          ? "WITHIN ONE WEEK"
-                          : one?.timeline === "W2"
-                          ? "WITHIN TWO WEEKS"
-                          : one?.timeline === "D1"
-                          ? "WITHIN ONE DAY"
-                          : one?.timeline === "D2"
-                          ? "WITHIN TWO DAYS"
-                          : one?.timeline === "D5"
-                          ? "WITHIN FIVE DAYS"
-                          : `WITHIN ${one?.timeline}`)) ||
-                      ""
-                    }
-                    credits={one?.price}
-                    categories={one?.categories?.join(" / ")}
-                    onClick={disabled ? () => {} : handlePublicationClick}
-                    selected={publicationIds?.length && publicationIds?.indexOf(one?.id) !== -1}
-                    id={one?.id}
+        </MDBox>
+        <MDBox mt={5}>
+          {((disabled && currentPublications?.length > 0) || !disabled) && (
+            <MDBox>
+              <MDBox py={2} display="flex" justifyContent="space-between">
+                <MDBox display="flex" alignItems="center">
+                  <MDTypography variant="h6">
+                    {disabled ? "Selected Publications" : "Select Publications"}
+                  </MDTypography>
+                  <Chip
+                    sx={{ ml: 2, cursor: "pointer" }}
+                    color="primary"
+                    variant="outlined"
+                    label={`${publicationIds?.length} Selected`}
+                    onClick={() => setOpen(true)}
                   />
                 </MDBox>
-              </Grid>
-            );
-          })}
-        </Grid>
+                <MDBox width="250px" ml="auto">
+                  <MDInput
+                    placeholder="Search Bundles..."
+                    size="small"
+                    fullWidth
+                    onChange={handleSearchChange}
+                    value={searchTerm}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <img height={15} width={15} src={SearchIcon} alt="Search" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </MDBox>
+              </MDBox>
+              <MDBox mt={3}>
+                <PublicationsList
+                  publications={searchTerm ? filteredPublications : currentPublications}
+                  updatePage={setPage}
+                  paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
+                  onSelect={!disabled && handleSelectedRowsChange}
+                  selectedP={selecetdP}
+                  loading={pLoader}
+                  disabled={disabled}
+                />
+              </MDBox>
+            </MDBox>
+          )}
+        </MDBox>
       </MDBox>
-      
-    </MDBox>
-    <MDBox display="flex" alignItems="center" justifyContent="space-between"
-     width="102.47%"
-     bgColor="white"
-     sx={{
-       position: "sticky",
-       bottom: 0,
-       marginLeft: "-1.2%",
-       padding: "2rem 1rem",
-       boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-     }}
-    >
+      <MDBox
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        width="102.47%"
+        bgColor="white"
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          marginLeft: "-1.2%",
+          padding: "2rem 1rem",
+          boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+        }}
+      >
         <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
           Cancel
         </MDButton>
@@ -250,6 +282,9 @@ const BundleForm = ({
           Submit
         </MDButton>
       </MDBox>
+      {open && (
+        <BundlePublicationModal onClose={() => setOpen(false)} currentPublications={selecetdP} />
+      )}
     </>
   );
 };
