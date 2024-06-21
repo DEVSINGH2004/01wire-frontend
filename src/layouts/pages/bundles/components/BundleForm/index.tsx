@@ -54,7 +54,7 @@ const BundleForm = ({
       category: null,
       type: null,
       price: null,
-      image:null
+      image:null,
     },
   });
   const [createBundle] = useMutation<ICreateBundleVars>(CREATE_BUNDLE);
@@ -77,6 +77,7 @@ const BundleForm = ({
         perPage: perPage,
       },
     },
+    fetchPolicy:"network-only",
     skip: disabled,
   });
 
@@ -121,7 +122,7 @@ const BundleForm = ({
   };
   useEffect(() => {
     if (data?.getBundleById) {
-      const { category, type, price, publicationIds, image } = data.getBundleById;
+      const { category, type, price, publicationIds, image, publicationInfo } = data.getBundleById;
       const typeObj = BundleTypeOptions?.find((el) => el?.value === type);
       const categoryObj = BundleCategoryOptions?.find((el) => el?.value === category);
       reset({
@@ -131,6 +132,7 @@ const BundleForm = ({
         image,
       });
       setPublicationIds(publicationIds);
+      setSelectedP(publicationInfo)
     }
   }, [data]);
   const currentPublications: any = publicationsData?.filterPublicationsPaginated?.data || [];

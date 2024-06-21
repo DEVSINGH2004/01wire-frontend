@@ -18,8 +18,6 @@ import MDButton from "components/MDButton";
 // Material Dashboard 2 PRO React TS examples components
 import DataTableBodyCell from "examples/Tables/DataTable/DataTableBodyCell";
 import Pagination from "@mui/material/Pagination";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import PaginationItem from "@mui/material/PaginationItem";
@@ -100,8 +98,6 @@ function DataTable({
     state: { pageIndex, pageSize, globalFilter },
   }: any = tableInstance;
 
-  console.log("paginationInfo", paginationInfo);
-
   const canPreviousPage = paginationInfo?.currentPage > 1;
   const canNextPage = paginationInfo?.currentPage < paginationInfo?.pageCount;
 
@@ -162,9 +158,11 @@ function DataTable({
   };
 
   // Update selected rows when defaultSelectedRows prop changes
-  // useEffect(() => {
-  //   setSelectedRows(defaultSelectedRows);
-  // }, [defaultSelectedRows]);
+  useEffect(() => {
+    if(onSelectedRowsChange){
+      setSelectedRows(defaultSelectedRows)
+    }
+  }, [defaultSelectedRows]);
   return (
     <>
       <Card sx={{ minHeight: "300px", flex: 1, overflow: "hidden" }}>
