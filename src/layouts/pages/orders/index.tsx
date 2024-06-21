@@ -4,17 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
 import { useLazyQuery } from "@apollo/client";
 import { GET_ORDERS, IGetOrders, IGetOrdersVars } from "graphql/queries/filterOrdersPaginated";
-import EditIcon from "assets/images/icons/penCircle.svg";
-import { ActionsCellRenderer } from "utils/helpers";
 import OrderDetail from "./components/orderDetail";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "../pr-management/components/DataTable";
 import Filters from "./components/Filters";
 import { makeColumns } from "./components/makeColumns";
+import ArticleBundleModal from "../releases/components/ArticleBundleModal";
 
 const PER_PAGE = 10;
 
@@ -30,6 +28,7 @@ const OrderManagement = () => {
   const [email, setEmail] = useState<string>("");
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
+  const [viewModal, setViewModal] = useState<any>(null);
 
   const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
     GET_ORDERS,
@@ -95,6 +94,8 @@ const OrderManagement = () => {
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
       setOpenForm(id);
+    } else if (action === "view") {
+      setViewModal(id);
     }
   };
 
@@ -111,7 +112,6 @@ const OrderManagement = () => {
       },
     });
   };
-  console.log("rows", paginationInfo);
 
   return (
     <>
@@ -119,12 +119,6 @@ const OrderManagement = () => {
       <MDBox px={2}>
         {!openForm && (
           <>
-            <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-              <MDTypography fontWeight="bold" fontSize="20px">
-                Manage Orders
-              </MDTypography>
-            </MDBox>
-
             <Filters
               setFilters={setFilters}
               email={email}
@@ -162,6 +156,7 @@ const OrderManagement = () => {
           )}
         </MDBox>
       </MDBox>
+      {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
     </>
   );
 };

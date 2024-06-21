@@ -41,6 +41,7 @@ export const GET_TRANSACTIONS = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

@@ -108,6 +108,20 @@ export interface ArticleData {
   data: ArticleType[];
   paginationInfo: PaginationInfo;
 }
+export type EstimateType = {
+  id: string;
+  userId: string;
+  publicationIds: string[];
+  bundleIds: string[];
+  totalCredits: number;
+  createdAt: string;
+  updatedAt: string;
+  publicationInfo: Publication;
+};
+export interface EstimateData {
+  data: EstimateType[];
+  paginationInfo: PaginationInfo;
+}
 export type OrderType = {
   id: string;
   userId: string;

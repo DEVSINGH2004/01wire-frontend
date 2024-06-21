@@ -55,6 +55,7 @@ export const GET_ORDERS = gql`
         publicationInfo {
           id
           title
+          url
         }
       }
       paginationInfo {
@@ -63,6 +64,7 @@ export const GET_ORDERS = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

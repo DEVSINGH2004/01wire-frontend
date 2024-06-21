@@ -110,7 +110,9 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
       Header: "Action",
       Align: "right",
       width: "15%",
+      accessor: "status",
       Cell: ({ value, row }) => {
+        console.log("value", value);
         return (
           <MDBox
             sx={{
@@ -118,16 +120,15 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
             }}
           >
             <IconButton
-              onClick={() => handleAction("navigate")}
+              onClick={() => handleAction(row.original.id, "navigate")}
               sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
             >
               <img width={36} height={36} alt="navigate" src={DownloadIcon} />
             </IconButton>
             <IconButton
+              onClick={() => handleAction(row.original.id, "view")}
               sx={{
-                visibility: !["PUBLISHED", "SCHEDULED"].includes(row.original.status)
-                  ? "collapse"
-                  : "",
+                visibility: !["PUBLISHED", "SCHEDULED"].includes(value) ? "collapse" : "",
               }}
             >
               <img width={36} height={36} alt="navigate" src={ViewIcon} />

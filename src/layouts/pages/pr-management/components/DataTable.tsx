@@ -22,6 +22,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
+import PaginationItem from "@mui/material/PaginationItem";
 
 // Declaring props types for DataTable
 interface Props {
@@ -258,17 +259,19 @@ function DataTable({
           py={2}
         >
           <MDButton
-            sx={{ visibility: !canPreviousPage && "collapse" }}
+            sx={{ visibility: !paginationInfo?.hasPreviousPage && "collapse" }}
             size="small"
             variant="contained"
             disabled={!canPreviousPage}
             onClick={() => handlePagination(paginationInfo?.currentPage - 1)}
           >
             <Box display="flex" justifyContent="center" alignItems="center" color="#fff">
-              <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
+              {/* <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
                 chevron_left
-              </Icon>
-              <MDTypography sx={{ fontsize: "12px", fontWeight: "600" }}>PREV</MDTypography>
+              </Icon> */}
+              <MDTypography sx={{ fontsize: "12px", fontWeight: "700", color: "#000" }}>
+                PREV
+              </MDTypography>
             </Box>
           </MDButton>
 
@@ -280,11 +283,28 @@ function DataTable({
             variant="outlined"
             shape="rounded"
             color={"primary"}
+            renderItem={(item) => (
+              <PaginationItem
+                {...item}
+                component="div"
+                style={{
+                  backgroundColor: item.selected ? "#FF4D53" : "white",
+                  color: item.selected ? "white" : "black",
+                  border: "none",
+                  height: 36,
+                  width: 36,
+                  fontWeight: "700",
+                  fontSize: "14px",
+                }}
+              >
+                {item.page}
+              </PaginationItem>
+            )}
             onChange={(e: any, page: number) => handlePagination(page - 1)}
           />
 
           <MDButton
-            sx={{ visibility: !canNextPage && "collapse" }}
+            sx={{ visibility: !paginationInfo?.hasNextPage && "collapse" }}
             size="small"
             variant="contained"
             disabled={!canNextPage}
@@ -295,9 +315,9 @@ function DataTable({
                 Next
               </MDTypography>
             </Box>
-            <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
+            {/* <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
               chevron_right
-            </Icon>
+            </Icon> */}
           </MDButton>
         </MDBox>
       )}

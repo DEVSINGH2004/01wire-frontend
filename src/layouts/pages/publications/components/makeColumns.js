@@ -85,7 +85,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
         return (
           <FormControl sx={{ width: "152px", height: "22px" }} size="medium">
             <Select
-              input={<OutlinedInput sx={{ color: "white" }} />}
+              // input={<OutlinedInput sx={{ color: "white" }} />}
               id="demo-select-small"
               displayEmpty
               value={selectedStatus}
@@ -93,19 +93,19 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 boxShadow: "none",
                 textAlign: "center",
                 borderRadius: "21px",
-
+                color: "#fff",
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "transparent", // Remove hover border color
                 },
 
                 "& .MuiOutlinedInput-input": {
                   padding: "10px",
-                  color: "white",
+                  color: "#fff",
                   fontSize: "12px",
-
                   fontWeight: "400",
                   borderRadius: "21px",
                   border: "none",
+                  boxShadow: "none",
                   background: selected?.background,
                   "&.Mui-focused, &.Mui-focusVisible": {
                     outline: "none", // Remove the default focus outline

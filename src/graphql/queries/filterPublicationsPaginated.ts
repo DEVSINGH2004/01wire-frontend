@@ -46,6 +46,7 @@ export const GET_PUBLICATIONS = gql`
         pageCount
         itemCount
         hasNextPage
+        hasPreviousPage
       }
     }
   }

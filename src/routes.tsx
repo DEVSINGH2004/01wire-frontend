@@ -18,11 +18,15 @@ import Dashboards from "layouts/pages/dashboards";
 import MyCredits from "layouts/pages/myCredits";
 import Releases from "layouts/pages/releases";
 import Clients from "layouts/pages/clients";
+import PREstimation from "layouts/pages/pr-estimation";
+import MyEstimates from "layouts/pages/my-estimates";
 // Material Dashboard 2 PRO React TS components
 import ClientIcon from "assets/images/icons/sidebarClient.svg";
 import DashboardIcon from "assets/images/icons/sidebarDashboard.svg";
 import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
 import WalletIcon from "assets/images/icons/sidebarWallet.svg";
+import PREstimateIcon from "assets/images/icons/prEstimateIcon.svg";
+import EstimateIcon from "assets/images/icons/money.svg";
 
 const routes = [
   {
@@ -61,6 +65,24 @@ const routes = [
     icon: <img src={WalletIcon} width="24px" height="24px" />,
     component: <MyCredits />,
   },
+  {
+    type: "collapse",
+    name: "PR Estimation",
+    key: "pr-estimation",
+    noCollapse: true,
+    route: "/pr-estimation",
+    icon: <img src={PREstimateIcon} width="24px" height="24px" />,
+    component: <PREstimation />,
+  },
+  // {
+  //   type: "collapse",
+  //   name: "My Estimates",
+  //   key: "my-estimates",
+  //   noCollapse: true,
+  //   route: "/my-estimates",
+  //   icon: <img src={EstimateIcon} width="24px" height="24px" />,
+  //   component: <MyEstimates />,
+  // },
 
   // { type: "divider", key: "divider-0" },
   // {

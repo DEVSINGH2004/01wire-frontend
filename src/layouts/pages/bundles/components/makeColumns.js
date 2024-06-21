@@ -100,7 +100,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
 
                 "& .MuiOutlinedInput-input": {
                   padding: "10px",
-                  color: "white",
+                  color: "#fff",
                   fontSize: "12px",
 
                   fontWeight: "400",

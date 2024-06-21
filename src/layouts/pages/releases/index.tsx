@@ -14,13 +14,12 @@ import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 import Autocomplete from "@mui/material/Autocomplete";
 import ReleaseForm from "./components/ReleaseForm";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 // Data
 import { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import {
   GET_ARTICLES,
   IGetArticles,
@@ -29,6 +28,15 @@ import {
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { DELETE_ARTICLE, IDeleteArticleVars } from "graphql/mutations/deleteArticle";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import DataTable from "../pr-management/components/DataTable";
+import NoteModal from "../pr-management/components/NoteModal";
+import { makeColumns } from "./components/makeColumns";
+import Filters from "./components/Filters";
+import {
+  UPDATE_ARTICLE_STATUS,
+  IUpdateArticleStatusVars,
+} from "graphql/mutations/updateArticleStatus";
+import ArticleBundleModal from "./components/ArticleBundleModal";
 
 const ReleaseTypeOptions = [
   { label: "Draft", value: "DRAFT" },
@@ -52,107 +60,33 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   </MDBox>
 );
 
-const columns = [
-  {
-    Header: "featureImage",
-    accessor: "featureImage",
-    width: "10%",
-    Cell: ({ value }: { value: string }) => (
-      <MDAvatar
-        src={value}
-        variant="rounded"
-        size="xxl"
-        sx={{
-          // height: "53px",
-          // width: "127px",
-          borderRadius: "4px",
-        }}
-      />
-    ),
-  },
-  {
-    Header: "title",
-    accessor: "title",
-    width: "50%",
-    Cell: ({ value }: { value: any }) => (
-      <MDBox display="flex" alignItems="center">
-        <MDTypography
-          width={value?.title?.length > 60 ? "250px" : "auto"}
-          sx={{
-            color: "#B2B2B2",
-          }}
-        >
-          {value?.title}
-        </MDTypography>
-        {value?.desc && (
-          <MDTypography
-            fontSize="16px"
-            width={value?.desc?.length > 60 ? "250px" : "auto"}
-            sx={{
-              color: "#B2B2B2",
-            }}
-          >
-            &nbsp;{`- ${value.desc}`}
-          </MDTypography>
-        )}
-      </MDBox>
-    ),
-  },
-  {
-    Header: "status",
-    accessor: "status",
-    width: "20%",
-    Cell: ({ value }: { value: any }) => (
-      <MDBox borderRadius="section" py={"5px"} px={"12px"} bgColor={"light"}>
-        <MDTypography
-          variant="caption"
-          fontWeight={"medium"}
-          color={
-            value === "SCHEDULED"
-              ? "success"
-              : ["AWAITING_APPROVAL", "IN_REVIEW"].includes(value)
-              ? "info"
-              : "primary"
-          }
-        >
-          {value}
-        </MDTypography>
-      </MDBox>
-    ),
-  },
-  {
-    Header: "actions",
-    accessor: "actions",
-    width: "20%",
-    Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
-  },
-];
-
+const PER_PAGE = 10;
 function Releases(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const estimation = location?.state?.estimation;
   const [loader, setLoader] = useState<boolean>(false);
   const [filter, setFilter] = useState<any>({});
-  const [openForm, setOpenForm] = useState<any>(id || false);
-  const [tableData, setData] = useState<any>({ rows: [], columns });
+  const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
+  const [tableData, setData] = useState<any>({ rows: [], columns: [] });
+  const [filters, setFilters] = useState<any>({});
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [initLoading, setInitLoader] = useState<boolean>(false);
+  const [noteModal, setNoteModal] = useState<any>(null);
+  const [viewModal, setViewModal] = useState<any>(null);
+
+  const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
 
-  const {
-    data: articlesData,
-    loading,
-    refetch,
-  } = useQuery<IGetArticles, IGetArticlesVars>(GET_ARTICLES, {
-    variables: {
-      filterInput: {
-        ...filter,
-      },
-      paginationInput: {
-        currentPage: 0,
-        perPage: 200,
-      },
+  const [getArticles, { data: articlesData, loading, refetch }] = useLazyQuery<
+    IGetArticles,
+    IGetArticlesVars
+  >(GET_ARTICLES, {
+    onCompleted: (res) => {
+      setPaginationInfo(res?.filterArticlesPaginated?.paginationInfo);
     },
-    skip: !!id,
+    // skip: !!id,
     fetchPolicy: "network-only",
   });
   const { data: clientsData } = useQuery<IGetClients, IGetClientsVars>(GET_CLIENTS, {
@@ -176,133 +110,196 @@ function Releases(): JSX.Element {
   }
 
   useEffect(() => {
-    setLoader(true);
-    const articles = articlesData?.filterArticlesPaginated?.data;
-    let rows: any = [];
-    if (articles?.length) {
-      rows = articles?.map((one) => {
-        return {
-          featureImage: `${process.env.REACT_APP_IMAGE_BASE_URL}${one?.featureImage}`,
-          title: {
-            title: one?.title,
-            desc: one?.summary,
-          },
-          status: one?.status,
-          actions: [
-            {
-              Icon: EditIcon,
-              onClick: () => {
-                navigate(`/releases/${one?.id}`);
-                setOpenForm(one?.id);
-              },
-            },
-            {
-              Icon: DeleteIcon,
-              onClick: () => {
-                deleteArticle({
-                  variables: {
-                    id: one?.id,
-                  },
-                })
-                  .then(() => {
-                    refetch();
-                    toast.success("Deleted Successfully");
-                  })
-                  .catch((err) => {
-                    toast.error(err?.message);
-                  });
-              },
-            },
-          ],
-        };
-      });
-    }
-    setData({ rows, columns });
-    setLoader(false);
-  }, [articlesData]);
+    setInitLoader(true);
+    getArticles({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: 0,
+        },
+        filterInput: {},
+      },
+    })
+      .then(() => setInitLoader(false))
+      .catch(() => setInitLoader(false));
+  }, []);
 
   useEffect(() => {
-    if (location?.pathname === "/releases") {
-      setOpenForm(false);
+    if (filters) {
+      getArticles({
+        variables: {
+          paginationInput: {
+            perPage: PER_PAGE,
+            currentPage: 0,
+          },
+          filterInput: {
+            ...filters,
+          },
+        },
+      });
     }
-  }, [location]);
+  }, [filters]);
+
+  const handleUpdateStatus = (row: any, status: string, notes?: string) => {
+    const id = row?.original?.id;
+    if (status === "AWAITING_APPROVAL" && !notes) {
+      setNoteModal({ ...row, status });
+      return;
+    }
+    setLoader(true);
+    updateArticleStatus({
+      variables: {
+        params: {
+          id,
+          status,
+          notes,
+        },
+      },
+    })
+      .then(() => {
+        setLoader(false);
+        refetch();
+        toast.success("Status Updated successfully");
+      })
+      .catch((err: any) => {
+        toast.error(err?.message);
+        setLoader(false);
+      });
+  };
+
+  const handleFilters = (key: string, val: any) => {
+    setFilters({
+      ...filters,
+      [key]: val,
+    });
+  };
+
+  const handleAction = (id: string, action: string) => {
+    if (action === "edit") {
+      setOpenForm(id);
+    } else if (action === "view") {
+      setViewModal(id);
+    }
+  };
+
+  useEffect(() => {
+    const rows = articlesData?.filterArticlesPaginated?.data || [];
+    const columns = makeColumns(handleAction, handleUpdateStatus);
+    // if (articles?.length) {
+    //   rows = articles?.map((one) => {
+    //     return {
+    //       featureImage: `${process.env.REACT_APP_IMAGE_BASE_URL}${one?.featureImage}`,
+    //       title: {
+    //         title: one?.title,
+    //         desc: one?.summary,
+    //       },
+    //       status: one?.status,
+    //       actions: [
+    //         {
+    //           Icon: EditIcon,
+    //           onClick: () => {
+    //             navigate(`/releases/${one?.id}`);
+    //             setOpenForm(one?.id);
+    //           },
+    //         },
+    //         {
+    //           Icon: DeleteIcon,
+    //           onClick: () => {
+    //             deleteArticle({
+    //               variables: {
+    //                 id: one?.id,
+    //               },
+    //             })
+    //               .then(() => {
+    //                 refetch();
+    //                 toast.success("Deleted Successfully");
+    //               })
+    //               .catch((err) => {
+    //                 toast.error(err?.message);
+    //               });
+    //           },
+    //         },
+    //       ],
+    //     };
+    //   });
+    // }
+    setData({ rows, columns });
+  }, [articlesData]);
+
+  // useEffect(() => {
+  //   if (location?.pathname === "/releases") {
+  //     setOpenForm(false);
+  //   }
+  // }, [location]);
+
+  const handlePagination = (page: number) => {
+    getArticles({
+      variables: {
+        paginationInput: {
+          perPage: PER_PAGE,
+          currentPage: page,
+        },
+        filterInput: {
+          ...filters,
+        },
+      },
+    });
+  };
 
   return (
     <>
+      {loader && <MDCircularLoader overlayloader startLoader />}
+
       <DashboardNavbar text="ADD PR" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
         {!openForm && (
           <>
-            <MDBox display="flex" alignItems="center" justifyContent="space-between" pt={2}>
-              <MDBox display="flex">
-                <Autocomplete
-                  disableClearable
-                  value={
-                    filter?.clientId &&
-                    clientsOptions?.find((one: any) => one?.value === filter?.clientId)
-                  }
-                  options={clientsOptions}
-                  onChange={(event, option: any) => {
-                    if (option?.value) {
-                      setFilter({ ...filter, clientId: option?.value });
-                    } else {
-                      const newFilter = { ...filter };
-                      delete newFilter?.clientId;
-                      setFilter(newFilter);
-                    }
-                  }}
-                  size="small"
-                  sx={{ width: "12rem" }}
-                  renderInput={(params) => <MDInput label="Select Client" {...params} />}
-                />
-                <MDBox pl={2}>
-                  <Autocomplete
-                    disableClearable
-                    value={
-                      filter?.status &&
-                      ReleaseTypeOptions?.find((one: any) => one?.value === filter?.status)
-                    }
-                    options={ReleaseTypeOptions}
-                    onChange={(event, option) => {
-                      if (option?.value) {
-                        setFilter({ ...filter, status: option?.value });
-                      } else {
-                        const newFilter = { ...filter };
-                        delete newFilter?.status;
-                        setFilter(newFilter);
-                      }
-                    }}
-                    size="small"
-                    sx={{ width: "10rem" }}
-                    renderInput={(params) => <MDInput label="Select Type" {...params} />}
-                  />
-                </MDBox>
-              </MDBox>
-            </MDBox>
-            <MDBox pt={2}>
-              <MDTypography fontWeight="bold" fontSize="20px">
-                Manage Press Release
-              </MDTypography>
-            </MDBox>
+            <Filters
+              setFilters={setFilters}
+              handleFilters={handleFilters}
+              filters={filters}
+              clientsOptions={clientsOptions}
+            />
           </>
         )}
         <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "520px" }}>
-          <Card sx={{ minHeight: "300px" }}>
-            {loading || loader ? (
+          {initLoading ? (
+            <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
-            ) : openForm ? (
+            </Card>
+          ) : openForm ? (
+            <Card sx={{ minHeight: "300px" }}>
               <ReleaseForm idVal={openForm} />
-            ) : tableData?.rows?.length ? (
-              <DataTable table={tableData} />
-            ) : (
+            </Card>
+          ) : tableData?.rows?.length ? (
+            <DataTable
+              handlePagination={handlePagination}
+              canSearch
+              table={tableData}
+              showHeader
+              loading={loading}
+              paginationInfo={paginationInfo || {}}
+            />
+          ) : (
+            <Card sx={{ minHeight: "300px" }}>
               <MDBox m={"auto"}>
                 <MDTypography variant="h6">No data found</MDTypography>
               </MDBox>
-            )}
-          </Card>
+            </Card>
+          )}
         </MDBox>
         <Footer />
       </MDBox>
+      {noteModal && (
+        <NoteModal
+          onClose={() => setNoteModal(null)}
+          handleSubmit={(note: string) => {
+            handleUpdateStatus(noteModal, noteModal.status, note);
+            setNoteModal(null);
+          }}
+        />
+      )}
+      {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
     </>
   );
 }

@@ -118,7 +118,7 @@ const Filters = ({
 
   return (
     <>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
+      <Box pt={2} display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
           <Autocomplete
             id="asynchronous-demo"

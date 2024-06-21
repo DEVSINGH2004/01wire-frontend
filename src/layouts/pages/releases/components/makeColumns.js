@@ -1,0 +1,196 @@
+/* eslint-disable react/prop-types */
+import { TableCell as MuiTableCell, IconButton } from "@mui/material";
+import MDTypography from "components/MDTypography";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import MDBox from "components/MDBox";
+import dayjs from "dayjs";
+import FormControl from "@mui/material/FormControl";
+import DownloadIcon from "assets/images/icons/downloadIcon.svg";
+import ViewIcon from "assets/images/icons/viewIcon.svg";
+import EditIcon from "assets/images/icons/editIcon.svg";
+import NavigateIcon from "assets/images/icons/navigateIcon.svg";
+import DeleteIcon from "assets/images/icons/deleteIcon.svg";
+import { truncateString } from "utils/helpers";
+import { statusOptions } from "../../pr-management/components/makeColumns";
+
+export const makeColumns = (handleAction, handleUpdateStatus) => {
+  const columns = [
+    {
+      Header: "PR ID",
+      accessor: "prId",
+      width: "10%",
+      Cell: ({ value }) => (
+        <MDBox>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
+        </MDBox>
+      ),
+    },
+    {
+      Header: "Title",
+      accessor: "title",
+      width: "30%",
+      Cell: ({ value }) => (
+        <MDBox>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+            {truncateString(value, 35)}
+          </MDTypography>
+        </MDBox>
+      ),
+    },
+
+    {
+      Header: "Created At",
+      width: "15%",
+      accessor: "createdAt",
+      Cell: ({ value }) => {
+        return (
+          <MDBox>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+              {dayjs(value).format("DD MMM YYYY")}
+            </MDTypography>
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "Updated At",
+      width: "15%",
+      accessor: "updatedAt",
+      Cell: ({ value }) => {
+        return (
+          <MDBox>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+              {dayjs(value).format("DD MMM YYYY")}
+            </MDTypography>
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "Status",
+      width: "15%",
+      accessor: "status",
+      Cell: ({ value, row }) => {
+        const selectedStatus = value;
+        const selected = statusOptions.find((el) => selectedStatus === el?.value);
+
+        const menuOptions =
+          selectedStatus === "SCHEDULED"
+            ? ["SCHEDULED", "REJECTED", "PUBLISHED"]
+            : selectedStatus === "SUBMITTED"
+            ? ["SUBMITTED", "AWAITING_APPROVAL", "SCHEDULED"]
+            : ["REVIEW", "AWAITING_APPROVAL", "SCHEDULED"];
+        return (
+          <MDBox>
+            {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(selectedStatus) ? (
+              <MDBox
+                px={1}
+                borderRadius="21px"
+                bgColor={selected?.background}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundImage: selected?.background,
+                  color: "white",
+                  backgroundBlendMode: "overlay",
+                  width: "140px",
+                  height: "22px",
+                }}
+              >
+                <MDTypography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: "400",
+                    color: "#fff",
+                  }}
+                >
+                  {selected?.label}
+                </MDTypography>
+              </MDBox>
+            ) : (
+              <FormControl sx={{ width: "152px", height: "22px" }} size="medium">
+                <Select
+                  id="demo-select-small"
+                  displayEmpty
+                  value={selectedStatus}
+                  sx={{
+                    textAlign: "center",
+                    borderRadius: "21px",
+                    "& .MuiOutlinedInput-input": {
+                      padding: "10px",
+                      color: "white",
+                      fontSize: "12px",
+                      fontWeight: "400",
+                      borderRadius: "21px",
+                      border: "none",
+                      background: selected?.background,
+                    },
+                  }}
+                  renderValue={(selected) => {
+                    if (selectedStatus === "") {
+                      return <em>Select an option</em>;
+                    }
+                    return selectedStatus ? selectedStatus : "";
+                  }}
+                  onChange={(e) => handleUpdateStatus(row, e.target.value)}
+                >
+                  {menuOptions
+                    .filter((option) => option !== selectedStatus) // Filter out the selected value
+                    .map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            )}
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "Action",
+      Align: "right",
+      width: "15%",
+      Cell: ({ value, row }) => {
+        return (
+          <MDBox
+            sx={{
+              display: "flex",
+            }}
+          >
+            {row.original.status === "PUBLISHED" && (
+              <IconButton onClick={() => handleAction("navigate")}>
+                <img width={36} height={36} alt="navigate" src={DownloadIcon} />
+              </IconButton>
+            )}
+            {["DRAFT", "AWAITING_APPROVAL"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+                <img width={36} height={36} alt="navigate" src={EditIcon} />
+              </IconButton>
+            )}
+            {["PUBLISHED", "SCHEDULED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "view")}>
+                <img width={36} height={36} alt="navigate" src={ViewIcon} />
+              </IconButton>
+            )}
+            {["DRAFT", "REJECTED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "delete")}>
+                <img width={36} height={36} alt="navigate" src={DeleteIcon} />
+              </IconButton>
+            )}
+            {["PUBLISHED", "REVIEW", "SCHEDULED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+                <img width={36} height={36} alt="navigate" src={NavigateIcon} />
+              </IconButton>
+            )}
+          </MDBox>
+        );
+      },
+    },
+  ];
+
+  return columns;
+};
