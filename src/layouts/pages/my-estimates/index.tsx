@@ -150,7 +150,7 @@ const MyEstimates = () => {
           title: one?.title,
           publications: one?.publicationIds?.length,
           bundles: one?.bundleIds?.length,
-          views: 100,
+          views: 0,
           reach: one?.traffic,
           credits: one?.totalCredits,
           actions: [
