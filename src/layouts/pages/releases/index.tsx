@@ -271,17 +271,19 @@ function Releases(): JSX.Element {
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <ReleaseForm idVal={openForm} />
+              <ReleaseForm idVal={openForm} onClose={() => setOpenForm(false)} />
             </Card>
           ) : tableData?.rows?.length ? (
-            <DataTable
-              handlePagination={handlePagination}
-              canSearch
-              table={tableData}
-              showHeader
-              loading={loading}
-              paginationInfo={paginationInfo || {}}
-            />
+            <MDBox>
+              <DataTable
+                handlePagination={handlePagination}
+                canSearch
+                table={tableData}
+                showHeader
+                loading={loading}
+                paginationInfo={paginationInfo || {}}
+              />
+            </MDBox>
           ) : (
             <Card sx={{ minHeight: "300px" }}>
               <MDBox m={"auto"}>
