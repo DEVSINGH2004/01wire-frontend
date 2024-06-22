@@ -22,6 +22,7 @@ import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArti
 import DisplayBundles from "../DisplayBundles";
 import PublicationsList from "../PublicationsList";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
+import BundlePublicationModal from "../BundlePublicationModal";
 const perPage = 10;
 interface Props {
   cb?: any;
@@ -63,6 +64,7 @@ function PlanNPayment({
   const [currentPage, setPage] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPublications, setFilteredPublications] = useState(null);
+  const [open, setOpen] = useState<any>(false);
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
       paginationInput: {
@@ -145,7 +147,6 @@ function PlanNPayment({
         .catch((err: any) => {
           setLoading(false);
           toast.error(err?.message);
-          console.log("error in saving data", err);
           setSaveData(false);
         });
     } else {
@@ -247,6 +248,7 @@ function PlanNPayment({
                 color="primary"
                 variant="outlined"
                 label={`${publicationIds?.length} Selected`}
+                onClick={() => setOpen(true)}
               />
             </MDBox>
             <MDInput
@@ -335,6 +337,9 @@ function PlanNPayment({
             </MDButton>
           </MDBox>
         </MDBox>
+      )}
+      {open && (
+        <BundlePublicationModal onClose={() => setOpen(false)} currentPublications={selecetedP} />
       )}
     </MDBox>
   );

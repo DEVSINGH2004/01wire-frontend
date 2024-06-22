@@ -54,7 +54,7 @@ const BundleForm = ({
       category: null,
       type: null,
       price: null,
-      image:null,
+      image: null,
     },
   });
   const [createBundle] = useMutation<ICreateBundleVars>(CREATE_BUNDLE);
@@ -77,7 +77,7 @@ const BundleForm = ({
         perPage: perPage,
       },
     },
-    fetchPolicy:"network-only",
+    fetchPolicy: "network-only",
     skip: disabled,
   });
 
@@ -132,7 +132,7 @@ const BundleForm = ({
         image,
       });
       setPublicationIds(publicationIds);
-      setSelectedP(publicationInfo)
+      setSelectedP(publicationInfo);
     }
   }, [data]);
   const currentPublications: any = publicationsData?.filterPublicationsPaginated?.data || [];
@@ -157,7 +157,9 @@ const BundleForm = ({
           <IconButton onClick={onClose}>
             <ArrowBackIosIcon />
           </IconButton>
-          <MDTypography variant="h5">Create Bundles</MDTypography>
+          <MDTypography variant="h5">
+            {id && id !== true ? "Edit Bundle" : "Create Bundle"}
+          </MDTypography>
         </MDBox>
         {(loading || pLoader || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
         <MDBox mt={3}>

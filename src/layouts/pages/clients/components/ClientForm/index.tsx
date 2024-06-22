@@ -40,7 +40,7 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
       })
       .catch((err) => {
         setLoading(false);
-        console.log("err while fetching client detail", err);
+        console.info("err while fetching client detail", err);
       });
   };
   useEffect(() => {
