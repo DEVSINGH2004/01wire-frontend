@@ -24,6 +24,7 @@ import Profile from "layouts/pages/profile";
 import Publications from "layouts/pages/publications";
 import Bundles from "layouts/pages/bundles";
 import PRManagement from "layouts/pages/pr-management";
+import DownloadReport from "layouts/pages/download-report";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -33,6 +34,8 @@ export default function App() {
   const { miniSidenav, direction, layout, sidenavColor, darkMode } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+
+  console.log("pathname", pathname);
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -87,7 +90,7 @@ export default function App() {
         <SignIn />
       ) : (
         <>
-          {layout === "dashboard" && (
+          {layout === "dashboard" && pathname !== "/download-report" && (
             <>
               <Sidenav
                 color={sidenavColor}
@@ -107,6 +110,7 @@ export default function App() {
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/clients/:id" element={<Clients />} />
+              <Route path="/download-report" element={<DownloadReport />} />
               <Route path="/releases/:id" element={<Releases />} />
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />

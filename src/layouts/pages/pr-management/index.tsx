@@ -23,12 +23,13 @@ import {
 } from "graphql/mutations/updateArticleStatus";
 import NoteModal from "./components/NoteModal";
 import Filters from "./components/Filters";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const PER_PAGE = 10;
 
 const PRManagement = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const uEmail = queryParams.get("email") || "";
@@ -142,6 +143,8 @@ const PRManagement = () => {
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
       setOpenForm(id);
+    } else if (action === "navigate") {
+      navigate(`/download-report?id=${id}`);
     }
   };
 

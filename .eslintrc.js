@@ -29,6 +29,7 @@ module.exports = {
   rules: {
     "react/prop-types": "off",
     "no-shadow": "off",
+    "react/no-unescaped-entities": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",

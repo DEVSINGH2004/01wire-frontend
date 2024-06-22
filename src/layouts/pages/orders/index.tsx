@@ -96,6 +96,8 @@ const OrderManagement = () => {
       setOpenForm(id);
     } else if (action === "view") {
       setViewModal(id);
+    } else if (action === "navigate") {
+      navigate(`/download-report?id=${id}`);
     }
   };
 
