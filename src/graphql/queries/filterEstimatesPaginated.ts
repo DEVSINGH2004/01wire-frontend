@@ -24,22 +24,61 @@ export interface IGetEstimates {
 export const GET_ESTIMATES = gql`
   query filterEstimatesPaginated(
     $paginationInput: PaginationInput!
-    $filterInput: ArticleFilterInput!
+    $filterInput: EstimateFilterInput!
   ) {
     filterEstimatesPaginated(paginationInput: $paginationInput, filterInput: $filterInput) {
       data {
         id
+        title
         userId
         publicationIds
         bundleIds
         totalCredits
         createdAt
         updatedAt
+        traffic
+        bundleInfo {
+          id
+          publicationIds
+          image
+          description
+          type
+          category
+          traffic
+          price
+          createdAt
+          updatedAt
+          publicationInfo {
+            id
+            stats {
+              da
+              pa
+              dr
+              ur
+              traffic
+            }
+            title
+            categories
+            linkType
+            url
+            image
+            timeline
+            price
+            createdAt
+            updatedAt
+          }
+        }
         publicationInfo {
           id
           title
           image
-          stats
+          stats {
+            da
+            pa
+            dr
+            ur
+            traffic
+          }
           price
           linkType
         }

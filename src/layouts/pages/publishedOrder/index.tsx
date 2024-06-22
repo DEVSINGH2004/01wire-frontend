@@ -110,7 +110,7 @@ const PublishedOrders = () => {
           lastDate: one?.updatedAt,
           actions: [
             {
-              Icon: TiltArrowIcon,
+              imgIcon: TiltArrowIcon,
               height: "16px",
               width: "16px",
               label: "Edit",
@@ -128,29 +128,29 @@ const PublishedOrders = () => {
   }, [data]);
   return (
     <>
-    <DashboardNavbar/>
-    <MDBox px={2}>
-      {!openForm && (
-        <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
-          <MDTypography fontWeight="bold" fontSize="20px"> 
-            Published Order 
-          </MDTypography>
+      <DashboardNavbar />
+      <MDBox px={2}>
+        {!openForm && (
+          <MDBox pt={2} display="flex" alignItems="center" justifyContent="space-between">
+            <MDTypography fontWeight="bold" fontSize="20px">
+              Published Order
+            </MDTypography>
+          </MDBox>
+        )}
+        <MDBox pt={openForm ? 3 : 2} pb={3}>
+          <Card sx={{ minHeight: "300px" }}>
+            {loading || loader ? (
+              <MDCircularLoader overlayloader startLoader />
+            ) : tableData?.rows?.length ? (
+              <DataTable canSearch table={tableData} />
+            ) : (
+              <MDBox m={"auto"}>
+                <MDTypography variant="h6">No data found</MDTypography>
+              </MDBox>
+            )}
+          </Card>
         </MDBox>
-      )}
-      <MDBox pt={openForm ? 3 : 2} pb={3}>
-        <Card sx={{ minHeight: "300px" }}>
-          {loading || loader ? (
-            <MDCircularLoader overlayloader startLoader />
-          ) : tableData?.rows?.length ? (
-            <DataTable canSearch table={tableData} />
-          ) : (
-            <MDBox m={"auto"}>
-              <MDTypography variant="h6">No data found</MDTypography>
-            </MDBox>
-          )}
-        </Card>
       </MDBox>
-    </MDBox>
     </>
   );
 };

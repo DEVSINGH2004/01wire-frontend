@@ -8,6 +8,7 @@ export interface ArticleFilterInput {
   categories?: string[];
   startTime?: string;
   endTime?: string;
+  userId?: string;
 }
 
 export interface IGetArticlesVars {
@@ -19,8 +20,7 @@ export interface IGetArticles {
   filterArticlesPaginated: ArticleData;
 }
 
-export const
-  GET_ARTICLES = gql`
+export const GET_ARTICLES = gql`
   query filterArticlesPaginated(
     $paginationInput: PaginationInput!
     $filterInput: ArticleFilterInput!

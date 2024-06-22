@@ -6,20 +6,30 @@ export const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
     {actions?.map((one: any, i: any) => {
       return (
-        <IconButton key={i} onClick={one?.onClick}>
-          {one?.label && (
-            <MDTypography
-              fontSize="16px"
-              fontWeight="medium"
-              fontFamily="Roboto"
-              color="primary"
-              mr={1}
-            >
-              {one.label}
-            </MDTypography>
+        <MDBox key={i}>
+          {one?.custom ? (
+            <MDBox mx={1}>{one.custom}</MDBox>
+          ) : (
+            <IconButton onClick={one?.onClick}>
+              {one?.label && (
+                <MDTypography
+                  fontSize="16px"
+                  fontWeight="medium"
+                  fontFamily="Roboto"
+                  color="primary"
+                  mr={1}
+                >
+                  {one.label}
+                </MDTypography>
+              )}
+              {one?.imgIcon ? (
+                <img src={one.imgIcon} height={one?.height} width={one?.width} />
+              ) : (
+                one?.Icon
+              )}
+            </IconButton>
           )}
-          <img src={one?.Icon} height={one?.height} width={one?.width} />
-        </IconButton>
+        </MDBox>
       );
     })}
   </MDBox>
@@ -88,7 +98,7 @@ export function removeEmptyFields(obj: { [key: string]: any }): { [key: string]:
 
 export const truncateString = (str: string, maxLength: number) => {
   if (str.length > maxLength) {
-    return str.slice(0, maxLength - 3) + '...';
+    return str.slice(0, maxLength - 3) + "...";
   }
   return str;
-}
+};

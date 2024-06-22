@@ -111,6 +111,7 @@ export interface ArticleData {
 export type EstimateType = {
   id: string;
   userId: string;
+  title: string;
   publicationIds: string[];
   bundleIds: string[];
   totalCredits: number;

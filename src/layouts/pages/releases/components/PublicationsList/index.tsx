@@ -48,7 +48,7 @@ const PublicationsList = ({
       Cell: ({ value }: { value: any }) => (
         <MDBox>
           <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-            {truncateString(value, 15)}
+            {value && truncateString(value, 15)}
           </MDTypography>
         </MDBox>
       ),
@@ -61,7 +61,7 @@ const PublicationsList = ({
         return (
           <MDBox>
             <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-              {truncateString(value, 15)}
+              {value && truncateString(value, 15)}
             </MDTypography>
           </MDBox>
         );
