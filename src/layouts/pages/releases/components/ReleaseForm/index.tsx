@@ -90,19 +90,19 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
- 
+
   const handleNext = (id?: any) => {
     if (id) setId(id);
     setSaveData(false);
     setActiveStep(activeStep + 1);
   };
   const handleBack = () => {
-    if(activeStep === 0){
-      onClose()
-    }else{
-    if (saveData) setSaveData(false);
-    setActiveStep(activeStep - 1);
-  }
+    if (activeStep === 0) {
+      onClose();
+    } else {
+      if (saveData) setSaveData(false);
+      setActiveStep(activeStep - 1);
+    }
   };
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [getArticleById] = useLazyQuery<IGetArticleById, IGetArticleByIdVars>(GET_ARTICLE_BY_ID, {
@@ -194,25 +194,21 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
           zIndex: 1000,
         }}
       >
-        {/* {activeStep === 0 ? (
-          <MDBox />
-        ) : ( */}
-          <MDTypography
-            fontSize="16px"
-            sx={{
-              fontWeight: 400,
-              fontFamily: "Roboto",
-              boxShadow:
-                "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-              padding: "0.5rem 1rem",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-            onClick={handleBack}
-          >
-            {"< Back"}
-          </MDTypography>
-        {/* )} */}
+        <MDTypography
+          fontSize="16px"
+          sx={{
+            fontWeight: 400,
+            fontFamily: "Roboto",
+            boxShadow:
+              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+            padding: "0.5rem 1rem",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleBack}
+        >
+          {"< Back"}
+        </MDTypography>
         <MDButton
           color="primary"
           onClick={

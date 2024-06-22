@@ -154,151 +154,153 @@ const PublicationForm = ({
   }, [data]);
   return (
     <>
-    <MDBox p={2}>
-      <MDBox display="flex" alignItems="center">
-        <IconButton onClick={onClose}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <MDTypography variant="h5">Create Publication</MDTypography>
-      </MDBox>
-      {(loading || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
-      <MDBox mt={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type="text"
-              label="Title"
-              name="title"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.text}
-            />
-            <FormField
-              type="multiSelect"
-              placeholder="Categories"
-              label="Categories"
-              name="categories"
-              control={control}
-              options={CategoryOptions}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.dropdown}
-            />
-            <FormField
-              type="number"
-              label="Traffic"
-              name="traffic"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
-            <FormField
-              type="number"
-              label="DA"
-              name="da"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
-            <FormField
-              type="number"
-              label="PA"
-              name="pa"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
+      <MDBox p={2}>
+        <MDBox display="flex" alignItems="center">
+          <IconButton onClick={onClose}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <MDTypography variant="h5">
+            {" "}
+            {id && id !== true ? "Edit Publication" : "Create Publication"}
+          </MDTypography>
+        </MDBox>
+        {(loading || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
+        <MDBox mt={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <FormField
+                type="text"
+                label="Title"
+                name="title"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.text}
+              />
+              <FormField
+                type="multiSelect"
+                placeholder="Categories"
+                label="Categories"
+                name="categories"
+                control={control}
+                options={CategoryOptions}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.dropdown}
+              />
+              <FormField
+                type="number"
+                label="Traffic"
+                name="traffic"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
+              <FormField
+                type="number"
+                label="DA"
+                name="da"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
+              <FormField
+                type="number"
+                label="PA"
+                name="pa"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
 
-            <FormField
-              type="dropdown"
-              placeholder="Timeline"
-              label="Timeline"
-              name="timeline"
-              control={control}
-              options={TimelineOptions}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.dropdown}
-            />
-            <FormField
-              type="text"
-              label="URL"
-              name="url"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.url}
-            />
+              <FormField
+                type="dropdown"
+                placeholder="Timeline"
+                label="Timeline"
+                name="timeline"
+                control={control}
+                options={TimelineOptions}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.dropdown}
+              />
+              <FormField
+                type="text"
+                label="URL"
+                name="url"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.url}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormField
+                type="file"
+                subLabel="JPEG, PNG, JPG(max. 3MB)"
+                name="image"
+                label="Image"
+                control={control}
+                defaultValue={data?.getPublicationById?.image}
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.text}
+              />
+              <FormField
+                type="number"
+                label="DR"
+                name="dr"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
+              <FormField
+                type="number"
+                label="UR"
+                name="ur"
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
+              <FormField
+                type="dropdown"
+                placeholder="Link Type"
+                label="Link Type"
+                name="linkType"
+                control={control}
+                options={[
+                  { label: "Do Follow", value: "DO_FOLLOW" },
+                  { label: "No Follow", value: "NO_FOLLOW" },
+                ]}
+                variant="outlined"
+                disabled={disabled}
+                errors={errors}
+                rules={genericValidations.dropdown}
+              />
+              <FormField
+                type="number"
+                label="Price"
+                name="price"
+                errors={errors}
+                rules={genericValidations.number}
+                control={control}
+                variant="outlined"
+                disabled={disabled}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type="file"
-              subLabel="JPEG, PNG, JPG(max. 3MB)"
-              name="image"
-              label="Image"
-              control={control}
-              defaultValue={data?.getPublicationById?.image}
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.text}
-            />
-            <FormField
-              type="number"
-              label="DR"
-              name="dr"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
-            <FormField
-              type="number"
-              label="UR"
-              name="ur"
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
-            <FormField
-              type="dropdown"
-              placeholder="Link Type"
-              label="Link Type"
-              name="linkType"
-              control={control}
-              options={[
-                { label: "Do Follow", value: "DO_FOLLOW" },
-                { label: "No Follow", value: "NO_FOLLOW" },
-              ]}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.dropdown}
-            />
-            <FormField
-              type="number"
-              label="Price"
-              name="price"
-              errors={errors}
-              rules={genericValidations.number}
-              control={control}
-              variant="outlined"
-              disabled={disabled}
-            />
-          </Grid>
-        </Grid>
+        </MDBox>
       </MDBox>
-    </MDBox>
-    <MDBox
+      <MDBox
         display="flex"
         alignItems="center"
         justifyContent="space-between"
         bgColor="white"
         width="102.47%"
-
         sx={{
           position: "sticky",
           bottom: 0,
@@ -315,7 +317,6 @@ const PublicationForm = ({
         </MDButton>
       </MDBox>
     </>
-
   );
 };
 export default PublicationForm;
