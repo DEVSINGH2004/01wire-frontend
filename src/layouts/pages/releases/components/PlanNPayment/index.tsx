@@ -22,7 +22,6 @@ import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArti
 import DisplayBundles from "../DisplayBundles";
 import PublicationsList from "../PublicationsList";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
-
 const perPage = 10;
 interface Props {
   cb?: any;
@@ -49,7 +48,6 @@ function PlanNPayment({
     data?.bundleInfo?.length > 0
       ? [...new Set(data.bundleInfo?.flatMap((bundle: any) => bundle.publicationIds))]
       : [];
-
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const [loading, setLoading] = useState<boolean>(false);
   const [publicationIds, setPublicationIds] = useState<any>(
@@ -65,7 +63,6 @@ function PlanNPayment({
   const [currentPage, setPage] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPublications, setFilteredPublications] = useState(null);
-
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
       paginationInput: {
@@ -238,7 +235,6 @@ function PlanNPayment({
           />
         </MDBox>
       )}
-
       {((disabled && currentPublications?.length > 0) || !disabled) && (
         <MDBox>
           <MDBox py={2} display="flex" justifyContent="space-between">

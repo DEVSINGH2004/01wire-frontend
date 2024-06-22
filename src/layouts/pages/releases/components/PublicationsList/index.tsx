@@ -158,19 +158,18 @@ const PublicationsList = ({
     let rows: any = [];
     if (publications?.length) {
       rows = publications?.map((one: any) => {
-        const { pa, da, dr, ur } = one?.stats || {};
         return {
           id: one?.id,
-          logo: one?.image,
+          logo: one?.logo || one?.image,
           title: one?.title,
-          categories: one?.categories?.join("/"),
-          traffic: one?.stats?.traffic,
-          pa,
-          da,
-          ur,
-          dr,
+          categories: one?.categories || one?.categories?.join("/"),
+          traffic: one?.traffic || one?.stats?.traffic,
+          pa: one?.pa || one?.stats?.pa,
+          da: one?.da || one?.stats?.da,
+          ur: one?.ur || one?.stats?.ur,
+          dr: one?.dr || one?.stats?.dr,
           linkType: one?.linkType,
-          credits: one?.price,
+          credits: one?.credits || one?.price,
         };
       });
       setData({ rows, columns });
