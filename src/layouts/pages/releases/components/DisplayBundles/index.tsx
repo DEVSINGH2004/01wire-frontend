@@ -44,10 +44,10 @@ const DisplayBundles = ({
   category,
 }: {
   bundles: any;
-  handleChange: (category: any, bundle: any) => void;
+  handleChange?: (category: any, bundle: any) => void;
   selected: any;
   disabled: boolean;
-  category: string;
+  category?: string;
 }) => {
   const [open, setOpen] = useState<any>(false);
   const sliderRef = useRef(null);

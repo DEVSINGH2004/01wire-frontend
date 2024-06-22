@@ -63,17 +63,17 @@ const PRManagement = () => {
 
   useEffect(() => {
     if (uId && uEmail) {
-      setOptions({
-        userId: uId,
-        email: uEmail,
-      });
-      setEmail(uEmail);
-      setFilters([
+      setOptions([
         {
-          ...filters,
           userId: uId,
+          email: uEmail,
         },
       ]);
+      setEmail(uEmail);
+      setFilters({
+        ...filters,
+        userId: uId,
+      });
     }
   }, [uEmail, uId]);
 
