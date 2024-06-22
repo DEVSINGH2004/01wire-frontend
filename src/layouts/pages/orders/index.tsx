@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { GET_ORDERS, IGetOrders, IGetOrdersVars } from "graphql/queries/filterOrdersPaginated";
 import OrderDetail from "./components/orderDetail";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -13,6 +13,9 @@ import DataTable from "../pr-management/components/DataTable";
 import Filters from "./components/Filters";
 import { makeColumns } from "./components/makeColumns";
 import ArticleBundleModal from "../releases/components/ArticleBundleModal";
+import NoteModal from "../pr-management/components/NoteModal";
+import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
+import { toast } from "react-toastify";
 
 const PER_PAGE = 10;
 
@@ -39,6 +42,7 @@ const OrderManagement = () => {
       fetchPolicy: "network-only",
     }
   );
+  const [updateArticleStatus] = useMutation<IUpdateOrderStatusVars>(UPDATE_ORDER_STATUS);
 
   useEffect(() => {
     setInitLoader(true);
@@ -98,7 +102,39 @@ const OrderManagement = () => {
       setViewModal(id);
     } else if (action === "navigate") {
       navigate(`/download-report?id=${id}`);
+    } else if (action === "note") {
+      setNoteModal({ id });
+    } else if (action === "view-article") {
+      navigate(`/pr-management/${id}`);
     }
+  };
+
+  const handleUpdateStatus = (row: any, status: string, notes?: string) => {
+    const id = row?.id;
+    let params: any = {
+      id,
+      status,
+    };
+    if (status === "PUBLISHED") {
+      params = { ...params, url: notes };
+    } else {
+      params = { ...params, notes };
+    }
+    setLoader(true);
+    updateArticleStatus({
+      variables: {
+        params,
+      },
+    })
+      .then(() => {
+        setLoader(false);
+        refetch();
+        toast.success("Status Updated successfully");
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+        setLoader(false);
+      });
   };
 
   const handlePagination = (page: number) => {
@@ -158,6 +194,19 @@ const OrderManagement = () => {
           )}
         </MDBox>
       </MDBox>
+      {noteModal && (
+        <NoteModal
+          orderPage
+          onClose={(note?: string) => {
+            handleUpdateStatus(noteModal, "REJECTED", note);
+            setNoteModal(null);
+          }}
+          handleSubmit={(note: string) => {
+            handleUpdateStatus(noteModal, "PUBLISHED", note);
+            setNoteModal(null);
+          }}
+        />
+      )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
     </>
   );

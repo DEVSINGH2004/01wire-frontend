@@ -11,7 +11,15 @@ import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 
-const NoteModal = ({ handleSubmit, onClose }: { onClose: any; handleSubmit: any }) => {
+const NoteModal = ({
+  handleSubmit,
+  onClose,
+  orderPage = false,
+}: {
+  onClose: any;
+  handleSubmit: any;
+  orderPage?: boolean;
+}) => {
   const [note, setNote] = useState<String>("");
 
   return (
@@ -51,9 +59,13 @@ const NoteModal = ({ handleSubmit, onClose }: { onClose: any; handleSubmit: any 
             sx={{ margin: "auto" }}
             variant="outlined"
             color="primary"
-            onClick={() => onClose()}
+            onClick={() => {
+              if (orderPage) {
+                onClose(note);
+              } else onClose();
+            }}
           >
-            Reject
+            {orderPage ? "Reject" : "Cancel"}
           </MDButton>
           <MDButton
             sx={{ margin: "auto" }}
@@ -62,7 +74,7 @@ const NoteModal = ({ handleSubmit, onClose }: { onClose: any; handleSubmit: any 
             disabled={!note}
             onClick={() => {
               handleSubmit(note);
-              onClose();
+              // onClose();
             }}
           >
             Submit
