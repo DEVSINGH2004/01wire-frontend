@@ -215,19 +215,24 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
     setLoader(true);
     try {
       axiosInstance
-        .get(`/order/pending?articleId=${articleId}`)
+        .get(`/order/pending?articleId=${articleId}`, {
+          responseType: "blob",
+        })
         .then(async (response: any) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
+          const urlBlob = window.URL.createObjectURL(
+            new Blob([response.data], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            })
+          );
           const link = document.createElement("a");
-          link.href = url;
+          link.href = urlBlob;
           link.setAttribute("download", `${Date.now()}.xlsx`);
           document.body.appendChild(link);
           link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(urlBlob);
           toast.success("Download successfully");
+          setLoader(false);
         })
         .catch((error) => {
           setLoader(false);
