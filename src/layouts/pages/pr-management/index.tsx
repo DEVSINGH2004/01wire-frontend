@@ -24,6 +24,7 @@ import {
 import NoteModal from "./components/NoteModal";
 import Filters from "./components/Filters";
 import { useLocation, useNavigate } from "react-router-dom";
+import ArticleBundleModal from "../releases/components/ArticleBundleModal";
 
 const PER_PAGE = 10;
 
@@ -55,6 +56,7 @@ const PRManagement = () => {
   const [email, setEmail] = useState<string>("");
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
+  const [viewModal, setViewModal] = useState<any>(null);
 
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
@@ -145,6 +147,8 @@ const PRManagement = () => {
       setOpenForm(id);
     } else if (action === "navigate") {
       navigate(`/download-report?id=${id}`);
+    } else if (action === "view") {
+      setViewModal(id);
     }
   };
 
@@ -248,6 +252,7 @@ const PRManagement = () => {
           }}
         />
       )}
+      {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
     </>
   );
 };

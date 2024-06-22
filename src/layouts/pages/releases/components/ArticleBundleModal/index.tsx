@@ -30,7 +30,7 @@ interface Props {
 const columns = [
   {
     Header: "Title",
-    accessor: "articleInfo.title",
+    accessor: "publicationInfo.title",
     width: "25%",
     Cell: ({ value }: any) => (
       <MDBox>
@@ -153,7 +153,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
       try {
         setLoader(true);
         axiosInstance
-          .post(`/order/upload-update?articleId=${articleId}`, formData, {
+          .post(`/order/upload-update`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -178,7 +178,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
     setLoader(true);
     try {
       axiosInstance
-        .get(`/order/upload-update?articleId=${articleId}`)
+        .get(`/order/pending?articleId=${articleId}`)
         .then(async (response: any) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");

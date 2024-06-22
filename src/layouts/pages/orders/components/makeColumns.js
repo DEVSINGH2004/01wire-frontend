@@ -120,7 +120,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
             }}
           >
             <IconButton
-              onClick={() => handleAction(row.original.id, "navigate")}
+              onClick={() => handleAction(row.original.articleId, "navigate")}
               sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
             >
               <img width={36} height={36} alt="navigate" src={DownloadIcon} />

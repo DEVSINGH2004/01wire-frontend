@@ -270,12 +270,13 @@ export const makeColumns = (
             }}
           >
             <IconButton
-              onClick={() => handleAction("navigate")}
+              onClick={() => handleAction(row.original.id, "navigate")}
               sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
             >
               <img width={36} height={36} alt="navigate" src={DownloadIcon} />
             </IconButton>
             <IconButton
+              onClick={() => handleAction(row.original.id, "view")}
               sx={{
                 visibility: !["PUBLISHED", "SCHEDULED"].includes(row.original.status)
                   ? "collapse"

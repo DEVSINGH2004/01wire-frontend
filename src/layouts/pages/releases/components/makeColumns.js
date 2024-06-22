@@ -162,7 +162,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
             }}
           >
             {row.original.status === "PUBLISHED" && (
-              <IconButton onClick={() => handleAction("navigate")}>
+              <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />
               </IconButton>
             )}
