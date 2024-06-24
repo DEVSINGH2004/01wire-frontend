@@ -27,7 +27,9 @@ const OrderManagement = () => {
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<any>({
+    status: "PENDING",
+  });
   const [email, setEmail] = useState<string>("");
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
@@ -52,7 +54,9 @@ const OrderManagement = () => {
           perPage: PER_PAGE,
           currentPage: 0,
         },
-        filterInput: {},
+        filterInput: {
+          ...filters,
+        },
       },
     })
       .then(() => setInitLoader(false))
