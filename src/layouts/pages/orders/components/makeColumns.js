@@ -119,24 +119,24 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
               display: "flex",
             }}
           >
-            <IconButton
+            {/* <IconButton
               onClick={() => handleAction(row.original.articleId, "navigate")}
               sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
             >
               <img width={36} height={36} alt="navigate" src={DownloadIcon} />
-            </IconButton>
+            </IconButton> */}
             <IconButton
-              onClick={() => handleAction(row.original.id, "view")}
-              sx={{
-                visibility: !["PUBLISHED", "SCHEDULED"].includes(value) ? "collapse" : "",
-              }}
+              onClick={() => handleAction(row.original.articleId, "view")}
+              // sx={{
+              //   visibility: !["PUBLISHED", "SCHEDULED"].includes(value) ? "collapse" : "",
+              // }}
             >
               <img width={36} height={36} alt="navigate" src={ViewIcon} />
             </IconButton>
             <IconButton
-              sx={{
-                visibility: ["PUBLISHED", "REJECTED"].includes(value) ? "collapse" : "",
-              }}
+              // sx={{
+              //   visibility: ["PUBLISHED", "REJECTED"].includes(value) ? "collapse" : "",
+              // }}
               onClick={() => handleAction(row.original.id, "note")}
             >
               <img width={36} height={36} alt="navigate" src={StatusIcon} />
