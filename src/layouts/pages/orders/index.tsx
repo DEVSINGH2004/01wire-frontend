@@ -18,7 +18,6 @@ import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/u
 import { toast } from "react-toastify";
 
 const PER_PAGE = 10;
-
 const OrderManagement = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -32,7 +31,6 @@ const OrderManagement = () => {
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
-
   const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
     GET_ORDERS,
     {
@@ -42,7 +40,6 @@ const OrderManagement = () => {
       fetchPolicy: "network-only",
     }
   );
-
   const [updateArticleStatus] = useMutation<IUpdateOrderStatusVars>(UPDATE_ORDER_STATUS);
 
   useEffect(() => {
@@ -79,7 +76,6 @@ const OrderManagement = () => {
   useEffect(() => {
     const rows = data?.filterOrdersPaginated?.data || [];
     const columns = makeColumns(handleAction, handleFilters, setEmail, setOptions, filters);
-
     setData({ rows, columns });
   }, [data]);
 
@@ -151,7 +147,6 @@ const OrderManagement = () => {
       },
     });
   };
-
   return (
     <>
       <DashboardNavbar />
