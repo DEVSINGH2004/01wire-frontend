@@ -42,6 +42,7 @@ const OrderManagement = () => {
       fetchPolicy: "network-only",
     }
   );
+
   const [updateArticleStatus] = useMutation<IUpdateOrderStatusVars>(UPDATE_ORDER_STATUS);
 
   useEffect(() => {

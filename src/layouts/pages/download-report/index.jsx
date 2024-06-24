@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "./download.css";
 import Box from "@mui/material/Box";
 import OneWireLogo from "assets/images/OneWireLogo_2.svg";
 import DownloadBg from "assets/images/download-report/downloadBg.png";
 import XIcon from "@mui/icons-material/X";
-import FacebookIcon from "@mui/icons-material/Facebook";
+import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
@@ -14,19 +14,29 @@ import Button from "@mui/material/Button";
 import { renderToString } from "react-dom/server";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-
+import { useQuery } from "@apollo/client";
 import { Divider } from "@mui/material";
+import {
+  GET_ARTICLE_BY_ID
+} from "graphql/queries/getArticleById";
+import { useLocation } from "react-router-dom";
+import { GET_ORDERS } from "graphql/queries/filterOrdersPaginated";
+import Link from "@mui/material/Link";
 
-const SocialMediaLink = ({ icon, platform, bgColor }) => (
-  <Box className="social-media-link" sx={{ background: bgColor }}>
-    <img
-      loading="lazy"
-      src={icon}
-      alt={`${platform} icon`}
-      className="social-icon"
-    />
-    <Box className="platform-name">{platform}</Box>
-  </Box>
+const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
+  <Link
+    sx={{
+      cursor: "pointer",
+    }}
+    href={to}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Box className="social-media-link" sx={{ background: bgColor, cursor: 'pointer' }}>
+      <IconComponent sx={{ fontSize: 40 }} />
+      <Box className="platform-name" >{platform}</Box>
+    </Box>
+  </Link>
 );
 
 const CompanyInfoItem = ({ label, value }) => (
@@ -79,11 +89,16 @@ const DistributionItem = ({
     <span className="distribution-type">{type}</span>
     <span className="distribution-industry">{industry}</span>
     <span className="distribution-countries">{countries}</span>
-    <span className="distribution-audience">{audience}</span>
+    <span className="distribution-audience">{audience} visit/month</span>
   </Box>
 );
 
+const getId = () => {
+  return new URLSearchParams(useLocation().search);
+};
 function PressReleaseReport() {
+  const query = getId();
+  const id = query.get('id');
   const componentRef = useRef();
   const handleDownloadPDF = async () => {
     const element = componentRef.current;
@@ -134,6 +149,25 @@ function PressReleaseReport() {
     // Step 4: Download the PDF
     pdf.save('download.pdf');
   };
+  const { data } = useQuery(GET_ARTICLE_BY_ID, {
+    fetchPolicy: "network-only",
+    variables: {
+      id,
+    },
+  });
+
+  const { data: orderData } = useQuery(GET_ORDERS, {
+    fetchPolicy: "network-only",
+    variables: {
+      paginationInput: {
+        perPage: 200,
+        currentPage: 0,
+      },
+      filterInput: {
+        articleId: id,
+      },
+    },
+  });
   return (
     <>
       <Button
@@ -212,18 +246,18 @@ function PressReleaseReport() {
               <Box className="info-grid">
                 <Box className="info-column">
                   <CompanyInfoItem
-                    label="Company Address"
-                    value="Avensure H&S & HR Outsourcing Services"
+                    label="Company Name"
+                    value={data?.getArticleById?.clientInfo?.title}
                   />
                   <CompanyInfoItem label="Phone" value="+91 9999 44 0531" />
                   <CompanyInfoItem
                     label="Email"
-                    value="enquiries@avensure.com"
+                    value={data?.getArticleById?.clientInfo?.email}
                   />
                 </Box>
                 <Box className="info-column">
                   <CompanyInfoItem label="Country" value="United Kingdom" />
-                  <CompanyInfoItem label="Website" value="www.avensure.com" />
+                  <CompanyInfoItem label="Website" value={data?.getArticleById?.clientInfo?.website} />
                 </Box>
                 <Box className="info-column">
                   <CompanyInfoItem
@@ -250,24 +284,28 @@ function PressReleaseReport() {
               }}
             >
               <SocialMediaLink
-                icon={FacebookIcon}
+                IconComponent={FacebookIcon}
                 platform="Facebook"
                 bgColor={"#0766FF"}
+                to={data?.getArticleById?.clientInfo?.social?.facebook}
               />
               <SocialMediaLink
-                icon={XIcon}
+                IconComponent={XIcon}
                 platform="x.com"
                 bgColor={"#0B66C2"}
+                to={data?.getArticleById?.clientInfo?.social?.linkedIn}
               />
               <SocialMediaLink
-                icon={InstagramIcon}
+                IconComponent={InstagramIcon}
                 platform="Instagram"
                 bgColor={`linear-gradient(0deg, #D9D9D9, #D9D9D9),linear-gradient(0deg, #0766FF, #0766FF),linear-gradient(49.12deg, #FFDD55 6.62%, #FF543E 50.06%, #C837AB 93.5%)`}
+                to={data?.getArticleById?.clientInfo?.social?.instagram}
               />
               <SocialMediaLink
-                icon={LinkedInIcon}
+                IconComponent={LinkedInIcon}
                 platform="Linkedin"
                 bgColor={"#0B66C2"}
+                to={data?.getArticleById?.clientInfo?.social?.linkedIn}
               />
             </Box>
           </Box>
@@ -289,14 +327,14 @@ function PressReleaseReport() {
             </Box>
           </footer>
         </header>
-        <main className="report-content" style={{breakBefore: "page"}}>
+        <main className="report-content" style={{ breakBefore: "page" }}>
           <section className="press-release-summary" >
             <Typography
               sx={{
                 fontSize: "26px",
                 fontWeight: "700",
                 lineHeight: "20px",
-                mt:1
+                mt: 1
               }}
             >
               Your Submitted Press Release
@@ -535,43 +573,16 @@ function PressReleaseReport() {
           </footer>
         </section>
         <section className="distribution-list">
-          <DistributionItem
-            logo="https://cdn.builder.io/api/v1/image/assets/TEMP/d95bfb209d042a1d73665f422ea8163f9b362cba48051d085d7924554ed1ecb9?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
-            name="Yahoo"
-            link="#"
-            type="News Portal"
-            industry="Financial"
-            countries="US, IN, CA"
-            audience="4550000 visit/month"
-          />
-          <DistributionItem
-            logo="https://cdn.builder.io/api/v1/image/assets/TEMP/1f98983de0caf6df6afadb610dd834630226ab78b660f05bb32461d2dadb05cb?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
-            name="Yahoo"
-            link="#"
-            type="News Portal"
-            industry="Financial"
-            countries="US, IN, CA"
-            audience="4550000 visit/month"
-          />
-          <DistributionItem
-            logo="https://cdn.builder.io/api/v1/image/assets/TEMP/0377433122e16c6cbb43ab5443353078c30f2563d0f7d0fa1e976c2e07edcdb0?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
-            name="Onewire"
-            link="#"
-            type="News Portal"
-            industry="Financial"
-            countries="US, IN, CA"
-            audience="4550000 visit/month"
-          />
-          {[...Array(5)].map((_, index) => (
+          {orderData?.filterOrdersPaginated?.data?.map((item, index) => (
             <DistributionItem
               key={index}
-              logo="https://cdn.builder.io/api/v1/image/assets/TEMP/0260ebbd4deee75bebeaedede674a87bec9ea925d708dca4c263dd705edfe1e2?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
+              logo={item?.publicationInfo?.image}
               name="Distribution Item"
-              link="#"
-              type="News and Media"
+              link={item?.publicationInfo?.url}
+              type={item?.publicationInfo?.title}
               industry="Finance"
               countries="Global"
-              audience="27300000 visit/month"
+              audience={item?.publicationInfo?.price}
             />
           ))}
           <footer

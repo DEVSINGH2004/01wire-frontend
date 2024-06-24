@@ -79,6 +79,12 @@ export type ArticleMediaContactType = {
   others: string;
 };
 
+export type ArticleClientInfo = {
+  email:string;
+  website:string;
+  title:string;
+  social:ClientSocialType;
+}
 export type ArticleType = {
   id: string;
   userId: string;
@@ -102,6 +108,7 @@ export type ArticleType = {
   publishAt: string;
   createdAt: string;
   updatedAt: string;
+  clientInfo:ArticleClientInfo;
 };
 
 export interface ArticleData {

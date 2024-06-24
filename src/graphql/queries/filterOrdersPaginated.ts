@@ -56,6 +56,8 @@ export const GET_ORDERS = gql`
           id
           title
           url
+          image
+          price
         }
       }
       paginationInfo {
