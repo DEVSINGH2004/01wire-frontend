@@ -143,6 +143,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
     })
       .then(() => {
         toast.success("Submitted successfully");
+        onClose();
       })
       .catch((err) => {
         toast.error(err?.message);
