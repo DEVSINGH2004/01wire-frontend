@@ -56,6 +56,10 @@ export const GET_ORDERS = gql`
           id
           title
           url
+          image
+          stats {
+           traffic
+          }
         }
       }
       paginationInfo {
