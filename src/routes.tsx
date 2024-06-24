@@ -73,16 +73,25 @@ const routes = [
     route: "/pr-estimation",
     icon: <img src={PREstimateIcon} width="24px" height="24px" />,
     component: <PREstimation />,
+    // collapse: [
+    //   {
+    //     name: "My Estimates",
+    //     key: "my-estimates",
+    //     route: "/my-estimates",
+    //     icon: <img src={EstimateIcon} width="24px" height="24px" />,
+    //     component: <MyEstimates />,
+    //   },
+    // ],
   },
-  // {
-  //   type: "collapse",
-  //   name: "My Estimates",
-  //   key: "my-estimates",
-  //   noCollapse: true,
-  //   route: "/my-estimates",
-  //   icon: <img src={EstimateIcon} width="24px" height="24px" />,
-  //   component: <MyEstimates />,
-  // },
+  {
+    type: "collapse",
+    name: "My Estimates",
+    key: "my-estimates",
+    noCollapse: true,
+    route: "/my-estimates",
+    icon: <img src={EstimateIcon} width="24px" height="24px" />,
+    component: <MyEstimates />,
+  },
 
   // { type: "divider", key: "divider-0" },
   // {

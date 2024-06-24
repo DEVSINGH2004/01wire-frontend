@@ -57,7 +57,6 @@ const PRDetail = ({ onClose, refetch, id }: { onClose: any; refetch: any; id: an
         <IconButton onClick={onClose}>
           <ArrowBackIosIcon />
         </IconButton>
-        <MDTypography variant="h5">Edit</MDTypography>
       </MDBox>
       <MDBox mt={3}>
         <ReviewNPublish id={id} />

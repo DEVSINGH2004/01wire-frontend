@@ -25,6 +25,7 @@ import Publications from "layouts/pages/publications";
 import Bundles from "layouts/pages/bundles";
 import PRManagement from "layouts/pages/pr-management";
 import DownloadReport from "layouts/pages/download-report";
+import ShareEstimation from "layouts/pages/share-estimation";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -34,9 +35,6 @@ export default function App() {
   const { miniSidenav, direction, layout, sidenavColor, darkMode } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
-
-  console.log("pathname", pathname);
-
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
     if (miniSidenav && !onMouseEnter) {
@@ -44,7 +42,6 @@ export default function App() {
       setOnMouseEnter(true);
     }
   };
-
   // Close sidenav when mouse leave mini sidenav
   const handleOnMouseLeave = () => {
     if (onMouseEnter) {
@@ -52,7 +49,6 @@ export default function App() {
       setOnMouseEnter(false);
     }
   };
-
   // Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", direction);
@@ -86,7 +82,11 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {!token ? (
+      {pathname.includes("/share-estimation") ? (
+        <Routes>
+          <Route path="/share-estimation/:id" element={<ShareEstimation />} />
+        </Routes>
+      ) : !token ? (
         <SignIn />
       ) : (
         <>
@@ -102,7 +102,6 @@ export default function App() {
               />
             </>
           )}
-          {layout === "vr"}
           <DashboardLayout>
             <Routes>
               {getRoutes(role === "ADMIN" ? adminRoutes : routes)}

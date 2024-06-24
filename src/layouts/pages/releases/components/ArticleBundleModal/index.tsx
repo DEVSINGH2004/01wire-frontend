@@ -17,100 +17,136 @@ import MDTypography from "components/MDTypography";
 import { truncateString } from "utils/helpers";
 import MDCircularLoader from "components/MDCircularLoader";
 import { GET_ORDERS, IGetOrders, IGetOrdersVars } from "graphql/queries/filterOrdersPaginated";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { statusOptions } from "../../../pr-management/components/makeColumns";
 import Divider from "@mui/material/Divider";
 import axiosInstance from "utils/axiosInstance";
+import StatusIcon from "assets/images/icons/statusIcon.svg";
+import NoteModal from "../../../pr-management/components/NoteModal";
+import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
 
 interface Props {
   onClose?: any;
   articleId: string;
 }
 
-const columns = [
-  {
-    Header: "Title",
-    accessor: "articleInfo.title",
-    width: "25%",
-    Cell: ({ value }: any) => (
-      <MDBox>
-        <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-          {truncateString(value, 35)}
-        </MDTypography>
-      </MDBox>
-    ),
-  },
-  {
-    Header: "Status",
-    width: "20%",
-    accessor: "status",
-    Cell: ({ value }: any) => {
-      const selectedStatus = value;
-      const selected = statusOptions.find((el: any) => selectedStatus === el?.value);
-
-      return (
+const getColumns = (setNoteOpen: any) => {
+  const columns = [
+    {
+      Header: "Title",
+      accessor: "publicationInfo.title",
+      width: "25%",
+      Cell: ({ value }: any) => (
         <MDBox>
-          <MDBox
-            px={1}
-            borderRadius="21px"
-            bgColor={selected?.background}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundImage: selected?.background,
-              color: "white",
-              backgroundBlendMode: "overlay",
-              width: "140px",
-              height: "22px",
-            }}
-          >
-            <MDTypography
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+            {truncateString(value, 35)}
+          </MDTypography>
+        </MDBox>
+      ),
+    },
+    {
+      Header: "Status",
+      width: "20%",
+      accessor: "status",
+      Cell: ({ value }: any) => {
+        const selectedStatus = value;
+        const selected = statusOptions.find((el: any) => selectedStatus === el?.value);
+
+        return (
+          <MDBox>
+            <MDBox
+              px={1}
+              borderRadius="21px"
+              bgColor={selected?.background}
               sx={{
-                fontSize: "12px",
-                fontWeight: "400",
-                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundImage: selected?.background,
+                color: "white",
+                backgroundBlendMode: "overlay",
+                width: "140px",
+                height: "22px",
               }}
             >
-              {selected?.label}
-            </MDTypography>
+              <MDTypography
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: "400",
+                  color: "#fff",
+                }}
+              >
+                {selected?.label}
+              </MDTypography>
+            </MDBox>
           </MDBox>
-        </MDBox>
-      );
+        );
+      },
     },
-  },
-  {
-    Header: "Remark/URL",
-    accessor: "notes",
-    width: "40%",
-    Cell: ({ value, row }: any) => (
-      <MDBox>
-        <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-          {row.original.status === "PUBLISHED"
-            ? row.original.publicationInfo?.url
-            : value
-            ? truncateString(value, 70)
-            : "-"}
-        </MDTypography>
-      </MDBox>
-    ),
-  },
-];
+    {
+      Header: "Remark/URL",
+      accessor: "notes",
+      width: "30%",
+      Cell: ({ value, row }: any) => (
+        <MDBox>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+            {row.original.status === "PUBLISHED"
+              ? row.original.publicationInfo?.url
+              : value
+              ? truncateString(value, 70)
+              : "-"}
+          </MDTypography>
+        </MDBox>
+      ),
+    },
+    {
+      Header: "Action",
+      Align: "right",
+      width: "10%",
+      Cell: ({ value, row }: any) => {
+        return (
+          <MDBox
+            sx={{
+              display: "flex",
+            }}
+          >
+            <IconButton
+              sx={{
+                visibility: ["PUBLISHED", "REJECTED"].includes(row.original?.status)
+                  ? "collapse"
+                  : "",
+              }}
+              onClick={() => setNoteOpen({ id: row.original.id })}
+            >
+              <img width={36} height={36} alt="navigate" src={StatusIcon} />
+            </IconButton>
+          </MDBox>
+        );
+      },
+    },
+  ];
+  return columns;
+};
 
 const ArticleBundleModal = ({ onClose, articleId }: Props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const [loader, setLoader] = useState<any>(null);
+  const [noteModal, setNoteModal] = useState<any>(null);
 
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [updateArticleStatus] = useMutation<IUpdateOrderStatusVars>(UPDATE_ORDER_STATUS);
 
-  const [getOrders, { data, loading }] = useLazyQuery<IGetOrders, IGetOrdersVars>(GET_ORDERS, {
-    onCompleted: (res) => {
-      setPaginationInfo(res?.filterOrdersPaginated?.paginationInfo);
-    },
-    fetchPolicy: "network-only",
-  });
+  const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
+    GET_ORDERS,
+    {
+      onCompleted: (res) => {
+        setPaginationInfo(res?.filterOrdersPaginated?.paginationInfo);
+      },
+      fetchPolicy: "network-only",
+    }
+  );
 
   useEffect(() => {
     getOrders({
@@ -128,6 +164,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
 
   useEffect(() => {
     const rows = data?.filterOrdersPaginated?.data || [];
+    const columns = getColumns(setNoteModal);
     setData({ rows, columns });
   }, [data]);
 
@@ -153,7 +190,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
       try {
         setLoader(true);
         axiosInstance
-          .post(`/order/upload-update?articleId=${articleId}`, formData, {
+          .post(`/order/upload-update`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -178,19 +215,24 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
     setLoader(true);
     try {
       axiosInstance
-        .get(`/order/upload-update?articleId=${articleId}`)
+        .get(`/order/pending?articleId=${articleId}`, {
+          responseType: "blob",
+        })
         .then(async (response: any) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
+          const urlBlob = window.URL.createObjectURL(
+            new Blob([response.data], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            })
+          );
           const link = document.createElement("a");
-          link.href = url;
+          link.href = urlBlob;
           link.setAttribute("download", `${Date.now()}.xlsx`);
           document.body.appendChild(link);
           link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(urlBlob);
           toast.success("Download successfully");
+          setLoader(false);
         })
         .catch((error) => {
           setLoader(false);
@@ -201,6 +243,35 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
       console.error("There was an error uploading the file:", error);
     }
   };
+
+  const handleUpdateStatus = (row: any, status: string, notes?: string) => {
+    const id = row?.id;
+    let params: any = {
+      id,
+      status,
+    };
+    if (status === "PUBLISHED") {
+      params = { ...params, url: notes };
+    } else {
+      params = { ...params, notes };
+    }
+    setLoader(true);
+    updateArticleStatus({
+      variables: {
+        params,
+      },
+    })
+      .then(() => {
+        setLoader(false);
+        refetch();
+        toast.success("Status Updated successfully");
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+        setLoader(false);
+      });
+  };
+
   return (
     <Dialog
       PaperProps={{
@@ -288,6 +359,19 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
           Download Template
         </MDButton>
       </DialogActions>
+      {noteModal && (
+        <NoteModal
+          orderPage
+          onClose={(note?: string) => {
+            handleUpdateStatus(noteModal, "REJECTED", note);
+            setNoteModal(null);
+          }}
+          handleSubmit={(note: string) => {
+            handleUpdateStatus(noteModal, "PUBLISHED", note);
+            setNoteModal(null);
+          }}
+        />
+      )}
     </Dialog>
   );
 };

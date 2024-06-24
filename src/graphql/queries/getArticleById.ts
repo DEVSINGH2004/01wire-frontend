@@ -38,6 +38,18 @@ export const GET_ARTICLE_BY_ID = gql`
       }
       publicationInfo {
         id
+        categories
+        title
+        stats{
+          dr 
+          pa
+          ur
+          da
+          traffic
+        }
+         price
+         linkType
+         image
       }
       mediaContact {
         name

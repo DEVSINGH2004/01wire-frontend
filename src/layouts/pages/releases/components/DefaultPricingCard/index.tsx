@@ -113,7 +113,9 @@ function DefaultPricingCard({
     </MDBox>
   ));
   const handleClick = () => {
-    handleChange(category, bundle);
+    if (handleChange) {
+      handleChange(category, bundle);
+    }
   };
   const checked = selected?.some((b: any) => b.id === id);
   return (

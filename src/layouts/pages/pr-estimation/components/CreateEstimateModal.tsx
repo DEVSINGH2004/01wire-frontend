@@ -38,6 +38,7 @@ const CreateEstimation = ({ onClose, values }: { onClose: any; values: any }) =>
       .then(() => {
         setLoader(false);
         toast.success("Saved Successfully");
+        onClose();
       })
       .catch((err) => {
         setLoader(false);

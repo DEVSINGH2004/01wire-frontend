@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import FormControl from "@mui/material/FormControl";
 import DownloadIcon from "assets/images/icons/downloadIcon.svg";
 import ViewIcon from "assets/images/icons/viewIcon.svg";
+import StatusIcon from "assets/images/icons/statusIcon.svg";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { truncateString } from "utils/helpers";
@@ -112,7 +113,6 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
       width: "15%",
       accessor: "status",
       Cell: ({ value, row }) => {
-        console.log("value", value);
         return (
           <MDBox
             sx={{
@@ -120,7 +120,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
             }}
           >
             <IconButton
-              onClick={() => handleAction(row.original.id, "navigate")}
+              onClick={() => handleAction(row.original.articleId, "navigate")}
               sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
             >
               <img width={36} height={36} alt="navigate" src={DownloadIcon} />
@@ -133,7 +133,15 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
             >
               <img width={36} height={36} alt="navigate" src={ViewIcon} />
             </IconButton>
-            <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+            <IconButton
+              sx={{
+                visibility: ["PUBLISHED", "REJECTED"].includes(value) ? "collapse" : "",
+              }}
+              onClick={() => handleAction(row.original.id, "note")}
+            >
+              <img width={36} height={36} alt="navigate" src={StatusIcon} />
+            </IconButton>
+            <IconButton onClick={() => handleAction(row.original.articleId, "view-article")}>
               <img width={36} height={36} alt="navigate" src={NavigateIcon} />
             </IconButton>
           </MDBox>
