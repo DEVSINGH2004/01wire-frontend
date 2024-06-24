@@ -22,6 +22,7 @@ import {
 import { useLocation } from "react-router-dom";
 import { GET_ORDERS } from "graphql/queries/filterOrdersPaginated";
 import Link from "@mui/material/Link";
+import DisplayImage from "components/DisplayImage";
 
 const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
   <Link
@@ -34,7 +35,7 @@ const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
   >
     <Box className="social-media-link" sx={{ background: bgColor, cursor: 'pointer' }}>
       <IconComponent sx={{ fontSize: 40 }} />
-      <Box className="platform-name" >{platform}</Box>
+      <Box className="platform-name" sx={{pl:'2'}}>{platform}</Box>
     </Box>
   </Link>
 );
@@ -77,11 +78,12 @@ const DistributionItem = ({
   audience,
 }) => (
   <Box className="distribution-item">
-    <img
-      loading="lazy"
+    <DisplayImage
       src={logo}
-      alt={`${name} logo`}
-      className="distribution-logo"
+      height="50px"
+      width="50px"
+      alt={name}
+      styles={{ borderRadius: "8.99px" }}
     />
     <a href={link} className="distribution-link">
       View Release
@@ -571,18 +573,19 @@ function PressReleaseReport() {
               <Box className="footer-website">www.onewire.com</Box>
             </Box>
           </footer>
+          
         </section>
         <section className="distribution-list">
           {orderData?.filterOrdersPaginated?.data?.map((item, index) => (
             <DistributionItem
               key={index}
               logo={item?.publicationInfo?.image}
-              name="Distribution Item"
+              name="logo"
               link={item?.publicationInfo?.url}
               type={item?.publicationInfo?.title}
               industry="Finance"
               countries="Global"
-              audience={item?.publicationInfo?.price}
+              audience={item?.publicationInfo?.stats?.traffic}
             />
           ))}
           <footer
