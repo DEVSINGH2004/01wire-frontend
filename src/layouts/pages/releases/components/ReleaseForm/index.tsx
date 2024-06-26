@@ -41,7 +41,8 @@ function getStepContent(
   handleNext: any,
   article: any,
   fetchData: any,
-  setSaveData: any
+  setSaveData: any,
+  setPayable: any
 ): JSX.Element {
   switch (stepIndex) {
     case 0:
@@ -72,6 +73,7 @@ function getStepContent(
           data={article}
           refetch={fetchData}
           setSaveData={setSaveData}
+          setPayable={setPayable}
         />
       );
     case 3:
@@ -88,6 +90,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
   const [articleId, setId] = useState<string>(idVal && idVal !== true && idVal);
   const [article, setArticle] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [payable, setPayable] = useState<number>(0);
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
 
@@ -123,7 +126,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
         setLoading(false);
       })
       .catch((err) => {
-        console.log("error in detail fetching", err);
+        console.error("error in detail fetching", err);
         setLoading(false);
       });
   };
@@ -176,7 +179,17 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
           {loading ? (
             <MDCircularLoader startLoader />
           ) : (
-            <>{getStepContent(activeStep, saveData, handleNext, article, fetchData, setSaveData)}</>
+            <>
+              {getStepContent(
+                activeStep,
+                saveData,
+                handleNext,
+                article,
+                fetchData,
+                setSaveData,
+                setPayable
+              )}
+            </>
           )}
         </MDBox>
       </MDBox>
@@ -186,6 +199,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
         display="flex"
         justifyContent="space-between"
         bgColor="white"
+        alignItems="center"
         sx={{
           position: "sticky",
           bottom: 0,
@@ -195,37 +209,59 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
           zIndex: 1000,
         }}
       >
-        <MDTypography
-          fontSize="16px"
+        <MDButton
           sx={{
-            fontWeight: 400,
-            fontFamily: "Roboto",
+            height: "40px !important",
             boxShadow:
-              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-            padding: "0.5rem 1rem",
-            borderRadius: "5px",
-            cursor: "pointer",
+              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
           }}
+          size="small"
+          variant="outlined"
+          color="light"
           onClick={handleBack}
         >
-          {"< Back"}
-        </MDTypography>
-        <MDButton
-          color="primary"
-          onClick={
-            !isLastStep
-              ? () => setSaveData(true)
-              : article?.totalCredits <= userWallet?.getUserWallet?.balance
-              ? handleSend
-              : handleAddCredits
-          }
-        >
-          {isLastStep
-            ? article?.totalCredits <= userWallet?.getUserWallet?.balance
-              ? "send"
-              : "Add Credits"
-            : "next"}
+          <MDTypography fontWeight="regular" fontSize="16px">
+            {"< Back"}
+          </MDTypography>
         </MDButton>
+        <MDBox display="flex" alignItems="center">
+          {[2, 3].includes(activeStep) && (
+            <MDBox mr={2}>
+              <MDTypography
+                fontWeight="regular"
+                fontFamily="Roboto"
+                fontSize="15px"
+                sx={{ color: "#7B809A" }}
+              >
+                Credits Payable
+              </MDTypography>
+              <MDTypography
+                textAlign="right"
+                fontWeight="bold"
+                fontSize="18px"
+                sx={{ color: "#F3BE00" }}
+              >
+                {payable}
+              </MDTypography>
+            </MDBox>
+          )}
+          <MDButton
+            color="primary"
+            onClick={
+              !isLastStep
+                ? () => setSaveData(true)
+                : article?.totalCredits <= userWallet?.getUserWallet?.balance
+                ? handleSend
+                : handleAddCredits
+            }
+          >
+            {isLastStep
+              ? article?.totalCredits <= userWallet?.getUserWallet?.balance
+                ? "send"
+                : "Add Credits"
+              : "next"}
+          </MDButton>
+        </MDBox>
       </MDBox>
     </>
   );
