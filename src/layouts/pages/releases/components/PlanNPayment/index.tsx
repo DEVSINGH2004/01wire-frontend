@@ -32,6 +32,7 @@ interface Props {
   disabled?: any;
   setSaveData?: any;
   createEstimate?: any;
+  setPayable?: any;
 }
 function PlanNPayment({
   data,
@@ -41,6 +42,7 @@ function PlanNPayment({
   disabled = false,
   setSaveData,
   createEstimate = false,
+  setPayable,
 }: Props): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
@@ -190,14 +192,19 @@ function PlanNPayment({
     setFilteredPublications(filteredItems);
   }, [searchTerm]);
 
-  function calculateTotalPrice(arr: any[], type: any): number {
-    return arr.reduce((total, one) => total + one?.[type], 0);
+  function calculateTotalPrice(arr: any[]): number {
+    return arr.reduce((total, one) => total + (one?.price || one?.credits), 0);
   }
   useEffect(() => {
-    const bCredits = calculateTotalPrice(selected, "price");
-    const pCredits = calculateTotalPrice(selecetedP, "credits");
+    const bCredits = calculateTotalPrice(selected);
+    const pCredits = calculateTotalPrice(selecetedP);
     setCredits(bCredits + pCredits);
   }, [selecetedP, selected]);
+  useEffect(() => {
+    if (setPayable) {
+      setPayable(totalCredits);
+    }
+  }, [totalCredits]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
