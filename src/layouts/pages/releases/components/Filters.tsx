@@ -15,7 +15,7 @@ import debounce from "lodash.debounce";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
-
+import DownArrow from "assets/images/down-arrow.svg";
 import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsersPaginated";
 
 import EastIcon from "@mui/icons-material/East";
@@ -123,22 +123,32 @@ const Filters = ({
 
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <Box>
-            <FormControl sx={{ width: "140px", height: "42px", mr: 2 }}>
+            <FormControl sx={{ width: "175px", height: "42px", mr: 2 }}>
               <Select
                 id="demo-select-small"
                 displayEmpty
                 placeholder="Status"
                 value={filters?.status}
                 sx={{
-                  textAlign: "center",
+                  textAlign: "left",
                   background: "#fff",
                   height: "42px",
                 }}
                 renderValue={
                   filters?.status !== "" ? undefined : () => <MDTypography>Status</MDTypography>
                 }
+                IconComponent={() => (
+                  <InputAdornment position="end" sx={{ mr: "8px" }}>
+                    <img height={12} width={12} src={DownArrow} alt="Status" />
+                  </InputAdornment>
+                )}
                 onChange={(e) => handleFilters("status", e.target.value)}
               >
+                <MenuItem>
+                  <MDTypography fontSize="15px" sx={{color:"#606F7B"}}>
+                    Status
+                  </MDTypography>
+                </MenuItem>
                 {statusOptions.map((option: any) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -148,20 +158,21 @@ const Filters = ({
             </FormControl>
           </Box>
           <MDBox
-            borderRadius={"8px"}
+            borderRadius={"5px"}
             bgColor="white"
             sx={{
               height: "42px",
               width: "300px",
-              p: 1,
+              p: 1.6,
               display: "flex",
               alignItems: "center",
               justifyContent: "space=between",
+              border: "1px solid lightgray",
             }}
           >
             <Box>
               <MDTypography
-                sx={{ fontWeight: "400", mt: "5px" }}
+                sx={{ fontWeight: "400", mt: "13px" }}
                 fontSize="10px"
                 color="textSecondary"
               >
@@ -184,6 +195,9 @@ const Filters = ({
                       "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
                         borderBottom: "none", // Remove bottom border on hover (when not disabled)
                       },
+                      "& .MuiInputBase-input": {
+                        fontSize: "12px", // Change font size
+                      },
                     },
                   },
                 }}
@@ -195,7 +209,7 @@ const Filters = ({
             </Box>
             <Box>
               <MDTypography
-                sx={{ fontWeight: "400", mt: "5px" }}
+                sx={{ fontWeight: "400", mt: "13px" }}
                 fontSize="10px"
                 color="textSecondary"
               >
@@ -217,6 +231,9 @@ const Filters = ({
                       },
                       "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
                         borderBottom: "none", // Remove bottom border on hover (when not disabled)
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "12px", // Change font size
                       },
                     },
                   },
