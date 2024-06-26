@@ -193,7 +193,7 @@ function PlanNPayment({
   }, [searchTerm]);
 
   function calculateTotalPrice(arr: any[]): number {
-    return arr.reduce((total, one) => total + (one?.price || one?.credits), 0);
+    return arr.reduce((total, one) => total + (one?.price || one?.credits || 0), 0);
   }
   useEffect(() => {
     const bCredits = calculateTotalPrice(selected);
