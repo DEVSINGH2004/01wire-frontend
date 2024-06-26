@@ -52,28 +52,29 @@ const DisplayBundles = ({
   const [open, setOpen] = useState<any>(false);
   const sliderRef = useRef(null);
   useEffect(() => {
-    if (sliderRef.current) {
+    if (sliderRef.current && !disabled) {
       sliderRef.current.slickGoTo(0);
     }
-  }, [category]);
+  }, [category, disabled]);
+  
   return (
     <>
       <MDBox
         sx={{
           "& .slick-track": {
-            transform: disabled && "none !important",
+            transform: !disabled && "none !important",
           },
         }}
         bgColor="grey-100"
         borderRadius="lg"
-        p="24px 60px 24px 70px"
+        p="18px 60px 24px 70px"
         mb={1}
         mt={2}
       >
         <Slider ref={sliderRef} {...settings}>
           {bundles?.map((one: any, i: number) => {
             return (
-              <MDBox key={i} width="300px !important">
+              <MDBox key={i} width="330px !important" pl={2}>
                 <DefaultPricingCard
                   color={"white"}
                   badge={{
@@ -103,6 +104,7 @@ const DisplayBundles = ({
                   bundle={one}
                   onclick={() => setOpen(one)}
                 />
+                
               </MDBox>
             );
           })}
