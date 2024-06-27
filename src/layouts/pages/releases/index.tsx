@@ -37,16 +37,7 @@ import {
   IUpdateArticleStatusVars,
 } from "graphql/mutations/updateArticleStatus";
 import ArticleBundleModal from "./components/ArticleBundleModal";
-
-const ReleaseTypeOptions = [
-  { label: "Draft", value: "DRAFT" },
-  { label: "Submitted", value: "SUBMITTED" },
-  { label: "In Review", value: "IN_REVIEW" },
-  { label: "Awaiting Approval", value: "AWAITING_APPROVAL" },
-  { label: "Scheduled", value: "SCHEDULED" },
-  { label: "Rejected", value: "REJECTED" },
-  { label: "None", value: "" },
-];
+import { statusOptions } from "constants/index";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -63,6 +54,7 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
 const PER_PAGE = 10;
 function Releases(): JSX.Element {
   const { id } = useParams();
+  const filteredStatus = statusOptions?.filter((one: any) => one?.value !== "DRAFT");
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation;
@@ -70,7 +62,7 @@ function Releases(): JSX.Element {
   const [filter, setFilter] = useState<any>({});
   const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<any>({ status: filteredStatus });
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [noteModal, setNoteModal] = useState<any>(null);
@@ -108,7 +100,10 @@ function Releases(): JSX.Element {
       value: "",
     });
   }
-
+  const getStatusArr = (arr: any) => {
+    if (!arr?.length) return [];
+    return arr?.map((one: any) => one?.value);
+  };
   useEffect(() => {
     setInitLoader(true);
     getArticles({
@@ -126,15 +121,18 @@ function Releases(): JSX.Element {
 
   useEffect(() => {
     if (filters) {
+      const status = getStatusArr(filters?.status);
+      const filterObj = { ...filters, status };
+      if (!filterObj?.status?.length) {
+        delete filterObj.status;
+      }
       getArticles({
         variables: {
           paginationInput: {
             perPage: PER_PAGE,
             currentPage: 0,
           },
-          filterInput: {
-            ...filters,
-          },
+          filterInput: filterObj,
         },
       });
     }
@@ -183,7 +181,6 @@ function Releases(): JSX.Element {
       navigate(`/download-report?id=${id}`);
     }
   };
-
   useEffect(() => {
     const rows = articlesData?.filterArticlesPaginated?.data || [];
     const columns = makeColumns(handleAction, handleUpdateStatus);
@@ -235,15 +232,18 @@ function Releases(): JSX.Element {
   // }, [location]);
 
   const handlePagination = (page: number) => {
+    const status = getStatusArr(filters?.status);
+    const filterInput = { ...filters, status };
+    if (!filterInput?.status?.length) {
+      delete filterInput.status;
+    }
     getArticles({
       variables: {
         paginationInput: {
           perPage: PER_PAGE,
           currentPage: page,
         },
-        filterInput: {
-          ...filters,
-        },
+        filterInput,
       },
     });
   };
@@ -265,7 +265,7 @@ function Releases(): JSX.Element {
           </>
         )}
         <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "520px" }}>
-          {initLoading ? (
+          {initLoading || loading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
             </Card>
