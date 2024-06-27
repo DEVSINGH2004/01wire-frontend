@@ -116,6 +116,11 @@ function AddPress({
       reset({ clientId: clientObj?.title });
     }
   }, [data, clientsData]);
+  useEffect(() => {
+    if (Object.keys(errors).length) {
+      setSaveData(false);
+    }
+  }, [Object.keys(errors).length]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
