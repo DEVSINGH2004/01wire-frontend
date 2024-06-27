@@ -60,11 +60,11 @@ const DisplayBundles = ({
   return (
     <>
       <MDBox
-        sx={{
-          "& .slick-track": {
-            transform: !disabled && "none !important",
-          },
-        }}
+        // sx={{
+        //   "& .slick-track": {
+        //     transform: disabled && "none !important",
+        //   },
+        // }}
         bgColor="grey-100"
         borderRadius="lg"
         p="18px 60px 24px 70px"
