@@ -60,11 +60,6 @@ const DisplayBundles = ({
   return (
     <>
       <MDBox
-        // sx={{
-        //   "& .slick-track": {
-        //     transform: disabled && "none !important",
-        //   },
-        // }}
         bgColor="grey-100"
         borderRadius="lg"
         p="18px 60px 24px 70px"
@@ -74,7 +69,7 @@ const DisplayBundles = ({
         <Slider ref={sliderRef} {...settings}>
           {bundles?.map((one: any, i: number) => {
             return (
-              <MDBox key={i} width="330px !important" pl={2}>
+              <MDBox key={i} width="98% !important" pl={1} pr={1.8}>
                 <DefaultPricingCard
                   color={"white"}
                   badge={{
