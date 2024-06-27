@@ -289,19 +289,57 @@ export const StatusOptions = [
 
 export const brandName = "01Wire!";
 
-export const visibilityOptions =  [ {
-  value: "SUPPRESSED",
-  label: "Suppressed",
-  background: "#F9565C",
-},
-{
-  value: "PUBLISHED",
-  label: "Published",
-  background: "#47C94C",
-},
-{
-  value: "PRIVATE",
-  label: "Private",
-  background: "#FCD404",
-},
+export const visibilityOptions = [
+  {
+    value: "SUPPRESSED",
+    label: "Suppressed",
+    background: "#F9565C",
+  },
+  {
+    value: "PUBLISHED",
+    label: "Published",
+    background: "#47C94C",
+  },
+  {
+    value: "PRIVATE",
+    label: "Private",
+    background: "#FCD404",
+  },
+];
+export const statusOptions = [
+  {
+    value: "DRAFT",
+    label: "Draft",
+    background: `#000000`,
+  },
+  {
+    value: "SUBMITTED",
+    label: "Submitted",
+    background: "#01B7F3",
+  },
+  {
+    value: "REVIEW",
+    label: "Review",
+    background: "#747474",
+  },
+  {
+    value: "AWAITING_APPROVAL",
+    label: "Awaiting Approval",
+    background: "#439DEE",
+  },
+  {
+    value: "SCHEDULED",
+    label: "Scheduled",
+    background: "#FF9900",
+  },
+  {
+    value: "REJECTED",
+    label: "Rejected",
+    background: "#FF4D53",
+  },
+  {
+    value: "PUBLISHED",
+    label: "Published",
+    background: "#47BC4C",
+  },
 ];

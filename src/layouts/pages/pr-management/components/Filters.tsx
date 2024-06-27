@@ -6,8 +6,6 @@ import { useLazyQuery } from "@apollo/client";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import FormControl from "@mui/material/FormControl";
 import { statusOptions } from "./makeColumns";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import MDInput from "components/MDInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import debounce from "lodash.debounce";
@@ -18,6 +16,8 @@ import DownArrow from "assets/images/down-arrow.svg";
 import { IGetUsers, IGetUsersVars, GET_USERS } from "graphql/queries/filterUsersPaginated";
 import EastIcon from "@mui/icons-material/East";
 import dayjs, { Dayjs } from "dayjs";
+import Chip from "@mui/material/Chip";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Filters = ({
   filters,
@@ -174,12 +174,12 @@ const Filters = ({
             )}
           />
           <MDInput
-            sx={{ width: 252 }}
+            sx={{ width: 130 }}
             fullWidth
             type="text"
             onChange={handleInputChange}
             value={q}
-            placeholder="Search PR ID"
+            placeholder="Search ID"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -192,34 +192,54 @@ const Filters = ({
 
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <Box>
-            <FormControl sx={{ width: "175px", height: "42px", mr: 2 }}>
-              <Select
-                id="demo-select-small"
-                displayEmpty
-                placeholder="Status"
-                value={filters?.status}
-                sx={{
-                  textAlign: "left",
-                  background: "#fff",
-                  height: "42px",
+            <FormControl sx={{ maxWidth: "455px", height: "42px", mr: 2 }}>
+              <Autocomplete
+                multiple
+                id="tags-outlined"
+                options={statusOptions}
+                getOptionLabel={(option) => option?.label}
+                value={filters?.status || []}
+                disableClearable
+                onChange={(event, newValue) => {
+                  handleFilters("status", newValue);
                 }}
-                renderValue={filters?.status !== "" ? undefined : () => <MenuItem>Status</MenuItem>}
-                onChange={(e) => handleFilters("status", e.target.value)}
-                IconComponent={() => (
-                  <InputAdornment position="end" sx={{ mr: "8px" }}>
-                    <img height={12} width={12} src={DownArrow} alt="Status" />
-                  </InputAdornment>
+                filterSelectedOptions
+                renderInput={(params) => (
+                  <MDInput
+                    {...params}
+                    sx={{
+                      height: "42px",
+                      border: "none",
+                      "& .MuiInputBase-root": {
+                        height: "42px",
+                        overflow: "auto",
+                        flexWrap: "nowrap",
+                        border: "none",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                      },
+                    }}
+                    placeholder="Select Status"
+                  />
                 )}
-              >
-                 <MenuItem>
-                  <MDTypography fontSize="15px" sx={{color:"#606F7B"}}>Status</MDTypography>
-                </MenuItem>
-                {statusOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      key={index}
+                      variant="outlined"
+                      size="small"
+                      label={option?.label}
+                      {...getTagProps({ index })}
+                      deleteIcon={<CloseIcon />}
+                    />
+                  ))
+                }
+                sx={{
+                  minWidth: 200,
+                  maxWidth: 400,
+                }}
+              />
             </FormControl>
           </Box>
           <MDBox
