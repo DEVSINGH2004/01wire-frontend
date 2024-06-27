@@ -189,20 +189,21 @@ const Filters = ({
 
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <MDBox
-            borderRadius={"8px"}
+            borderRadius={"5px"}
             bgColor="white"
             sx={{
               height: "42px",
               width: "300px",
-              p: 1,
+              p: 1.5,
               display: "flex",
               alignItems: "center",
               justifyContent: "space=between",
+              border:'1px solid lightgray'
             }}
           >
             <Box>
               <MDTypography
-                sx={{ fontWeight: "400", mt: "5px" }}
+                sx={{ fontWeight: "400", mt: "13px" }}
                 fontSize="10px"
                 color="textSecondary"
               >
@@ -225,6 +226,9 @@ const Filters = ({
                       "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
                         borderBottom: "none", // Remove bottom border on hover (when not disabled)
                       },
+                      "& .MuiInputBase-input": {
+                        fontSize: "12px", // Change font size
+                      },
                     },
                   },
                 }}
@@ -236,7 +240,7 @@ const Filters = ({
             </Box>
             <Box>
               <MDTypography
-                sx={{ fontWeight: "400", mt: "5px" }}
+                sx={{ fontWeight: "400", mt: "13px" }}
                 fontSize="10px"
                 color="textSecondary"
               >
@@ -258,6 +262,9 @@ const Filters = ({
                       },
                       "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
                         borderBottom: "none", // Remove bottom border on hover (when not disabled)
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "12px", // Change font size
                       },
                     },
                   },

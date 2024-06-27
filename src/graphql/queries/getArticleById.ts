@@ -32,35 +32,36 @@ export const GET_ARTICLE_BY_ID = gql`
       totalCredits
       publishAt
       clientInfo {
-       email
-       website
-       title
-       social {
-        facebook
-        instagram
-        linkedIn
-        twitter
-       }
+        email
+        website
+        title
+        social {
+          facebook
+          instagram
+          linkedIn
+          twitter
+        }
       }
       bundleInfo {
         id
         category
         publicationIds
+        price
       }
       publicationInfo {
         id
         categories
         title
-        stats{
-          dr 
+        stats {
+          dr
           pa
           ur
           da
           traffic
         }
-         price
-         linkType
-         image
+        price
+        linkType
+        image
       }
       mediaContact {
         name
