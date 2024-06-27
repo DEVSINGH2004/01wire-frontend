@@ -10,6 +10,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
 import debounce from "lodash.debounce";
 import { visibilityOptions } from "../../../../constants";
+import DownArrow from "assets/images/down-arrow.svg";
+import MDTypography from "components/MDTypography";
+
+
 
 const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any }) => {
   const [q, setQ] = useState<string>("");
@@ -44,21 +48,28 @@ const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any 
             ),
           }}
         />
-        <FormControl sx={{ width: "150px", height: "42px" }}>
+        <FormControl sx={{ width: "175px", height: "42px" }}>
           <Select
             id="demo-select-small"
             displayEmpty
             placeholder="Status"
             value={filters?.status || ""}
             sx={{
-              textAlign: "center",
+              textAlign: "left",
               background: "#fff",
               height: "42px",
             }}
+            IconComponent={() => (
+              <InputAdornment position="end" sx={{ mr: "8px" }}>
+                <img height={12} width={12} src={DownArrow} alt="Status" />
+              </InputAdornment>
+            )}
             onChange={(e) => e.target.value && handleFilters("visibility", e.target.value)}
           >
-            <MenuItem value="" disabled>
+            <MenuItem value="" disabled sx={{color:"#606F7B"}}>
+            <MDTypography fontSize="15px" sx={{color:"#606F7B"}}>
               Visibility
+              </MDTypography>
             </MenuItem>
             {visibilityOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>

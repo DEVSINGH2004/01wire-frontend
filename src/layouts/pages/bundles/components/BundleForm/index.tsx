@@ -267,6 +267,7 @@ const BundleForm = ({
         display="flex"
         alignItems="center"
         justifyContent="space-between"
+        alignItem="center"
         width="102.47%"
         bgColor="white"
         sx={{
@@ -277,8 +278,20 @@ const BundleForm = ({
           boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
         }}
       >
-        <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
-          Cancel
+       <MDButton
+          sx={{
+            height: "40px !important",
+            boxShadow:
+              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
+          }}
+          size="small"
+          variant="outlined"
+          color="light"
+          onClick={onClose}
+        >
+          <MDTypography fontWeight="regular" fontSize="14px">
+            {"Cancel"}
+          </MDTypography>
         </MDButton>
         <MDButton color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>
           Submit
