@@ -25,10 +25,12 @@ import NoteModal from "./components/NoteModal";
 import Filters from "./components/Filters";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArticleBundleModal from "../releases/components/ArticleBundleModal";
+import { statusOptions } from "constants/index";
 
 const PER_PAGE = 10;
 
 const PRManagement = () => {
+  const filteredStatus = statusOptions?.filter((one: any) => one?.value !== "DRAFT");
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,7 +38,7 @@ const PRManagement = () => {
   const uEmail = queryParams.get("email") || "";
   const uId = queryParams.get("userID") || "";
 
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<any>({ status: filteredStatus });
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
 
@@ -60,7 +62,10 @@ const PRManagement = () => {
 
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
-
+  const getStatusArr = (arr: any) => {
+    if (!arr?.length) return [];
+    return arr?.map((one: any) => one?.value);
+  };
   useEffect(() => {
     if (uId && uEmail) {
       setOptions([
@@ -94,15 +99,18 @@ const PRManagement = () => {
 
   useEffect(() => {
     if (filters) {
+      const status = getStatusArr(filters?.status);
+      const filterInput = { ...filters, status };
+      if (!filterInput?.status?.length) {
+        delete filterInput.status;
+      }
       getArticles({
         variables: {
           paginationInput: {
             perPage: PER_PAGE,
             currentPage: 0,
           },
-          filterInput: {
-            ...filters,
-          },
+          filterInput,
         },
       });
     }
@@ -170,15 +178,18 @@ const PRManagement = () => {
   }, [data]);
 
   const handlePagination = (page: number) => {
+    const status = getStatusArr(filters?.status);
+    const filterInput = { ...filters, status };
+    if (!filterInput?.status?.length) {
+      delete filterInput.status;
+    }
     getArticles({
       variables: {
         paginationInput: {
           perPage: PER_PAGE,
           currentPage: page,
         },
-        filterInput: {
-          ...filters,
-        },
+        filterInput,
       },
     });
   };

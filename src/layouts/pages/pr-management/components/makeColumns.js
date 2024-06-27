@@ -50,11 +50,6 @@ export const statusOptions = [
     label: "Published",
     background: "#47BC4C",
   },
-  {
-    value: "PENDING",
-    label: "Pending",
-    background: "#FCD404",
-  },
 ];
 
 export const makeColumns = (
