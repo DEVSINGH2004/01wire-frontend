@@ -26,6 +26,7 @@ import Filters from "./components/Filters";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArticleBundleModal from "../releases/components/ArticleBundleModal";
 import { statusOptions } from "constants/index";
+import MessageModal from "../releases/components/MessageModal";
 
 const PER_PAGE = 10;
 
@@ -66,6 +67,9 @@ const PRManagement = () => {
     if (!arr?.length) return [];
     return arr?.map((one: any) => one?.value);
   };
+  const [messageModal, setMessageModal] = useState<any>(false);
+  const [store, setStore] = useState<any>(null);
+
   useEffect(() => {
     if (uId && uEmail) {
       setOptions([
@@ -151,6 +155,7 @@ const PRManagement = () => {
   };
 
   const handleAction = (id: string, action: string) => {
+    handleData(id);
     if (action === "edit") {
       setOpenForm(id);
     } else if (action === "navigate") {
@@ -158,6 +163,7 @@ const PRManagement = () => {
     } else if (action === "view") {
       setViewModal(id);
     }
+    setMessageModal(true);
   };
 
   useEffect(() => {
@@ -192,6 +198,15 @@ const PRManagement = () => {
         filterInput,
       },
     });
+  };
+  const handleData = (storeId: any) => {
+    const articles = data?.filterArticlesPaginated?.data;
+    const specificRow = articles.find((row) => row.id === storeId);
+    console.log(specificRow, "specificRow");
+
+    if (specificRow) {
+      setStore(specificRow);
+    }
   };
 
   return (
@@ -264,6 +279,13 @@ const PRManagement = () => {
         />
       )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
+      {messageModal && (
+        <MessageModal
+          open={messageModal}
+          onClose={() => setMessageModal(false)}
+          data={store?.notes}
+        />
+      )}
     </>
   );
 };

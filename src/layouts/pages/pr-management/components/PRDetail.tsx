@@ -71,6 +71,7 @@ const PRDetail = ({ onClose, refetch, id }: { onClose: any; refetch: any; id: an
         <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
           Cancel
         </MDButton>
+        {/* {["DRAFT","AWAITING_APPROVAL","REJECTED","PUBLISHE"].includes(status) && ( */}
         <MDBox display="flex" alignItems="center">
           <MDBox mr={3}>
             <Autocomplete
@@ -94,6 +95,7 @@ const PRDetail = ({ onClose, refetch, id }: { onClose: any; refetch: any; id: an
             Update
           </MDButton>
         </MDBox>
+        {/* )} */}
       </MDBox>
     </MDBox>
   );

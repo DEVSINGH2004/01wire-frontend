@@ -37,6 +37,7 @@ import {
   IUpdateArticleStatusVars,
 } from "graphql/mutations/updateArticleStatus";
 import ArticleBundleModal from "./components/ArticleBundleModal";
+import MessageModal from "./components/MessageModal";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -65,6 +66,8 @@ function Releases(): JSX.Element {
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
+  const [messageModal, setMessageModal] = useState<any>(false);
+  const [store, setStore] = useState<any>(null);
 
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
@@ -170,7 +173,8 @@ function Releases(): JSX.Element {
     });
   };
 
-  const handleAction = (id: string, action: string) => {
+  const handleAction = (id: string, action: string , row: string) => {
+    handleData(id)
     if (action === "edit") {
       setOpenForm(id);
     } else if (action === "view") {
@@ -178,50 +182,23 @@ function Releases(): JSX.Element {
     } else if (action === "navigate") {
       navigate(`/download-report?id=${id}`);
     }
+    setMessageModal(true)
   };
   useEffect(() => {
     const rows = articlesData?.filterArticlesPaginated?.data || [];
     const columns = makeColumns(handleAction, handleUpdateStatus);
-    // if (articles?.length) {
-    //   rows = articles?.map((one) => {
-    //     return {
-    //       featureImage: `${process.env.REACT_APP_IMAGE_BASE_URL}${one?.featureImage}`,
-    //       title: {
-    //         title: one?.title,
-    //         desc: one?.summary,
-    //       },
-    //       status: one?.status,
-    //       actions: [
-    //         {
-    //           Icon: EditIcon,
-    //           onClick: () => {
-    //             navigate(`/releases/${one?.id}`);
-    //             setOpenForm(one?.id);
-    //           },
-    //         },
-    //         {
-    //           Icon: DeleteIcon,
-    //           onClick: () => {
-    //             deleteArticle({
-    //               variables: {
-    //                 id: one?.id,
-    //               },
-    //             })
-    //               .then(() => {
-    //                 refetch();
-    //                 toast.success("Deleted Successfully");
-    //               })
-    //               .catch((err) => {
-    //                 toast.error(err?.message);
-    //               });
-    //           },
-    //         },
-    //       ],
-    //     };
-    //   });
-    // }
     setData({ rows, columns });
   }, [articlesData]);
+
+  const handleData = (storeId:any) => {
+    const rows = articlesData?.filterArticlesPaginated?.data || [];
+    const specificRow = rows.find(row => row.id === storeId);
+    if (specificRow) {
+      setStore(specificRow)
+    } 
+  }
+   
+
 
   // useEffect(() => {
   //   if (location?.pathname === "/releases") {
@@ -302,6 +279,9 @@ function Releases(): JSX.Element {
         />
       )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
+      {messageModal && 
+       <MessageModal open={messageModal} onClose={() => setMessageModal(false)} data={store?.notes}/>
+      }
     </>
   );
 }
