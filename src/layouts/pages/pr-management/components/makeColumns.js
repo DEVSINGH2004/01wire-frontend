@@ -299,7 +299,6 @@ export const makeColumns = (
                 <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
             )}
-            
           </MDBox>
         );
       },
