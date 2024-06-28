@@ -9,11 +9,10 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 interface Props {
+  message?: any;
   onClose?: any;
-  data?: string[];
-  open?:any;
 }
-const MessageModal = ({ onClose, data,open }: Props) => {
+const MessageModal = ({ message, onClose }: Props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -27,13 +26,13 @@ const MessageModal = ({ onClose, data,open }: Props) => {
           border: "0.5px solid rgba(0, 0, 0, 0.2)",
         },
       }}
-      open={open}
+      open
       onClose={onClose}
     >
       <MDBox display="flex" alignItems="center" justifyContent="space-between">
         <DialogTitle>
           <MDTypography fontSize="16px" fontWeight="medium">
-            Message
+            Comments
           </MDTypography>
         </DialogTitle>
         <IconButton onClick={onClose}>
@@ -45,7 +44,7 @@ const MessageModal = ({ onClose, data,open }: Props) => {
           textAlign: "left",
         }}
       >
-        {data}
+        {message}
       </DialogContent>
     </Dialog>
   );

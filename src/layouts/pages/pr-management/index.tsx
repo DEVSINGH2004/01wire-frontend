@@ -42,7 +42,6 @@ const PRManagement = () => {
   const [filters, setFilters] = useState<any>({ status: filteredStatus });
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
-
   const [getArticles, { data, loading, refetch }] = useLazyQuery<IGetArticles, IGetArticlesVars>(
     GET_ARTICLES,
     {
@@ -55,20 +54,18 @@ const PRManagement = () => {
 
   const [loader, setLoader] = useState<boolean>(false);
   const [initLoading, setInitLoader] = useState<boolean>(false);
-
   const [email, setEmail] = useState<string>("");
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
-
   const [openForm, setOpenForm] = useState<any>(id || false);
+  const [articleStatus, setStatus] = useState<any>(null);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const getStatusArr = (arr: any) => {
     if (!arr?.length) return [];
     return arr?.map((one: any) => one?.value);
   };
-  const [messageModal, setMessageModal] = useState<any>(false);
-  const [store, setStore] = useState<any>(null);
+  const [open, setOpen] = useState<any>(false);
 
   useEffect(() => {
     if (uId && uEmail) {
@@ -154,16 +151,15 @@ const PRManagement = () => {
     });
   };
 
-  const handleAction = (id: string, action: string) => {
-    handleData(id);
+  const handleAction = (id: string, action: string, row?: any) => {
     if (action === "edit") {
       setOpenForm(id);
+      setStatus(row?.status);
     } else if (action === "navigate") {
       navigate(`/download-report?id=${id}`);
     } else if (action === "view") {
       setViewModal(id);
     }
-    setMessageModal(true);
   };
 
   useEffect(() => {
@@ -176,7 +172,8 @@ const PRManagement = () => {
       handleFilters,
       setEmail,
       setOptions,
-      filters
+      filters,
+      setOpen
     );
 
     setData({ rows, columns });
@@ -199,16 +196,6 @@ const PRManagement = () => {
       },
     });
   };
-  const handleData = (storeId: any) => {
-    const articles = data?.filterArticlesPaginated?.data;
-    const specificRow = articles.find((row) => row.id === storeId);
-    console.log(specificRow, "specificRow");
-
-    if (specificRow) {
-      setStore(specificRow);
-    }
-  };
-
   return (
     <>
       {loader && <MDCircularLoader overlayloader startLoader />}
@@ -242,6 +229,7 @@ const PRManagement = () => {
                 }}
                 refetch={refetch}
                 id={openForm}
+                articleStatus={articleStatus}
               />
             </Card>
           ) : loading || !!data?.filterArticlesPaginated?.data?.length ? (
@@ -279,13 +267,7 @@ const PRManagement = () => {
         />
       )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
-      {messageModal && (
-        <MessageModal
-          open={messageModal}
-          onClose={() => setMessageModal(false)}
-          data={store?.notes}
-        />
-      )}
+      {open && <MessageModal message={open} onClose={() => setOpen(false)} />}
     </>
   );
 };

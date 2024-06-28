@@ -15,7 +15,6 @@ import { truncateString } from "utils/helpers";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MessageIcon from "@mui/icons-material/Message";
 
-
 export const statusOptions = [
   {
     value: "DRAFT",
@@ -60,7 +59,8 @@ export const makeColumns = (
   handleFilters,
   setEmail,
   setOptions,
-  filters
+  filters,
+  setOpen
 ) => {
   const columns = [
     {
@@ -266,39 +266,39 @@ export const makeColumns = (
               display: "flex",
             }}
           >
-            <IconButton
-              onClick={() => handleAction(row.original.id, "navigate")}
-              sx={{ visibility: row.original.status !== "PUBLISHED" ? "collapse" : "" }}
-            >
-              <img width={36} height={36} alt="navigate" src={DownloadIcon} />
-            </IconButton>
-            <IconButton
-              onClick={() => handleAction(row.original.id, "view")}
-              sx={{
-                visibility: !["PUBLISHED", "SCHEDULED"].includes(row.original.status)
-                  ? "collapse"
-                  : "",
-              }}
-            >
-              <img width={36} height={36} alt="navigate" src={ViewIcon} />
-            </IconButton>
-            <IconButton onClick={() => handleAction(row.original.id, "edit")}>
+            {row.original.status === "PUBLISHED" && (
+              <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
+                <img width={36} height={36} alt="navigate" src={DownloadIcon} />
+              </IconButton>
+            )}
+            {["PUBLISHED", "SCHEDULED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "view")}>
+                <img width={36} height={36} alt="navigate" src={ViewIcon} />
+              </IconButton>
+            )}
+            <IconButton onClick={() => handleAction(row.original.id, "edit", row?.original)}>
               <img width={36} height={36} alt="navigate" src={NavigateIcon} />
             </IconButton>
-            <IconButton
+            {["AWAITING_APPROVAL", "REJECTED"].includes(row.original.status) && (
+              <IconButton
                 color="primary"
-                onClick={() => handleAction(row.original.id,"id")}
+                onClick={() => {
+                  if (row?.original?.notes) {
+                    setOpen(row.original.notes);
+                  }
+                }}
                 sx={{
                   width: "35px",
                   height: "35px",
                   margin: "9px ",
                   backgroundColor: "#f8f8fc",
                   border: "1px solid #e0e0e4",
-                  paddingTop:'10px'
+                  paddingTop: "10px",
                 }}
               >
                 <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
+            )}
           </MDBox>
         );
       },

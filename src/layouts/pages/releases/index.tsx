@@ -2,21 +2,13 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Card from "@mui/material/Card";
-import IconButton from "@mui/material/IconButton";
-import EditIcon from "assets/images/icons/editIcon.svg";
-import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import MDButton from "components/MDButton";
-import MDAvatar from "components/MDAvatar";
 import MDCircularLoader from "components/MDCircularLoader";
 // Material Dashboard 2 PRO React TS examples components
 import Footer from "examples/Footer";
-import Autocomplete from "@mui/material/Autocomplete";
 import ReleaseForm from "./components/ReleaseForm";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 // Data
 import { useState } from "react";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
@@ -39,18 +31,6 @@ import {
 import ArticleBundleModal from "./components/ArticleBundleModal";
 import MessageModal from "./components/MessageModal";
 
-const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
-  <MDBox display="flex" alignItems="center" justifyContent="space-between">
-    {actions?.map((one: any, i: any) => {
-      return (
-        <IconButton key={i} onClick={one?.onClick}>
-          <img src={one?.Icon} height="36px" width="36px" />
-        </IconButton>
-      );
-    })}
-  </MDBox>
-);
-
 const PER_PAGE = 10;
 function Releases(): JSX.Element {
   const { id } = useParams();
@@ -66,8 +46,7 @@ function Releases(): JSX.Element {
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
-  const [messageModal, setMessageModal] = useState<any>(false);
-  const [store, setStore] = useState<any>(null);
+  const [open, setOpen] = useState<any>(false);
 
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
@@ -173,8 +152,7 @@ function Releases(): JSX.Element {
     });
   };
 
-  const handleAction = (id: string, action: string , row: string) => {
-    handleData(id)
+  const handleAction = (id: string, action: string, row: string) => {
     if (action === "edit") {
       setOpenForm(id);
     } else if (action === "view") {
@@ -182,23 +160,12 @@ function Releases(): JSX.Element {
     } else if (action === "navigate") {
       navigate(`/download-report?id=${id}`);
     }
-    setMessageModal(true)
   };
   useEffect(() => {
     const rows = articlesData?.filterArticlesPaginated?.data || [];
-    const columns = makeColumns(handleAction, handleUpdateStatus);
+    const columns = makeColumns(handleAction, handleUpdateStatus, setOpen);
     setData({ rows, columns });
   }, [articlesData]);
-
-  const handleData = (storeId:any) => {
-    const rows = articlesData?.filterArticlesPaginated?.data || [];
-    const specificRow = rows.find(row => row.id === storeId);
-    if (specificRow) {
-      setStore(specificRow)
-    } 
-  }
-   
-
 
   // useEffect(() => {
   //   if (location?.pathname === "/releases") {
@@ -279,9 +246,7 @@ function Releases(): JSX.Element {
         />
       )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
-      {messageModal && 
-       <MessageModal open={messageModal} onClose={() => setMessageModal(false)} data={store?.notes}/>
-      }
+      {open && <MessageModal message={open} onClose={() => setOpen(false)} />}
     </>
   );
 }
