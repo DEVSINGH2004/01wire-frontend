@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client";
 import MDBox from "components/MDBox";
 import MDCircularLoader from "components/MDCircularLoader";
-import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import IconButton from "@mui/material/IconButton";
@@ -18,13 +17,22 @@ import {
 import { StatusOptions } from "constants/index";
 import RejectPR from "./RejectPRModal";
 
-const PRDetail = ({ onClose, refetch, id }: { onClose: any; refetch: any; id: any }) => {
+const PRDetail = ({
+  onClose,
+  refetch,
+  id,
+  articleStatus,
+}: {
+  onClose: any;
+  refetch: any;
+  id: any;
+  articleStatus?: any;
+}) => {
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [status, setStatus] = useState<any>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
   const handleUpdateStatus = () => {
-    console.log("status", status);
     if (status === "REJECTED") {
       setOpen(true);
     } else {
@@ -71,29 +79,31 @@ const PRDetail = ({ onClose, refetch, id }: { onClose: any; refetch: any; id: an
         <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
           Cancel
         </MDButton>
-        <MDBox display="flex" alignItems="center">
-          <MDBox mr={3}>
-            <Autocomplete
-              disableClearable
-              options={StatusOptions}
-              onChange={(event, option: any) => {
-                setStatus(option?.value);
-              }}
-              value={status && StatusOptions?.find((one: any) => one?.value === status)}
-              size="small"
-              sx={{ width: "12rem" }}
-              renderInput={(params) => <MDInput label="Status" {...params} />}
-            />
+        {!["DRAFT", "AWAITING_APPROVAL", "REJECTED", "PUBLISHED"].includes(articleStatus) && (
+          <MDBox display="flex" alignItems="center">
+            <MDBox mr={3}>
+              <Autocomplete
+                disableClearable
+                options={StatusOptions}
+                onChange={(event, option: any) => {
+                  setStatus(option?.value);
+                }}
+                value={status && StatusOptions?.find((one: any) => one?.value === status)}
+                size="small"
+                sx={{ width: "12rem" }}
+                renderInput={(params) => <MDInput label="Status" {...params} />}
+              />
+            </MDBox>
+            <MDButton
+              disabled={!status}
+              color="primary"
+              variant="contained"
+              onClick={handleUpdateStatus}
+            >
+              Update
+            </MDButton>
           </MDBox>
-          <MDButton
-            disabled={!status}
-            color="primary"
-            variant="contained"
-            onClick={handleUpdateStatus}
-          >
-            Update
-          </MDButton>
-        </MDBox>
+        )}
       </MDBox>
     </MDBox>
   );
