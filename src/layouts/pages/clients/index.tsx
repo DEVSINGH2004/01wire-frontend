@@ -8,7 +8,6 @@ import IconButton from "@mui/material/IconButton";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 // Material Dashboard 2 PRO React TS examples components
-import Footer from "examples/Footer";
 import ClientForm from "./components/ClientForm";
 import { useLazyQuery } from "@apollo/client";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
@@ -146,7 +145,6 @@ function Clients(): JSX.Element {
             </Card>
           )}
         </MDBox>
-        <Footer />
       </MDBox>
       {deleteConf && (
         <DeleteModal
