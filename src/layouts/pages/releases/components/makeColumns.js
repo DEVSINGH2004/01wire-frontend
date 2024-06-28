@@ -13,8 +13,9 @@ import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import { truncateString } from "utils/helpers";
 import { statusOptions } from "../../pr-management/components/makeColumns";
+import MessageIcon from "@mui/icons-material/Message";
 
-export const makeColumns = (handleAction, handleUpdateStatus) => {
+export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
   const columns = [
     {
       Header: "PR ID",
@@ -166,11 +167,13 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />
               </IconButton>
             )}
+
             {["DRAFT", "AWAITING_APPROVAL"].includes(row.original.status) && (
               <IconButton onClick={() => handleAction(row.original.id, "edit")}>
                 <img width={36} height={36} alt="navigate" src={EditIcon} />
               </IconButton>
             )}
+
             {["PUBLISHED", "SCHEDULED"].includes(row.original.status) && (
               <IconButton onClick={() => handleAction(row.original.id, "view")}>
                 <img width={36} height={36} alt="navigate" src={ViewIcon} />
@@ -184,6 +187,26 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
             {["PUBLISHED", "REVIEW", "SCHEDULED"].includes(row.original.status) && (
               <IconButton onClick={() => handleAction(row.original.id, "edit")}>
                 <img width={36} height={36} alt="navigate" src={NavigateIcon} />
+              </IconButton>
+            )}
+            {["AWAITING_APPROVAL", "REJECTED"].includes(row.original.status) && (
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  if (row?.original?.notes) {
+                    setOpen(row.original.notes);
+                  }
+                }}
+                sx={{
+                  width: "35px",
+                  height: "35px",
+                  margin: "9px ",
+                  backgroundColor: "#f8f8fc",
+                  border: "1px solid #e0e0e4",
+                  paddingTop: "10px",
+                }}
+              >
+                <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
             )}
           </MDBox>
