@@ -110,7 +110,7 @@ export default function App() {
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/clients/:id" element={<Clients />} />
               <Route path="/download-report" element={<DownloadReport />} />
-              <Route path="/press-releases/:id" element={<Releases />} />
+              <Route path="/releases/:id" element={<Releases />} />
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />
               <Route path="/bundles/:id" element={<Bundles />} />

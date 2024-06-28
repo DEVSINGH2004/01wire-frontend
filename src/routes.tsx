@@ -42,9 +42,9 @@ const routes = [
     type: "collapse",
     name: "Press Release",
     icon: <img src={ReleaseIcon} width="24px" height="24px" />,
-    key: "press-releases",
+    key: "releases",
     noCollapse: true,
-    route: "/press-releases",
+    route: "/releases",
     component: <Releases />,
   },
   {
