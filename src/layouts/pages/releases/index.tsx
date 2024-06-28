@@ -37,7 +37,6 @@ import {
   IUpdateArticleStatusVars,
 } from "graphql/mutations/updateArticleStatus";
 import ArticleBundleModal from "./components/ArticleBundleModal";
-import { statusOptions } from "constants/index";
 
 const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -54,7 +53,6 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
 const PER_PAGE = 10;
 function Releases(): JSX.Element {
   const { id } = useParams();
-  const filteredStatus = statusOptions?.filter((one: any) => one?.value !== "DRAFT");
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation;
@@ -62,7 +60,7 @@ function Releases(): JSX.Element {
   const [filter, setFilter] = useState<any>({});
   const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
-  const [filters, setFilters] = useState<any>({ status: filteredStatus });
+  const [filters, setFilters] = useState<any>({});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [noteModal, setNoteModal] = useState<any>(null);
