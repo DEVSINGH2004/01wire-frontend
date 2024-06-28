@@ -299,26 +299,7 @@ export const makeColumns = (
                 <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
             )}
-            {["REJECTED"].includes(row.original.status) && (
-              <IconButton
-                color="primary"
-                onClick={() => {
-                  if (row?.original?.notes) {
-                    setOpen(row.original.notes);
-                  }
-                }}
-                sx={{
-                  width: "35px",
-                  height: "35px",
-                  margin: "9px ",
-                  backgroundColor: "#f8f8fc",
-                  border: "1px solid #e0e0e4",
-                  paddingTop: "10px",
-                }}
-              >
-                <MessageIcon sx={{ fontSize: "10px" }} />
-              </IconButton>
-            )}
+            
           </MDBox>
         );
       },
