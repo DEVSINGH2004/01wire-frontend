@@ -24,13 +24,15 @@ import axiosInstance from "utils/axiosInstance";
 import StatusIcon from "assets/images/icons/statusIcon.svg";
 import NoteModal from "../../../pr-management/components/NoteModal";
 import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
+import MessageIcon from "@mui/icons-material/Message";
+import MessageModal from "../MessageModal";
 
 interface Props {
   onClose?: any;
   articleId: string;
 }
 
-const getColumns = (setNoteOpen: any) => {
+const getColumns = (setNoteOpen: any,setOpen?:any) => {
   const columns = [
     {
       Header: "Title",
@@ -110,16 +112,32 @@ const getColumns = (setNoteOpen: any) => {
               display: "flex",
             }}
           >
+            {!["PUBLISHED", "REJECTED"].includes(row.original?.status) && (
             <IconButton
-              sx={{
-                visibility: ["PUBLISHED", "REJECTED"].includes(row.original?.status)
-                  ? "collapse"
-                  : "",
-              }}
               onClick={() => setNoteOpen({ id: row.original.id })}
             >
               <img width={36} height={36} alt="navigate" src={StatusIcon} />
             </IconButton>
+            )}
+            {["REJECTED"].includes(row.original?.status) && (
+            <IconButton
+            color="primary"
+            onClick={() => {
+              if (row?.original?.notes) {
+                setOpen(row.original.notes);
+              }
+            }}
+            sx={{
+              width: "35px",
+              height: "35px",
+              backgroundColor: "#f8f8fc",
+              border: "1px solid #e0e0e4",
+              paddingTop: "10px",
+            }}
+          >
+            <MessageIcon sx={{ fontSize: "10px" }} />
+          </IconButton>
+            )}
           </MDBox>
         );
       },
@@ -133,6 +151,8 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const [loader, setLoader] = useState<any>(null);
   const [noteModal, setNoteModal] = useState<any>(null);
+  const [open, setOpen] = useState<any>(null);
+
 
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [paginationInfo, setPaginationInfo] = useState<any>({});
@@ -164,7 +184,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
 
   useEffect(() => {
     const rows = data?.filterOrdersPaginated?.data || [];
-    const columns = getColumns(setNoteModal);
+    const columns = getColumns(setNoteModal,setOpen);
     setData({ rows, columns });
   }, [data]);
 
@@ -372,6 +392,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
           }}
         />
       )}
+      {open && <MessageModal message={open} onClose={() => setOpen(false)} />}
     </Dialog>
   );
 };

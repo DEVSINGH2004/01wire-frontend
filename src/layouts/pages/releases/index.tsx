@@ -7,7 +7,6 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 // Material Dashboard 2 PRO React TS examples components
-import Footer from "examples/Footer";
 import ReleaseForm from "./components/ReleaseForm";
 // Data
 import { useState } from "react";
@@ -234,7 +233,6 @@ function Releases(): JSX.Element {
             </Card>
           )}
         </MDBox>
-        <Footer />
       </MDBox>
       {noteModal && (
         <NoteModal

@@ -19,7 +19,6 @@ import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import DisplayImage from "components/DisplayImage";
 // Material Dashboard 2 PRO React TS examples components
-import Footer from "examples/Footer";
 // Images
 import ERIcon from "assets/images/ER.svg";
 import AAIcon from "assets/images/AA.svg";
@@ -197,9 +196,6 @@ function Overview(): JSX.Element {
               </MDBox>
             )}
           </Grid>
-          <MDBox mt="100px">
-            <Footer />
-          </MDBox>
         </MDBox>
       )}
     </>

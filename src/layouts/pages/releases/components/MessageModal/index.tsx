@@ -20,7 +20,7 @@ const MessageModal = ({ message, onClose }: Props) => {
     <Dialog
       PaperProps={{
         style: {
-          minHeight: "300px",
+          minHeight: "350px",
           minWidth: isMobile ? "100%" : "500px",
           boxShadow: "0px 4px 16px 0px rgba(0, 0, 0, 0.2)",
           border: "0.5px solid rgba(0, 0, 0, 0.2)",
@@ -41,7 +41,11 @@ const MessageModal = ({ message, onClose }: Props) => {
       </MDBox>
       <DialogContent
         sx={{
-          textAlign: "left",
+          textAlign: "justify",
+          boxShadow:
+            "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
+          margin: "0px 15px 15px 15px",
+          borderRadius: "6px",
         }}
       >
         {message}
