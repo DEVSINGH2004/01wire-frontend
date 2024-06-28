@@ -196,7 +196,13 @@ const Filters = ({
               <Autocomplete
                 multiple
                 id="tags-outlined"
-                options={statusOptions}
+                options={
+                  filters?.status?.length > 0
+                    ? statusOptions?.filter(
+                        (one) => !JSON.stringify(filters?.status)?.includes(one?.value)
+                      )
+                    : statusOptions
+                }
                 getOptionLabel={(option) => option?.label}
                 value={filters?.status || []}
                 disableClearable
