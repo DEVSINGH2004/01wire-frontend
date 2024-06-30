@@ -25,13 +25,11 @@ import NoteModal from "./components/NoteModal";
 import Filters from "./components/Filters";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArticleBundleModal from "../releases/components/ArticleBundleModal";
-import { statusOptions } from "constants/index";
 import MessageModal from "../releases/components/MessageModal";
 
 const PER_PAGE = 10;
 
 const PRManagement = () => {
-  const filteredStatus = statusOptions?.filter((one: any) => one?.value !== "DRAFT");
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,7 +37,7 @@ const PRManagement = () => {
   const uEmail = queryParams.get("email") || "";
   const uId = queryParams.get("userID") || "";
 
-  const [filters, setFilters] = useState<any>({ status: filteredStatus });
+  const [filters, setFilters] = useState<any>({});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [getArticles, { data, loading, refetch }] = useLazyQuery<IGetArticles, IGetArticlesVars>(
