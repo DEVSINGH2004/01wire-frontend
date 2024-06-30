@@ -198,7 +198,9 @@ const OrderManagement = () => {
         <NoteModal
           orderPage
           onClose={(note?: string) => {
-            handleUpdateStatus(noteModal, "REJECTED", note);
+            if (note && typeof note === "string") {
+              handleUpdateStatus(noteModal, "REJECTED", note);
+            }
             setNoteModal(null);
           }}
           handleSubmit={(note: string) => {
