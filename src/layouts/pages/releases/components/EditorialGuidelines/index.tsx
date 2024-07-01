@@ -42,6 +42,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
           </IconButton>
         </MDBox>
         <DialogContent>
+
           <MDTypography
             fontFamily="Georgia, serif"
             fontSize="18px"
@@ -125,6 +126,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
               <li>Maintain logical flow and coherence.</li>
             </ul>
           </MDTypography>
+
           <MDTypography
             fontFamily="Georgia, serif"
             fontSize="18px"
@@ -237,6 +239,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
               </li>
             </ul>
           </MDTypography>
+
           <MDTypography
             fontFamily="Georgia, serif"
             fontSize="18px"
@@ -303,6 +306,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
               <li>Include a media contact person’s name, phone number, and email address.</li>
             </ul>
           </MDTypography>
+          
           <MDTypography
             fontFamily="Georgia, serif"
             fontSize="18px"
