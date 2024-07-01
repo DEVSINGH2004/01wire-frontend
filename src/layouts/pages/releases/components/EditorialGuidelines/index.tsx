@@ -42,27 +42,318 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
           </IconButton>
         </MDBox>
         <DialogContent>
-          <MDTypography fontSize="16px" mt={2} sx={{ fontWeight: 400, color: "rgba(0, 0, 0, 1)" }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
-            <br />
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
-            <br />
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="18px"
+            mt={1}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            Objective:
+          </MDTypography>
+          <MDTypography fontFamily="Georgia, serif" fontSize="15px" color="black" mt={1}>
+            Ensure all press releases meet high standards of quality, accuracy, and relevance,
+            providing valuable information to readers.
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="18px"
+            mt={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            Writing Standards:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            1. Content Quality:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Ensure newsworthiness and relevance to the audience.</li>
+              <li>Deliver factual, concise, and clear information.</li>
+              <li>Use a neutral, professional tone without promotional language.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            2. Accuracy:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Verify all facts, statistics, and claims.</li>
+              <li>Cite sources for data or quotes.</li>
+              <li>Ensure correct spelling, grammar, and punctuation.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            3. Clarity and Readability:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Use straightforward language; avoid jargon.</li>
+              <li>Keep sentences and paragraphs short.</li>
+              <li>Maintain logical flow and coherence.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="18px"
+            mt={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            Structure and Format:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            1. Title:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>
+                Create a clear, concise, and compelling title without colons or unnecessary
+                punctuation.
+              </li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            2. Dateline:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Include location (city, state/country) and date at the beginning.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            3. Body:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Start with a strong lead paragraph summarizing key points.</li>
+              <li>Follow with detailed supporting paragraphs.</li>
+              <li>Avoid headings or subheadings within the body.</li>
+              <li>Aim for at least 650 words.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            4. Quotes:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Include valuable quotes from relevant sources.</li>
+              <li>Ensure quotes are directly related to the main points.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            5. About Section:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>
+                Conclude with an "About ProtoStarHub" section providing a brief company overview.
+              </li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="18px"
+            mt={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            Key Considerations::
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            1. Relevance:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Focus on financial, economic, or industry-related news.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            2. Tone and Style:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Maintain a neutral, objective tone.</li>
+              <li>Avoid exaggerated claims or subjective statements.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            3. Contact Information:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Include a media contact person’s name, phone number, and email address.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="18px"
+            mt={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            Final Checks:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            1. Proofreading:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Proofread to eliminate errors and inconsistencies.</li>
+              <li>Have a colleague review the document.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="16px"
+            mt={2}
+            ml={2}
+            sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
+          >
+            2. Compliance:
+          </MDTypography>
+          <MDTypography
+            fontFamily="Georgia, serif"
+            fontSize="15px"
+            ml={6}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
+          >
+            <ul style={{ listStyleType: "circle" }}>
+              <li>Ensure compliance with relevant laws and regulations.</li>
+              <li>Avoid defamatory, libellous, or infringing content.</li>
+            </ul>
+          </MDTypography>
+          <MDTypography fontFamily="Georgia, serif" fontSize="15px" color="black" mt={2}>
+            By following these guidelines, your press release will meet standards and effectively
+            communicate your news. For questions or assistance, contact our editorial team.
           </MDTypography>
         </DialogContent>
       </Dialog>
