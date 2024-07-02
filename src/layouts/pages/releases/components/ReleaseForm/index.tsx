@@ -221,7 +221,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
           onClick={handleBack}
         >
           <MDTypography fontWeight="regular" fontSize="16px">
-            {"< Back"}
+            {"Back"}
           </MDTypography>
         </MDButton>
         <MDBox display="flex" alignItems="center">
