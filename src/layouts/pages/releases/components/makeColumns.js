@@ -14,13 +14,11 @@ import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import { truncateString } from "utils/helpers";
 import { statusOptions } from "../../pr-management/components/makeColumns";
 import MessageIcon from "@mui/icons-material/Message";
-import ShareIcon from "assets/images/icons/shareIcon.svg";
-import { toast } from "react-toastify";
-
+// import ShareIcon from "assets/images/icons/shareIcon.svg";
+// import { toast } from "react-toastify";
 
 export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
   async function copyToClipboard(text) {
-    console.log("text", text)
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
@@ -173,7 +171,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
               display: "flex",
             }}
           >
-             {/* <IconButton
+            {/* <IconButton
               onClick={() => {
                 copyToClipboard(`${window?.location?.origin}/share-release/${row?.original?.id}`)
                   .then(() => {
@@ -233,7 +231,6 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                 <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
             )}
-           
           </MDBox>
         );
       },

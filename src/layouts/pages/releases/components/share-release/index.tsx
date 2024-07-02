@@ -25,7 +25,12 @@ const ShareReleases = () => {
     disableHysteresis: true,
     threshold: 0,
   });
-
+  const {
+    title = "-",
+    featureImage = "",
+    mediaContact = {},
+    content = "",
+  }: any = data?.getArticleById || {};
   return (
     <MDBox>
       <AppBar
@@ -50,11 +55,11 @@ const ShareReleases = () => {
         ) : id ? (
           <MDBox sx={{ padding: "40px 180px" }}>
             <MDTypography fontSize="50px" color="black" fontWeight="bold">
-              {data?.getArticleById?.title}
+              {title}
             </MDTypography>
             <MDBox sx={{ marginTop: "30px" }}>
               <DisplayImage
-                src={data?.getArticleById?.featureImage}
+                src={featureImage}
                 height="550px"
                 width="100%"
                 alt={"img"}
@@ -74,7 +79,7 @@ const ShareReleases = () => {
             </MDTypography>
 
             <MDTypography sx={{ marginTop: "20px" }} fontSize="20px">
-              {data?.getArticleById?.content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")}
+              {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")}
             </MDTypography>
 
             <MDBox
@@ -98,19 +103,19 @@ const ShareReleases = () => {
                 Media Contact
               </MDTypography>
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Name : {data?.getArticleById?.mediaContact?.name}
+                Name : {mediaContact?.name}
               </MDTypography>
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Email : {data?.getArticleById?.mediaContact?.email}
+                Email : {mediaContact?.email}
               </MDTypography>
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Phone : {data?.getArticleById?.mediaContact?.phone}
+                Phone : {mediaContact?.phone}
               </MDTypography>
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Website : {data?.getArticleById?.mediaContact?.website}
+                Website : {mediaContact?.website}
               </MDTypography>
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Address : {data?.getArticleById?.mediaContact?.address}
+                Address : {mediaContact?.address}
               </MDTypography>
 
               <MDTypography
@@ -128,11 +133,11 @@ const ShareReleases = () => {
                   sx={{
                     cursor: "pointer",
                   }}
-                  href={data?.getArticleById?.mediaContact?.facebook}
+                  href={mediaContact?.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {data?.getArticleById?.mediaContact?.facebook}
+                  {mediaContact?.facebook}
                 </Link>
               </MDTypography>
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
@@ -141,11 +146,11 @@ const ShareReleases = () => {
                   sx={{
                     cursor: "pointer",
                   }}
-                  href={data?.getArticleById?.mediaContact?.instagram}
+                  href={mediaContact?.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {data?.getArticleById?.mediaContact?.instagram}
+                  {mediaContact?.instagram}
                 </Link>
               </MDTypography>
             </MDBox>

@@ -267,7 +267,7 @@ function DataTable({
           py={2}
         >
           <MDButton
-            sx={{ visibility: !paginationInfo?.hasPreviousPage && "collapse" ,height:'30px'}}
+            sx={{ visibility: !paginationInfo?.hasPreviousPage && "collapse", height: "30px" }}
             size="small"
             variant="contained"
             disabled={!canPreviousPage}
@@ -282,7 +282,6 @@ function DataTable({
               </MDTypography>
             </Box>
           </MDButton>
-
           <Pagination
             page={paginationInfo?.currentPage + 1}
             hideNextButton
@@ -309,14 +308,12 @@ function DataTable({
             )}
             onChange={(e: any, page: number) => handlePagination(page - 1)}
           />
-
           <MDButton
-            sx={{ visibility: !paginationInfo?.hasNextPage && "collapse", height:'30px'  }}
+            sx={{ visibility: !paginationInfo?.hasNextPage && "collapse", height: "30px" }}
             size="small"
             variant="contained"
             disabled={!canNextPage}
             onClick={() => handlePagination(paginationInfo?.currentPage + 1)}
-
           >
             <Box display="flex" justifyContent="center" alignItems="center" color="#fff">
               <MDTypography fontSize="14px" sx={{ color: "black" }}>
