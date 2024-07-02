@@ -128,7 +128,9 @@ function Clients(): JSX.Element {
               <MDCircularLoader overlayloader startLoader />
             </Card>
           ) : openForm ? (
-            <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+            <Card>
+              <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+            </Card>
           ) : loading || clientsData?.filterClientsPaginated?.data?.length ? (
             <DataTable
               loading={loading}

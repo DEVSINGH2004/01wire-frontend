@@ -14,8 +14,17 @@ import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import { truncateString } from "utils/helpers";
 import { statusOptions } from "../../pr-management/components/makeColumns";
 import MessageIcon from "@mui/icons-material/Message";
+// import ShareIcon from "assets/images/icons/shareIcon.svg";
+// import { toast } from "react-toastify";
 
 export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  }
   const columns = [
     {
       Header: "PR ID",
@@ -162,6 +171,19 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
               display: "flex",
             }}
           >
+            {/* <IconButton
+              onClick={() => {
+                copyToClipboard(`${window?.location?.origin}/share-release/${row?.original?.id}`)
+                  .then(() => {
+                    toast.success("Copied to clipboard");
+                  })
+                  .catch((err) => {
+                    toast.error(err);
+                  });
+              }}
+            >
+              <img width={36} height={36} alt="navigate" src={ShareIcon} />
+            </IconButton> */}
             {row.original.status === "PUBLISHED" && (
               <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />
