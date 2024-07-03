@@ -26,6 +26,7 @@ import NoteModal from "../../../pr-management/components/NoteModal";
 import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
 import MessageIcon from "@mui/icons-material/Message";
 import MessageModal from "../MessageModal";
+import { Chip } from "@mui/material";
 
 interface Props {
   onClose?: any;
@@ -55,33 +56,16 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
         const selected = statusOptions.find((el: any) => selectedStatus === el?.value);
 
         return (
-          <MDBox>
-            <MDBox
-              px={1}
-              borderRadius="21px"
-              bgColor={selected?.background}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundImage: selected?.background,
-                color: "white",
-                backgroundBlendMode: "overlay",
-                width: "140px",
-                height: "22px",
-              }}
-            >
-              <MDTypography
-                sx={{
-                  fontSize: "12px",
-                  fontWeight: "400",
-                  color: "#fff",
-                }}
-              >
-                {selected?.label}
-              </MDTypography>
-            </MDBox>
-          </MDBox>
+          <Chip
+            label={selected?.label}
+            sx={{
+              backgroundImage: selected?.background,
+              backgroundBlendMode: "overlay",
+              backgroundColor: selected?.background,
+              color: "#fff",
+              minWidth: "140px",
+            }}
+          />
         );
       },
     },

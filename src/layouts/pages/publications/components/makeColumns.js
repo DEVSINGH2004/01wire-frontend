@@ -83,7 +83,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
         const selected = visibilityOptions.find((el) => selectedStatus === el?.value);
 
         return (
-          <FormControl sx={{ width: "152px", height: "22px" }} size="medium">
+          <FormControl sx={{ width: "140px" }} size="medium">
             <Select
               // input={<OutlinedInput sx={{ color: "white" }} />}
               id="demo-select-small"
@@ -93,7 +93,9 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 boxShadow: "none",
                 textAlign: "center",
                 borderRadius: "21px",
+                 height: "35px",
                 color: "#fff",
+                background: selected?.background,
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "transparent", // Remove hover border color
                 },
@@ -117,7 +119,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 if (selectedStatus === "") {
                   return <em>Select an option</em>;
                 }
-                return selectedStatus ? selectedStatus : "";
+                return selectedStatus ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase() : "";
               }}
               onChange={(e) => handleUpdateStatus(row, e.target.value)}
             >

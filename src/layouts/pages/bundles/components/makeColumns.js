@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, IconButton, OutlinedInput } from "@mui/material";
+import { TableCell as MuiTableCell, IconButton, OutlinedInput, Chip } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import { truncateString } from "utils/helpers";
@@ -29,27 +29,14 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
       accessor: "type",
       width: "25%",
       Cell: ({ value }) => (
-        <MDBox
-          px={1}
-          borderRadius="21px"
+        <Chip
+          label={value}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            color: "#fff",
+            minWidth: "140px",
             backgroundColor: "#EBEBEB",
-            width: "122px",
-            height: "25px",
           }}
-        >
-          <MDTypography
-            sx={{
-              fontSize: "12px",
-              fontWeight: "400",
-            }}
-          >
-            {value}
-          </MDTypography>
-        </MDBox>
+        />
       ),
     },
     {
@@ -59,7 +46,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
-            {value ? `${value} Reach` : "-"}
+            {value ? value : "-"}
           </MDTypography>
         </MDBox>
       ),
@@ -83,7 +70,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
         const selected = visibilityOptions.find((el) => selectedStatus === el?.value);
 
         return (
-          <FormControl sx={{ width: "152px", height: "22px" }} size="medium">
+          <FormControl sx={{ width: "140px" }} size="medium">
             <Select
               input={<OutlinedInput sx={{ color: "white" }} />}
               id="demo-select-small"
@@ -93,16 +80,14 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 boxShadow: "none",
                 textAlign: "center",
                 borderRadius: "21px",
-
+                height: "34px",
+                background: selected?.background,
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "transparent", // Remove hover border color
                 },
-
                 "& .MuiOutlinedInput-input": {
-                  padding: "10px",
                   color: "#fff",
                   fontSize: "12px",
-
                   fontWeight: "400",
                   borderRadius: "21px",
                   border: "none",
@@ -117,7 +102,9 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 if (selectedStatus === "") {
                   return <em>Select an option</em>;
                 }
-                return selectedStatus ? selectedStatus : "";
+                return selectedStatus
+                  ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase()
+                  : "";
               }}
               onChange={(e) => handleUpdateStatus(row, e.target.value)}
             >
