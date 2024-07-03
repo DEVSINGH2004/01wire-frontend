@@ -213,7 +213,7 @@ const PRManagement = () => {
           </>
         )}
 
-        <MDBox px={2} pt={openForm ? 3 : 2} pb={3} sx={{ flex: 1 }}>
+        <MDBox px={2} pt={openForm ? 3 : 2} sx={{ flex: 1 }}>
           {initLoading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />

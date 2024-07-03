@@ -14,7 +14,7 @@ const PREstimation = () => {
   return (
     <MDBox>
       <DashboardNavbar text="PR Estimation" />
-      <MDBox px={2} py={3}>
+      <MDBox px={2} pt={3}>
         {loader && <MDCircularLoader startLoader overlayloader />}
         <PlanNPayment createEstimate={handleChange} />
       </MDBox>

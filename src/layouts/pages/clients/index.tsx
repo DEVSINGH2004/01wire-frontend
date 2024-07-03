@@ -122,7 +122,7 @@ function Clients(): JSX.Element {
       {deleteLoader && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar text="Add New Client" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
-        <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "570px" }}>
+        <MDBox pt={openForm ? 6 : 2} sx={{ minHeight: "570px" }}>
           {loader ? (
             <Card sx={{ minHeight: "400px" }}>
               <MDCircularLoader overlayloader startLoader />

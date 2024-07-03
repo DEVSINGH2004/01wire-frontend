@@ -226,7 +226,7 @@ function Releases(): JSX.Element {
             />
           </>
         )}
-        <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "520px" }}>
+        <MDBox pt={openForm ? 6 : 2} sx={{ minHeight: "520px" }}>
           {initLoading || loading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />

@@ -164,7 +164,7 @@ const Publications = () => {
           </>
         )}
 
-        <MDBox pt={openForm ? 3 : 2} pb={3}>
+        <MDBox pt={openForm ? 3 : 2}>
           {loader ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
