@@ -98,7 +98,7 @@ function DataTable({
     state: { pageIndex, pageSize, globalFilter },
   }: any = tableInstance;
 
-  const canPreviousPage = paginationInfo?.currentPage > 1;
+  const canPreviousPage = paginationInfo?.currentPage > 0;
   const canNextPage = paginationInfo?.currentPage < paginationInfo?.pageCount;
 
   // Set the default value for the entries per page when component mounts

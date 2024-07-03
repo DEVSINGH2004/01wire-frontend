@@ -14,6 +14,7 @@ const PublicationsList = ({
   selectedP,
   loading,
   disabled = false,
+  showCreditsColumn = true,
 }: {
   publications: any;
   updatePage?: any;
@@ -22,7 +23,9 @@ const PublicationsList = ({
   selectedP?: any;
   loading?: boolean;
   disabled?: boolean;
+  showCreditsColumn?: boolean;
 }) => {
+  console.info("paginationInfo", paginationInfo);
   const columns = [
     {
       Header: "Title",
@@ -140,18 +143,21 @@ const PublicationsList = ({
         );
       },
     },
-    {
-      Header: "Credits",
-      width: "10%",
-      accessor: "credits",
-      Cell: ({ value }: { value: any }) => {
-        return (
-          <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-            {value}
-          </MDTypography>
-        );
-      },
-    },
+
+    ...(showCreditsColumn
+      ? [
+          {
+            Header: "Credits",
+            width: "10%",
+            accessor: "credits",
+            Cell: ({ value }: { value: any }) => (
+              <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+                {value}
+              </MDTypography>
+            ),
+          },
+        ]
+      : []),
   ];
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   useEffect(() => {
@@ -168,7 +174,7 @@ const PublicationsList = ({
           da: one?.da || one?.stats?.da,
           ur: one?.ur || one?.stats?.ur,
           dr: one?.dr || one?.stats?.dr,
-          linkType: one?.linkType,
+          linkType: one?.linkType?.split("_")?.join(" "),
           credits: one?.credits || one?.price,
         };
       });
@@ -176,7 +182,7 @@ const PublicationsList = ({
     }
   }, [publications]);
   const handlePagination = (page: number) => {
-    updatePage(page - 1);
+    updatePage(page);
   };
 
   return (

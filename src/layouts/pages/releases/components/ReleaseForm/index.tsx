@@ -53,6 +53,7 @@ function getStepContent(
           data={article}
           refetch={fetchData}
           setSaveData={setSaveData}
+          disabled={article?.status === "PUBLISHED"}
         />
       );
     case 1:
@@ -61,6 +62,7 @@ function getStepContent(
           cb={handleNext}
           saveData={saveData}
           data={article}
+          disabled={article?.status === "PUBLISHED"}
           refetch={fetchData}
           setSaveData={setSaveData}
         />
@@ -74,6 +76,7 @@ function getStepContent(
           refetch={fetchData}
           setSaveData={setSaveData}
           setPayable={setPayable}
+          disabled={article?.status === "PUBLISHED"}
         />
       );
     case 3:
@@ -225,7 +228,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
           </MDTypography>
         </MDButton>
         <MDBox display="flex" alignItems="center">
-          {[2, 3].includes(activeStep) && (
+          {[2, 3].includes(activeStep) && article?.status === "DRAFT" && (
             <MDBox mr={2}>
               <MDTypography
                 fontWeight="regular"
@@ -254,10 +257,15 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
                 ? handleSend
                 : handleAddCredits
             }
+            sx={{
+              visibility: isLastStep && article?.status === "PUBLISHED" && "collapse",
+            }}
           >
             {isLastStep
               ? article?.totalCredits <= userWallet?.getUserWallet?.balance
-                ? "send"
+                ? article?.status === "DRAFT"
+                  ? "Submit"
+                  : "Resubmit"
                 : "Add Credits"
               : "next"}
           </MDButton>

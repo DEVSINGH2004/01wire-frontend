@@ -292,22 +292,28 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
         </MDBox>
-        <MDBox component={NavLink} to="/" pl={4} pb={2} pt={2.25} display="flex" alignItems="center"
-         sx={{
-          background: "#404040",
-          width: "100%"
-        }}>
-          {brand && (
-            <MDBox component="img" src={brand} alt="Brand" height="40px" width="80px" />
-          )}
-          <MDBox
+        <MDBox
+          component={NavLink}
+          to="/"
+          pb={2}
+          pt={2.25}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          sx={{
+            background: "#404040",
+            width: "100%",
+          }}
+        >
+          {brand && <MDBox component="img" src={brand} alt="Brand" height="40px" width="80px" />}
+          {/* <MDBox
             width={!brandName && "100%"}
             sx={(theme: any) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            {/* <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
+            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
               {brandName}
-            </MDTypography> */}
-          </MDBox>
+            </MDTypography>
+          </MDBox> */}
         </MDBox>
       </MDBox>
       <List>{renderRoutes}</List>
