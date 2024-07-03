@@ -14,6 +14,7 @@ const PublicationsList = ({
   selectedP,
   loading,
   disabled = false,
+  showCreditsColumn = true,
 }: {
   publications: any;
   updatePage?: any;
@@ -22,6 +23,7 @@ const PublicationsList = ({
   selectedP?: any;
   loading?: boolean;
   disabled?: boolean;
+  showCreditsColumn?: boolean;
 }) => {
   const columns = [
     {
@@ -140,18 +142,21 @@ const PublicationsList = ({
         );
       },
     },
-    {
-      Header: "Credits",
-      width: "10%",
-      accessor: "credits",
-      Cell: ({ value }: { value: any }) => {
-        return (
-          <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-            {value}
-          </MDTypography>
-        );
-      },
-    },
+
+    ...(showCreditsColumn
+      ? [
+          {
+            Header: "Credits",
+            width: "10%",
+            accessor: "credits",
+            Cell: ({ value }: { value: any }) => (
+              <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+                {value}
+              </MDTypography>
+            ),
+          },
+        ]
+      : []),
   ];
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   useEffect(() => {

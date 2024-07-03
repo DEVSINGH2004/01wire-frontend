@@ -11,6 +11,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
 export const makeColumns = (handleAction, handleUpdateStatus) => {
+  
   const columns = [
     {
       Header: "Category",
@@ -32,7 +33,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
         <Chip
           label={value}
           sx={{
-            color: "#fff",
+            color: "#000",
             minWidth: "140px",
             backgroundColor: "#EBEBEB",
           }}
@@ -80,7 +81,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 boxShadow: "none",
                 textAlign: "center",
                 borderRadius: "21px",
-                height: "34px",
+                height: "32px",
                 background: selected?.background,
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "transparent", // Remove hover border color

@@ -67,7 +67,7 @@ const Filters = ({
           <Autocomplete
             id="asynchronous-demo"
             size="small"
-            sx={{ width: 252, height: 42, mr: 2, }}
+            sx={{ width: 252, height: 42, mr: 2 }}
             onChange={handleClientChange}
             options={clientsOptions}
             value={
@@ -117,7 +117,15 @@ const Filters = ({
         </Box>
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <Box>
-            <FormControl sx={{ maxWidth: "455px", height: "42px", mr: 2 ,border: "1px solid lightgray",borderRadius:"7px"}}>
+            <FormControl
+              sx={{
+                maxWidth: "455px",
+                height: "42px",
+                mr: 2,
+                border: "1px solid lightgray",
+                borderRadius: "7px",
+              }}
+            >
               <Autocomplete
                 multiple
                 id="tags-outlined"
@@ -133,15 +141,23 @@ const Filters = ({
                   <MDInput
                     {...params}
                     sx={{
-                      height: "40px",
+                      height: "41px",
                       border: "none",
                       "& .MuiInputBase-root": {
-                        height: "40px",
+                        height: "41px",
                         overflow: "auto",
                         flexWrap: "nowrap",
                         border: "none",
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
+                        },
+                        "&::-webkit-scrollbar": {
+                          height: "4px",
+                          width: "0px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "lightgray",
+                          borderRadius: "7px",
                         },
                       },
                     }}
