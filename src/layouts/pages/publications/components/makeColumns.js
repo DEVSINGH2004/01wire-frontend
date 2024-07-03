@@ -93,7 +93,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 boxShadow: "none",
                 textAlign: "center",
                 borderRadius: "21px",
-                 height: "35px",
+                height: "35px",
                 color: "#fff",
                 background: selected?.background,
                 "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -108,7 +108,6 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                   borderRadius: "21px",
                   border: "none",
                   boxShadow: "none",
-                  background: selected?.background,
                   "&.Mui-focused, &.Mui-focusVisible": {
                     outline: "none", // Remove the default focus outline
                     boxShadow: "none", // Remove the shadow which causes the blue outline
@@ -119,7 +118,9 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 if (selectedStatus === "") {
                   return <em>Select an option</em>;
                 }
-                return selectedStatus ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase() : "";
+                return selectedStatus
+                  ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase()
+                  : "";
               }}
               onChange={(e) => handleUpdateStatus(row, e.target.value)}
             >

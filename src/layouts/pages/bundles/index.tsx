@@ -85,9 +85,7 @@ const Bundles = () => {
 
   useEffect(() => {
     const rows = data?.filterBundlesPaginated?.data || [];
-    console.log(rows,"rows")
     const columns = makeColumns(handleAction, handleUpdateStatus);
-
     setData({ rows, columns });
   }, [data]);
 

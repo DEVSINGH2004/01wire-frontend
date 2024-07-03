@@ -25,6 +25,7 @@ const PublicationsList = ({
   disabled?: boolean;
   showCreditsColumn?: boolean;
 }) => {
+  console.info("paginationInfo", paginationInfo);
   const columns = [
     {
       Header: "Title",
@@ -173,7 +174,7 @@ const PublicationsList = ({
           da: one?.da || one?.stats?.da,
           ur: one?.ur || one?.stats?.ur,
           dr: one?.dr || one?.stats?.dr,
-          linkType: one?.linkType,
+          linkType: one?.linkType?.split("_")?.join(" "),
           credits: one?.credits || one?.price,
         };
       });
@@ -181,7 +182,7 @@ const PublicationsList = ({
     }
   }, [publications]);
   const handlePagination = (page: number) => {
-    updatePage(page - 1);
+    updatePage(page);
   };
 
   return (

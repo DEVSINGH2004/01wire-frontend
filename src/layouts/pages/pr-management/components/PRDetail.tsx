@@ -58,38 +58,38 @@ const PRDetail = ({
         });
     }
   };
-  const filteredOptions = StatusOptions.filter(option => option.value !== 'SCHEDULED');
+  const filteredOptions = StatusOptions.filter((option) => option.value !== articleStatus);
   return (
     <>
-    <MDBox p={2}>
-      {loader && <MDCircularLoader overlayloader startLoader />}
-      {open && <RejectPR id={id} status={status} onClose={() => setOpen(false)} />}
-      <MDBox display="flex" alignItems="center">
-        <IconButton onClick={onClose}>
-          <ArrowBackIosIcon />
-        </IconButton>
+      <MDBox p={2}>
+        {loader && <MDCircularLoader overlayloader startLoader />}
+        {open && <RejectPR id={id} status={status} onClose={() => setOpen(false)} />}
+        <MDBox display="flex" alignItems="center">
+          <IconButton onClick={onClose}>
+            <ArrowBackIosIcon />
+          </IconButton>
+        </MDBox>
+        <MDBox mt={3}>
+          <ReviewNPublish id={id} />
+        </MDBox>
       </MDBox>
-      <MDBox mt={3}>
-        <ReviewNPublish id={id} />
-      </MDBox>
-    </MDBox>
-    <MDBox 
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      alignItem="center"
-      width="102.47%"
-      bgColor="white"
-      sx={{
-        position: "sticky",
-        bottom: 0,
-        marginLeft: "-1.2%",
-        padding: "2rem 1rem",
-        boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-        zIndex:1000,
-      }}
+      <MDBox
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        alignItem="center"
+        width="102.47%"
+        bgColor="white"
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          marginLeft: "-1.2%",
+          padding: "2rem 1rem",
+          boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+          zIndex: 1000,
+        }}
       >
-      <MDButton
+        <MDButton
           sx={{
             height: "40px !important",
             boxShadow:
@@ -130,7 +130,7 @@ const PRDetail = ({
           </MDBox>
         )}
       </MDBox>
-   </>
+    </>
   );
 };
 export default PRDetail;

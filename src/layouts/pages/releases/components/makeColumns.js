@@ -18,6 +18,7 @@ import MessageIcon from "@mui/icons-material/Message";
 // import { toast } from "react-toastify";
 
 export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
+  const role = localStorage.getItem("role");
   async function copyToClipboard(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -93,7 +94,8 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
             : ["REVIEW", "AWAITING_APPROVAL", "SCHEDULED"];
         return (
           <MDBox>
-            {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(selectedStatus) ? (
+            {role === "USER" ||
+            ["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(selectedStatus) ? (
               <Chip
                 label={selected?.label}
                 sx={{
@@ -105,7 +107,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                 }}
               />
             ) : (
-              <FormControl sx={{ width: "140px"}} size="medium">
+              <FormControl sx={{ width: "140px" }} size="medium">
                 <Select
                   id="demo-select-small"
                   displayEmpty
@@ -116,7 +118,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                     background: selected?.background,
                     height: "35px",
                     "& .MuiOutlinedInput-input": {
-                      color: "white",
+                      color: "#fff",
                       fontSize: "12px",
                       fontWeight: "400",
                       borderRadius: "21px",
@@ -128,7 +130,10 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                     if (selectedStatus === "") {
                       return <em>Select an option</em>;
                     }
-                    return selectedStatus ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase() : "";
+                    return selectedStatus
+                      ? selectedStatus.charAt(0).toUpperCase() +
+                          selectedStatus.slice(1).toLowerCase()
+                      : "";
                   }}
                   onChange={(e) => handleUpdateStatus(row, e.target.value)}
                 >

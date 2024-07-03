@@ -141,11 +141,12 @@ const Filters = ({
                   <MDInput
                     {...params}
                     sx={{
-                      height: "41px",
+                      height: "40px",
                       border: "none",
                       "& .MuiInputBase-root": {
-                        height: "41px",
-                        overflow: "auto",
+                        height: "40px",
+                        overflowX: "auto",
+                        overflowY: "hidden",
                         flexWrap: "nowrap",
                         border: "none",
                         "& .MuiOutlinedInput-notchedOutline": {

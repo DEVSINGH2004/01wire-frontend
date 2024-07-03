@@ -34,6 +34,7 @@ interface Props {
 }
 
 const getColumns = (setNoteOpen: any, setOpen?: any) => {
+  const role = localStorage.getItem("role");
   const columns = [
     {
       Header: "Title",
@@ -96,12 +97,12 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
               display: "flex",
             }}
           >
-            {!["PUBLISHED", "REJECTED"].includes(row.original?.status) && (
+            {!["PUBLISHED", "REJECTED"].includes(row.original?.status) && role === "ADMIN" && (
               <IconButton onClick={() => setNoteOpen({ id: row.original.id })}>
                 <img width={36} height={36} alt="navigate" src={StatusIcon} />
               </IconButton>
             )}
-            {["REJECTED"].includes(row.original?.status) && (
+            {["REJECTED", "AWAITING_APPROVAL"].includes(row.original?.status) && (
               <IconButton
                 color="primary"
                 onClick={() => {
@@ -272,6 +273,10 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
         setLoader(false);
       });
   };
+  const role = localStorage.getItem("role");
+  const isRejectedOrPublished = data?.filterOrdersPaginated?.data.some((one) => {
+    if (["PUBLISHED", "REJECTED"].includes(one?.status)) return true;
+  });
 
   return (
     <Dialog
@@ -320,46 +325,51 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
             </MDBox>
           )}
         </MDBox>
+        <></>
       </DialogContent>
-      <Divider />
-      <DialogActions
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-around",
-          width: "100%",
-        }}
-      >
-        <Box sx={{ margin: "auto" }}>
-          <input
-            accept=".xlsx, .xls"
-            style={{ display: "none" }}
-            id="upload-button-file"
-            multiple
-            type="file"
-            onChange={handleFileUpload}
-          />
-          <label htmlFor="upload-button-file">
+      {role === "ADMIN" && !isRejectedOrPublished && !loading && (
+        <>
+          <Divider />
+          <DialogActions
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            <Box sx={{ margin: "auto" }}>
+              <input
+                accept=".xlsx, .xls"
+                style={{ display: "none" }}
+                id="upload-button-file"
+                multiple
+                type="file"
+                onChange={handleFileUpload}
+              />
+              <label htmlFor="upload-button-file">
+                <MDButton
+                  sx={{ margin: "auto" }}
+                  variant="outlined"
+                  component="span"
+                  color="primary"
+                  // onClick={() => onClose()}
+                >
+                  Upload Template
+                </MDButton>
+              </label>
+            </Box>
             <MDButton
+              onClick={handleFileDownload}
               sx={{ margin: "auto" }}
-              variant="outlined"
-              component="span"
+              variant="contained"
               color="primary"
-              // onClick={() => onClose()}
             >
-              Upload Template
+              Download Template
             </MDButton>
-          </label>
-        </Box>
-        <MDButton
-          onClick={handleFileDownload}
-          sx={{ margin: "auto" }}
-          variant="contained"
-          color="primary"
-        >
-          Download Template
-        </MDButton>
-      </DialogActions>
+          </DialogActions>
+        </>
+      )}
       {noteModal && (
         <NoteModal
           orderPage

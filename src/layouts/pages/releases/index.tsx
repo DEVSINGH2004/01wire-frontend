@@ -29,6 +29,7 @@ import {
 } from "graphql/mutations/updateArticleStatus";
 import ArticleBundleModal from "./components/ArticleBundleModal";
 import MessageModal from "./components/MessageModal";
+import DeleteModal from "examples/DeleteModal";
 
 const PER_PAGE = 10;
 function Releases(): JSX.Element {
@@ -46,6 +47,7 @@ function Releases(): JSX.Element {
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
   const [open, setOpen] = useState<any>(false);
+  const [deleteConf, setDeleteConf] = useState<any>(false);
 
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
@@ -150,7 +152,24 @@ function Releases(): JSX.Element {
       [key]: val,
     });
   };
-
+  const handleDelete = (id: string) => {
+    if (!id) return;
+    setLoader(true);
+    deleteArticle({
+      variables: {
+        id,
+      },
+    })
+      .then((res) => {
+        setLoader(false);
+        refetch();
+        toast.success("Deleted Successfully.");
+      })
+      .catch((err) => {
+        toast.error(err?.message);
+        setLoader(false);
+      });
+  };
   const handleAction = (id: string, action: string, row: string) => {
     if (action === "edit") {
       setOpenForm(id);
@@ -158,6 +177,8 @@ function Releases(): JSX.Element {
       setViewModal(id);
     } else if (action === "navigate") {
       navigate(`/download-report?id=${id}`);
+    } else if (action === "delete") {
+      setDeleteConf(id);
     }
   };
   useEffect(() => {
@@ -245,6 +266,15 @@ function Releases(): JSX.Element {
       )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
       {open && <MessageModal message={open} onClose={() => setOpen(false)} />}
+      {deleteConf && (
+        <DeleteModal
+          onClose={() => setDeleteConf(null)}
+          handleSubmit={() => {
+            handleDelete(deleteConf);
+            setDeleteConf(null);
+          }}
+        />
+      )}
     </>
   );
 }
