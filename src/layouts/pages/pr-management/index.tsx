@@ -58,6 +58,7 @@ const PRManagement = () => {
   const [viewModal, setViewModal] = useState<any>(null);
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [articleStatus, setStatus] = useState<any>(null);
+  const [pageSize, setSize] = useState<number>(10);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const getStatusArr = (arr: any) => {
     if (!arr?.length) return [];
@@ -86,7 +87,7 @@ const PRManagement = () => {
     getArticles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: 0,
         },
         filterInput: {},
@@ -94,7 +95,7 @@ const PRManagement = () => {
     })
       .then(() => setInitLoader(false))
       .catch(() => setInitLoader(false));
-  }, []);
+  }, [pageSize]);
 
   useEffect(() => {
     if (filters) {
@@ -187,7 +188,7 @@ const PRManagement = () => {
     getArticles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput,
@@ -243,7 +244,9 @@ const PRManagement = () => {
                 table={tableData}
                 showHeader
                 loading={loading}
+                setSize={setSize}
                 paginationInfo={paginationInfo || {}}
+                entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
               />
             </Box>
           ) : (

@@ -21,6 +21,8 @@ import Pagination from "@mui/material/Pagination";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import PaginationItem from "@mui/material/PaginationItem";
+import Autocomplete from "@mui/material/Autocomplete";
+import MDInput from "components/MDInput";
 
 // Declaring props types for DataTable
 interface Props {
@@ -48,6 +50,7 @@ interface Props {
   handlePagination?: any;
   onSelectedRowsChange?: (selectedRows: any[]) => void;
   defaultSelectedRows?: any;
+  setSize?: (val: any) => void;
 }
 
 function DataTable({
@@ -64,6 +67,7 @@ function DataTable({
   handlePagination,
   onSelectedRowsChange,
   defaultSelectedRows = [],
+  setSize,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -105,7 +109,12 @@ function DataTable({
   useEffect(() => setPageSize(defaultValue || 10), [defaultValue]);
 
   // Set the entries per page value based on the select value
-  const setEntriesPerPage = (value: any) => setPageSize(value);
+  const setEntriesPerPage = (value: any) => {
+    setPageSize(value);
+    if (setSize) {
+      setSize(value);
+    }
+  };
 
   // Render the paginations
 
@@ -178,6 +187,28 @@ function DataTable({
             },
           }}
         >
+          {entriesPerPage ? (
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+              {entriesPerPage && (
+                <MDBox display="flex" alignItems="center">
+                  <Autocomplete
+                    disableClearable
+                    value={pageSize.toString()}
+                    options={entries}
+                    onChange={(event, newValue) => {
+                      setEntriesPerPage(parseInt(newValue, 10));
+                    }}
+                    size="small"
+                    sx={{ width: "5rem" }}
+                    renderInput={(params) => <MDInput {...params} />}
+                  />
+                  <MDTypography variant="caption" color="secondary">
+                    &nbsp;&nbsp;entries per page
+                  </MDTypography>
+                </MDBox>
+              )}
+            </MDBox>
+          ) : null}
           <Table {...getTableProps()}>
             {showHeader && (
               <MDBox component="thead" bgColor="#F8F8FC">
