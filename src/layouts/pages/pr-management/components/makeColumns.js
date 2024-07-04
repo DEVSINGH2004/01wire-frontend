@@ -55,6 +55,11 @@ export const statusOptions = [
     label: "Published",
     background: "#47BC4C",
   },
+  {
+    value: "PENDING",
+    label: "Pending",
+    background: "#747474",
+  },
 ];
 
 export const makeColumns = (
@@ -168,20 +173,20 @@ export const makeColumns = (
         );
       },
     },
-    {
-      Header: "Updated At",
-      width: "10%",
-      accessor: "updatedAt",
-      Cell: ({ value }) => {
-        return (
-          <MDBox>
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-              {dayjs(value).format("DD MMM YYYY")}
-            </MDTypography>
-          </MDBox>
-        );
-      },
-    },
+    // {
+    //   Header: "Updated At",
+    //   width: "10%",
+    //   accessor: "updatedAt",
+    //   Cell: ({ value }) => {
+    //     return (
+    //       <MDBox>
+    //         <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+    //           {dayjs(value).format("DD MMM YYYY")}
+    //         </MDTypography>
+    //       </MDBox>
+    //     );
+    //   },
+    // },
     {
       Header: "Status",
       width: "10%",
@@ -257,6 +262,7 @@ export const makeColumns = (
     {
       Header: "Action",
       width: "20%",
+      align: "right",
       Cell: ({ value, row }) => {
         return (
           <MDBox
