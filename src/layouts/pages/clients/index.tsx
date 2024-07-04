@@ -41,6 +41,7 @@ function Clients(): JSX.Element {
   const [tableData, setData] = useState<any>([]);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [deleteConf, setDeleteConf] = useState<any>(null);
+  const [pageSize, setSize] = useState<number>(10);
   const [deleteClient, { loading: deleteLoader }] = useMutation<IDeleteClientVars>(DELETE_CLIENT);
   const [getClients, { data: clientsData, loading, refetch }] = useLazyQuery<
     IGetClients,
@@ -58,7 +59,7 @@ function Clients(): JSX.Element {
     getClients({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: 0,
         },
         filterInput: {},
@@ -66,7 +67,7 @@ function Clients(): JSX.Element {
     })
       .then(() => setLoader(false))
       .catch(() => setLoader(false));
-  }, []);
+  }, [pageSize]);
 
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
@@ -109,7 +110,7 @@ function Clients(): JSX.Element {
     getClients({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput: {},
@@ -122,7 +123,7 @@ function Clients(): JSX.Element {
       {deleteLoader && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar text="Add New Client" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
-        <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "570px" }}>
+        <MDBox pt={openForm ? 6 : 2} sx={{ minHeight: "570px" }}>
           {loader ? (
             <Card sx={{ minHeight: "400px" }}>
               <MDCircularLoader overlayloader startLoader />
@@ -138,6 +139,9 @@ function Clients(): JSX.Element {
               table={tableData}
               showHeader
               paginationInfo={paginationInfo || {}}
+              entriesPerPage={{ defaultValue: pageSize }}
+              setSize={setSize}
+              maxHeight="calc(100vh - 10rem)"
             />
           ) : (
             <Card sx={{ minHeight: "400px" }}>

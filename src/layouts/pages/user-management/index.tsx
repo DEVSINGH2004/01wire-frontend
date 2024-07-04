@@ -23,6 +23,7 @@ const UserManagement = () => {
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [intLoader, setInitLoader] = useState<boolean>(false);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [pageSize, setSize] = useState<number>(10);
 
   const [getUsers, { data, loading }] = useLazyQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
     fetchPolicy: "network-only",
@@ -54,13 +55,13 @@ const UserManagement = () => {
         filterInput: {},
         paginationInput: {
           currentPage: 0,
-          perPage: PER_PAGE,
+          perPage: pageSize,
         },
       },
     }).then(() => {
       setInitLoader(false);
     });
-  }, []);
+  }, [pageSize]);
 
   useEffect(() => {
     const rows = data?.filterUsersPaginated?.data || [];
@@ -84,7 +85,7 @@ const UserManagement = () => {
     getUsers({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput: {
@@ -128,6 +129,9 @@ const UserManagement = () => {
               table={tableData}
               showHeader
               paginationInfo={paginationInfo}
+              entriesPerPage={{ defaultValue: pageSize }}
+              setSize={setSize}
+              maxHeight="calc(100vh - 14rem)"
             />
           ) : (
             <Card sx={{ minHeight: "300px" }}>

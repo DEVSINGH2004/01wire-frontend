@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 // @mui material components
@@ -23,6 +23,8 @@ import DisplayBundles from "../DisplayBundles";
 import PublicationsList from "../PublicationsList";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
 import BundlePublicationModal from "../BundlePublicationModal";
+import debounce from "lodash.debounce";
+
 const perPage = 10;
 interface Props {
   cb?: any;
@@ -65,8 +67,10 @@ function PlanNPayment({
   const [selectedCategory, setCategory] = useState<string | null>();
   const [currentPage, setPage] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPublications, setFilteredPublications] = useState(null);
   const [open, setOpen] = useState<any>(false);
+  const [pageSize, setSize] = useState<number>(50);
+  const [filter, setFilter] = useState<any>({});
+
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
       paginationInput: {
@@ -85,10 +89,11 @@ function PlanNPayment({
     variables: {
       filterInput: {
         filterIds: bundlePids,
+        ...filter,
       },
       paginationInput: {
         currentPage: currentPage,
-        perPage: perPage,
+        perPage: pageSize,
       },
     },
     skip: disabled,
@@ -177,20 +182,22 @@ function PlanNPayment({
   const handleCategorySelection = (value: string) => {
     setCategory(value);
   };
+  const checkTitleAvail = useCallback(
+    debounce((val: string) => {
+      setFilter({ title: val });
+    }, 500),
+    []
+  );
   const handleSearchChange = (event: any) => {
-    setSearchTerm(event.target.value);
+    const searchVal = event.target.value || "";
+    setSearchTerm(searchVal);
+    checkTitleAvail(searchVal);
   };
   useEffect(() => {
     if (!selectedCategory && bundlesData?.filterBundlesPaginated?.data?.length) {
       setCategory(bundlesData?.filterBundlesPaginated?.data?.[0]?.category);
     }
   }, [bundlesData]);
-  useEffect(() => {
-    const filteredItems = currentPublications.filter((item: any) =>
-      item?.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredPublications(filteredItems);
-  }, [searchTerm]);
 
   function calculateTotalPrice(arr: any[]): number {
     return arr.reduce((total, one) => total + (one?.price || one?.credits || 0), 0);
@@ -205,6 +212,7 @@ function PlanNPayment({
       setPayable(totalCredits);
     }
   }, [totalCredits]);
+
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -277,13 +285,18 @@ function PlanNPayment({
           </MDBox>
           <MDBox mt={3}>
             <PublicationsList
-              publications={searchTerm ? filteredPublications : currentPublications}
+              publications={currentPublications}
               updatePage={setPage}
               paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
               onSelect={!disabled && handleSelectedRowsChange}
               selectedP={selecetedP}
               loading={pLoading}
               disabled={disabled}
+              entriesPerPage={
+                disabled ? false : { defaultValue: pageSize, entries: [5, 10, 20, 40, 50] }
+              }
+              setSize={setSize}
+              maxHeight
             />
           </MDBox>
         </MDBox>

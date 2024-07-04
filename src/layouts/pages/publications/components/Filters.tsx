@@ -13,21 +13,19 @@ import { visibilityOptions } from "../../../../constants";
 import DownArrow from "assets/images/down-arrow.svg";
 import MDTypography from "components/MDTypography";
 
-
-
 const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any }) => {
   const [q, setQ] = useState<string>("");
 
-  const checkPrIdAvail = useCallback(
+  const checkTitleAvail = useCallback(
     debounce((val: string) => {
-      handleFilters("prId", Number(val));
+      handleFilters("title", val);
     }, 500),
     []
   );
   const handleInputChange = (evt: any) => {
     const searchTerm = evt.target.value || "";
     setQ(searchTerm);
-    checkPrIdAvail(searchTerm);
+    checkTitleAvail(searchTerm);
   };
 
   return (
@@ -66,9 +64,9 @@ const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any 
             )}
             onChange={(e) => e.target.value && handleFilters("visibility", e.target.value)}
           >
-            <MenuItem value="" disabled sx={{color:"#606F7B"}}>
-            <MDTypography fontSize="15px" sx={{color:"#606F7B"}}>
-              Visibility
+            <MenuItem value="" disabled sx={{ color: "#606F7B" }}>
+              <MDTypography fontSize="15px" sx={{ color: "#606F7B" }}>
+                Visibility
               </MDTypography>
             </MenuItem>
             {visibilityOptions.map((option) => (

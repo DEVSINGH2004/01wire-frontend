@@ -48,7 +48,7 @@ function Releases(): JSX.Element {
   const [viewModal, setViewModal] = useState<any>(null);
   const [open, setOpen] = useState<any>(false);
   const [deleteConf, setDeleteConf] = useState<any>(false);
-
+  const [pageSize, setSize] = useState<number>(10);
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [deleteArticle] = useMutation<IDeleteArticleVars>(DELETE_ARTICLE);
 
@@ -90,7 +90,7 @@ function Releases(): JSX.Element {
     getArticles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: 0,
         },
         filterInput: {},
@@ -98,7 +98,7 @@ function Releases(): JSX.Element {
     })
       .then(() => setInitLoader(false))
       .catch(() => setInitLoader(false));
-  }, []);
+  }, [pageSize]);
 
   useEffect(() => {
     if (filters) {
@@ -202,7 +202,7 @@ function Releases(): JSX.Element {
     getArticles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput,
@@ -226,7 +226,7 @@ function Releases(): JSX.Element {
             />
           </>
         )}
-        <MDBox pt={openForm ? 6 : 2} pb={3} sx={{ minHeight: "520px" }}>
+        <MDBox pt={openForm ? 6 : 2} sx={{ minHeight: "520px" }}>
           {initLoading || loading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
@@ -244,6 +244,9 @@ function Releases(): JSX.Element {
                 showHeader
                 loading={loading}
                 paginationInfo={paginationInfo || {}}
+                entriesPerPage={{ defaultValue: pageSize }}
+                setSize={setSize}
+                maxHeight="calc(100vh - 14rem)"
               />
             </MDBox>
           ) : (

@@ -295,17 +295,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
         <MDBox
           component={NavLink}
           to="/"
-          pb={2}
-          pt={2.25}
+          pt={2}
           display="flex"
           alignItems="center"
           justifyContent="center"
-          sx={{
-            background: "#404040",
-            width: "100%",
-          }}
         >
-          {brand && <MDBox component="img" src={brand} alt="Brand" height="40px" width="80px" />}
+          {brand && <MDBox component="img" src={brand} alt="Brand" height="65px" width="130px" />}
           {/* <MDBox
             width={!brandName && "100%"}
             sx={(theme: any) => sidenavLogoLabel(theme, { miniSidenav })}

@@ -316,6 +316,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
               canSearch
               table={tableData}
               showHeader
+              entriesPerPage={false}
               paginationInfo={paginationInfo}
               handlePagination={handlePagination}
             />

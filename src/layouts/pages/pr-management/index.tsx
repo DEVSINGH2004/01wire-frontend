@@ -58,6 +58,7 @@ const PRManagement = () => {
   const [viewModal, setViewModal] = useState<any>(null);
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [articleStatus, setStatus] = useState<any>(null);
+  const [pageSize, setSize] = useState<number>(10);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const getStatusArr = (arr: any) => {
     if (!arr?.length) return [];
@@ -86,7 +87,7 @@ const PRManagement = () => {
     getArticles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: 0,
         },
         filterInput: {},
@@ -94,7 +95,7 @@ const PRManagement = () => {
     })
       .then(() => setInitLoader(false))
       .catch(() => setInitLoader(false));
-  }, []);
+  }, [pageSize]);
 
   useEffect(() => {
     if (filters) {
@@ -187,7 +188,7 @@ const PRManagement = () => {
     getArticles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput,
@@ -213,7 +214,7 @@ const PRManagement = () => {
           </>
         )}
 
-        <MDBox px={2} pt={openForm ? 3 : 2} pb={3} sx={{ flex: 1 }}>
+        <MDBox px={2} pt={openForm ? 3 : 2} sx={{ flex: 1 }}>
           {initLoading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
@@ -243,7 +244,10 @@ const PRManagement = () => {
                 table={tableData}
                 showHeader
                 loading={loading}
+                setSize={setSize}
                 paginationInfo={paginationInfo || {}}
+                entriesPerPage={{ defaultValue: pageSize }}
+                maxHeight="calc(100vh - 15rem)"
               />
             </Box>
           ) : (

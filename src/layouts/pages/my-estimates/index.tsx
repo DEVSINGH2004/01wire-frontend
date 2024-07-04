@@ -16,18 +16,17 @@ import DataTable from "../pr-management/components/DataTable";
 import { truncateString } from "utils/helpers";
 import ShareIcon from "assets/images/icons/shareIcon.svg";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
-import EditIcon from "assets/images/icons/editIcon.svg";
+// import EditIcon from "assets/images/icons/editIcon.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import MDButton from "components/MDButton";
 import DeleteModal from "examples/DeleteModal";
-
-const perPage = 200;
 
 const columns = [
   {
     Header: "Title",
     accessor: "title",
     width: "40%",
+    align: "left",
     Cell: ({ value }: { value: "string" }) => (
       <MDTypography fontWeight="medium" sx={{ fontSize: "16px", fontFamily: "Roboto" }}>
         {truncateString(value, 35)}
@@ -105,12 +104,14 @@ const MyEstimates = () => {
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
+  const [pageSize, setSize] = useState<number>(10);
+
   const { data, refetch, loading } = useQuery<IGetEstimates, IGetEstimatesVars>(GET_ESTIMATES, {
     variables: {
       filterInput: {},
       paginationInput: {
         currentPage: currentPage,
-        perPage: perPage,
+        perPage: pageSize,
       },
     },
     fetchPolicy: "network-only",
@@ -212,8 +213,11 @@ const MyEstimates = () => {
     }
   }, [data]);
   const handlePagination = (page: number) => {
-    setCurrentPage(page - 1);
+    setCurrentPage(page);
   };
+  useEffect(() => {
+    refetch();
+  }, [currentPage]);
   return (
     <MDBox>
       <DashboardNavbar text="My Estimates" />
@@ -234,8 +238,11 @@ const MyEstimates = () => {
             canSearch
             table={tableData}
             showHeader
-            paginationInfo={data?.filterEstimatesPaginated?.paginationInfo}
+            paginationInfo={data?.filterEstimatesPaginated?.paginationInfo || {}}
             handlePagination={handlePagination}
+            maxHeight="calc(100vh - 10.5rem)"
+            entriesPerPage={{ defaultValue: pageSize }}
+            setSize={setSize}
           />
         ) : (
           <MDBox sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

@@ -45,7 +45,11 @@ const BundlePublicationModal = ({ onClose, currentPublications }: Props) => {
           textAlign: "center",
         }}
       >
-        <PublicationsList showCreditsColumn={false} publications={currentPublications} />
+        <PublicationsList
+          entriesPerPage={false}
+          showCreditsColumn={false}
+          publications={currentPublications}
+        />
       </DialogContent>
     </Dialog>
   );

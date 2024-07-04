@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { AppBar, Grid, Toolbar, useScrollTrigger } from "@mui/material";
+import React, { useRef } from "react";
+import { AppBar, Toolbar, useScrollTrigger } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
@@ -12,6 +13,8 @@ import {
 } from "graphql/queries/getArticleById";
 import DisplayImage from "components/DisplayImage";
 import Link from "@mui/material/Link";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { toast } from "react-toastify";
 
 const ShareReleases = () => {
   const { id } = useParams();
@@ -31,6 +34,23 @@ const ShareReleases = () => {
     mediaContact = {},
     content = "",
   }: any = data?.getArticleById || {};
+
+  const textRef = useRef<HTMLDivElement>(null);
+
+  const handleCopied = () => {
+    if (textRef.current) {
+      const range = document.createRange();
+      range.selectNodeContents(textRef.current);
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand("copy");
+        selection.removeAllRanges();
+        toast.success("Copied to clipboard");
+      }
+    }
+  };
   return (
     <MDBox>
       <AppBar
@@ -49,112 +69,138 @@ const ShareReleases = () => {
           </MDBox>
         </Toolbar>
       </AppBar>
-      <MDBox sx={{ minHeight: "400px", marginTop: "116px" }}>
+      <MDBox sx={{ minHeight: "400px", marginTop: "116px" }} ref={textRef}>
         {loading ? (
           <MDCircularLoader startLoader />
         ) : id ? (
-          <MDBox sx={{ padding: "40px 180px" }}>
-            <MDTypography fontSize="50px" color="black" fontWeight="bold">
-              {title}
-            </MDTypography>
-            <MDBox sx={{ marginTop: "30px" }}>
-              <DisplayImage
-                src={featureImage}
-                height="550px"
-                width="100%"
-                alt={"img"}
-                styles={{ borderRadius: "10px" }}
-              />
+          <>
+            <MDBox sx={{ padding: "40px 180px" }}>
+              <MDTypography fontSize="50px" color="black" fontWeight="bold">
+                {title}
+              </MDTypography>
+              <MDBox sx={{ marginTop: "30px" }}>
+                <DisplayImage
+                  src={featureImage}
+                  height="550px"
+                  width="100%"
+                  alt={"img"}
+                  styles={{ borderRadius: "10px" }}
+                />
+              </MDBox>
+              <MDTypography sx={{ marginTop: "40px" }} fontSize="20px">
+                {data?.getArticleById?.summary}
+              </MDTypography>
+              <MDTypography
+                fontSize="35px"
+                color="black"
+                fontWeight="bold"
+                sx={{ marginTop: "20px" }}
+              >
+                Introduction
+              </MDTypography>
+
+              <MDTypography sx={{ marginTop: "20px" }} fontSize="20px">
+                {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")}
+              </MDTypography>
+
+              <MDBox
+                sx={{
+                  minHeight: "300px",
+                  marginTop: "50px",
+                  width: "100%",
+                  boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
+                  borderRadius: "10px",
+                  textAlign: "center",
+                  padding: "20px 0px",
+                }}
+                bgColor="white"
+              >
+                <MDTypography
+                  fontSize="20px"
+                  color="black"
+                  fontWeight="bold"
+                  sx={{ paddingBottom: "10px" }}
+                >
+                  Media Contact
+                </MDTypography>
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Name : {mediaContact?.name}
+                </MDTypography>
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Email : {mediaContact?.email}
+                </MDTypography>
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Phone : {mediaContact?.phone}
+                </MDTypography>
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Website : {mediaContact?.website}
+                </MDTypography>
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Address : {mediaContact?.address}
+                </MDTypography>
+
+                <MDTypography
+                  fontSize="20px"
+                  color="black"
+                  fontWeight="bold"
+                  sx={{ padding: "30px 0px 10px 0px" }}
+                >
+                  Social Media
+                </MDTypography>
+
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Facebook :{" "}
+                  <Link
+                    sx={{
+                      cursor: "pointer",
+                    }}
+                    href={mediaContact?.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {mediaContact?.facebook}
+                  </Link>
+                </MDTypography>
+                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                  Instagram :{" "}
+                  <Link
+                    sx={{
+                      cursor: "pointer",
+                    }}
+                    href={mediaContact?.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {mediaContact?.instagram}
+                  </Link>
+                </MDTypography>
+              </MDBox>
             </MDBox>
-            <MDTypography sx={{ marginTop: "40px" }} fontSize="20px">
-              {data?.getArticleById?.summary}
-            </MDTypography>
-            <MDTypography
-              fontSize="35px"
-              color="black"
-              fontWeight="bold"
-              sx={{ marginTop: "20px" }}
-            >
-              Introduction
-            </MDTypography>
-
-            <MDTypography sx={{ marginTop: "20px" }} fontSize="20px">
-              {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")}
-            </MDTypography>
-
             <MDBox
-              sx={{
-                minHeight: "300px",
-                marginTop: "50px",
-                width: "100%",
-                boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
-                borderRadius: "10px",
-                textAlign: "center",
-                padding: "20px 0px",
-              }}
-              bgColor="white"
+              display="flex"
+              justifyContent="flex-end"
+              alignItem="center"
+              sx={{ position: "sticky", bottom: 40 }}
             >
-              <MDTypography
-                fontSize="20px"
-                color="black"
-                fontWeight="bold"
-                sx={{ paddingBottom: "10px" }}
+              <MDBox
+                display="flex"
+                justifyContent="center"
+                bgColor="rgba(255, 255, 255, 0.8)"
+                borderRadius="50%"
+                shadow="rgba(0, 0, 0, 0.1) 0px 10px 50px"
+                mr={3}
+                pt={1.8}
+                sx={{
+                  width: "50px",
+                  height: "50px",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCopied()}
               >
-                Media Contact
-              </MDTypography>
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Name : {mediaContact?.name}
-              </MDTypography>
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Email : {mediaContact?.email}
-              </MDTypography>
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Phone : {mediaContact?.phone}
-              </MDTypography>
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Website : {mediaContact?.website}
-              </MDTypography>
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Address : {mediaContact?.address}
-              </MDTypography>
-
-              <MDTypography
-                fontSize="20px"
-                color="black"
-                fontWeight="bold"
-                sx={{ padding: "30px 0px 10px 0px" }}
-              >
-                Social Media
-              </MDTypography>
-
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Facebook :{" "}
-                <Link
-                  sx={{
-                    cursor: "pointer",
-                  }}
-                  href={mediaContact?.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {mediaContact?.facebook}
-                </Link>
-              </MDTypography>
-              <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Instagram :{" "}
-                <Link
-                  sx={{
-                    cursor: "pointer",
-                  }}
-                  href={mediaContact?.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {mediaContact?.instagram}
-                </Link>
-              </MDTypography>
+                <ContentCopyIcon />
+              </MDBox>
             </MDBox>
-          </MDBox>
+          </>
         ) : (
           <MDBox
             sx={{

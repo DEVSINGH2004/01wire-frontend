@@ -21,6 +21,8 @@ import Pagination from "@mui/material/Pagination";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import PaginationItem from "@mui/material/PaginationItem";
+import Autocomplete from "@mui/material/Autocomplete";
+import MDInput from "components/MDInput";
 
 // Declaring props types for DataTable
 interface Props {
@@ -28,7 +30,7 @@ interface Props {
     | false
     | {
         defaultValue: number;
-        entries: number[];
+        entries?: number[];
       };
   canSearch?: boolean;
   showTotalEntries?: boolean;
@@ -48,6 +50,8 @@ interface Props {
   handlePagination?: any;
   onSelectedRowsChange?: (selectedRows: any[]) => void;
   defaultSelectedRows?: any;
+  setSize?: (val: any) => void;
+  maxHeight?: any;
 }
 
 function DataTable({
@@ -64,6 +68,8 @@ function DataTable({
   handlePagination,
   onSelectedRowsChange,
   defaultSelectedRows = [],
+  setSize,
+  maxHeight,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -102,10 +108,15 @@ function DataTable({
   const canNextPage = paginationInfo?.currentPage < paginationInfo?.pageCount;
 
   // Set the default value for the entries per page when component mounts
-  useEffect(() => setPageSize(defaultValue || 10), [defaultValue]);
+  useEffect(() => setPageSize(defaultValue || 100), [defaultValue]);
 
   // Set the entries per page value based on the select value
-  const setEntriesPerPage = (value: any) => setPageSize(value);
+  const setEntriesPerPage = (value: any) => {
+    setPageSize(value);
+    if (setSize) {
+      setSize(value);
+    }
+  };
 
   // Render the paginations
 
@@ -171,16 +182,42 @@ function DataTable({
           sx={{
             boxShadow: "none",
             overflow: "auto",
-            maxHeight: "calc(100vh - 16rem)",
+            maxHeight: maxHeight,
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": {
               display: "none",
             },
           }}
         >
+          {entriesPerPage ? (
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+              {entriesPerPage && (
+                <MDBox display="flex" alignItems="center">
+                  <Autocomplete
+                    disableClearable
+                    value={pageSize.toString()}
+                    options={entries}
+                    onChange={(event, newValue) => {
+                      setEntriesPerPage(parseInt(newValue, 10));
+                    }}
+                    size="small"
+                    sx={{ width: "5rem" }}
+                    renderInput={(params) => <MDInput {...params} />}
+                  />
+                  <MDTypography variant="caption" color="secondary">
+                    &nbsp;&nbsp;entries per page
+                  </MDTypography>
+                </MDBox>
+              )}
+            </MDBox>
+          ) : null}
           <Table {...getTableProps()}>
             {showHeader && (
-              <MDBox component="thead" bgColor="#F8F8FC">
+              <MDBox
+                component="thead"
+                bgColor="#F8F8FC"
+                sx={{ position: "sticky", top: -1, left: 0, zIndex: 1000 }}
+              >
                 {headerGroups.map((headerGroup: any, key: any) => (
                   <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
                     {onSelectedRowsChange && (
@@ -203,7 +240,7 @@ function DataTable({
                         <MDBox
                           position="relative"
                           textAlign={column.align}
-                          align={column.align ? column.align : "left"}
+                          align={column.align ? column.align : "center"}
                           color="#606F7B"
                           sx={() => ({
                             fontSize: "14px",
@@ -244,7 +281,7 @@ function DataTable({
                       <DataTableBodyCell
                         key={key}
                         noBorder={noEndBorder && rows.length - 1 === key}
-                        align={cell.column.align ? cell.column.align : "left"}
+                        align={cell.column.align ? cell.column.align : "center"}
                         {...cell.getCellProps()}
                       >
                         {cell.render("Cell")}
@@ -274,9 +311,6 @@ function DataTable({
             onClick={() => handlePagination(paginationInfo?.currentPage - 1)}
           >
             <Box display="flex" justifyContent="center" alignItems="center" color="#fff">
-              {/* <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
-                chevron_left
-              </Icon> */}
               <MDTypography fontSize="14px" sx={{ color: "#000" }}>
                 Prev
               </MDTypography>
