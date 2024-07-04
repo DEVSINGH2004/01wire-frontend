@@ -59,7 +59,7 @@ module.exports = {
       "ignorePackages",
       { js: "never", jsx: "never", ts: "never", tsx: "never" },
     ],
-    "react/jsx-filename-extension": ["warn", { extensions: [".tsx"] }],
+    "react/jsx-filename-extension": ["warn", { extensions: [".js",".tsx",".jsx"] }],
   },
   settings: {
     react: {
