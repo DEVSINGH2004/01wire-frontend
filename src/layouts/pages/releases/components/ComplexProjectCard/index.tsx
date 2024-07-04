@@ -110,7 +110,7 @@ function ComplexProjectCard({
               >
                 <img src={TrendingUpIcon} height="16px" width="16px" />
                 <MDTypography ml="3px" fontWeight={400} fontSize="14px">
-                  {`${traffic} Traffic`}
+                  {`${stats?.traffic}`}
                 </MDTypography>
               </MDBox>
               {stats.map((one: any, i: Key) => {
