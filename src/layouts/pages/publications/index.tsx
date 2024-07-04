@@ -189,7 +189,7 @@ const Publications = () => {
               table={tableData}
               showHeader
               paginationInfo={paginationInfo || {}}
-              entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+              entriesPerPage={{ defaultValue: pageSize }}
               setSize={setSize}
               maxHeight="calc(100vh - 14.5rem)"
             />

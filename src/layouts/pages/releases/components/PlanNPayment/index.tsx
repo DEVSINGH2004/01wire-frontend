@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 // @mui material components
@@ -11,7 +11,7 @@ import MDButton from "components/MDButton";
 // import MDInput from "components/MDInput";
 import MDCircularLoader from "components/MDCircularLoader";
 import MDInput from "components/MDInput";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import {
   GET_PUBLICATIONS,
@@ -23,6 +23,8 @@ import DisplayBundles from "../DisplayBundles";
 import PublicationsList from "../PublicationsList";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
 import BundlePublicationModal from "../BundlePublicationModal";
+import debounce from "lodash.debounce";
+
 const perPage = 10;
 interface Props {
   cb?: any;
@@ -65,10 +67,9 @@ function PlanNPayment({
   const [selectedCategory, setCategory] = useState<string | null>();
   const [currentPage, setPage] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPublications, setFilteredPublications] = useState(null);
   const [open, setOpen] = useState<any>(false);
-  const [pageSize, setSize] = useState<number>(10);
-  const [paginationInfo, setPaginationInfo] = useState<any>({});
+  const [pageSize, setSize] = useState<number>(50);
+  const [filter, setFilter] = useState<any>({});
 
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
@@ -80,51 +81,23 @@ function PlanNPayment({
     fetchPolicy: "network-only",
     skip: disabled,
   });
-  // const {
-  //   data: publicationsData,
-  //   refetch: refetchPublications,
-  //   loading: pLoading,
-  // } = useQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
-  //   variables: {
-  //     filterInput: {
-  //       filterIds: bundlePids,
-  //     },
-  //     paginationInput: {
-  //       currentPage: currentPage,
-  //       perPage: perPage,
-  //     },
-  //   },
-  //   skip: disabled,
-  // });
-
-  const [
-    getPublication,
-    { data: publicationsData, loading: pLoading, refetch: refetchPublications },
-  ] = useLazyQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
-    // skip: !!id,
-    fetchPolicy: "network-only",
-    onCompleted: (res) => {
-      setPaginationInfo(res?.filterPublicationsPaginated?.paginationInfo);
-    },
-  });
-
-  useEffect(() => {
-    setLoading(true);
-    getPublication({
-      variables: {
-        paginationInput: {
-          perPage: pageSize,
-          currentPage: 0,
-        },
-        filterInput: {
-          filterIds: bundlePids,
-        },
+  const {
+    data: publicationsData,
+    refetch: refetchPublications,
+    loading: pLoading,
+  } = useQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
+    variables: {
+      filterInput: {
+        filterIds: bundlePids,
+        ...filter,
       },
-    })
-      .then(() => setLoading(false))
-      .catch(() => setLoading(false));
-  }, [pageSize]);
-
+      paginationInput: {
+        currentPage: currentPage,
+        perPage: pageSize,
+      },
+    },
+    skip: disabled,
+  });
   const currentPublications: any =
     (disabled && data?.publicationInfo) ||
     publicationsData?.filterPublicationsPaginated?.data ||
@@ -209,20 +182,22 @@ function PlanNPayment({
   const handleCategorySelection = (value: string) => {
     setCategory(value);
   };
+  const checkTitleAvail = useCallback(
+    debounce((val: string) => {
+      setFilter({ title: val });
+    }, 500),
+    []
+  );
   const handleSearchChange = (event: any) => {
-    setSearchTerm(event.target.value);
+    const searchVal = event.target.value || "";
+    setSearchTerm(searchVal);
+    checkTitleAvail(searchVal);
   };
   useEffect(() => {
     if (!selectedCategory && bundlesData?.filterBundlesPaginated?.data?.length) {
       setCategory(bundlesData?.filterBundlesPaginated?.data?.[0]?.category);
     }
   }, [bundlesData]);
-  useEffect(() => {
-    const filteredItems = currentPublications.filter((item: any) =>
-      item?.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredPublications(filteredItems);
-  }, [searchTerm]);
 
   function calculateTotalPrice(arr: any[]): number {
     return arr.reduce((total, one) => total + (one?.price || one?.credits || 0), 0);
@@ -238,18 +213,6 @@ function PlanNPayment({
     }
   }, [totalCredits]);
 
-  const handlePagination = (page: number) => {
-    getPublication({
-      variables: {
-        paginationInput: {
-          perPage: pageSize,
-          currentPage: page,
-        },
-        filterInput: {},
-      },
-    });
-    setPage(page);
-  };
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -322,16 +285,18 @@ function PlanNPayment({
           </MDBox>
           <MDBox mt={3}>
             <PublicationsList
-              publications={searchTerm ? filteredPublications : currentPublications}
+              publications={currentPublications}
               updatePage={setPage}
               paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
               onSelect={!disabled && handleSelectedRowsChange}
               selectedP={selecetedP}
               loading={pLoading}
               disabled={disabled}
-              handlePagination={handlePagination}
-              entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+              entriesPerPage={
+                disabled ? false : { defaultValue: pageSize, entries: [5, 10, 20, 40, 50] }
+              }
               setSize={setSize}
+              maxHeight
             />
           </MDBox>
         </MDBox>

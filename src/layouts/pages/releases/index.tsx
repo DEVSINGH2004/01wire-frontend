@@ -244,7 +244,7 @@ function Releases(): JSX.Element {
                 showHeader
                 loading={loading}
                 paginationInfo={paginationInfo || {}}
-                entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+                entriesPerPage={{ defaultValue: pageSize }}
                 setSize={setSize}
                 maxHeight="calc(100vh - 14rem)"
               />

@@ -104,7 +104,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                   backgroundColor: selected?.background,
                   color: "#fff",
                   minWidth: "140px",
-                  textTransform:'uppercase',
+                  textTransform: "uppercase",
                 }}
               />
             ) : (
@@ -125,7 +125,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                       borderRadius: "21px",
                       border: "none",
                       background: selected?.background,
-                      textTransform:'uppercase',
+                      textTransform: "uppercase",
                     },
                   }}
                   renderValue={(selected) => {
@@ -152,7 +152,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
     },
     {
       Header: "Action",
-      Align: "right",
+      // align: "right",
       width: "15%",
       Cell: ({ value, row }) => {
         return (
@@ -178,11 +178,6 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                 <img width={36} height={36} alt="navigate" src={ViewIcon} />
               </IconButton>
             )}
-            {["DRAFT", "REJECTED"].includes(row.original.status) && (
-              <IconButton onClick={() => handleAction(row.original.id, "delete")}>
-                <img width={36} height={36} alt="navigate" src={DeleteIcon} />
-              </IconButton>
-            )}
             {["PUBLISHED", "REVIEW", "SCHEDULED"].includes(row.original.status) && (
               <IconButton onClick={() => handleAction(row.original.id, "edit")}>
                 <img width={36} height={36} alt="navigate" src={NavigateIcon} />
@@ -206,6 +201,11 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                 }}
               >
                 <MessageIcon sx={{ fontSize: "10px" }} />
+              </IconButton>
+            )}
+            {["DRAFT", "REJECTED"].includes(row.original.status) && (
+              <IconButton onClick={() => handleAction(row.original.id, "delete")}>
+                <img width={36} height={36} alt="navigate" src={DeleteIcon} />
               </IconButton>
             )}
           </MDBox>

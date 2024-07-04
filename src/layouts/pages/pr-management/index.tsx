@@ -246,7 +246,7 @@ const PRManagement = () => {
                 loading={loading}
                 setSize={setSize}
                 paginationInfo={paginationInfo || {}}
-                entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+                entriesPerPage={{ defaultValue: pageSize }}
                 maxHeight="calc(100vh - 15rem)"
               />
             </Box>

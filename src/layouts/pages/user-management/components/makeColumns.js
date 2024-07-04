@@ -9,6 +9,7 @@ export const makeColumns = (navigate) => {
     {
       Header: "User Email",
       accessor: "email",
+      align: "left",
       width: "20%",
       Cell: ({ value }) => (
         <MDBox>
@@ -48,7 +49,7 @@ export const makeColumns = (navigate) => {
     },
     {
       Header: "Action",
-      Align: "right",
+      align: "right",
       width: "20%",
       Cell: ({ value, row }) => {
         return (

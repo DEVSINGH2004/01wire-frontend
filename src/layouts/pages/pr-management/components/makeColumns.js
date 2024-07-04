@@ -17,6 +17,7 @@ import MessageIcon from "@mui/icons-material/Message";
 import ShareIcon from "assets/images/icons/shareIcon.svg";
 import { toast } from "react-toastify";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import InfoIcon from "@mui/icons-material/Info";
 
 export const statusOptions = [
   {
@@ -183,7 +184,7 @@ export const makeColumns = (
     },
     {
       Header: "Status",
-      width: "15%",
+      width: "10%",
       accessor: "status",
       Cell: ({ value, row }) => {
         const selectedStatus = value;
@@ -206,7 +207,7 @@ export const makeColumns = (
                   backgroundColor: selected?.background,
                   color: "#fff",
                   minWidth: "140px",
-                  textTransform:'uppercase',
+                  textTransform: "uppercase",
                 }}
               />
             ) : (
@@ -228,7 +229,7 @@ export const makeColumns = (
                       borderRadius: "21px",
                       border: "none",
                       background: selected?.background,
-                      textTransform:'uppercase',
+                      textTransform: "uppercase",
                     },
                   }}
                   renderValue={(selected) => {
@@ -255,8 +256,7 @@ export const makeColumns = (
     },
     {
       Header: "Action",
-      Align: "right",
-      width: "15%",
+      width: "20%",
       Cell: ({ value, row }) => {
         return (
           <MDBox
@@ -264,29 +264,29 @@ export const makeColumns = (
               display: "flex",
             }}
           >
-            <IconButton
+            {/* <IconButton
               color="black"
               onClick={() => {
                 const url = `${window?.location?.origin}/share-release/${row?.original?.id}`;
                 copyToClipboard(url)
                   .then(() => {
-                    window.open(url, '_blank');
+                    window.open(url, "_blank");
                   })
                   .catch((err) => {
                     toast.error(err);
                   });
               }}
-              sx={{
-                width: "35px",
-                height: "35px",
-                margin: "9px ",
-                backgroundColor: "#f8f8fc",
-                border: "1px solid #e0e0e4",
-                paddingTop: "8px",
-              }}
+              // sx={{
+              //   width: "35px",
+              //   height: "35px",
+              //   margin: "9px ",
+              //   backgroundColor: "#f8f8fc",
+              //   border: "1px solid #e0e0e4",
+              //   paddingTop: "8px",
+              // }}
             >
-              <InfoOutlinedIcon sx={{ fontSize: 5 }} />
-            </IconButton>
+              <InfoIcon fontSize="small" />
+            </IconButton> */}
             {row.original.status === "PUBLISHED" && (
               <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />
