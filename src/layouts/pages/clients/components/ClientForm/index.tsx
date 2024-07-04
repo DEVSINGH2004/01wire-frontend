@@ -100,7 +100,7 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
             }}
             onClick={handleCloseForm}
           >
-            {"< Back"}
+            {"Back"}
           </MDTypography>
           <MDButton color="primary" onClick={() => setSaveData(true)}>
             Save

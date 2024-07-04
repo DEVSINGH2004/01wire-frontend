@@ -101,7 +101,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
         return (
           <MDBox>
             <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-              {dayjs(value).format("DD MMM YYYY")}
+              {value ? dayjs(value).format("DD MMM YYYY") : "-"}
             </MDTypography>
           </MDBox>
         );

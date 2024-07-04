@@ -117,7 +117,15 @@ const Filters = ({
         </Box>
         <Box display="flex" alignItems="center" justifyContent="flex-end">
           <Box>
-            <FormControl sx={{ maxWidth: "455px", height: "42px", mr: 2 }}>
+            <FormControl
+              sx={{
+                maxWidth: "455px",
+                height: "42px",
+                mr: 2,
+                border: "1px solid lightgray",
+                borderRadius: "7px",
+              }}
+            >
               <Autocomplete
                 multiple
                 id="tags-outlined"
@@ -133,15 +141,24 @@ const Filters = ({
                   <MDInput
                     {...params}
                     sx={{
-                      height: "42px",
+                      height: "40px",
                       border: "none",
                       "& .MuiInputBase-root": {
-                        height: "42px",
-                        overflow: "auto",
+                        height: "40px",
+                        overflowX: "auto",
+                        overflowY: "hidden",
                         flexWrap: "nowrap",
                         border: "none",
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
+                        },
+                        "&::-webkit-scrollbar": {
+                          height: "4px",
+                          width: "0px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "lightgray",
+                          borderRadius: "7px",
                         },
                       },
                     }}

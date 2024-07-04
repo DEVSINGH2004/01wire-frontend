@@ -16,6 +16,7 @@ import {
 } from "graphql/mutations/updateArticleStatus";
 import { StatusOptions } from "constants/index";
 import RejectPR from "./RejectPRModal";
+import MDTypography from "components/MDTypography";
 
 const PRDetail = ({
   onClose,
@@ -57,34 +58,58 @@ const PRDetail = ({
         });
     }
   };
+  const filteredOptions = StatusOptions.filter((option) => option.value !== articleStatus);
   return (
-    <MDBox p={2}>
-      {loader && <MDCircularLoader overlayloader startLoader />}
-      {open && <RejectPR id={id} status={status} onClose={() => setOpen(false)} />}
-      <MDBox display="flex" alignItems="center">
-        <IconButton onClick={onClose}>
-          <ArrowBackIosIcon />
-        </IconButton>
+    <>
+      <MDBox p={2}>
+        {loader && <MDCircularLoader overlayloader startLoader />}
+        {open && <RejectPR id={id} status={status} onClose={() => setOpen(false)} />}
+        <MDBox display="flex" alignItems="center">
+          <IconButton onClick={onClose}>
+            <ArrowBackIosIcon />
+          </IconButton>
+        </MDBox>
+        <MDBox mt={3}>
+          <ReviewNPublish id={id} />
+        </MDBox>
       </MDBox>
-      <MDBox mt={3}>
-        <ReviewNPublish id={id} />
-      </MDBox>
-      <Divider
+      <MDBox
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        alignItem="center"
+        width="102.47%"
+        bgColor="white"
         sx={{
-          borderColor: "#B2B2B2",
-          borderStyle: "dotted",
+          position: "sticky",
+          bottom: 0,
+          marginLeft: "-1.2%",
+          padding: "2rem 1rem",
+          boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+          zIndex: 1000,
         }}
-      />
-      <MDBox display="flex" alignItems="center" justifyContent="space-between">
-        <MDButton color="light" sx={{ color: "#000" }} variant="contained" onClick={onClose}>
-          Cancel
+      >
+        <MDButton
+          sx={{
+            height: "40px !important",
+            boxShadow:
+              "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
+          }}
+          size="small"
+          variant="outlined"
+          color="light"
+          onClick={onClose}
+        >
+          <MDTypography fontWeight="regular" fontSize="14px">
+            {"Cancel"}
+          </MDTypography>
         </MDButton>
         {!["DRAFT", "AWAITING_APPROVAL", "REJECTED", "PUBLISHED"].includes(articleStatus) && (
           <MDBox display="flex" alignItems="center">
             <MDBox mr={3}>
               <Autocomplete
                 disableClearable
-                options={StatusOptions}
+                options={filteredOptions}
                 onChange={(event, option: any) => {
                   setStatus(option?.value);
                 }}
@@ -105,7 +130,7 @@ const PRDetail = ({
           </MDBox>
         )}
       </MDBox>
-    </MDBox>
+    </>
   );
 };
 export default PRDetail;

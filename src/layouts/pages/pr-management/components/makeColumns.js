@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, IconButton } from "@mui/material";
+import { TableCell as MuiTableCell, IconButton, Chip } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -188,33 +188,18 @@ export const makeColumns = (
         return (
           <MDBox>
             {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(selectedStatus) ? (
-              <MDBox
-                px={1}
-                borderRadius="21px"
-                bgColor={selected?.background}
+              <Chip
+                label={selected?.label}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                   backgroundImage: selected?.background,
-                  color: "white",
                   backgroundBlendMode: "overlay",
-                  width: "140px",
-                  height: "22px",
+                  backgroundColor: selected?.background,
+                  color: "#fff",
+                  minWidth: "140px",
                 }}
-              >
-                <MDTypography
-                  sx={{
-                    fontSize: "12px",
-                    fontWeight: "400",
-                    color: "#fff",
-                  }}
-                >
-                  {selected?.label}
-                </MDTypography>
-              </MDBox>
+              />
             ) : (
-              <FormControl sx={{ width: "152px", height: "22px" }} size="medium">
+              <FormControl sx={{ width: "140px" }} size="medium">
                 <Select
                   id="demo-select-small"
                   displayEmpty
@@ -223,10 +208,11 @@ export const makeColumns = (
                   sx={{
                     textAlign: "center",
                     borderRadius: "21px",
+                    height: "35px",
+                    background: selected?.background,
                     "& .MuiOutlinedInput-input": {
-                      padding: "10px",
                       color: "#fff",
-                      fontSize: "12px",
+                      fontSize: "13px",
                       fontWeight: "400",
                       borderRadius: "21px",
                       border: "none",
@@ -237,7 +223,7 @@ export const makeColumns = (
                     if (selectedStatus === "") {
                       return <em>Select an option</em>;
                     }
-                    return selectedStatus ? selectedStatus : "";
+                    return selectedStatus ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase() : "";
                   }}
                   onChange={(e) => handleUpdateStatus(row, e.target.value)}
                 >

@@ -283,7 +283,7 @@ export const BundleTypeOptions = [
 ];
 export const StatusOptions = [
   { label: "Scheduled", value: "SCHEDULED" },
-  { label: "Accepted", value: "PUBLISHED" },
+  { label: "Published", value: "PUBLISHED" },
   { label: "Rejected", value: "REJECTED" },
 ];
 

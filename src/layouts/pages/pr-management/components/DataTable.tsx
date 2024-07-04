@@ -98,7 +98,7 @@ function DataTable({
     state: { pageIndex, pageSize, globalFilter },
   }: any = tableInstance;
 
-  const canPreviousPage = paginationInfo?.currentPage > 1;
+  const canPreviousPage = paginationInfo?.currentPage > 0;
   const canNextPage = paginationInfo?.currentPage < paginationInfo?.pageCount;
 
   // Set the default value for the entries per page when component mounts
@@ -207,7 +207,7 @@ function DataTable({
                           color="#606F7B"
                           sx={() => ({
                             fontSize: "14px",
-                            fontWeight: "400",
+                            fontWeight: "600",
                           })}
                         >
                           {column.render("Header")}
@@ -267,7 +267,7 @@ function DataTable({
           py={2}
         >
           <MDButton
-            sx={{ visibility: !paginationInfo?.hasPreviousPage && "collapse" }}
+            sx={{ visibility: !paginationInfo?.hasPreviousPage && "collapse", height: "30px" }}
             size="small"
             variant="contained"
             disabled={!canPreviousPage}
@@ -277,12 +277,11 @@ function DataTable({
               {/* <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
                 chevron_left
               </Icon> */}
-              <MDTypography sx={{ fontsize: "12px", fontWeight: "700", color: "#000" }}>
+              <MDTypography fontSize="14px" sx={{ color: "#000" }}>
                 PREV
               </MDTypography>
             </Box>
           </MDButton>
-
           <Pagination
             page={paginationInfo?.currentPage + 1}
             hideNextButton
@@ -299,10 +298,9 @@ function DataTable({
                   backgroundColor: item.selected ? "#FF4D53" : "white",
                   color: item.selected ? "white" : "black",
                   border: "none",
-                  height: 36,
-                  width: 36,
-                  fontWeight: "700",
-                  fontSize: "14px",
+                  height: 30,
+                  width: 30,
+                  fontSize: "12px",
                 }}
               >
                 {item.page}
@@ -310,16 +308,15 @@ function DataTable({
             )}
             onChange={(e: any, page: number) => handlePagination(page - 1)}
           />
-
           <MDButton
-            sx={{ visibility: !paginationInfo?.hasNextPage && "collapse" }}
+            sx={{ visibility: !paginationInfo?.hasNextPage && "collapse", height: "30px" }}
             size="small"
             variant="contained"
             disabled={!canNextPage}
             onClick={() => handlePagination(paginationInfo?.currentPage + 1)}
           >
             <Box display="flex" justifyContent="center" alignItems="center" color="#fff">
-              <MDTypography sx={{ fontsize: "12px", fontWeight: "700", color: "black" }}>
+              <MDTypography fontSize="14px" sx={{ color: "black" }}>
                 Next
               </MDTypography>
             </Box>

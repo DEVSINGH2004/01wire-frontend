@@ -26,6 +26,7 @@ import NoteModal from "../../../pr-management/components/NoteModal";
 import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
 import MessageIcon from "@mui/icons-material/Message";
 import MessageModal from "../MessageModal";
+import { Chip } from "@mui/material";
 
 interface Props {
   onClose?: any;
@@ -33,6 +34,7 @@ interface Props {
 }
 
 const getColumns = (setNoteOpen: any, setOpen?: any) => {
+  const role = localStorage.getItem("role");
   const columns = [
     {
       Header: "Title",
@@ -55,33 +57,16 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
         const selected = statusOptions.find((el: any) => selectedStatus === el?.value);
 
         return (
-          <MDBox>
-            <MDBox
-              px={1}
-              borderRadius="21px"
-              bgColor={selected?.background}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundImage: selected?.background,
-                color: "white",
-                backgroundBlendMode: "overlay",
-                width: "140px",
-                height: "22px",
-              }}
-            >
-              <MDTypography
-                sx={{
-                  fontSize: "12px",
-                  fontWeight: "400",
-                  color: "#fff",
-                }}
-              >
-                {selected?.label}
-              </MDTypography>
-            </MDBox>
-          </MDBox>
+          <Chip
+            label={selected?.label}
+            sx={{
+              backgroundImage: selected?.background,
+              backgroundBlendMode: "overlay",
+              backgroundColor: selected?.background,
+              color: "#fff",
+              minWidth: "140px",
+            }}
+          />
         );
       },
     },
@@ -112,12 +97,12 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
               display: "flex",
             }}
           >
-            {!["PUBLISHED", "REJECTED"].includes(row.original?.status) && (
+            {!["PUBLISHED", "REJECTED"].includes(row.original?.status) && role === "ADMIN" && (
               <IconButton onClick={() => setNoteOpen({ id: row.original.id })}>
                 <img width={36} height={36} alt="navigate" src={StatusIcon} />
               </IconButton>
             )}
-            {["REJECTED"].includes(row.original?.status) && (
+            {["REJECTED", "AWAITING_APPROVAL"].includes(row.original?.status) && (
               <IconButton
                 color="primary"
                 onClick={() => {
@@ -288,6 +273,10 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
         setLoader(false);
       });
   };
+  const role = localStorage.getItem("role");
+  const isRejectedOrPublished = data?.filterOrdersPaginated?.data.some((one) => {
+    if (["PUBLISHED", "REJECTED"].includes(one?.status)) return true;
+  });
 
   return (
     <Dialog
@@ -336,46 +325,51 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
             </MDBox>
           )}
         </MDBox>
+        <></>
       </DialogContent>
-      <Divider />
-      <DialogActions
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-around",
-          width: "100%",
-        }}
-      >
-        <Box sx={{ margin: "auto" }}>
-          <input
-            accept=".xlsx, .xls"
-            style={{ display: "none" }}
-            id="upload-button-file"
-            multiple
-            type="file"
-            onChange={handleFileUpload}
-          />
-          <label htmlFor="upload-button-file">
+      {role === "ADMIN" && !isRejectedOrPublished && !loading && (
+        <>
+          <Divider />
+          <DialogActions
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            <Box sx={{ margin: "auto" }}>
+              <input
+                accept=".xlsx, .xls"
+                style={{ display: "none" }}
+                id="upload-button-file"
+                multiple
+                type="file"
+                onChange={handleFileUpload}
+              />
+              <label htmlFor="upload-button-file">
+                <MDButton
+                  sx={{ margin: "auto" }}
+                  variant="outlined"
+                  component="span"
+                  color="primary"
+                  // onClick={() => onClose()}
+                >
+                  Upload Template
+                </MDButton>
+              </label>
+            </Box>
             <MDButton
+              onClick={handleFileDownload}
               sx={{ margin: "auto" }}
-              variant="outlined"
-              component="span"
+              variant="contained"
               color="primary"
-              // onClick={() => onClose()}
             >
-              Upload Template
+              Download Template
             </MDButton>
-          </label>
-        </Box>
-        <MDButton
-          onClick={handleFileDownload}
-          sx={{ margin: "auto" }}
-          variant="contained"
-          color="primary"
-        >
-          Download Template
-        </MDButton>
-      </DialogActions>
+          </DialogActions>
+        </>
+      )}
       {noteModal && (
         <NoteModal
           orderPage

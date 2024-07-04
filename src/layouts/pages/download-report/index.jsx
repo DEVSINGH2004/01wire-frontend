@@ -35,7 +35,7 @@ const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
   >
     <Box className="social-media-link" sx={{ background: bgColor, cursor: 'pointer' }}>
       <IconComponent sx={{ fontSize: 40 }} />
-      <Box className="platform-name" sx={{pl:'2'}}>{platform}</Box>
+      <Box className="platform-name" sx={{ pl: '2' }}>{platform}</Box>
     </Box>
   </Link>
 );
@@ -135,7 +135,6 @@ function PressReleaseReport() {
       if (position > 0) {
         pdf.addPage();
       }
-
       pdf.addImage(
         imgData,
         'JPEG',
@@ -147,7 +146,6 @@ function PressReleaseReport() {
 
       position += pdfHeight;
     }
-
     // Step 4: Download the PDF
     pdf.save('download.pdf');
   };
@@ -170,6 +168,7 @@ function PressReleaseReport() {
       },
     },
   });
+
   return (
     <>
       <Button
@@ -417,69 +416,11 @@ function PressReleaseReport() {
         </main>
         <section className="press-release-content">
           <h2 className="section-title">Your Submitted Press Release</h2>
-          <p className="press-release-text">
-            Manchester M2 5JB, United Kingdom, 3rd May 2024, King NewsWire -
-            Avensure H&S & HR Outsourcing Services has successfully launched the
-            Care Compliance Bureau, a dedicated service for registered providers
-            of Care Homes and Homecare (Adult Care in England). The company's
-            impressive 2023 performance shows its persistent quest for
-            excellence in outsourced HR services. As a result, the company was
-            under consideration for Consultancy of the Year at the British HR
-            Awards.
-            <br />
-            <br />
-            Avensure H&S & HR Outsourcing Services entered the month of April
-            2024, unveiling a brand new CCB website, which ensures care
-            businesses and their workforce meet Care Quality Commission
-            regulations, fundamental standards, and Quality Statements.
-            <br />
-            <br />
-            "CCB's goal is to offer support with documentation and guidance on
-            document usage within care services. It provides care businesses
-            with a more robust and compliant foundation, particularly in light
-            of the new single assessment framework," Chris Garner, Managing
-            Director of Avensure, explained.
-            <br />
-            <br />
-            As part of Avensure H&S & HR Outsourcing Services, CCB offers
-            comprehensive support and an approach to compliance covering various
-            operational aspects beyond CQC requirements. "CCB is your partner
-            for CQC compliance in the era of new regulations," Garner stated.
+          <p className="press-release-text"
+            dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}
+          >
           </p>
-          <h3 className="subsection-title">British HR Awards Nomination</h3>
-          <p className="press-release-text">
-            Avensure H&S & HR Outsourcing Services were shortlisted for
-            Consultancy of the Year along with over 25 entities at the
-            prestigious British HR Awards.
-            <br />
-            <br />
-            "It's fantastic to be shortlisted for Consultancy of the Year. The
-            esteemed recognition reflects our commitment to delivering
-            unparalleled HR solutions tailored to each client's unique needs. We
-            are truly honoured to be acknowledged as part of HR excellence in
-            the UK this year and look forward to the award ceremony on April
-            16," Chris Garner remarked.
-            <br />
-            <br />
-            The British HR Awards, powered by New Possible's employee insight
-            platform, aims to discover and celebrate genuinely passionate
-            organisations about delivering a world-class people experience.
-            There were over 300 entries across categories from organisations in
-            the UK.
-          </p>
-          <h3 className="subsection-title">The 2023 Record Year</h3>
-          <p className="press-release-text">
-            <a href="#" className="company-link">
-              Avensure H&S & HR Outsourcing Services
-            </a>{" "}
-            reported 2023 as a record year, with a 30% revenue increase and £4
-            million EBITDA.
-            <br />
-            <br />
-            2023 was a record year for us, with new services offered to support
-            clients and a major £1 million investment in new technology,
-            launching the PeopleCloud platform," Chris Garner shared.
-          </p>
+
           <footer className="content-footer">
             <img
               loading="lazy"
@@ -493,101 +434,26 @@ function PressReleaseReport() {
             </Box>
           </footer>
         </section>
-        <section className="additional-content">
-          <p className="press-release-text">
-            The Avensure H&S & HR Outsourcing Services Managing Director
-            attributed the company's improved financial success to its increased
-            market attractiveness, led by its extensive product range. "It's
-            becoming a 'no brainer' to use our services. They're affordable and
-            easy to use with hands-on help and support, coupled with our
-            next-generation online HR & H&S management system, making us the
-            perfect match for UK businesses," Garner observed.
-            <br />
-            <br />
-            The company also takes pride in its people. Garner expounded this,
-            adding, "We deeply believe in the talents behind Avensure H&S & HR
-            Outsourcing Services. Our unique, commercially driven support is
-            delivered by experts who truly care about clients, each motivated to
-            go the extra mile. This culture within Avensure H&S & HR Outsourcing
-            Services is becoming well-known nationwide, giving us a market edge.
-            We have thousands of 5-star reviews, which echo around the UK
-            business environment and attract many new clients."
-            <br />
-            <br />
-            Avensure H&S & HR Outsourcing Services accrues over 1,000 clients
-            yearly and believes this needs to be supported. The company
-            constantly invests in HR experts, health and safety specialists and
-            great legal minds. Always looking to expand its product range and
-            reinvest in its products, Avensure H&S & HR Outsourcing Services
-            creates more recruitment opportunities, leading to roles being
-            filled in its immigration and care compliance departments.
-            <br />
-            <br />
-            "We're very fortunate our culture reverberates around the industry,"
-            Garner commented. "Avensure has a lot of fantastic professionals
-            wanting to join our organisation on an almost daily basis. We can
-            handpick who we believe will benefit clients the most, thus
-            reinforcing our mission of being the number 1 provider in the UK."
-          </p>
-          <h3 className="subsection-title">Scheduled Webinars</h3>
-          <p className="press-release-text">
-            Avensure H&S & HR Outsourcing Services is proud to lead the market
-            by providing top-notch training and valuable information to improve
-            employment law and health and safety practices.
-            <br />
-            <br />
-            "Our strength lies in offering practical training and employment law
-            insights tailored to impact businesses positively. We also have a
-            profound understanding of UK businesses' current challenges. By
-            pinpointing real-time trends and areas of concern, we deliver
-            effective training solutions," Chris Garner said.
-            <br />
-            <br />
-            Here are the previous and upcoming CPD-accredited Avensure H&S & HR
-            Outsourcing Services Webinars for Q2:
-            <br />
-            <ul>
-              <li>March 2024: HR - The Ultimate Guide to Annual Leave</li>
-              <li>April 2024: Health and Safety Manual Handling</li>
-              <li>June 2024: H&S Fire Risk Assessments</li>
-            </ul>
-            <br />
-            Avensure H&S & HR Outsourcing Services stands out with over 5,000 UK
-            businesses in its client portfolio, ranging from micro to SME
-            clients, giving the company a unique advantage.
-            <br />
-            <br />
-            <a href="https://www.avensure.com/" className="company-link">
-              Visit https://www.avensure.com/ to learn more.
-            </a>
-          </p>
-          <footer className="content-footer">
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b9fb197a1a148e5e92cf368ee7149d3b74867abbcb5f6ddc39b189c80e5c060?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
-              alt="Decorative line"
-              className="decorative-line"
-            />
-            <Box className="footer-content">
-              <Box className="footer-title">One Wire</Box>
-              <Box className="footer-website">www.onewire.com</Box>
-            </Box>
-          </footer>
-          
-        </section>
+
         <section className="distribution-list">
-          {orderData?.filterOrdersPaginated?.data?.map((item, index) => (
-            <DistributionItem
-              key={index}
-              logo={item?.publicationInfo?.image}
-              name="logo"
-              link={item?.publicationInfo?.url}
-              type={item?.publicationInfo?.title}
-              industry="Finance"
-              countries="Global"
-              audience={item?.publicationInfo?.stats?.traffic}
-            />
-          ))}
+          {orderData?.filterOrdersPaginated?.data?.map((item, index) => {
+            if (item?.status === "REJECTED") {
+              return null;
+            }
+            return (
+              <DistributionItem
+                key={index}
+                logo={item?.publicationInfo?.image}
+                name="logo"
+                link={item?.publicationInfo?.url}
+                type={item?.publicationInfo?.title}
+                industry="Finance"
+                countries="Global"
+                audience={item?.publicationInfo?.stats?.traffic}
+              />
+            );
+          })}
+
           <footer
             style={{
               mx: "48px",
