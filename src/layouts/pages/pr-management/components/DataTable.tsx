@@ -278,7 +278,7 @@ function DataTable({
                 chevron_left
               </Icon> */}
               <MDTypography fontSize="14px" sx={{ color: "#000" }}>
-                PREV
+                Prev
               </MDTypography>
             </Box>
           </MDButton>

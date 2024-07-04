@@ -77,7 +77,7 @@ const NoteModal = ({
               // onClose();
             }}
           >
-            Submit
+            PUBLISH
           </MDButton>
         </DialogActions>
       </Dialog>
