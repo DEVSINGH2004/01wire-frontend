@@ -15,6 +15,9 @@ const PublicationsList = ({
   loading,
   disabled = false,
   showCreditsColumn = true,
+  handlePagination,
+  entriesPerPage,
+  setSize,
 }: {
   publications: any;
   updatePage?: any;
@@ -24,8 +27,10 @@ const PublicationsList = ({
   loading?: boolean;
   disabled?: boolean;
   showCreditsColumn?: boolean;
+  handlePagination?:any;
+  entriesPerPage?:any
+  setSize?:any
 }) => {
-  console.info("paginationInfo", paginationInfo);
   const columns = [
     {
       Header: "Title",
@@ -181,9 +186,9 @@ const PublicationsList = ({
       setData({ rows, columns });
     }
   }, [publications]);
-  const handlePagination = (page: number) => {
-    updatePage(page);
-  };
+  // const handlePagination = (page: number) => {
+  //   updatePage(page);
+  // };
 
   return (
     <MDBox sx={{ minHeight: "100px" }}>
@@ -198,6 +203,9 @@ const PublicationsList = ({
           handlePagination={!disabled && handlePagination}
           onSelectedRowsChange={onSelect}
           defaultSelectedRows={selectedP}
+          maxHeight="calc(100vh - 14.5rem)"
+          entriesPerPage={entriesPerPage}
+          setSize={setSize}
         />
       ) : (
         <MDBox sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

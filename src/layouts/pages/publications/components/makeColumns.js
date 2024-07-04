@@ -96,6 +96,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 height: "35px",
                 color: "#fff",
                 background: selected?.background,
+                textTransform:'uppercase',
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "transparent", // Remove hover border color
                 },
@@ -118,9 +119,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 if (selectedStatus === "") {
                   return <em>Select an option</em>;
                 }
-                return selectedStatus
-                  ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase()
-                  : "";
+                return selectedStatus ? selectedStatus : "";
               }}
               onChange={(e) => handleUpdateStatus(row, e.target.value)}
             >

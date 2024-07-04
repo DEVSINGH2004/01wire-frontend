@@ -30,7 +30,7 @@ const Bundles = () => {
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [deleteConf, setDeleteConf] = useState<any>(null);
-
+  const [pageSize, setSize] = useState<number>(10);
   const [deleteBundle, { loading: deleteLoader }] = useMutation<IDeleteBundleVars>(DELETE_BUNDLE);
   const [updateVisibility, { loading: updateLoader }] =
     useMutation<IUpdateBundleVisVars>(UPDATE_BUNDLE_VISIBILITY);
@@ -51,12 +51,12 @@ const Bundles = () => {
       variables: {
         paginationInput: {
           currentPage: 0,
-          perPage: PER_PAGE,
+          perPage: pageSize,
         },
       },
     });
     setLoader(false);
-  }, []);
+  }, [pageSize]);
 
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
@@ -93,7 +93,7 @@ const Bundles = () => {
     getBundles({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
       },
@@ -145,6 +145,10 @@ const Bundles = () => {
               table={tableData}
               showHeader
               paginationInfo={paginationInfo || {}}
+              entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+              setSize={setSize}
+              maxHeight="calc(100vh - 10rem)"
+
             />
           ) : (
             <Card sx={{ minHeight: "300px" }}>

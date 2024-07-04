@@ -14,6 +14,9 @@ import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { truncateString } from "utils/helpers";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MessageIcon from "@mui/icons-material/Message";
+import ShareIcon from "assets/images/icons/shareIcon.svg";
+import { toast } from "react-toastify";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 export const statusOptions = [
   {
@@ -62,6 +65,13 @@ export const makeColumns = (
   filters,
   setOpen
 ) => {
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  }
   const columns = [
     {
       Header: "PR ID",
@@ -196,6 +206,7 @@ export const makeColumns = (
                   backgroundColor: selected?.background,
                   color: "#fff",
                   minWidth: "140px",
+                  textTransform:'uppercase',
                 }}
               />
             ) : (
@@ -217,13 +228,14 @@ export const makeColumns = (
                       borderRadius: "21px",
                       border: "none",
                       background: selected?.background,
+                      textTransform:'uppercase',
                     },
                   }}
                   renderValue={(selected) => {
                     if (selectedStatus === "") {
                       return <em>Select an option</em>;
                     }
-                    return selectedStatus ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase() : "";
+                    return selectedStatus ? selectedStatus : "";
                   }}
                   onChange={(e) => handleUpdateStatus(row, e.target.value)}
                 >
@@ -252,6 +264,29 @@ export const makeColumns = (
               display: "flex",
             }}
           >
+            <IconButton
+              color="black"
+              onClick={() => {
+                const url = `${window?.location?.origin}/share-release/${row?.original?.id}`;
+                copyToClipboard(url)
+                  .then(() => {
+                    window.open(url, '_blank');
+                  })
+                  .catch((err) => {
+                    toast.error(err);
+                  });
+              }}
+              sx={{
+                width: "35px",
+                height: "35px",
+                margin: "9px ",
+                backgroundColor: "#f8f8fc",
+                border: "1px solid #e0e0e4",
+                paddingTop: "8px",
+              }}
+            >
+              <InfoOutlinedIcon sx={{ fontSize: 5 }} />
+            </IconButton>
             {row.original.status === "PUBLISHED" && (
               <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />

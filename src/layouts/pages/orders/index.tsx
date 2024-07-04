@@ -33,6 +33,8 @@ const OrderManagement = () => {
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
+  const [pageSize, setSize] = useState<number>(10);
+
   const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
     GET_ORDERS,
     {
@@ -49,7 +51,7 @@ const OrderManagement = () => {
     getOrders({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: 0,
         },
         filterInput: {
@@ -59,7 +61,7 @@ const OrderManagement = () => {
     })
       .then(() => setInitLoader(false))
       .catch(() => setInitLoader(false));
-  }, []);
+  }, [pageSize]);
 
   useEffect(() => {
     if (filters) {
@@ -142,7 +144,7 @@ const OrderManagement = () => {
     getOrders({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput: {
@@ -184,6 +186,9 @@ const OrderManagement = () => {
               showHeader
               loading={loading}
               paginationInfo={paginationInfo || {}}
+              entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+              setSize={setSize}
+              maxHeight="calc(100vh - 14rem)"
             />
           ) : (
             <Card sx={{ minHeight: "300px" }}>

@@ -35,6 +35,7 @@ const Publications = () => {
   const [openForm, setOpenForm] = useState<any>(id || false);
   const [filters, setFilters] = useState<any>({});
   const [deleteConf, setDeleteConf] = useState<any>(null);
+  const [pageSize, setSize] = useState<number>(10);
 
   const [updateVisibility, { loading: updateLoader }] = useMutation<IUpdatePublicationVisVars>(
     UPDATE_PUBLICATION_VISIBILITY
@@ -60,13 +61,13 @@ const Publications = () => {
         filterInput: {},
         paginationInput: {
           currentPage: 0,
-          perPage: PER_PAGE,
+          perPage: pageSize,
         },
       },
     })
       .then(() => setLoader(false))
       .catch(() => setLoader(false));
-  }, []);
+  }, [pageSize]);
 
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
@@ -120,7 +121,7 @@ const Publications = () => {
     getPublications({
       variables: {
         paginationInput: {
-          perPage: PER_PAGE,
+          perPage: pageSize,
           currentPage: page,
         },
         filterInput: {
@@ -188,6 +189,9 @@ const Publications = () => {
               table={tableData}
               showHeader
               paginationInfo={paginationInfo || {}}
+              entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+              setSize={setSize}
+              maxHeight="calc(100vh - 14.5rem)"
             />
           ) : (
             <Card sx={{ minHeight: "300px" }}>

@@ -11,7 +11,6 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
 export const makeColumns = (handleAction, handleUpdateStatus) => {
-  
   const columns = [
     {
       Header: "Category",
@@ -83,6 +82,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 borderRadius: "21px",
                 height: "32px",
                 background: selected?.background,
+                textTransform: "uppercase",
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "transparent", // Remove hover border color
                 },
@@ -103,9 +103,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 if (selectedStatus === "") {
                   return <em>Select an option</em>;
                 }
-                return selectedStatus
-                  ? selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1).toLowerCase()
-                  : "";
+                return selectedStatus ? selectedStatus : "";
               }}
               onChange={(e) => handleUpdateStatus(row, e.target.value)}
             >

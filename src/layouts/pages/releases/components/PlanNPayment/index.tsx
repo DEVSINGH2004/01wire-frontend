@@ -11,7 +11,7 @@ import MDButton from "components/MDButton";
 // import MDInput from "components/MDInput";
 import MDCircularLoader from "components/MDCircularLoader";
 import MDInput from "components/MDInput";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import {
   GET_PUBLICATIONS,
@@ -67,6 +67,9 @@ function PlanNPayment({
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPublications, setFilteredPublications] = useState(null);
   const [open, setOpen] = useState<any>(false);
+  const [pageSize, setSize] = useState<number>(10);
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
+
   const { data: bundlesData } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: {
       paginationInput: {
@@ -77,22 +80,51 @@ function PlanNPayment({
     fetchPolicy: "network-only",
     skip: disabled,
   });
-  const {
-    data: publicationsData,
-    refetch: refetchPublications,
-    loading: pLoading,
-  } = useQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
-    variables: {
-      filterInput: {
-        filterIds: bundlePids,
-      },
-      paginationInput: {
-        currentPage: currentPage,
-        perPage: perPage,
-      },
+  // const {
+  //   data: publicationsData,
+  //   refetch: refetchPublications,
+  //   loading: pLoading,
+  // } = useQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
+  //   variables: {
+  //     filterInput: {
+  //       filterIds: bundlePids,
+  //     },
+  //     paginationInput: {
+  //       currentPage: currentPage,
+  //       perPage: perPage,
+  //     },
+  //   },
+  //   skip: disabled,
+  // });
+
+  const [
+    getPublication,
+    { data: publicationsData, loading: pLoading, refetch: refetchPublications },
+  ] = useLazyQuery<IGetPublications, IGetPublicationsVars>(GET_PUBLICATIONS, {
+    // skip: !!id,
+    fetchPolicy: "network-only",
+    onCompleted: (res) => {
+      setPaginationInfo(res?.filterPublicationsPaginated?.paginationInfo);
     },
-    skip: disabled,
   });
+
+  useEffect(() => {
+    setLoading(true);
+    getPublication({
+      variables: {
+        paginationInput: {
+          perPage: pageSize,
+          currentPage: 0,
+        },
+        filterInput: {
+          filterIds: bundlePids,
+        },
+      },
+    })
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false));
+  }, [pageSize]);
+
   const currentPublications: any =
     (disabled && data?.publicationInfo) ||
     publicationsData?.filterPublicationsPaginated?.data ||
@@ -205,6 +237,19 @@ function PlanNPayment({
       setPayable(totalCredits);
     }
   }, [totalCredits]);
+
+  const handlePagination = (page: number) => {
+    getPublication({
+      variables: {
+        paginationInput: {
+          perPage: pageSize,
+          currentPage: page,
+        },
+        filterInput: {},
+      },
+    });
+    setPage(page);
+  };
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -284,6 +329,9 @@ function PlanNPayment({
               selectedP={selecetedP}
               loading={pLoading}
               disabled={disabled}
+              handlePagination={handlePagination}
+              entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+              setSize={setSize}
             />
           </MDBox>
         </MDBox>

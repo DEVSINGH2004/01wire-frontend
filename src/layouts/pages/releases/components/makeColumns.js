@@ -104,6 +104,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                   backgroundColor: selected?.background,
                   color: "#fff",
                   minWidth: "140px",
+                  textTransform:'uppercase',
                 }}
               />
             ) : (
@@ -124,16 +125,14 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                       borderRadius: "21px",
                       border: "none",
                       background: selected?.background,
+                      textTransform:'uppercase',
                     },
                   }}
                   renderValue={(selected) => {
                     if (selectedStatus === "") {
                       return <em>Select an option</em>;
                     }
-                    return selectedStatus
-                      ? selectedStatus.charAt(0).toUpperCase() +
-                          selectedStatus.slice(1).toLowerCase()
-                      : "";
+                    return selectedStatus ? selectedStatus : "";
                   }}
                   onChange={(e) => handleUpdateStatus(row, e.target.value)}
                 >
@@ -162,19 +161,6 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
               display: "flex",
             }}
           >
-            {/* <IconButton
-              onClick={() => {
-                copyToClipboard(`${window?.location?.origin}/share-release/${row?.original?.id}`)
-                  .then(() => {
-                    toast.success("Copied to clipboard");
-                  })
-                  .catch((err) => {
-                    toast.error(err);
-                  });
-              }}
-            >
-              <img width={36} height={36} alt="navigate" src={ShareIcon} />
-            </IconButton> */}
             {row.original.status === "PUBLISHED" && (
               <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import MDBox from "components/MDBox";
 import MDCircularLoader from "components/MDCircularLoader";
 import MDTypography from "components/MDTypography";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import {
   GET_ESTIMATES,
   IGetEstimatesVars,
@@ -104,17 +104,46 @@ const MyEstimates = () => {
   const [loader, setLoader] = useState(false);
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
-  const { data, refetch, loading } = useQuery<IGetEstimates, IGetEstimatesVars>(GET_ESTIMATES, {
-    variables: {
-      filterInput: {},
-      paginationInput: {
-        currentPage: currentPage,
-        perPage: perPage,
-      },
-    },
+  const [pageSize, setSize] = useState<number>(10);
+
+  // const { data, refetch, loading } = useQuery<IGetEstimates, IGetEstimatesVars>(GET_ESTIMATES, {
+  //   variables: {
+  //     filterInput: {},
+  //     paginationInput: {
+  //       currentPage: currentPage,
+  //       perPage: perPage,
+  //     },
+  //   },
+  //   fetchPolicy: "network-only",
+  // });
+  const [getEstimate, { data: getEstimateData, loading, refetch }] = useLazyQuery<
+    IGetEstimates,
+    IGetEstimatesVars
+  >(GET_ESTIMATES, {
+    // skip: !!id,
     fetchPolicy: "network-only",
+    onCompleted: (res) => {
+      setPaginationInfo(res?.filterEstimatesPaginated?.paginationInfo);
+    },
   });
+
+  useEffect(() => {
+    setLoader(true);
+    getEstimate({
+      variables: {
+        paginationInput: {
+          perPage: pageSize,
+          currentPage: 0,
+        },
+        filterInput: {},
+      },
+    })
+      .then(() => setLoader(false))
+      .catch(() => setLoader(false));
+  }, [pageSize]);
+
   const [deleteEstimate] = useMutation<IDeleteEstimateVars>(DELETE_ESTIMATE);
   async function copyToClipboard(text: string): Promise<void> {
     try {
@@ -143,7 +172,7 @@ const MyEstimates = () => {
   };
   useEffect(() => {
     let rows: any = [];
-    const resData = data?.filterEstimatesPaginated?.data;
+    const resData = getEstimateData?.filterEstimatesPaginated?.data;
     if (resData?.length) {
       rows = resData?.map((one: any) => {
         return {
@@ -210,9 +239,18 @@ const MyEstimates = () => {
       });
       setData({ rows, columns });
     }
-  }, [data]);
+  }, [getEstimateData]);
   const handlePagination = (page: number) => {
-    setCurrentPage(page - 1);
+    getEstimate({
+      variables: {
+        paginationInput: {
+          perPage: pageSize,
+          currentPage: page,
+        },
+        filterInput: {},
+      },
+    });
+    setCurrentPage(page);
   };
   return (
     <MDBox>
@@ -229,13 +267,16 @@ const MyEstimates = () => {
         {loader && <MDCircularLoader startLoader overlayloader />}
         {loading ? (
           <MDCircularLoader startLoader />
-        ) : data?.filterEstimatesPaginated?.data?.length > 0 ? (
+        ) : getEstimateData?.filterEstimatesPaginated?.data?.length > 0 ? (
           <DataTable
             canSearch
             table={tableData}
             showHeader
-            paginationInfo={data?.filterEstimatesPaginated?.paginationInfo}
+            paginationInfo={paginationInfo || {}}
             handlePagination={handlePagination}
+            maxHeight="calc(100vh - 10.5rem)"
+            entriesPerPage={{ defaultValue: pageSize, entries: [5, 10, 20] }}
+            setSize={setSize}
           />
         ) : (
           <MDBox sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

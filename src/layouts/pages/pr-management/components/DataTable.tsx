@@ -51,6 +51,7 @@ interface Props {
   onSelectedRowsChange?: (selectedRows: any[]) => void;
   defaultSelectedRows?: any;
   setSize?: (val: any) => void;
+  maxHeight?: any;
 }
 
 function DataTable({
@@ -68,6 +69,7 @@ function DataTable({
   onSelectedRowsChange,
   defaultSelectedRows = [],
   setSize,
+  maxHeight,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -180,7 +182,7 @@ function DataTable({
           sx={{
             boxShadow: "none",
             overflow: "auto",
-            maxHeight: "calc(100vh - 16rem)",
+            maxHeight: maxHeight,
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": {
               display: "none",
@@ -211,7 +213,11 @@ function DataTable({
           ) : null}
           <Table {...getTableProps()}>
             {showHeader && (
-              <MDBox component="thead" bgColor="#F8F8FC">
+              <MDBox
+                component="thead"
+                bgColor="#F8F8FC"
+                sx={{ position: "sticky", top: 0, left: 0, zIndex: 1000 }}
+              >
                 {headerGroups.map((headerGroup: any, key: any) => (
                   <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
                     {onSelectedRowsChange && (
