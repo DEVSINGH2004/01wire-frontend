@@ -56,7 +56,7 @@ const DisplayBundles = ({
       sliderRef.current.slickGoTo(0);
     }
   }, [category, disabled]);
-  
+
   return (
     <>
       <MDBox
@@ -65,6 +65,11 @@ const DisplayBundles = ({
         p="18px 60px 24px 70px"
         mb={1}
         mt={2}
+        sx={{
+          "& .slick-track": {
+            transform: disabled && "none !important",
+          },
+        }}
       >
         <Slider ref={sliderRef} {...settings}>
           {bundles?.map((one: any, i: number) => {
@@ -99,7 +104,6 @@ const DisplayBundles = ({
                   bundle={one}
                   onclick={() => setOpen(one)}
                 />
-                
               </MDBox>
             );
           })}

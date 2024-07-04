@@ -133,7 +133,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
     },
     {
       Header: "Action",
-      Align: "right",
+      align: "right",
       width: "15%",
       Cell: ({ value, row }) => {
         return (
