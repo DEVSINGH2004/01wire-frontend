@@ -54,6 +54,7 @@ const PublicationsList = ({
       Header: "",
       accessor: "title",
       width: "20%",
+      align: "left",
       Cell: ({ value }: { value: any }) => (
         <MDBox>
           <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>

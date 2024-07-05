@@ -26,6 +26,7 @@ import Filters from "./components/Filters";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArticleBundleModal from "../releases/components/ArticleBundleModal";
 import MessageModal from "../releases/components/MessageModal";
+import RejectPR from "./components/RejectPRModal";
 
 const PER_PAGE = 10;
 
@@ -118,7 +119,7 @@ const PRManagement = () => {
 
   const handleUpdateStatus = (row: any, status: string, notes?: string) => {
     const id = row?.original?.id;
-    if (status === "AWAITING_APPROVAL" && !notes) {
+    if (["AWAITING_APPROVAL", "REJECTED"].includes(status) && !notes) {
       setNoteModal({ ...row, status });
       return;
     }
@@ -152,6 +153,7 @@ const PRManagement = () => {
 
   const handleAction = (id: string, action: string, row?: any) => {
     if (action === "edit") {
+      navigate(`/pr-management/${id}`);
       setOpenForm(id);
       setStatus(row?.status);
     } else if (action === "navigate") {
@@ -195,6 +197,11 @@ const PRManagement = () => {
       },
     });
   };
+  useEffect(() => {
+    if (location?.pathname === "/pr-management") {
+      setOpenForm(false);
+    }
+  }, [id, location]);
   return (
     <>
       {loader && <MDCircularLoader overlayloader startLoader />}

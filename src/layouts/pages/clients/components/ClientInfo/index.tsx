@@ -65,7 +65,7 @@ function ClientInfo({
       const { facebook, instagram, youtube, twitter, others, linkedIn } = social;
       const defaultValues = {
         title,
-        type: type && ComanyTypeOptions?.find((one) => one?.value === type),
+        type,
         category: category && IndustryTypeOptions?.find((one) => one?.value === category),
         email,
         logo,

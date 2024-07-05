@@ -29,6 +29,7 @@ import {
 interface Props {
   onClose?: () => void;
   idVal?: any;
+  refetch?: any;
 }
 
 function getSteps(): string[] {
@@ -86,7 +87,7 @@ function getStepContent(
   }
 }
 
-function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
+function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [saveData, setSaveData] = useState<boolean>(false);
@@ -149,6 +150,7 @@ function ReleaseForm({ idVal, onClose }: Props): JSX.Element {
     })
       .then(() => {
         toast.success("Submitted successfully");
+        refetch();
         onClose();
       })
       .catch((err) => {

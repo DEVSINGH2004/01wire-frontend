@@ -18,6 +18,14 @@ import MDCircularLoader from "components/MDCircularLoader";
 import { useMutation } from "@apollo/client";
 import { CREATE_ESTIMATE, ICreateEstimateVars } from "graphql/mutations/createEstimation";
 
+async function copyToClipboard(text: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (err) {
+    console.error("Failed to copy text: ", err);
+  }
+}
+
 const CreateEstimation = ({ onClose, values }: { onClose: any; values: any }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -35,9 +43,18 @@ const CreateEstimation = ({ onClose, values }: { onClose: any; values: any }) =>
         },
       },
     })
-      .then(() => {
+      .then((res: any) => {
         setLoader(false);
         toast.success("Saved Successfully");
+        copyToClipboard(
+          `${window?.location?.origin}/share-estimation/${res?.data?.createEstimate?.id}`
+        )
+          .then(() => {
+            toast.success("Link copied to clipboard");
+          })
+          .catch((err: any) => {
+            toast.error(err);
+          });
         onClose();
       })
       .catch((err) => {

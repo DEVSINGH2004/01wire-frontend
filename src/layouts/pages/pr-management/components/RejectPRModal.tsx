@@ -49,7 +49,7 @@ const RejectPR = ({ id, onClose, status }: { id: string; onClose: any; status: s
         <MDBox display="flex" alignItems="center" justifyContent="space-between">
           <DialogTitle>
             <MDTypography fontSize="16px" fontWeight="medium">
-              Reject PR
+              Update Status
             </MDTypography>
           </DialogTitle>
           <IconButton onClick={onClose}>
@@ -59,7 +59,7 @@ const RejectPR = ({ id, onClose, status }: { id: string; onClose: any; status: s
         <DialogContent>
           <MDBox sx={{ width: "600px", margin: "0 auto", padding: "20px" }}>
             <TextField
-              label="Rejection Reason"
+              label="Reason"
               multiline
               rows={6}
               variant="outlined"
