@@ -109,7 +109,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
     },
     {
       Header: "Action",
-      Align: "right",
+      align: "right",
       width: "15%",
       accessor: "status",
       Cell: ({ value, row }) => {

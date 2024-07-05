@@ -94,6 +94,7 @@ const columns = [
   {
     Header: "Actions",
     accessor: "actions",
+    align: "right",
     width: "30%",
     Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
   },

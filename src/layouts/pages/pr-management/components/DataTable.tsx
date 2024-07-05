@@ -354,9 +354,6 @@ function DataTable({
                 Next
               </MDTypography>
             </Box>
-            {/* <Icon fontSize="large" sx={{ fontWeight: "800", fontSize: "32px", color: "#000" }}>
-              chevron_right
-            </Icon> */}
           </MDButton>
         </MDBox>
       )}
