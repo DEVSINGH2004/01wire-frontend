@@ -38,7 +38,6 @@ function Releases(): JSX.Element {
   const location = useLocation();
   const estimation = location?.state?.estimation;
   const [loader, setLoader] = useState<boolean>(false);
-  const [filter, setFilter] = useState<any>({});
   const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [filters, setFilters] = useState<any>({});
@@ -172,6 +171,7 @@ function Releases(): JSX.Element {
   };
   const handleAction = (id: string, action: string, row: string) => {
     if (action === "edit") {
+      navigate(`/releases/${id}`);
       setOpenForm(id);
     } else if (action === "view") {
       setViewModal(id);
@@ -187,11 +187,11 @@ function Releases(): JSX.Element {
     setData({ rows, columns });
   }, [articlesData]);
 
-  // useEffect(() => {
-  //   if (location?.pathname === "/releases") {
-  //     setOpenForm(false);
-  //   }
-  // }, [location]);
+  useEffect(() => {
+    if (location?.pathname === "/releases" && !estimation) {
+      setOpenForm(false);
+    }
+  }, [id]);
 
   const handlePagination = (page: number) => {
     const status = getStatusArr(filters?.status);
@@ -233,7 +233,7 @@ function Releases(): JSX.Element {
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <ReleaseForm idVal={openForm} onClose={() => setOpenForm(false)} />
+              <ReleaseForm idVal={openForm} onClose={() => setOpenForm(false)} refetch={refetch} />
             </Card>
           ) : tableData?.rows?.length ? (
             <MDBox>

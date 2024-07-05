@@ -16,7 +16,6 @@ import DataTable from "../pr-management/components/DataTable";
 import { truncateString } from "utils/helpers";
 import ShareIcon from "assets/images/icons/shareIcon.svg";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
-// import EditIcon from "assets/images/icons/editIcon.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import MDButton from "components/MDButton";
 import DeleteModal from "examples/DeleteModal";
@@ -144,6 +143,7 @@ const MyEstimates = () => {
       });
   };
   useEffect(() => {
+    console.info("data", data);
     let rows: any = [];
     const resData = data?.filterEstimatesPaginated?.data;
     if (resData?.length) {
@@ -170,15 +170,6 @@ const MyEstimates = () => {
                   });
               },
             },
-            // {
-            //   imgIcon: EditIcon,
-            //   height: "36px",
-            //   width: "36px",
-            //   //   onClick: () => {
-            //   //     navigate(`/publications/${one?.id}`);
-            //   //     setOpenForm(one?.id);
-            //   //   },
-            // },
             {
               imgIcon: DeleteIcon,
               height: "36px",
@@ -195,7 +186,7 @@ const MyEstimates = () => {
                       state: {
                         estimation: {
                           selectedBundles: one?.bundleInfo,
-                          publicationIds: one?.publicationIds,
+                          selectedPublications: one?.publicationInfo,
                         },
                       },
                     });

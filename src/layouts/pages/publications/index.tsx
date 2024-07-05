@@ -71,6 +71,7 @@ const Publications = () => {
 
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
+      navigate(`/publications/${id}`);
       setOpenForm(id);
     } else {
       setDeleteConf(id);
@@ -100,9 +101,13 @@ const Publications = () => {
 
     setData({ rows, columns });
   }, [data]);
-
+  const getStatusArr = (arr: any) => {
+    if (!arr?.length) return [];
+    return arr?.map((one: any) => one?.value);
+  };
   useEffect(() => {
     if (filters) {
+      const visibility = getStatusArr(filters?.visibility);
       getPublications({
         variables: {
           paginationInput: {
@@ -111,13 +116,19 @@ const Publications = () => {
           },
           filterInput: {
             ...filters,
+            visibility,
           },
         },
       });
     }
   }, [filters]);
-
+  useEffect(() => {
+    if (location?.pathname === "/publications") {
+      setOpenForm(false);
+    }
+  }, [id, location]);
   const handlePagination = (page: number) => {
+    const visibility = getStatusArr(filters?.visibility);
     getPublications({
       variables: {
         paginationInput: {
@@ -126,6 +137,7 @@ const Publications = () => {
         },
         filterInput: {
           ...filters,
+          visibility,
         },
       },
     });

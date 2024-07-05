@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import OneWireLogo from "assets/images/OneWireLogo_2.svg";
 import DownloadBg from "assets/images/download-report/downloadBg.png";
 import XIcon from "@mui/icons-material/X";
-import FacebookIcon from '@mui/icons-material/Facebook';
+import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
@@ -16,9 +16,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useQuery } from "@apollo/client";
 import { Divider } from "@mui/material";
-import {
-  GET_ARTICLE_BY_ID
-} from "graphql/queries/getArticleById";
+import { GET_ARTICLE_BY_ID } from "graphql/queries/getArticleById";
 import { useLocation } from "react-router-dom";
 import { GET_ORDERS } from "graphql/queries/filterOrdersPaginated";
 import Link from "@mui/material/Link";
@@ -33,9 +31,11 @@ const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
     target="_blank"
     rel="noopener noreferrer"
   >
-    <Box className="social-media-link" sx={{ background: bgColor, cursor: 'pointer' }}>
+    <Box className="social-media-link" sx={{ background: bgColor, cursor: "pointer" }}>
       <IconComponent sx={{ fontSize: 40 }} />
-      <Box className="platform-name" sx={{ pl: '2' }}>{platform}</Box>
+      <Box className="platform-name" sx={{ pl: "2" }}>
+        {platform}
+      </Box>
     </Box>
   </Link>
 );
@@ -50,12 +50,7 @@ const CompanyInfoItem = ({ label, value }) => (
 const PickupSection = ({ platform, logo, buttonText }) => (
   <section className="pickup-section">
     <h3 className="pickup-title">{platform} Pickup</h3>
-    <img
-      loading="lazy"
-      src={logo}
-      alt={`${platform} logo`}
-      className="platform-logo"
-    />
+    <img loading="lazy" src={logo} alt={`${platform} logo`} className="platform-logo" />
     <Box className="view-release-button">
       <span className="button-text">{buttonText}</span>
       <img
@@ -68,15 +63,7 @@ const PickupSection = ({ platform, logo, buttonText }) => (
   </section>
 );
 
-const DistributionItem = ({
-  logo,
-  name,
-  link,
-  type,
-  industry,
-  countries,
-  audience,
-}) => (
+const DistributionItem = ({ logo, name, link, type, industry, countries, audience }) => (
   <Box className="distribution-item">
     <DisplayImage
       src={logo}
@@ -100,9 +87,11 @@ const getId = () => {
 };
 function PressReleaseReport() {
   const query = getId();
-  const id = query.get('id');
+  const id = query.get("id");
   const componentRef = useRef();
+  const [loader, setLoader] = useState(false);
   const handleDownloadPDF = async () => {
+    setLoader(true);
     const element = componentRef.current;
 
     // Step 1: Convert the component to a canvas with a lower scale to reduce size
@@ -111,13 +100,13 @@ function PressReleaseReport() {
       useCORS: true, // Handle CORS for external resources
     });
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.75); // Lower the quality to 75%
+    const imgData = canvas.toDataURL("image/jpeg", 0.75); // Lower the quality to 75%
 
     // Step 2: Prepare PDF options
     const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -135,19 +124,13 @@ function PressReleaseReport() {
       if (position > 0) {
         pdf.addPage();
       }
-      pdf.addImage(
-        imgData,
-        'JPEG',
-        0,
-        -position,
-        pdfWidth,
-        scaledHeight
-      );
+      pdf.addImage(imgData, "JPEG", 0, -position, pdfWidth, scaledHeight);
 
       position += pdfHeight;
     }
     // Step 4: Download the PDF
-    pdf.save('download.pdf');
+    pdf.save("download.pdf");
+    setLoader(false);
   };
   const { data } = useQuery(GET_ARTICLE_BY_ID, {
     fetchPolicy: "network-only",
@@ -177,13 +160,13 @@ function PressReleaseReport() {
         sx={{
           position: "absolute",
           top: "10px",
-          right: "200px",
+          right: "180px",
         }}
         onClick={handleDownloadPDF}
       >
-        Download Report
+        {loader ? "Downloading..." : "Download Report"}
       </Button>
-      <Box margin="auto" ref={componentRef} style={{ padding: 20, width: '210mm' /* A4 width */ }}>
+      <Box margin="auto" ref={componentRef} style={{ padding: 20, width: "210mm" /* A4 width */ }}>
         <header
           style={{
             backgroundColor: " #fff",
@@ -191,12 +174,7 @@ function PressReleaseReport() {
           }}
         >
           <Box className="logo-container">
-            <img
-              loading="lazy"
-              src={DownloadBg}
-              alt="Company logo"
-              className="company-logo"
-            />
+            <img loading="lazy" src={DownloadBg} alt="Company logo" className="company-logo" />
             <Box
               sx={{
                 display: "flex",
@@ -204,13 +182,7 @@ function PressReleaseReport() {
                 position: "absolute",
               }}
             >
-              <img
-                loading="lazy"
-                src={OneWireLogo}
-                alt="Wire logo"
-                height={75}
-                width={168}
-              />
+              <img loading="lazy" src={OneWireLogo} alt="Wire logo" height={75} width={168} />
             </Box>
           </Box>
           <Box
@@ -251,14 +223,14 @@ function PressReleaseReport() {
                     value={data?.getArticleById?.clientInfo?.title}
                   />
                   <CompanyInfoItem label="Phone" value="+91 9999 44 0531" />
-                  <CompanyInfoItem
-                    label="Email"
-                    value={data?.getArticleById?.clientInfo?.email}
-                  />
+                  <CompanyInfoItem label="Email" value={data?.getArticleById?.clientInfo?.email} />
                 </Box>
                 <Box className="info-column">
                   <CompanyInfoItem label="Country" value="United Kingdom" />
-                  <CompanyInfoItem label="Website" value={data?.getArticleById?.clientInfo?.website} />
+                  <CompanyInfoItem
+                    label="Website"
+                    value={data?.getArticleById?.clientInfo?.website}
+                  />
                 </Box>
                 <Box className="info-column">
                   <CompanyInfoItem
@@ -316,26 +288,20 @@ function PressReleaseReport() {
             }}
           >
             <Divider width="100%" />
-            <Box
-              mx="48px"
-              mb={2}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <Box mx="48px" mb={2} display="flex" justifyContent="space-between" alignItems="center">
               <Typography>One Wire</Typography>
               <Typography>www.onewire.com</Typography>
             </Box>
           </footer>
         </header>
         <main className="report-content" style={{ breakBefore: "page" }}>
-          <section className="press-release-summary" >
+          <section className="press-release-summary">
             <Typography
               sx={{
                 fontSize: "26px",
                 fontWeight: "700",
                 lineHeight: "20px",
-                mt: 1
+                mt: 1,
               }}
             >
               Your Submitted Press Release
@@ -348,8 +314,7 @@ function PressReleaseReport() {
                 my: 2,
               }}
             >
-              Avensure H&S & HR Outsourcing Services Rolls Out Care <br />{" "}
-              Compliance Bureau
+              Avensure H&S & HR Outsourcing Services Rolls Out Care <br /> Compliance Bureau
             </Typography>
             <Typography
               sx={{
@@ -400,26 +365,21 @@ function PressReleaseReport() {
             style={{
               mx: "48px",
             }}
+            className="content-footer"
           >
             <Divider width="100%" />
-            <Box
-              mx="48px"
-              mb={2}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography>One Wire</Typography>
-              <Typography>www.onewire.com</Typography>
+            <Box mx="48px" mb={2} display="flex" justifyContent="space-between" alignItems="center">
+              <Box className="footer-title">One Wire</Box>
+              <Box className="footer-website">www.onewire.com</Box>
             </Box>
           </footer>
         </main>
         <section className="press-release-content">
           <h2 className="section-title">Your Submitted Press Release</h2>
-          <p className="press-release-text"
+          <p
+            className="press-release-text"
             dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}
-          >
-          </p>
+          ></p>
 
           <footer className="content-footer">
             <img
@@ -445,7 +405,7 @@ function PressReleaseReport() {
                 key={index}
                 logo={item?.publicationInfo?.image}
                 name="logo"
-                link={item?.publicationInfo?.url}
+                link={item?.url}
                 type={item?.publicationInfo?.title}
                 industry="Finance"
                 countries="Global"
@@ -458,17 +418,11 @@ function PressReleaseReport() {
             style={{
               mx: "48px",
             }}
+            className="content-footer"
           >
-            <Divider width="100%" />
-            <Box
-              mx="48px"
-              mb={2}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography>One Wire</Typography>
-              <Typography>www.onewire.com</Typography>
+            <Box mx="48px" mb={2} display="flex" justifyContent="space-between" alignItems="center">
+              <Box>One Wire</Box>
+              <Box>www.onewire.com</Box>
             </Box>
           </footer>
         </section>

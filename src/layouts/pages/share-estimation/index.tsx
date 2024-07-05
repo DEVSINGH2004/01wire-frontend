@@ -97,21 +97,27 @@ const ShareEstimation = () => {
                 />
               </Grid>
             </Grid>
-            <MDBox>
-              <MDTypography my={3} variant="h6">
-                Bundles
-              </MDTypography>
-              <DisplayBundles
-                bundles={data?.getEstimateById?.bundleInfo}
-                selected={data?.getEstimateById?.bundleInfo}
-                disabled
-              />
-            </MDBox>
+            {data?.getEstimateById?.bundleInfo?.length > 0 && (
+              <MDBox>
+                <MDTypography my={3} variant="h6">
+                  Bundles
+                </MDTypography>
+                <DisplayBundles
+                  bundles={data?.getEstimateById?.bundleInfo}
+                  selected={data?.getEstimateById?.bundleInfo}
+                  disabled
+                />
+              </MDBox>
+            )}
             <MDBox>
               <MDTypography my={3} variant="h6">
                 Publications
               </MDTypography>
-              <PublicationsList publications={data?.getEstimateById?.publicationInfo} disabled />
+              <PublicationsList
+                entriesPerPage={false}
+                publications={data?.getEstimateById?.publicationInfo}
+                disabled
+              />
             </MDBox>
           </MDBox>
         ) : (

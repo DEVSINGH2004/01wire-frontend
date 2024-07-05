@@ -71,10 +71,11 @@ export const makeColumns = (handleAction) => {
     },
     {
       Header: "Social Media",
-      accessor: "socialMedia",
+      accessor: "social",
       width: "50%",
       Cell: ({ value = {} }) => {
-        const { facebook, instagram, twitter, youtube, linkedIn } = value;
+        console.log("value", value);
+        const { facebook, instagram, twitter, youtube, linkedIn } = value || {};
         return (
           <MDBox display="flex" alignItems="center" justifyContent="space-between" width={"250px"}>
             <SocialMediaLink url={facebook} Icon={FBIcon} />
