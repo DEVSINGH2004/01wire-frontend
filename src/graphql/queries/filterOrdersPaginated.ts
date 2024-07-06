@@ -37,6 +37,7 @@ export const GET_ORDERS = gql`
         publishBy
         createdAt
         updatedAt
+        url
         user {
           email
         }
@@ -58,7 +59,7 @@ export const GET_ORDERS = gql`
           url
           image
           stats {
-           traffic
+            traffic
           }
         }
       }

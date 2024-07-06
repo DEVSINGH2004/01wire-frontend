@@ -12,6 +12,8 @@ import debounce from "lodash.debounce";
 import { visibilityOptions } from "../../../../constants";
 import DownArrow from "assets/images/down-arrow.svg";
 import MDTypography from "components/MDTypography";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 
 const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any }) => {
   const [q, setQ] = useState<string>("");
@@ -46,36 +48,27 @@ const Filters = ({ filters, handleFilters }: { filters: any; handleFilters: any 
             ),
           }}
         />
-        <FormControl sx={{ width: "175px", height: "42px" }}>
-          <Select
-            id="demo-select-small"
-            displayEmpty
-            placeholder="Status"
-            value={filters?.status || ""}
-            sx={{
-              textAlign: "left",
-              background: "#fff",
-              height: "42px",
-            }}
-            IconComponent={() => (
-              <InputAdornment position="end" sx={{ mr: "8px" }}>
-                <img height={12} width={12} src={DownArrow} alt="Status" />
-              </InputAdornment>
-            )}
-            onChange={(e) => e.target.value && handleFilters("visibility", e.target.value)}
-          >
-            <MenuItem value="" disabled sx={{ color: "#606F7B" }}>
-              <MDTypography fontSize="15px" sx={{ color: "#606F7B" }}>
-                Visibility
-              </MDTypography>
-            </MenuItem>
-            {visibilityOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          multiple
+          options={visibilityOptions}
+          value={filters?.visibility}
+          filterSelectedOptions
+          onChange={(e, newValue) => {
+            handleFilters("visibility", newValue);
+          }}
+          renderInput={(params) => (
+            <MDInput
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  height: "45px",
+                  minWidth: "170px",
+                },
+              }}
+              {...params}
+              placeholder="Select Status"
+            />
+          )}
+        />
       </Box>
     </>
   );

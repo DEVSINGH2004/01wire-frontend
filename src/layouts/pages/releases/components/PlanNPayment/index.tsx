@@ -49,6 +49,7 @@ function PlanNPayment({
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation || {};
+  const estimatePIds = estimation?.selectedPublications?.map((p: any) => p?.id);
   const savedBundlePids =
     data?.bundleInfo?.length > 0
       ? [...new Set(data.bundleInfo?.flatMap((bundle: any) => bundle.publicationIds))]
@@ -56,12 +57,14 @@ function PlanNPayment({
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const [loading, setLoading] = useState<boolean>(false);
   const [publicationIds, setPublicationIds] = useState<any>(
-    data?.publicationIds ? data?.publicationIds : estimation?.publicationIds || []
+    estimatePIds || (data?.publicationIds ? data?.publicationIds : [])
   );
   const [totalCredits, setCredits] = useState<number>(0);
-  const [selecetedP, setSelectedP] = useState<any>(data?.publicationInfo || []);
+  const [selectedP, setSelectedP] = useState<any>(
+    estimation?.selectedPublications || data?.publicationInfo || []
+  );
   const [selected, setSelected] = useState<any>(
-    data?.bundleInfo || estimation?.selectedBundles || []
+    estimation?.selectedBundles || data?.bundleInfo || []
   );
   const [bundlePids, setBundlePids] = useState<any>(savedBundlePids);
   const [selectedCategory, setCategory] = useState<string | null>();
@@ -204,9 +207,9 @@ function PlanNPayment({
   }
   useEffect(() => {
     const bCredits = calculateTotalPrice(selected);
-    const pCredits = calculateTotalPrice(selecetedP);
+    const pCredits = calculateTotalPrice(selectedP);
     setCredits(bCredits + pCredits);
-  }, [selecetedP, selected]);
+  }, [selectedP, selected]);
   useEffect(() => {
     if (setPayable) {
       setPayable(totalCredits);
@@ -263,25 +266,29 @@ function PlanNPayment({
                 color="primary"
                 variant="outlined"
                 label={`${publicationIds?.length} Selected`}
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                  if (!disabled) setOpen(true);
+                }}
               />
             </MDBox>
-            <MDInput
-              sx={{ width: 268 }}
-              fullWidth
-              type="text"
-              size="small"
-              onChange={handleSearchChange}
-              value={searchTerm}
-              placeholder="Search Publications"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <img height={15} width={15} src={SearchIcon} alt="Search" />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {!disabled && (
+              <MDInput
+                sx={{ width: 268 }}
+                fullWidth
+                type="text"
+                size="small"
+                onChange={handleSearchChange}
+                value={searchTerm}
+                placeholder="Search Publications"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <img height={15} width={15} src={SearchIcon} alt="Search" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           </MDBox>
           <MDBox mt={3}>
             <PublicationsList
@@ -289,7 +296,7 @@ function PlanNPayment({
               updatePage={setPage}
               paginationInfo={publicationsData?.filterPublicationsPaginated?.paginationInfo}
               onSelect={!disabled && handleSelectedRowsChange}
-              selectedP={selecetedP}
+              selectedP={selectedP}
               loading={pLoading}
               disabled={disabled}
               entriesPerPage={
@@ -347,7 +354,7 @@ function PlanNPayment({
                   state: {
                     estimation: {
                       selectedBundles: selected,
-                      publicationIds,
+                      selectedPublications: selectedP,
                     },
                   },
                 });
@@ -359,7 +366,7 @@ function PlanNPayment({
         </MDBox>
       )}
       {open && (
-        <BundlePublicationModal onClose={() => setOpen(false)} currentPublications={selecetedP} />
+        <BundlePublicationModal onClose={() => setOpen(false)} currentPublications={selectedP} />
       )}
     </MDBox>
   );

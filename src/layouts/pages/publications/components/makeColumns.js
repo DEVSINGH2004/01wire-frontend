@@ -27,16 +27,17 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
     },
     {
       Header: "Traffic",
-      accessor: "traffic",
+      accessor: "stats.traffic",
       width: "10%",
-      Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            <strong>{value ? value : "-"}</strong>
-            {value ? "Reach" : ""}
-          </MDTypography>
-        </MDBox>
-      ),
+      Cell: ({ value }) => {
+        return (
+          <MDBox>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+              {value ? value : "-"}
+            </MDTypography>
+          </MDBox>
+        );
+      },
     },
     {
       Header: "Website",

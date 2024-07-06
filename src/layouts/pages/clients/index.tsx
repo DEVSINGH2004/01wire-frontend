@@ -71,6 +71,7 @@ function Clients(): JSX.Element {
 
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
+      navigate(`/clients/${id}`);
       setOpenForm(id);
     } else {
       setDeleteConf(id);

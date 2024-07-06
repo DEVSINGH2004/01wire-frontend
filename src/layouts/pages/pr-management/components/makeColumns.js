@@ -197,10 +197,25 @@ export const makeColumns = (
 
         const menuOptions =
           selectedStatus === "SCHEDULED"
-            ? ["SCHEDULED", "REJECTED", "PUBLISHED"]
+            ? [
+                { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+                { label: "REJECTED", value: "REJECTED" },
+                { label: "PUBLISHED", value: "PUBLISHED" },
+              ]
             : selectedStatus === "SUBMITTED"
-            ? ["SUBMITTED", "AWAITING_APPROVAL", "SCHEDULED"]
-            : ["REVIEW", "AWAITING_APPROVAL", "SCHEDULED"];
+            ? [
+                { label: "REVIEW", value: "REVIEW" },
+                { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+                { label: "SCHEDULED", value: "SCHEDULED" },
+                { label: "REJECTED", value: "REJECTED" },
+                { label: "PUBLISHED", value: "PUBLISHED" },
+              ]
+            : [
+                { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+                { label: "SCHEDULED", value: "SCHEDULED" },
+                { label: "REJECTED", value: "REJECTED" },
+                { label: "PUBLISHED", value: "PUBLISHED" },
+              ];
         return (
           <MDBox>
             {["DRAFT", "AWAITING_APPROVAL", "PUBLISHED", "REJECTED"].includes(selectedStatus) ? (
@@ -246,10 +261,10 @@ export const makeColumns = (
                   onChange={(e) => handleUpdateStatus(row, e.target.value)}
                 >
                   {menuOptions
-                    .filter((option) => option !== selectedStatus) // Filter out the selected value
+                    .filter((option) => option?.value !== selectedStatus) // Filter out the selected value
                     .map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
+                      <MenuItem key={option?.label} value={option?.value}>
+                        {option?.label}
                       </MenuItem>
                     ))}
                 </Select>
@@ -303,9 +318,6 @@ export const makeColumns = (
                 <img width={36} height={36} alt="navigate" src={ViewIcon} />
               </IconButton>
             )}
-            <IconButton onClick={() => handleAction(row.original.id, "edit", row?.original)}>
-              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-            </IconButton>
             {["AWAITING_APPROVAL", "REJECTED"].includes(row.original.status) && (
               <IconButton
                 color="primary"
@@ -326,6 +338,9 @@ export const makeColumns = (
                 <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
             )}
+            <IconButton onClick={() => handleAction(row.original.id, "edit", row?.original)}>
+              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
+            </IconButton>
           </MDBox>
         );
       },

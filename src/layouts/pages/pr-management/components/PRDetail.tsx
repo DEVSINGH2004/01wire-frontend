@@ -7,14 +7,12 @@ import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import Divider from "@mui/material/Divider";
 import ReviewNPublish from "layouts/pages/releases/components/ReviewNPublish";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
   UPDATE_ARTICLE_STATUS,
   IUpdateArticleStatusVars,
 } from "graphql/mutations/updateArticleStatus";
-import { StatusOptions } from "constants/index";
 import RejectPR from "./RejectPRModal";
 import MDTypography from "components/MDTypography";
 
@@ -34,7 +32,7 @@ const PRDetail = ({
   const [open, setOpen] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
   const handleUpdateStatus = () => {
-    if (status === "REJECTED") {
+    if (["REJECTED", "AWAITING_APPROVAL"].includes(status)) {
       setOpen(true);
     } else {
       setLoader(true);
@@ -58,7 +56,28 @@ const PRDetail = ({
         });
     }
   };
-  const filteredOptions = StatusOptions.filter((option) => option.value !== articleStatus);
+
+  const statusOptions =
+    articleStatus === "SCHEDULED"
+      ? [
+          { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+          { label: "REJECTED", value: "REJECTED" },
+          { label: "PUBLISHED", value: "PUBLISHED" },
+        ]
+      : articleStatus === "SUBMITTED"
+      ? [
+          { label: "REVIEW", value: "REVIEW" },
+          { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+          { label: "SCHEDULED", value: "SCHEDULED" },
+          { label: "REJECTED", value: "REJECTED" },
+          { label: "PUBLISHED", value: "PUBLISHED" },
+        ]
+      : [
+          { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+          { label: "SCHEDULED", value: "SCHEDULED" },
+          { label: "REJECTED", value: "REJECTED" },
+          { label: "PUBLISHED", value: "PUBLISHED" },
+        ];
   return (
     <>
       <MDBox p={2}>
@@ -109,13 +128,13 @@ const PRDetail = ({
             <MDBox mr={3}>
               <Autocomplete
                 disableClearable
-                options={filteredOptions}
+                options={status ? statusOptions?.filter((s) => s?.value !== status) : statusOptions}
                 onChange={(event, option: any) => {
                   setStatus(option?.value);
                 }}
-                value={status && StatusOptions?.find((one: any) => one?.value === status)}
+                value={status && statusOptions?.find((one: any) => one?.value === status)}
                 size="small"
-                sx={{ width: "12rem" }}
+                sx={{ width: "14rem" }}
                 renderInput={(params) => <MDInput label="Status" {...params} />}
               />
             </MDBox>
