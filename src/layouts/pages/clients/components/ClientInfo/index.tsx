@@ -21,6 +21,7 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { removeEmptyFields } from "utils/helpers";
+import { genericValidations } from "utils/helpers";
 
 const ComanyTypeOptions = [
   { label: "Public", value: "PUBLIC" },
@@ -51,7 +52,7 @@ function ClientInfo({
 }): JSX.Element {
   const {
     control,
-    formState: { isDirty },
+    formState: { isDirty, errors },
     handleSubmit,
     reset,
   } = useForm({ defaultValues: { category: null, type: null } });
@@ -154,7 +155,6 @@ function ClientInfo({
       setSaveData(false);
     }
   };
-
   useEffect(() => {
     if (saveData && isDirty) {
       handleSubmit(onSubmit)();
@@ -163,7 +163,11 @@ function ClientInfo({
       setSaveData(false);
     }
   }, [saveData, isDirty]);
-
+  useEffect(() => {
+    if (Object.keys(errors).length) {
+      setSaveData(false);
+    }
+  }, [Object.keys(errors).length]);
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -179,16 +183,10 @@ function ClientInfo({
               name="title"
               control={control}
               variant="outlined"
+              required
+              errors={errors}
+              rules={genericValidations.text}
             />
-            {/* <FormField
-              type="dropdown"
-              placeholder="Select Company Tye"
-              label="Company Type"
-              name="type"
-              control={control}
-              options={ComanyTypeOptions}
-              variant="outlined"
-            /> */}
             <FormField
               type="radio"
               placeholder="Select Company Tye"
@@ -197,21 +195,30 @@ function ClientInfo({
               control={control}
               opt={ComanyTypeOptions}
               variant="outlined"
+              required
+              errors={errors}
+              rules={genericValidations.text}
             />
             <FormField
               type="dropdown"
-              placeholder="Select Industry Tye"
+              placeholder="Select Industry Type"
               label="Industry Type"
               name="category"
               control={control}
               options={IndustryTypeOptions}
               variant="outlined"
+              required
+              errors={errors}
+              rules={genericValidations.dropdown}
             />
             <FormField
               type="text"
               label="Email"
               name="email"
               control={control}
+              required
+              errors={errors}
+              rules={genericValidations.email}
               variant="outlined"
               InputProps={{
                 endAdornment: (
@@ -226,6 +233,9 @@ function ClientInfo({
               label="Website"
               name="website"
               control={control}
+              required
+              errors={errors}
+              rules={genericValidations.url}
               variant="outlined"
               InputProps={{
                 endAdornment: (
@@ -243,6 +253,8 @@ function ClientInfo({
               name="logo"
               label="Logo"
               control={control}
+              errors={errors}
+              rules={genericValidations.text}
             />
             <FormField
               type="text"
@@ -268,6 +280,8 @@ function ClientInfo({
               label="Facebook"
               name="facebook"
               control={control}
+              errors={errors}
+              rules={genericValidations.link}
               variant="outlined"
               InputProps={{
                 endAdornment: (
@@ -282,6 +296,8 @@ function ClientInfo({
               label="Linkedin"
               name="linkedIn"
               control={control}
+              errors={errors}
+              rules={genericValidations.link}
               variant="outlined"
               InputProps={{
                 endAdornment: (
@@ -296,6 +312,8 @@ function ClientInfo({
               label="Youtube"
               name="youtube"
               control={control}
+              errors={errors}
+              rules={genericValidations.link}
               variant="outlined"
               InputProps={{
                 endAdornment: (
@@ -312,6 +330,8 @@ function ClientInfo({
               label="Instagram"
               name="instagram"
               control={control}
+              errors={errors}
+              rules={genericValidations.link}
               variant="outlined"
               InputProps={{
                 endAdornment: (
@@ -326,6 +346,8 @@ function ClientInfo({
               label="X"
               name="twitter"
               control={control}
+              errors={errors}
+              rules={genericValidations.link}
               variant="outlined"
               InputProps={{
                 endAdornment: (

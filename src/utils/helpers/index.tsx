@@ -82,6 +82,12 @@ export const genericValidations = {
       message: "Invalid url address",
     },
   },
+  link: {
+    pattern: {
+      value: /^(ftp|http|https):\/\/[^ "]+$/,
+      message: "Invalid url address",
+    },
+  },
   dropdown: {
     required: "Please fill value",
   },
