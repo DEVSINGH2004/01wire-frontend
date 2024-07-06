@@ -245,8 +245,16 @@
   font: 500 13px/1.5 'PP Neue Montreal', sans-serif;
   text-align: justify;
   margin-bottom: 16px;
+  max-width: 100%;
+  overflow: hidden;
 }
-
+.press-release-text img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
 .subsection-title {
   color: #000;
   font: 700 16px 'PP Neue Montreal', sans-serif;

@@ -28,7 +28,7 @@ const NoteModal = ({
         <MDBox display="flex" alignItems="center" justifyContent="space-between">
           <DialogTitle>
             <MDTypography fontSize="16px" fontWeight="medium">
-              Update Order Status{" "}
+              {orderPage ? "Update Order Status" : "Update Status"}
             </MDTypography>
           </DialogTitle>
           <IconButton onClick={onClose}>
@@ -77,7 +77,7 @@ const NoteModal = ({
               // onClose();
             }}
           >
-            PUBLISH
+            {orderPage ? "PUBLISH" : "UPDATE"}
           </MDButton>
         </DialogActions>
       </Dialog>
