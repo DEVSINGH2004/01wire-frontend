@@ -85,6 +85,22 @@ const DistributionItem = ({ logo, name, link, type, industry, countries, audienc
 const getId = () => {
   return new URLSearchParams(useLocation().search);
 };
+const Footer = ({ style }) => {
+  return (
+    <footer className="content-footer" style={style}>
+      <img
+        loading="lazy"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b9fb197a1a148e5e92cf368ee7149d3b74867abbcb5f6ddc39b189c80e5c060?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
+        alt="Decorative line"
+        className="decorative-line"
+      />
+      <Box className="footer-content">
+        <Box className="footer-title">One Wire</Box>
+        <Box className="footer-website">www.onewire.com</Box>
+      </Box>
+    </footer>
+  );
+};
 function PressReleaseReport() {
   const query = getId();
   const id = query.get("id");
@@ -151,7 +167,9 @@ function PressReleaseReport() {
       },
     },
   });
-
+  const filteredOrders = orderData?.filterOrdersPaginated?.data?.filter(
+    (one) => one?.status !== "REJECTED"
+  );
   return (
     <>
       <Button
@@ -242,7 +260,7 @@ function PressReleaseReport() {
               </Box>
             </Box>
           </Box>
-          <Box mx="48px" mb="62px">
+          <Box mx="48px" mb="30px">
             <h3 className="section-title">Follow Us</h3>
             <Box
               sx={{
@@ -282,17 +300,8 @@ function PressReleaseReport() {
               />
             </Box>
           </Box>
-          <footer
-            style={{
-              mx: "48px",
-            }}
-          >
-            <Divider width="100%" />
-            <Box mx="48px" mb={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Typography>One Wire</Typography>
-              <Typography>www.onewire.com</Typography>
-            </Box>
-          </footer>
+
+          <Footer style={{ margin: "20px" }} />
         </header>
         <main className="report-content" style={{ breakBefore: "page" }}>
           <section className="press-release-summary">
@@ -361,71 +370,35 @@ function PressReleaseReport() {
               />
             </Box>
           </section>
-          <footer
-            style={{
-              mx: "48px",
-            }}
-            className="content-footer"
-          >
-            <Divider width="100%" />
-            <Box mx="48px" mb={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Box className="footer-title">One Wire</Box>
-              <Box className="footer-website">www.onewire.com</Box>
-            </Box>
-          </footer>
+          <Footer style={{ marginTop: "20px" }} />
         </main>
         <section className="press-release-content">
           <h2 className="section-title">Your Submitted Press Release</h2>
-          <p
+          <div
             className="press-release-text"
             dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}
-          ></p>
-
-          <footer className="content-footer">
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b9fb197a1a148e5e92cf368ee7149d3b74867abbcb5f6ddc39b189c80e5c060?apiKey=a76d01df06f64f7f8c0e5d6a100e4150&"
-              alt="Decorative line"
-              className="decorative-line"
-            />
-            <Box className="footer-content">
-              <Box className="footer-title">One Wire</Box>
-              <Box className="footer-website">www.onewire.com</Box>
-            </Box>
-          </footer>
+          ></div>
+          <Footer />
         </section>
-
-        <section className="distribution-list">
-          {orderData?.filterOrdersPaginated?.data?.map((item, index) => {
-            if (item?.status === "REJECTED") {
-              return null;
-            }
-            return (
-              <DistributionItem
-                key={index}
-                logo={item?.publicationInfo?.image}
-                name="logo"
-                link={item?.url}
-                type={item?.publicationInfo?.title}
-                industry="Finance"
-                countries="Global"
-                audience={item?.publicationInfo?.stats?.traffic}
-              />
-            );
-          })}
-
-          <footer
-            style={{
-              mx: "48px",
-            }}
-            className="content-footer"
-          >
-            <Box mx="48px" mb={2} display="flex" justifyContent="space-between" alignItems="center">
-              <Box>One Wire</Box>
-              <Box>www.onewire.com</Box>
-            </Box>
-          </footer>
-        </section>
+        {filteredOrders?.length > 0 && (
+          <section className="distribution-list">
+            {filteredOrders?.map((item, index) => {
+              return (
+                <DistributionItem
+                  key={index}
+                  logo={item?.publicationInfo?.image}
+                  name="logo"
+                  link={item?.url}
+                  type={item?.publicationInfo?.title}
+                  industry="Finance"
+                  countries="Global"
+                  audience={item?.publicationInfo?.stats?.traffic}
+                />
+              );
+            })}
+            <Footer style={{ margin: "20px" }} />
+          </section>
+        )}
       </Box>
     </>
   );
