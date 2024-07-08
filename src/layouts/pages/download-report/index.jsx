@@ -166,6 +166,8 @@ function PressReleaseReport() {
   const filteredOrders = orderData?.filterOrdersPaginated?.data?.filter(
     (one) => one?.status !== "REJECTED"
   );
+  const { email, phone, website, name, address, country, state } =
+    data?.getArticleById?.mediaContact || {};
   return (
     <>
       <Button
@@ -232,26 +234,17 @@ function PressReleaseReport() {
             >
               <Box className="info-grid">
                 <Box className="info-column">
-                  <CompanyInfoItem
-                    label="Company Name"
-                    value={data?.getArticleById?.clientInfo?.title}
-                  />
-                  <CompanyInfoItem label="Phone" value="+91 9999 44 0531" />
-                  <CompanyInfoItem label="Email" value={data?.getArticleById?.clientInfo?.email} />
+                  <CompanyInfoItem label="Company Name" value={name || "-"} />
+                  <CompanyInfoItem label="Phone" value={phone || "-"} />
+                  <CompanyInfoItem label="Email" value={email || "-"} />
                 </Box>
                 <Box className="info-column">
-                  <CompanyInfoItem label="Country" value="United Kingdom" />
-                  <CompanyInfoItem
-                    label="Website"
-                    value={data?.getArticleById?.clientInfo?.website}
-                  />
+                  <CompanyInfoItem label="Country" value={country || "-"} />
+                  <CompanyInfoItem label="Website" value={website || "-"} />
                 </Box>
                 <Box className="info-column">
-                  <CompanyInfoItem
-                    label="Address 1"
-                    value="4th Floor , St John House, 2-10 Queen St"
-                  />
-                  <CompanyInfoItem label="City" value="Manchester M2 5JB" />
+                  <CompanyInfoItem label="Address 1" value={address || "-"} />
+                  <CompanyInfoItem label="State" value={state || "-"} />
                 </Box>
               </Box>
             </Box>
