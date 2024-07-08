@@ -47,6 +47,8 @@ export const GET_ARTICLE_BY_ID = gql`
         category
         publicationIds
         price
+        traffic
+        type
       }
       publicationInfo {
         id
@@ -59,6 +61,7 @@ export const GET_ARTICLE_BY_ID = gql`
           da
           traffic
         }
+        url
         price
         linkType
         image
