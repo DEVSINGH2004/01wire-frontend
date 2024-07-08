@@ -44,19 +44,19 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
         <DialogContent>
 
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="18px"
             mt={1}
             sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
           >
             Objective:
           </MDTypography>
-          <MDTypography fontFamily="Georgia, serif" fontSize="15px" color="black" mt={1}>
+          <MDTypography fontFamily="Roboto" fontSize="15px" color="black" mt={1}>
             Ensure all press releases meet high standards of quality, accuracy, and relevance,
             providing valuable information to readers.
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="18px"
             mt={2}
             sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
@@ -64,7 +64,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             Writing Standards:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -73,7 +73,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             1. Content Quality:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -85,7 +85,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -94,7 +94,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             2. Accuracy:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -106,7 +106,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -115,10 +115,10 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             3. Clarity and Readability:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
-            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
           >
             <ul style={{ listStyleType: "circle" }}>
               <li>Use straightforward language; avoid jargon.</li>
@@ -128,7 +128,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
           </MDTypography>
 
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="18px"
             mt={2}
             sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
@@ -136,7 +136,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             Structure and Format:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -145,7 +145,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             1. Title:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -158,7 +158,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -167,7 +167,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             2. Dateline:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -177,7 +177,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -186,10 +186,10 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             3. Body:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
-            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
           >
             <ul style={{ listStyleType: "circle" }}>
               <li>Start with a strong lead paragraph summarizing key points.</li>
@@ -199,7 +199,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -208,10 +208,10 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             4. Quotes:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
-            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
           >
             <ul style={{ listStyleType: "circle" }}>
               <li>Include valuable quotes from relevant sources.</li>
@@ -219,7 +219,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -228,10 +228,10 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             5. About Section:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
-            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
           >
             <ul style={{ listStyleType: "circle" }}>
               <li>
@@ -241,15 +241,15 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
           </MDTypography>
 
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="18px"
             mt={2}
             sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
           >
-            Key Considerations::
+            Key Considerations:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -258,7 +258,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             1. Relevance:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -268,7 +268,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -277,7 +277,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             2. Tone and Style:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -288,7 +288,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -297,10 +297,10 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             3. Contact Information:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
-            sx={{ fontWeight: 500, color: "rgba(0, 0, 0, 1)" }}
+            sx={{ color: "rgba(0, 0, 0, 1)" }}
           >
             <ul style={{ listStyleType: "circle" }}>
               <li>Include a media contact person’s name, phone number, and email address.</li>
@@ -308,7 +308,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
           </MDTypography>
           
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="18px"
             mt={2}
             sx={{ fontWeight: 600, color: "rgba(0, 0, 0, 1)" }}
@@ -316,7 +316,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             Final Checks:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -325,7 +325,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             1. Proofreading:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -336,7 +336,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             </ul>
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="16px"
             mt={2}
             ml={2}
@@ -345,7 +345,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
             2. Compliance:
           </MDTypography>
           <MDTypography
-            fontFamily="Georgia, serif"
+            fontFamily="Roboto"
             fontSize="15px"
             ml={6}
             sx={{ color: "rgba(0, 0, 0, 1)" }}
@@ -355,7 +355,7 @@ const EditorialGuidelines = ({ onClose }: { onClose: any }) => {
               <li>Avoid defamatory, libellous, or infringing content.</li>
             </ul>
           </MDTypography>
-          <MDTypography fontFamily="Georgia, serif" fontSize="15px" color="black" mt={2}>
+          <MDTypography fontFamily="Roboto" fontSize="15px" color="black" mt={2}>
             By following these guidelines, your press release will meet standards and effectively
             communicate your news. For questions or assistance, contact our editorial team.
           </MDTypography>

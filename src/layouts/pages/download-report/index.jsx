@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import "./download.css";
 import Box from "@mui/material/Box";
 import OneWireLogo from "assets/images/OneWireLogo_2.svg";
@@ -6,16 +6,12 @@ import DownloadBg from "assets/images/download-report/downloadBg.png";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import MDTypography from "components/MDTypography";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { renderToString } from "react-dom/server";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useQuery } from "@apollo/client";
-import { Divider } from "@mui/material";
 import { GET_ARTICLE_BY_ID } from "graphql/queries/getArticleById";
 import { useLocation } from "react-router-dom";
 import { GET_ORDERS } from "graphql/queries/filterOrdersPaginated";
@@ -154,6 +150,8 @@ function PressReleaseReport() {
       id,
     },
   });
+
+  console.log(data, "data");
 
   const { data: orderData } = useQuery(GET_ORDERS, {
     fetchPolicy: "network-only",
@@ -373,7 +371,7 @@ function PressReleaseReport() {
           <Footer style={{ marginTop: "20px" }} />
         </main>
         <section className="press-release-content">
-          <h2 className="section-title">Your Submitted Press Release</h2>
+          <h2 className="section-title">{data?.getArticleById?.title}</h2>
           <div
             className="press-release-text"
             dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}

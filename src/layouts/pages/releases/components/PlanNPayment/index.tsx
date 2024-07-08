@@ -310,7 +310,6 @@ function PlanNPayment({
       )}
       {createEstimate && (
         <MDBox
-          mt={3}
           width="102.47%"
           display="flex"
           justifyContent="space-between"

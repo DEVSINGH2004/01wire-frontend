@@ -104,6 +104,7 @@ export type ArticleType = {
   bundleIds: string[];
   publicationIds: string[];
   bundleInfo: Bundle[];
+  publicationInfo: string[];
   mediaContact: ArticleMediaContactType;
   publishAt: string;
   createdAt: string;
