@@ -14,10 +14,7 @@ import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import { truncateString } from "utils/helpers";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MessageIcon from "@mui/icons-material/Message";
-import ShareIcon from "assets/images/icons/shareIcon.svg";
-import { toast } from "react-toastify";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import InfoIcon from "@mui/icons-material/Info";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export const statusOptions = [
   {
@@ -71,13 +68,15 @@ export const makeColumns = (
   filters,
   setOpen
 ) => {
-  async function copyToClipboard(text) {
+  async function handleNextTab(row) {
     try {
-      await navigator.clipboard.writeText(text);
+      const url = `${window?.location?.origin}/share-release/${row?.original?.id}`;
+      window.open(url, "_blank");
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
   }
+
   const columns = [
     {
       Header: "PR ID",
@@ -158,7 +157,6 @@ export const makeColumns = (
         );
       },
     },
-
     {
       Header: "Created At",
       width: "10%",
@@ -285,29 +283,6 @@ export const makeColumns = (
               display: "flex",
             }}
           >
-            {/* <IconButton
-              color="black"
-              onClick={() => {
-                const url = `${window?.location?.origin}/share-release/${row?.original?.id}`;
-                copyToClipboard(url)
-                  .then(() => {
-                    window.open(url, "_blank");
-                  })
-                  .catch((err) => {
-                    toast.error(err);
-                  });
-              }}
-              // sx={{
-              //   width: "35px",
-              //   height: "35px",
-              //   margin: "9px ",
-              //   backgroundColor: "#f8f8fc",
-              //   border: "1px solid #e0e0e4",
-              //   paddingTop: "8px",
-              // }}
-            >
-              <InfoIcon fontSize="small" />
-            </IconButton> */}
             {row.original.status === "PUBLISHED" && (
               <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
                 <img width={36} height={36} alt="navigate" src={DownloadIcon} />
@@ -338,6 +313,20 @@ export const makeColumns = (
                 <MessageIcon sx={{ fontSize: "10px" }} />
               </IconButton>
             )}
+            <IconButton
+              color="black"
+              onClick={() => handleNextTab(row)}
+              sx={{
+                width: "35px",
+                height: "35px",
+                margin: "9px ",
+                backgroundColor: "#f8f8fc",
+                border: "1px solid #e0e0e4",
+                paddingTop: "8px",
+              }}
+            >
+              <VisibilityIcon fontSize="small" />
+            </IconButton>
             <IconButton onClick={() => handleAction(row.original.id, "edit", row?.original)}>
               <img width={36} height={36} alt="navigate" src={NavigateIcon} />
             </IconButton>
@@ -346,6 +335,5 @@ export const makeColumns = (
       },
     },
   ];
-
   return columns;
 };

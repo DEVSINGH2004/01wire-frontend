@@ -45,7 +45,7 @@ interface Props {
   isSorted?: boolean;
   noEndBorder?: boolean;
   showHeader?: boolean;
-  paginationInfo: any;
+  paginationInfo?: any;
   loading?: boolean;
   handlePagination?: any;
   onSelectedRowsChange?: (selectedRows: any[]) => void;
