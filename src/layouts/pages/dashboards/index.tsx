@@ -32,10 +32,6 @@ import Publish from "assets/images/publish.svg";
 import Appro from "assets/images/appro.svg";
 import Schedule from "assets/images/schedule.svg";
 
-
-
-
-
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function Overview(): JSX.Element {
@@ -58,7 +54,6 @@ function Overview(): JSX.Element {
   const { data, loading } = useQuery<IGetArticleStats>(GET_ARTICLE_STATS, {
     fetchPolicy: "network-only",
   });
-  console.log(data,"data")
   const editorialReview = data?.getArticleStats?.find(
     (one: any) => one?.status === "IN_REVIEW"
   )?.count;
@@ -118,7 +113,7 @@ function Overview(): JSX.Element {
                   <img src={Review} height="64px" width="64px" alt="Review" />
                   <MDBox>
                     <MDTypography fontSize="16px" fontWeight="light" color="text">
-                     Review
+                      Review
                     </MDTypography>
                     <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
                       {editorialReview || 0}

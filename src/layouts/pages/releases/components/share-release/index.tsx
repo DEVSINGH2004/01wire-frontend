@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { AppBar, Toolbar, useScrollTrigger } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -15,7 +15,104 @@ import DisplayImage from "components/DisplayImage";
 import Link from "@mui/material/Link";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { toast } from "react-toastify";
-
+import DataTable from "layouts/pages/pr-management/components/DataTable";
+const columns = [
+  {
+    Header: "Category",
+    accessor: "category",
+    width: "25%",
+    align: "left",
+    Cell: ({ value }: { value: "string" }) => (
+      <MDTypography fontWeight="medium" sx={{ fontSize: "16px", fontFamily: "Roboto" }}>
+        {value}
+      </MDTypography>
+    ),
+  },
+  {
+    Header: "Type",
+    accessor: "type",
+    width: "25%",
+    Cell: ({ value }: { value: any }) => (
+      <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+        {value}
+      </MDTypography>
+    ),
+  },
+  {
+    Header: "Traffic",
+    accessor: "traffic",
+    width: "25%",
+    Cell: ({ value }: { value: any }) => {
+      return (
+        <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+          {value}
+        </MDTypography>
+      );
+    },
+  },
+  {
+    Header: "Publications",
+    accessor: "publicationIds",
+    width: "25%",
+    align: "right",
+    Cell: ({ value }: { value: any }) => {
+      return (
+        <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+          {value?.length}
+        </MDTypography>
+      );
+    },
+  },
+];
+const columnsPub = [
+  {
+    Header: "Title",
+    accessor: "title",
+    width: "25%",
+    align: "left",
+    Cell: ({ value }: { value: "string" }) => (
+      <MDTypography fontWeight="medium" sx={{ fontSize: "16px", fontFamily: "Roboto" }}>
+        {value}
+      </MDTypography>
+    ),
+  },
+  {
+    Header: "Traffic",
+    accessor: "stats",
+    width: "25%",
+    Cell: ({ value }: { value: any }) => {
+      return (
+        <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+          {value?.traffic || "-"}
+        </MDTypography>
+      );
+    },
+  },
+  {
+    Header: "Website",
+    accessor: "url",
+    width: "25%",
+    align: "center",
+    Cell: ({ value = "-" }: { value: any }) => {
+      return (
+        <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+          {value}
+        </MDTypography>
+      );
+    },
+  },
+  {
+    Header: "LinkType",
+    accessor: "linkType",
+    width: "25%",
+    align: "right",
+    Cell: ({ value }: { value: any }) => (
+      <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+        {value.split("_").join(" ")}
+      </MDTypography>
+    ),
+  },
+];
 const ShareReleases = () => {
   const { id } = useParams();
   const { data, loading } = useQuery<IGetArticleById, IGetArticleByIdVars>(GET_ARTICLE_BY_ID, {
@@ -24,6 +121,7 @@ const ShareReleases = () => {
       id,
     },
   });
+
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
@@ -51,6 +149,9 @@ const ShareReleases = () => {
       }
     }
   };
+  const bundleRows = data?.getArticleById?.bundleInfo;
+  const rows: any = data?.getArticleById?.publicationInfo || [];
+
   return (
     <MDBox>
       <AppBar
@@ -78,24 +179,16 @@ const ShareReleases = () => {
               <MDTypography fontSize="50px" color="black" fontWeight="bold">
                 {title}
               </MDTypography>
-              <MDBox sx={{ marginTop: "30px" }} >
+              <MDBox sx={{ marginTop: "30px" }}>
                 <DisplayImage
                   src={featureImage}
                   height="550px"
                   width="100%"
                   alt={"img"}
-                  styles={{ borderRadius: "10px",
-                     maxWidth: "100%",
-                    height: "auto",
-                    display: "block",
-                    margin: "0 auto",
-                    objectFit: "contain",
-
-                   }}
+                  styles={{ borderRadius: "10px" }}
                 />
-                
               </MDBox>
-              <MDTypography sx={{ marginTop: "40px" }} fontSize="20px">
+              <MDTypography sx={{ marginTop: "40px", textAlign: "justify" }} fontSize="20px">
                 {data?.getArticleById?.summary}
               </MDTypography>
               <MDTypography
@@ -107,7 +200,7 @@ const ShareReleases = () => {
                 Introduction
               </MDTypography>
 
-              <MDTypography sx={{ marginTop: "20px" }} fontSize="20px" className="press-release-text">
+              <MDTypography sx={{ marginTop: "20px", textAlign: "justify" }} fontSize="20px">
                 {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")}
               </MDTypography>
 
@@ -183,6 +276,70 @@ const ShareReleases = () => {
                   </Link>
                 </MDTypography>
               </MDBox>
+              {data?.getArticleById?.bundleInfo.length > 0 && (
+                <>
+                  <MDTypography
+                    fontSize="35px"
+                    color="black"
+                    fontWeight="bold"
+                    sx={{ marginTop: "30px" }}
+                  >
+                    Bundles
+                  </MDTypography>
+                  {/* bundles table */}
+                  <MDBox
+                    sx={{
+                      marginTop: "35px",
+                      width: "100%",
+                      boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                    }}
+                    bgColor="white"
+                  >
+                    <DataTable
+                      canSearch
+                      table={{ rows: bundleRows, columns }}
+                      showHeader
+                      entriesPerPage={false}
+                      maxHeight={"400px"}
+                    />
+                  </MDBox>
+                  {/* end bundles table */}
+                </>
+              )}
+              {data?.getArticleById?.publicationInfo.length > 0 && (
+                <>
+                  <MDTypography
+                    fontSize="35px"
+                    color="black"
+                    fontWeight="bold"
+                    sx={{ marginTop: "30px" }}
+                  >
+                    Publications
+                  </MDTypography>
+                  {/* Publication table */}
+                  <MDBox
+                    sx={{
+                      marginTop: "35px",
+                      width: "100%",
+                      boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                    }}
+                    bgColor="white"
+                  >
+                    <DataTable
+                      canSearch
+                      table={{ rows, columns: columnsPub }}
+                      showHeader
+                      entriesPerPage={false}
+                      maxHeight={"400px"}
+                    />
+                  </MDBox>
+                  {/* end Publication table */}
+                </>
+              )}
             </MDBox>
             <MDBox
               display="flex"
@@ -218,7 +375,7 @@ const ShareReleases = () => {
               justifyContent: "center",
             }}
           >
-            <MDTypography variant="h6">No estimation found</MDTypography>
+            <MDTypography variant="h6">No release found</MDTypography>
           </MDBox>
         )}
       </MDBox>
