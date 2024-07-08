@@ -151,8 +151,6 @@ function PressReleaseReport() {
     },
   });
 
-  console.log(data, "data");
-
   const { data: orderData } = useQuery(GET_ORDERS, {
     fetchPolicy: "network-only",
     variables: {
