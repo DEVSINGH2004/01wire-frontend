@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "./download.css";
 import Box from "@mui/material/Box";
 import OneWireLogo from "assets/images/OneWireLogo_2.svg";
@@ -6,12 +6,16 @@ import DownloadBg from "assets/images/download-report/downloadBg.png";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import MDTypography from "components/MDTypography";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { renderToString } from "react-dom/server";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useQuery } from "@apollo/client";
+import { Divider } from "@mui/material";
 import { GET_ARTICLE_BY_ID } from "graphql/queries/getArticleById";
 import { useLocation } from "react-router-dom";
 import { GET_ORDERS } from "graphql/queries/filterOrdersPaginated";
@@ -166,8 +170,6 @@ function PressReleaseReport() {
   const filteredOrders = orderData?.filterOrdersPaginated?.data?.filter(
     (one) => one?.status !== "REJECTED"
   );
-  const { email, phone, website, name, address, country, state } =
-    data?.getArticleById?.mediaContact || {};
   return (
     <>
       <Button
@@ -234,17 +236,26 @@ function PressReleaseReport() {
             >
               <Box className="info-grid">
                 <Box className="info-column">
-                  <CompanyInfoItem label="Company Name" value={name || "-"} />
-                  <CompanyInfoItem label="Phone" value={phone || "-"} />
-                  <CompanyInfoItem label="Email" value={email || "-"} />
+                  <CompanyInfoItem
+                    label="Company Name"
+                    value={data?.getArticleById?.clientInfo?.title}
+                  />
+                  <CompanyInfoItem label="Phone" value="+91 9999 44 0531" />
+                  <CompanyInfoItem label="Email" value={data?.getArticleById?.clientInfo?.email} />
                 </Box>
                 <Box className="info-column">
-                  <CompanyInfoItem label="Country" value={country || "-"} />
-                  <CompanyInfoItem label="Website" value={website || "-"} />
+                  <CompanyInfoItem label="Country" value="United Kingdom" />
+                  <CompanyInfoItem
+                    label="Website"
+                    value={data?.getArticleById?.clientInfo?.website}
+                  />
                 </Box>
                 <Box className="info-column">
-                  <CompanyInfoItem label="Address 1" value={address || "-"} />
-                  <CompanyInfoItem label="State" value={state || "-"} />
+                  <CompanyInfoItem
+                    label="Address 1"
+                    value="4th Floor , St John House, 2-10 Queen St"
+                  />
+                  <CompanyInfoItem label="City" value="Manchester M2 5JB" />
                 </Box>
               </Box>
             </Box>
@@ -362,7 +373,7 @@ function PressReleaseReport() {
           <Footer style={{ marginTop: "20px" }} />
         </main>
         <section className="press-release-content">
-          <h2 className="section-title">{data?.getArticleById?.title}</h2>
+          <h2 className="section-title">Your Submitted Press Release</h2>
           <div
             className="press-release-text"
             dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}

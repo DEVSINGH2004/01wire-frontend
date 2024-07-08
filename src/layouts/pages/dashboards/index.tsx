@@ -25,6 +25,17 @@ import AAIcon from "assets/images/AA.svg";
 import ScheduledIcon from "assets/images/Scheduled.svg";
 import RejectedIcon from "assets/images/Rejected.svg";
 import TiltArrowIcon from "assets/images/TiltArrow.svg";
+import Draft from "assets/images/draft.svg";
+import Submitted from "assets/images/submitted.svg";
+import Review from "assets/images/review.svg";
+import Publish from "assets/images/publish.svg";
+import Appro from "assets/images/appro.svg";
+import Schedule from "assets/images/schedule.svg";
+
+
+
+
+
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 function Overview(): JSX.Element {
@@ -47,6 +58,7 @@ function Overview(): JSX.Element {
   const { data, loading } = useQuery<IGetArticleStats>(GET_ARTICLE_STATS, {
     fetchPolicy: "network-only",
   });
+  console.log(data,"data")
   const editorialReview = data?.getArticleStats?.find(
     (one: any) => one?.status === "IN_REVIEW"
   )?.count;
@@ -55,6 +67,10 @@ function Overview(): JSX.Element {
   )?.count;
   const scheduled = data?.getArticleStats?.find((one: any) => one?.status === "SCHEDULED")?.count;
   const rejected = data?.getArticleStats?.find((one: any) => one?.status === "REJECTED")?.count;
+  const draft = data?.getArticleStats?.find((one: any) => one?.status === "DRAFT")?.count;
+  const published = data?.getArticleStats?.find((one: any) => one?.status === "PUBLISHED")?.count;
+  const submitted = data?.getArticleStats?.find((one: any) => one?.status === "SUBMITTED")?.count;
+
   return (
     <>
       <DashboardNavbar />
@@ -62,17 +78,47 @@ function Overview(): JSX.Element {
         <MDCircularLoader startLoader />
       ) : (
         <MDBox px={2}>
-          <MDTypography mt={1} variant="h6" fontWeight="medium">
+          <MDTypography mt={3} variant="h6" fontWeight="medium">
             Current Status
           </MDTypography>
           <Grid mt={1} container spacing={2}>
             <Grid item xs={12} md={3}>
               <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
-                  <img src={ERIcon} height="64px" width="64px" alt="ER" />
+                  <img src={Draft} height="64px" width="64px" alt="Draft" />
                   <MDBox>
                     <MDTypography fontSize="16px" fontWeight="light" color="text">
-                      Editorial Review
+                      Draft
+                    </MDTypography>
+                    <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                      {draft || 0}
+                    </MDTypography>
+                  </MDBox>
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+                <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                  <img src={Submitted} height="64px" width="64px" alt="Submitted" />
+                  <MDBox>
+                    <MDTypography fontSize="16px" fontWeight="light" color="text">
+                      Submitted
+                    </MDTypography>
+                    <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                      {submitted || 0}
+                    </MDTypography>
+                  </MDBox>
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+                <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                  <img src={Review} height="64px" width="64px" alt="Review" />
+                  <MDBox>
+                    <MDTypography fontSize="16px" fontWeight="light" color="text">
+                     Review
                     </MDTypography>
                     <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
                       {editorialReview || 0}
@@ -84,7 +130,7 @@ function Overview(): JSX.Element {
             <Grid item xs={12} md={3}>
               <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
-                  <img src={AAIcon} height="64px" width="64px" alt="ER" />
+                  <img src={Appro} height="64px" width="64px" alt="Appro" />
                   <MDBox>
                     <MDTypography fontSize="16px" fontWeight="light" color="text">
                       Awaiting Approval
@@ -99,7 +145,7 @@ function Overview(): JSX.Element {
             <Grid item xs={12} md={3}>
               <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
-                  <img src={ScheduledIcon} height="64px" width="64px" alt="ER" />
+                  <img src={Schedule} height="64px" width="64px" alt="Schedule" />
                   <MDBox>
                     <MDTypography fontSize="16px" fontWeight="light" color="text">
                       Scheduled
@@ -121,6 +167,21 @@ function Overview(): JSX.Element {
                     </MDTypography>
                     <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
                       {rejected || 0}
+                    </MDTypography>
+                  </MDBox>
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+                <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                  <img src={Publish} height="64px" width="64px" alt="Publish" />
+                  <MDBox>
+                    <MDTypography fontSize="16px" fontWeight="light" color="text">
+                      Published
+                    </MDTypography>
+                    <MDTypography fontSize="32px" fontWeight="bold" textAlign="right">
+                      {published || 0}
                     </MDTypography>
                   </MDBox>
                 </MDBox>
