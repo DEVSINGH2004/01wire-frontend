@@ -52,13 +52,13 @@ const columns = [
   },
   {
     Header: "Publications",
-    accessor: "publications",
+    accessor: "publicationIds",
     width: "25%",
     align: "right",
     Cell: ({ value }: { value: any }) => {
       return (
         <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-          {value}
+          {value?.length}
         </MDTypography>
       );
     },
@@ -78,12 +78,12 @@ const columnsPub = [
   },
   {
     Header: "Traffic",
-    accessor: "traffic",
+    accessor: "stats",
     width: "25%",
     Cell: ({ value }: { value: any }) => {
       return (
         <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-          {value}
+          {value?.traffic || "-"}
         </MDTypography>
       );
     },
@@ -93,7 +93,7 @@ const columnsPub = [
     accessor: "url",
     width: "25%",
     align: "center",
-    Cell: ({ value }: { value: any }) => {
+    Cell: ({ value = "-" }: { value: any }) => {
       return (
         <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
           {value}
@@ -149,20 +149,8 @@ const ShareReleases = () => {
       }
     }
   };
-
-  const bundleRows = data?.getArticleById?.bundleInfo?.map((pub:any) => ({
-    category: pub.category,
-    type: pub.type,
-    traffic: pub?.traffic,
-    publications: pub.publicationIds.length,
-  })) || [];
-
-  const rows = data?.getArticleById?.publicationInfo?.map((pub:any) => ({
-    title: pub.title,
-    traffic: pub.stats?.traffic,
-    url: pub.url,
-    linkType: pub.linkType,
-  })) || [];
+  const bundleRows = data?.getArticleById?.bundleInfo;
+  const rows: any = data?.getArticleById?.publicationInfo || [];
 
   return (
     <MDBox>
