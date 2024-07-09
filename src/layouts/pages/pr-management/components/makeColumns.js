@@ -196,7 +196,6 @@ export const makeColumns = (
         const menuOptions =
           selectedStatus === "SCHEDULED"
             ? [
-                { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
                 { label: "REJECTED", value: "REJECTED" },
                 { label: "PUBLISHED", value: "PUBLISHED" },
               ]
