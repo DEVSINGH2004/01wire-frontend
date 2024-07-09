@@ -316,7 +316,7 @@ const ShareReleases = () => {
                     fontWeight="bold"
                     sx={{ marginTop: "30px" }}
                   >
-                    Publication
+                    Publications
                   </MDTypography>
                   {/* Publication table */}
                   <MDBox
@@ -375,7 +375,7 @@ const ShareReleases = () => {
               justifyContent: "center",
             }}
           >
-            <MDTypography variant="h6">No estimation found</MDTypography>
+            <MDTypography variant="h6">No release found</MDTypography>
           </MDBox>
         )}
       </MDBox>

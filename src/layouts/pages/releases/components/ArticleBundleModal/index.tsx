@@ -78,7 +78,7 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
             {row.original.status === "PUBLISHED"
-              ? row.original.publicationInfo?.url
+              ? row.original?.url
               : value
               ? truncateString(value, 70)
               : "-"}
