@@ -30,6 +30,7 @@ import {
 import ArticleBundleModal from "./components/ArticleBundleModal";
 import MessageModal from "./components/MessageModal";
 import DeleteModal from "examples/DeleteModal";
+import { statusOptions } from "constants/index";
 
 const PER_PAGE = 10;
 function Releases(): JSX.Element {
@@ -37,10 +38,12 @@ function Releases(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation;
+  const PRStatus = location?.state?.status;
+  const selectedStatus = statusOptions?.filter((one) => one?.value === PRStatus);
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<any>(PRStatus ? { status: selectedStatus } : {});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [initLoading, setInitLoader] = useState<boolean>(false);
   const [noteModal, setNoteModal] = useState<any>(null);
