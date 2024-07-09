@@ -201,7 +201,8 @@ const ShareReleases = () => {
               </MDTypography>
 
               <MDTypography sx={{ marginTop: "20px", textAlign: "justify" }} fontSize="20px">
-                {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")}
+                <div dangerouslySetInnerHTML={{ __html: content }} />
+                {/* {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")} */}
               </MDTypography>
 
               <MDBox

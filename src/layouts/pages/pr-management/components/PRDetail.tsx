@@ -60,7 +60,7 @@ const PRDetail = ({
   const statusOptions =
     articleStatus === "SCHEDULED"
       ? [
-          { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
+          // { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
           { label: "REJECTED", value: "REJECTED" },
           { label: "PUBLISHED", value: "PUBLISHED" },
         ]
