@@ -29,9 +29,10 @@ const settings = {
   speed: 500,
   slidesToShow: 3,
   slidesToScroll: 3,
-  className: "center",
+  className: "left",
   infinite: false,
   centerPadding: "60px",
+  centerMode:false,
   prevArrow: <PrevArrow />,
   nextArrow: <NextArrow />,
 };
@@ -68,7 +69,10 @@ const DisplayBundles = ({
         sx={{
           "& .slick-track": {
             transform: disabled && "none !important",
-          },
+            margin:0,
+            padding:0,
+            left: bundles.length == 2 && !disabled ? "-33%" : 0
+          }
         }}
       >
         <Slider ref={sliderRef} {...settings}>
