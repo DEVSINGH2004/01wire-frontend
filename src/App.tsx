@@ -27,6 +27,7 @@ import PRManagement from "layouts/pages/pr-management";
 import DownloadReport from "layouts/pages/download-report";
 import ShareEstimation from "layouts/pages/share-estimation";
 import ShareReleases from "layouts/pages/releases/components/share-release";
+import "../src/layouts/pages/download-report/download.css";
 
 export default function App() {
   const token = localStorage.getItem("token");
@@ -80,7 +81,8 @@ export default function App() {
         return null;
       }
     );
-    const isSharePath = pathname.startsWith('/share-estimation') || pathname.startsWith('/share-release');
+  const isSharePath =
+    pathname.startsWith("/share-estimation") || pathname.startsWith("/share-release");
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -89,7 +91,6 @@ export default function App() {
           <Route path="/share-estimation/:id" element={<ShareEstimation />} />
           <Route path="/share-release/:id" element={<ShareReleases />} />
         </Routes>
-        
       ) : !token ? (
         <SignIn />
       ) : (
