@@ -251,7 +251,8 @@
   max-width: 100%;
   overflow: hidden;
 }
-.press-release-text img {
+.press-release-text,
+.editorClassName img {
   max-width: 100%;
   height: auto;
   display: block;

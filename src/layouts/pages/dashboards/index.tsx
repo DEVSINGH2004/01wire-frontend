@@ -10,7 +10,6 @@ import {
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import IconButton from "@mui/material/IconButton";
 // Material Dashboard 2 PRO React TS components
@@ -20,9 +19,6 @@ import MDCircularLoader from "components/MDCircularLoader";
 import DisplayImage from "components/DisplayImage";
 // Material Dashboard 2 PRO React TS examples components
 // Images
-import ERIcon from "assets/images/ER.svg";
-import AAIcon from "assets/images/AA.svg";
-import ScheduledIcon from "assets/images/Scheduled.svg";
 import RejectedIcon from "assets/images/Rejected.svg";
 import TiltArrowIcon from "assets/images/TiltArrow.svg";
 import Draft from "assets/images/draft.svg";
@@ -65,7 +61,13 @@ function Overview(): JSX.Element {
   const draft = data?.getArticleStats?.find((one: any) => one?.status === "DRAFT")?.count;
   const published = data?.getArticleStats?.find((one: any) => one?.status === "PUBLISHED")?.count;
   const submitted = data?.getArticleStats?.find((one: any) => one?.status === "SUBMITTED")?.count;
-
+  const handleNavigation = (status: string) => {
+    navigate("/releases", {
+      state: {
+        status,
+      },
+    });
+  };
   return (
     <>
       <DashboardNavbar />
@@ -78,7 +80,10 @@ function Overview(): JSX.Element {
           </MDTypography>
           <Grid mt={1} container spacing={2}>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("DRAFT")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={Draft} height="64px" width="64px" alt="Draft" />
                   <MDBox>
@@ -93,7 +98,10 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("SUBMITTED")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={Submitted} height="64px" width="64px" alt="Submitted" />
                   <MDBox>
@@ -108,7 +116,10 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("REVIEW")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={Review} height="64px" width="64px" alt="Review" />
                   <MDBox>
@@ -123,7 +134,10 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("AWAITING_APPROVAL")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={Appro} height="64px" width="64px" alt="Appro" />
                   <MDBox>
@@ -138,7 +152,10 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("SCHEDULED")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={Schedule} height="64px" width="64px" alt="Schedule" />
                   <MDBox>
@@ -153,7 +170,10 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("REJECTED")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={RejectedIcon} height="64px" width="64px" alt="ER" />
                   <MDBox>
@@ -168,7 +188,10 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Card sx={{ p: 2, borderRadius: "12px", height: "124px" }}>
+              <Card
+                onClick={() => handleNavigation("PUBLISHED")}
+                sx={{ p: 2, borderRadius: "12px", height: "124px", cursor: "pointer" }}
+              >
                 <MDBox display="flex" alignItems="center" justifyContent="space-between">
                   <img src={Publish} height="64px" width="64px" alt="Publish" />
                   <MDBox>

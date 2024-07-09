@@ -17,6 +17,8 @@ import { useLocation } from "react-router-dom";
 import { GET_ORDERS } from "graphql/queries/filterOrdersPaginated";
 import Link from "@mui/material/Link";
 import DisplayImage from "components/DisplayImage";
+import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 
 const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
   <Link
@@ -363,6 +365,18 @@ function PressReleaseReport() {
         </main>
         <section className="press-release-content">
           <h2 className="section-title">{data?.getArticleById?.title}</h2>
+          <MDBox sx={{ marginTop: "30px" }}>
+            <DisplayImage
+              src={data?.getArticleById?.featureImage}
+              height="550px"
+              width="100%"
+              alt={"img"}
+              styles={{ borderRadius: "10px" }}
+            />
+          </MDBox>
+          <MDTypography sx={{ my: "20px", textAlign: "justify" }} fontSize="20px">
+            {data?.getArticleById?.summary}
+          </MDTypography>
           <div
             className="press-release-text"
             dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}

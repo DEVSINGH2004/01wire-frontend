@@ -75,6 +75,7 @@ function MDEditor({
     <MDEditorRoot ownerState={{ darkMode }}>
       <Editor
         readOnly={disabled}
+        editorClassName="editorClassName"
         toolbarHidden={disabled}
         editorStyle={{ minHeight: "352px" }}
         toolbar={config}
