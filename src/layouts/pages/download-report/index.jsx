@@ -170,6 +170,7 @@ function PressReleaseReport() {
   );
   const { email, phone, website, name, address, country, state } =
     data?.getArticleById?.mediaContact || {};
+  const { linkedIn, facebook, instagram, twitter } = data?.getArticleById?.clientInfo?.social || {};
   return (
     <>
       <Button
@@ -265,36 +266,44 @@ function PressReleaseReport() {
                 gap: "10px",
               }}
             >
-              <SocialMediaLink
-                IconComponent={FacebookIcon}
-                platform="Facebook"
-                bgColor={"#0766FF"}
-                to={data?.getArticleById?.clientInfo?.social?.facebook}
-              />
-              <SocialMediaLink
-                IconComponent={XIcon}
-                platform="x.com"
-                bgColor={"#0B66C2"}
-                to={data?.getArticleById?.clientInfo?.social?.linkedIn}
-              />
-              <SocialMediaLink
-                IconComponent={InstagramIcon}
-                platform="Instagram"
-                bgColor={`linear-gradient(0deg, #D9D9D9, #D9D9D9),linear-gradient(0deg, #0766FF, #0766FF),linear-gradient(49.12deg, #FFDD55 6.62%, #FF543E 50.06%, #C837AB 93.5%)`}
-                to={data?.getArticleById?.clientInfo?.social?.instagram}
-              />
-              <SocialMediaLink
-                IconComponent={LinkedInIcon}
-                platform="Linkedin"
-                bgColor={"#0B66C2"}
-                to={data?.getArticleById?.clientInfo?.social?.linkedIn}
-              />
+              {facebook && (
+                <SocialMediaLink
+                  IconComponent={FacebookIcon}
+                  platform="Facebook"
+                  bgColor={"#0766FF"}
+                  to={facebook}
+                />
+              )}
+              {twitter && (
+                <SocialMediaLink
+                  IconComponent={XIcon}
+                  platform="x.com"
+                  bgColor={"#0B66C2"}
+                  to={twitter}
+                />
+              )}
+              {instagram && (
+                <SocialMediaLink
+                  IconComponent={InstagramIcon}
+                  platform="Instagram"
+                  bgColor={`linear-gradient(0deg, #D9D9D9, #D9D9D9),linear-gradient(0deg, #0766FF, #0766FF),linear-gradient(49.12deg, #FFDD55 6.62%, #FF543E 50.06%, #C837AB 93.5%)`}
+                  to={instagram}
+                />
+              )}
+              {linkedIn && (
+                <SocialMediaLink
+                  IconComponent={LinkedInIcon}
+                  platform="Linkedin"
+                  bgColor={"#0B66C2"}
+                  to={linkedIn}
+                />
+              )}
             </Box>
           </Box>
 
           <Footer style={{ margin: "20px" }} />
         </header>
-        <main className="report-content" style={{ breakBefore: "page" }}>
+        {/* <main className="report-content" style={{ breakBefore: "page" }}>
           <section className="press-release-summary">
             <Typography
               sx={{
@@ -362,13 +371,13 @@ function PressReleaseReport() {
             </Box>
           </section>
           <Footer style={{ marginTop: "20px" }} />
-        </main>
+        </main> */}
         <section className="press-release-content">
           <h2 className="section-title">{data?.getArticleById?.title}</h2>
           <MDBox sx={{ marginTop: "30px" }}>
             <DisplayImage
               src={data?.getArticleById?.featureImage}
-              height="550px"
+              height="auto"
               width="100%"
               alt={"img"}
               styles={{ borderRadius: "10px" }}
