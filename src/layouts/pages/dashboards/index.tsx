@@ -51,7 +51,7 @@ function Overview(): JSX.Element {
     fetchPolicy: "network-only",
   });
   const editorialReview = data?.getArticleStats?.find(
-    (one: any) => one?.status === "IN_REVIEW"
+    (one: any) => one?.status === "REVIEW"
   )?.count;
   const awaitingApproval = data?.getArticleStats?.find(
     (one: any) => one?.status === "AWAITING_APPROVAL"
