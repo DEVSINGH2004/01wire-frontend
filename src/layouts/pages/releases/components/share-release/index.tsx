@@ -182,7 +182,7 @@ const ShareReleases = () => {
               <MDBox sx={{ marginTop: "30px" }}>
                 <DisplayImage
                   src={featureImage}
-                  height="550px"
+                  height="auto"
                   width="100%"
                   alt={"img"}
                   styles={{ borderRadius: "10px" }}
@@ -199,12 +199,9 @@ const ShareReleases = () => {
               >
                 Introduction
               </MDTypography>
-
               <MDTypography sx={{ marginTop: "20px", textAlign: "justify" }} fontSize="20px">
                 <div className="press-release-text" dangerouslySetInnerHTML={{ __html: content }} />
-                {/* {content.replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, "")} */}
               </MDTypography>
-
               <MDBox
                 sx={{
                   minHeight: "300px",

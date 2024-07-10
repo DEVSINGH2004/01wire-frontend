@@ -251,7 +251,13 @@
   max-width: 100%;
   overflow: hidden;
 }
-.press-release-text,
+.press-release-text img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
 .editorClassName img {
   max-width: 100%;
   height: auto;
