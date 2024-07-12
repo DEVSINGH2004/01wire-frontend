@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { EditorState, convertToRaw, ContentState,Modifier,convertFromHTML } from "draft-js";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import MDEditorRoot from "components/MDEditor/MDEditorRoot";
@@ -72,36 +72,6 @@ function MDEditor({
     onChange(html);
   }, [editorState]);
 
-
-const handlePastedText = (
-  text: string,
-  html: string | undefined,
-  editorState: EditorState,
-  setEditorState: React.Dispatch<React.SetStateAction<EditorState>>,
-): boolean => {
-  if (html) {
-    // Convert HTML to content blocks
-    const contentBlocks = convertFromHTML(html);
-    const contentState = ContentState.createFromBlockArray(
-      contentBlocks.contentBlocks,
-      contentBlocks.entityMap
-    );
-    // Create a new content state by merging the pasted content
-    const selectionState = editorState.getSelection();
-    const newContentState = Modifier.replaceWithFragment(
-      editorState.getCurrentContent(),
-      selectionState,
-      contentState.getBlockMap()
-    );
-    // Push the new content state into the editor state
-    const newEditorState = EditorState.push(editorState, newContentState, 'insert-fragment');
-    setEditorState(newEditorState);
-    return true;
-  }
-  return false;
-};
-
-
   return (
     <MDEditorRoot ownerState={{ darkMode }}>
       <Editor
@@ -112,7 +82,6 @@ const handlePastedText = (
         toolbar={config}
         editorState={editorState}
         onEditorStateChange={setEditorState}
-        handlePastedText={(text, html) => handlePastedText(text, html, editorState, setEditorState)}
       />
     </MDEditorRoot>
   );
