@@ -304,7 +304,12 @@ function DataTable({
           py={2}
         >
           <MDButton
-            sx={{ visibility: !paginationInfo?.hasPreviousPage && "collapse", height: "30px" }}
+            sx={{
+              visibility: !paginationInfo?.hasPreviousPage && "collapse",
+              height: "30px",
+              boxShadow:
+                "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
+            }}
             size="small"
             variant="contained"
             disabled={!canPreviousPage}
@@ -331,10 +336,11 @@ function DataTable({
                 style={{
                   backgroundColor: item.selected ? "#FF4D53" : "white",
                   color: item.selected ? "white" : "black",
-                  border: "none",
                   height: 30,
                   width: 30,
                   fontSize: "12px",
+                  boxShadow:
+                    "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
                 }}
               >
                 {item.page}
@@ -343,7 +349,12 @@ function DataTable({
             onChange={(e: any, page: number) => handlePagination(page - 1)}
           />
           <MDButton
-            sx={{ visibility: !paginationInfo?.hasNextPage && "collapse", height: "30px" }}
+            sx={{
+              visibility: !paginationInfo?.hasNextPage && "collapse",
+              height: "30px",
+              boxShadow:
+                "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important",
+            }}
             size="small"
             variant="contained"
             disabled={!canNextPage}

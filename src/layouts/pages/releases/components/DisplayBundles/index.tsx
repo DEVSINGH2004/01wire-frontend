@@ -56,7 +56,7 @@ const DisplayBundles = ({
       sliderRef.current.slickGoTo(0);
     }
   }, [category, disabled]);
-
+ 
   return (
     <>
       <MDBox
@@ -67,7 +67,10 @@ const DisplayBundles = ({
         mt={2}
         sx={{
           "& .slick-track": {
-            transform: disabled && "none !important",
+            transform: [1,2].includes(bundles?.length) ? "none !important" : disabled && "none !important",
+            display:'flex',
+            justifyContent:'center',
+            width:[1,2].includes(bundles?.length) ? '100% !important' : "",
           },
         }}
       >

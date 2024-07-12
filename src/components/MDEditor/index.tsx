@@ -9,7 +9,6 @@ import axiosInstance from "utils/axiosInstance";
 import { toast } from "react-toastify";
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
-
 function MDEditor({
   value,
   onChange,
@@ -22,7 +21,7 @@ function MDEditor({
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
   const [editorState, setEditorState] = React.useState(() => {
-    const contentBlock = value && htmlToDraft(value);
+    const contentBlock = value ? htmlToDraft(value) : null;
     if (contentBlock) {
       const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
       return EditorState.createWithContent(contentState);
@@ -53,6 +52,7 @@ function MDEditor({
         });
     });
   };
+
   const config = {
     blockType: {
       inDropdown: true,
@@ -71,6 +71,7 @@ function MDEditor({
     const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
     onChange(html);
   }, [editorState]);
+
   return (
     <MDEditorRoot ownerState={{ darkMode }}>
       <Editor
@@ -90,6 +91,7 @@ function MDEditor({
 MDEditor.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default MDEditor;
