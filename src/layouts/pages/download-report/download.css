@@ -265,6 +265,13 @@
   margin: 0 auto;
   object-fit: contain;
 }
+.rdw-editor-wrapper {
+  border: none !important;
+}
+.rdw-editor-main {
+  border: none !important;
+  box-shadow: none !important;
+}
 .subsection-title {
   color: #000;
   font: 700 16px 'PP Neue Montreal', sans-serif;
