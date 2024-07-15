@@ -13,6 +13,7 @@ import SearchIcon from "assets/images/icons/searchIcon.svg";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useNavigate } from "react-router-dom";
 import debounce from "lodash.debounce";
+import UpdateBalanceModal from "./components/UpdateBalanceModal";
 
 const PER_PAGE = 10;
 const UserManagement = () => {
@@ -24,8 +25,9 @@ const UserManagement = () => {
   const [intLoader, setInitLoader] = useState<boolean>(false);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [pageSize, setSize] = useState<number>(10);
+  const [open, setOpen] = useState<any>(false);
 
-  const [getUsers, { data, loading }] = useLazyQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
+  const [getUsers, { data, loading, refetch }] = useLazyQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
     fetchPolicy: "network-only",
     onCompleted: (res) => {
       setPaginationInfo(res?.filterUsersPaginated?.paginationInfo);
@@ -65,7 +67,7 @@ const UserManagement = () => {
 
   useEffect(() => {
     const rows = data?.filterUsersPaginated?.data || [];
-    const columns = makeColumns(navigate);
+    const columns = makeColumns(navigate, setOpen);
     setData({ rows, columns });
   }, [data]);
 
@@ -141,6 +143,9 @@ const UserManagement = () => {
             </Card>
           )}
         </MDBox>
+        {open && (
+          <UpdateBalanceModal userId={open} onClose={() => setOpen(false)} refetch={refetch} />
+        )}
       </MDBox>
     </>
   );

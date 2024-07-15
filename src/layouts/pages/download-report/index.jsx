@@ -19,6 +19,7 @@ import Link from "@mui/material/Link";
 import DisplayImage from "components/DisplayImage";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDEditor from "components/MDEditor";
 
 const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
   <Link
@@ -386,10 +387,14 @@ function PressReleaseReport() {
           <MDTypography sx={{ my: "20px", textAlign: "justify" }} fontSize="20px">
             {data?.getArticleById?.summary}
           </MDTypography>
-          <div
+          {data?.getArticleById?.content && (
+            <MDEditor noBorder disabled onChange={() => {}} value={data?.getArticleById?.content} />
+          )}
+
+          {/* <div
             className="press-release-text"
             dangerouslySetInnerHTML={{ __html: data?.getArticleById?.content }}
-          ></div>
+          ></div> */}
           <Footer />
         </section>
         {filteredOrders?.length > 0 && (

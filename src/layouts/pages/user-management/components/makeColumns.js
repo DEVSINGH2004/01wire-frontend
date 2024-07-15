@@ -3,8 +3,9 @@ import { IconButton } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
-export const makeColumns = (navigate) => {
+export const makeColumns = (navigate, setOpen) => {
   const columns = [
     {
       Header: "User Email",
@@ -58,6 +59,9 @@ export const makeColumns = (navigate) => {
               display: "flex",
             }}
           >
+            <IconButton onClick={() => setOpen(row?.original?.id)}>
+              <AccountBalanceWalletIcon />
+            </IconButton>
             <IconButton
               onClick={() =>
                 navigate(`/pr-management?userID=${row.original.id}&email=${row.original.email}`)

@@ -16,6 +16,7 @@ import Link from "@mui/material/Link";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { toast } from "react-toastify";
 import DataTable from "layouts/pages/pr-management/components/DataTable";
+import MDEditor from "components/MDEditor";
 const columns = [
   {
     Header: "Category",
@@ -199,9 +200,12 @@ const ShareReleases = () => {
               >
                 Introduction
               </MDTypography>
-              <MDTypography sx={{ marginTop: "20px", textAlign: "justify" }} fontSize="20px">
+              {data?.getArticleById?.content && (
+                <MDEditor noBorder disabled onChange={() => {}} value={content} />
+              )}
+              {/* <MDTypography sx={{ marginTop: "20px", textAlign: "justify" }} fontSize="20px">
                 <div className="press-release-text" dangerouslySetInnerHTML={{ __html: content }} />
-              </MDTypography>
+              </MDTypography> */}
               <MDBox
                 sx={{
                   minHeight: "300px",
