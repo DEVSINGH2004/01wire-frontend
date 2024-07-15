@@ -13,10 +13,12 @@ function MDEditor({
   value,
   onChange,
   disabled = false,
+  noBorder = false,
 }: {
   value: any;
   onChange: any;
   disabled?: any;
+  noBorder?: boolean;
 }) {
   const [controller] = useMaterialUIController();
   const { darkMode } = controller;
@@ -40,7 +42,7 @@ function MDEditor({
           },
         })
         .then((response) => {
-          console.log("File uploaded successfully:", response);
+          console.info("File uploaded successfully:", response);
           resolve({
             data: { link: process.env.REACT_APP_IMAGE_BASE_URL + response?.data?.fileName },
           });
@@ -76,12 +78,13 @@ function MDEditor({
     <MDEditorRoot ownerState={{ darkMode }}>
       <Editor
         readOnly={disabled}
-        editorClassName="editorClassName"
+        editorClassName={noBorder ? "rdw-editor-main" : "editorClassName"}
         toolbarHidden={disabled}
         editorStyle={{ minHeight: "352px" }}
         toolbar={config}
         editorState={editorState}
         onEditorStateChange={setEditorState}
+        wrapperClassName={noBorder && "rdw-editor-wrapper"}
       />
     </MDEditorRoot>
   );
