@@ -4,7 +4,6 @@ import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import WalletIcon from "assets/images/wallet.svg";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 export const makeColumns = (navigate, setOpen) => {
   const columns = [

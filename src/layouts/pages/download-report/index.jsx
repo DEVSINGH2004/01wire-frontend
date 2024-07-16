@@ -176,12 +176,16 @@ function PressReleaseReport() {
   return (
     <>
       <Button
-        color="secondary"
-        variant="inherit"
+        variant="contained"
         sx={{
           position: "sticky",
           top: "10px",
           left: "80%",
+          color: "#000",
+          background: "#fff",
+          "&:hover": {
+            background: "#fff",
+          },
         }}
         onClick={handleDownloadPDF}
         startIcon={<DownloadIcon fontSize="medium" />}
