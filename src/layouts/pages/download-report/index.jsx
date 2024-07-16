@@ -20,6 +20,7 @@ import DisplayImage from "components/DisplayImage";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDEditor from "components/MDEditor";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const SocialMediaLink = ({ IconComponent, platform, bgColor, to }) => (
   <Link
@@ -175,16 +176,17 @@ function PressReleaseReport() {
   return (
     <>
       <Button
-        color="primary"
-        variant="conatined"
+        color="secondary"
+        variant="inherit"
         sx={{
-          position: "absolute",
+          position: "sticky",
           top: "10px",
-          right: "180px",
+          left: "80%",
         }}
         onClick={handleDownloadPDF}
+        startIcon={<DownloadIcon fontSize="medium" />}
       >
-        {loader ? "Downloading..." : "Download Report"}
+        {loader ? "Downloading..." : "Download"}
       </Button>
       <Box margin="auto" ref={componentRef} style={{ padding: 20, width: "210mm" /* A4 width */ }}>
         <header

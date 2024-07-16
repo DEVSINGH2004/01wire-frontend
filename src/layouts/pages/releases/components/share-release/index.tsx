@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { AppBar, Toolbar, useScrollTrigger } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -17,6 +17,11 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { toast } from "react-toastify";
 import DataTable from "layouts/pages/pr-management/components/DataTable";
 import MDEditor from "components/MDEditor";
+import Button from "@mui/material/Button";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import DownloadIcon from "@mui/icons-material/Download";
+
 const columns = [
   {
     Header: "Category",
@@ -116,6 +121,7 @@ const columnsPub = [
 ];
 const ShareReleases = () => {
   const { id } = useParams();
+  const [loader, setLoader] = useState<boolean>(false);
   const { data, loading } = useQuery<IGetArticleById, IGetArticleByIdVars>(GET_ARTICLE_BY_ID, {
     fetchPolicy: "network-only",
     variables: {
@@ -134,27 +140,101 @@ const ShareReleases = () => {
     content = "",
   }: any = data?.getArticleById || {};
 
-  const textRef = useRef<HTMLDivElement>(null);
+  const htmlRef = useRef<HTMLDivElement>(null);
 
-  const handleCopied = () => {
-    if (textRef.current) {
-      const range = document.createRange();
-      range.selectNodeContents(textRef.current);
-      const selection = window.getSelection();
-      if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand("copy");
-        selection.removeAllRanges();
+  const handleCopied = async () => {
+    if (htmlRef.current) {
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = htmlRef.current.innerHTML;
+
+      // Adjust image styles to prevent overflow and maintain aspect ratio
+      const images = tempDiv.querySelectorAll("img");
+      images.forEach((img) => {
+        img.style.maxWidth = "100%";
+        img.style.height = "auto";
+      });
+
+      // Embed styles directly into the copied content
+      const styles = `
+        <style>
+          * {
+            line-height: 1.5 !important;
+          }
+          img {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          h1, h2, h3, h4, h5, h6, p, span, div {
+            font-family: Arial, sans-serif !important;
+          }
+          h1 {
+            font-weight: bold !important;
+          }
+        </style>
+      `;
+
+      const html = styles + tempDiv.innerHTML;
+
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+          }),
+        ]);
         toast.success("Copied to clipboard");
+      } catch (err) {
+        console.error("Failed to copy: ", err);
       }
     }
   };
+  const downloadPdf = async () => {
+    setLoader(true);
+    const element = htmlRef.current;
+
+    // Step 1: Convert the component to a canvas with a lower scale to reduce size
+    const canvas = await html2canvas(element, {
+      scale: 1.5, // Lower scale factor to reduce size, you can adjust as needed
+      useCORS: true, // Handle CORS for external resources
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.75); // Lower the quality to 75%
+
+    // Step 2: Prepare PDF options
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    const ratio = pdfWidth / canvasWidth;
+    const scaledHeight = canvasHeight * ratio;
+
+    // Step 3: Split content into multiple pages
+    let position = 0;
+    while (position < scaledHeight) {
+      if (position > 0) {
+        pdf.addPage();
+      }
+      pdf.addImage(imgData, "JPEG", 0, -position, pdfWidth, scaledHeight);
+
+      position += pdfHeight;
+    }
+    // Step 4: Download the PDF
+    pdf.save("download.pdf");
+    setLoader(false);
+  };
+
   const bundleRows = data?.getArticleById?.bundleInfo;
   const rows: any = data?.getArticleById?.publicationInfo || [];
 
   return (
-    <MDBox>
+    <MDBox position="relative">
       <AppBar
         position="fixed"
         sx={{
@@ -171,7 +251,15 @@ const ShareReleases = () => {
           </MDBox>
         </Toolbar>
       </AppBar>
-      <MDBox sx={{ minHeight: "400px", marginTop: "116px" }} ref={textRef}>
+      <Button
+        startIcon={<DownloadIcon fontSize="medium" />}
+        sx={{ position: "sticky", top: "20%", left: "89%", color: "#000" }}
+        onClick={downloadPdf}
+        variant="text"
+      >
+        {loader ? "Downloading..." : "Download"}
+      </Button>
+      <MDBox sx={{ minHeight: "400px", marginTop: "116px" }} ref={htmlRef}>
         {loading ? (
           <MDCircularLoader startLoader />
         ) : id ? (
@@ -343,30 +431,6 @@ const ShareReleases = () => {
                 </>
               )}
             </MDBox>
-            <MDBox
-              display="flex"
-              justifyContent="flex-end"
-              alignItem="center"
-              sx={{ position: "sticky", bottom: 40 }}
-            >
-              <MDBox
-                display="flex"
-                justifyContent="center"
-                bgColor="rgba(255, 255, 255, 0.8)"
-                borderRadius="50%"
-                shadow="rgba(0, 0, 0, 0.1) 0px 10px 50px"
-                mr={3}
-                pt={1.8}
-                sx={{
-                  width: "50px",
-                  height: "50px",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCopied()}
-              >
-                <ContentCopyIcon />
-              </MDBox>
-            </MDBox>
           </>
         ) : (
           <MDBox
@@ -380,6 +444,30 @@ const ShareReleases = () => {
             <MDTypography variant="h6">No release found</MDTypography>
           </MDBox>
         )}
+      </MDBox>
+      <MDBox
+        display="flex"
+        justifyContent="flex-end"
+        alignItem="center"
+        sx={{ position: "sticky", bottom: 40 }}
+      >
+        <MDBox
+          display="flex"
+          justifyContent="center"
+          bgColor="rgba(255, 255, 255, 0.8)"
+          borderRadius="50%"
+          shadow="rgba(0, 0, 0, 0.1) 0px 10px 50px"
+          mr={3}
+          pt={1.8}
+          sx={{
+            width: "50px",
+            height: "50px",
+            cursor: "pointer",
+          }}
+          onClick={handleCopied}
+        >
+          <ContentCopyIcon />
+        </MDBox>
       </MDBox>
     </MDBox>
   );
