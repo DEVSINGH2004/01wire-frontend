@@ -19,7 +19,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
     {
       Header: "PR ID",
       accessor: "prId",
-      width: "10%",
+      width: "7%",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
@@ -29,7 +29,8 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
     {
       Header: "Title",
       accessor: "articleInfo.title",
-      width: "25%",
+      align: "left",
+      width: "28%",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>

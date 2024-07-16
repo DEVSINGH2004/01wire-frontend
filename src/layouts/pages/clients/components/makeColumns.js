@@ -59,6 +59,7 @@ export const makeColumns = (handleAction) => {
       Header: "",
       accessor: "title",
       width: "30%",
+      align: "left",
       Cell: ({ value }) => {
         return (
           <MDBox>
