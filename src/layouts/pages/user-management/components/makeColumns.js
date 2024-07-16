@@ -59,7 +59,17 @@ export const makeColumns = (navigate, setOpen) => {
               display: "flex",
             }}
           >
-            <IconButton onClick={() => setOpen(row?.original?.id)}>
+            <IconButton
+              sx={{
+                width: "35px",
+                height: "35px",
+                margin: "9px ",
+                backgroundColor: "#f8f8fc",
+                border: "1px solid #e0e0e4",
+                paddingTop: "10px",
+              }}
+              onClick={() => setOpen(row?.original?.id)}
+            >
               <AccountBalanceWalletIcon />
             </IconButton>
             <IconButton
