@@ -3,6 +3,7 @@ import { IconButton } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
+import WalletIcon from "assets/images/wallet.svg";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 export const makeColumns = (navigate, setOpen) => {
@@ -59,18 +60,8 @@ export const makeColumns = (navigate, setOpen) => {
               display: "flex",
             }}
           >
-            <IconButton
-              sx={{
-                width: "35px",
-                height: "35px",
-                margin: "9px ",
-                backgroundColor: "#f8f8fc",
-                border: "1px solid #e0e0e4",
-                paddingTop: "10px",
-              }}
-              onClick={() => setOpen(row?.original?.id)}
-            >
-              <AccountBalanceWalletIcon />
+            <IconButton onClick={() => setOpen(row?.original?.id)}>
+              <img width={36} height={36} alt="navigate" src={WalletIcon} />
             </IconButton>
             <IconButton
               onClick={() =>

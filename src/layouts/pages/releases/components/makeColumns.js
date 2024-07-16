@@ -41,6 +41,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
       Header: "Title",
       accessor: "title",
       width: "30%",
+      align: "left",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
