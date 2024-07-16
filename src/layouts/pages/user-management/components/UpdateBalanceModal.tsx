@@ -32,7 +32,7 @@ const UpdateBalanceModal = ({
     setLoader(true);
     updateBalance({
       variables: {
-        amount: type === "Credit" ? Number(credits) : Number(-credits),
+        amount: type === "Credit" ? credits : -credits,
         notes,
         userId,
       },
@@ -74,7 +74,7 @@ const UpdateBalanceModal = ({
           <MDInput
             fullWidth
             type="number"
-            onChange={(e: any) => setCredits(e.target.value)}
+            onChange={(e: any) => setCredits(Number(e.target.value))}
             value={credits}
           />
           <MDTypography
@@ -100,7 +100,7 @@ const UpdateBalanceModal = ({
             Cancel
           </MDButton>
           <MDButton
-            disabled={!credits}
+            disabled={credits <= 0}
             sx={{ margin: "auto" }}
             variant="contained"
             color="success"
@@ -112,7 +112,7 @@ const UpdateBalanceModal = ({
             sx={{ margin: "auto" }}
             variant="contained"
             color="primary"
-            disabled={!credits}
+            disabled={credits <= 0}
             onClick={() => hanldeSubmit("Debit")}
           >
             Debit
