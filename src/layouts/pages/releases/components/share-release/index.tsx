@@ -249,23 +249,32 @@ const ShareReleases = () => {
           <MDBox m="auto">
             <img src={OneWireLogo} height={"46px"} width="100%" />
           </MDBox>
+          <MDBox sx={{ textAlign: "right" }}>
+            <Button
+              startIcon={<DownloadIcon fontSize="medium" />}
+              sx={{
+                color: "#000",
+                background: "#fff",
+                "&:hover": {
+                  background: "#fff",
+                },
+              }}
+              onClick={downloadPdf}
+              variant="contained"
+            >
+              {loader ? "Downloading..." : "Download"}
+            </Button>
+          </MDBox>
         </Toolbar>
       </AppBar>
-      <Button
-        startIcon={<DownloadIcon fontSize="medium" />}
-        sx={{ position: "sticky", top: "20%", left: "89%", color: "#000" }}
-        onClick={downloadPdf}
-        variant="text"
-      >
-        {loader ? "Downloading..." : "Download"}
-      </Button>
+
       <MDBox sx={{ minHeight: "400px", marginTop: "116px" }} ref={htmlRef}>
         {loading ? (
           <MDCircularLoader startLoader />
         ) : id ? (
           <>
             <MDBox sx={{ padding: "40px 180px" }}>
-              <MDTypography fontSize="50px" color="black" fontWeight="bold">
+              <MDTypography color="black" variant="h2">
                 {title}
               </MDTypography>
               <MDBox sx={{ marginTop: "30px" }}>

@@ -92,6 +92,7 @@ export const makeColumns = (
       Header: "Title",
       accessor: "title",
       width: "15%",
+      align: "left",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
@@ -134,7 +135,7 @@ export const makeColumns = (
                     handleFilters("userId", row.original.userId);
                   }}
                 >
-                  <FilterListOutlinedIcon />
+                  <FilterListOutlinedIcon fontSize="small" />
                 </IconButton>
               </MDBox>
             )}

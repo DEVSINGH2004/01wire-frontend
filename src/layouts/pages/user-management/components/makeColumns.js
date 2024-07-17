@@ -3,7 +3,7 @@ import { IconButton } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import WalletIcon from "assets/images/wallet.svg";
 
 export const makeColumns = (navigate, setOpen) => {
   const columns = [
@@ -11,7 +11,7 @@ export const makeColumns = (navigate, setOpen) => {
       Header: "User Email",
       accessor: "email",
       align: "left",
-      width: "20%",
+      width: "25%",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
@@ -21,7 +21,7 @@ export const makeColumns = (navigate, setOpen) => {
     {
       Header: "User Name",
       accessor: "fullName",
-      width: "20%",
+      width: "25%",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
@@ -31,27 +31,27 @@ export const makeColumns = (navigate, setOpen) => {
     {
       Header: "Wallet Balance",
       accessor: "walletInfo.balance",
-      width: "20%",
+      width: "25%",
       Cell: ({ value }) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
         </MDBox>
       ),
     },
-    {
-      Header: "Total PR",
-      accessor: "totalPR",
-      width: "20%",
-      Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>10</MDTypography>
-        </MDBox>
-      ),
-    },
+    // {
+    //   Header: "Total PR",
+    //   accessor: "totalPR",
+    //   width: "20%",
+    //   Cell: ({ value }) => (
+    //     <MDBox>
+    //       <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>10</MDTypography>
+    //     </MDBox>
+    //   ),
+    // },
     {
       Header: "Action",
       align: "right",
-      width: "20%",
+      width: "25%",
       Cell: ({ value, row }) => {
         return (
           <MDBox
@@ -59,18 +59,8 @@ export const makeColumns = (navigate, setOpen) => {
               display: "flex",
             }}
           >
-            <IconButton
-              sx={{
-                width: "35px",
-                height: "35px",
-                margin: "9px ",
-                backgroundColor: "#f8f8fc",
-                border: "1px solid #e0e0e4",
-                paddingTop: "10px",
-              }}
-              onClick={() => setOpen(row?.original?.id)}
-            >
-              <AccountBalanceWalletIcon />
+            <IconButton onClick={() => setOpen(row?.original?.id)}>
+              <img width={36} height={36} alt="navigate" src={WalletIcon} />
             </IconButton>
             <IconButton
               onClick={() =>
