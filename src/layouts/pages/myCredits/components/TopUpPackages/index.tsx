@@ -28,7 +28,7 @@ const TopUpPackages = () => {
         <TermsAndConditionsModal kind={open} onClose={() => setOpen(false)} setUrl={setUrl} />
       )}
       {paymentUrl && <PaymentIframe src={paymentUrl} onClose={() => setUrl(null)} />}
-      <Card sx={{ height: "100%", p: 2 }}>
+      <Card sx={{ height: "auto", p: 2 }}>
         <MDTypography fontSize="14px" fontWeight="medium" color="textSecondary">
           Recommended Top-up
         </MDTypography>

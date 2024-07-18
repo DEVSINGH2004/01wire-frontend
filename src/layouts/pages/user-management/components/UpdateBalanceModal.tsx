@@ -32,9 +32,11 @@ const UpdateBalanceModal = ({
     setLoader(true);
     updateBalance({
       variables: {
-        amount: type === "Credit" ? credits : -credits,
-        notes,
-        userId,
+        params: {
+          amount: type === "Credit" ? credits : -credits,
+          notes,
+          userId,
+        },
       },
     })
       .then(() => {
@@ -100,7 +102,7 @@ const UpdateBalanceModal = ({
             Cancel
           </MDButton>
           <MDButton
-            disabled={credits <= 0}
+            disabled={credits <= 0 || !notes}
             sx={{ margin: "auto" }}
             variant="contained"
             color="success"
@@ -112,7 +114,7 @@ const UpdateBalanceModal = ({
             sx={{ margin: "auto" }}
             variant="contained"
             color="primary"
-            disabled={credits <= 0}
+            disabled={credits <= 0 || !notes}
             onClick={() => hanldeSubmit("Debit")}
           >
             Debit

@@ -8,7 +8,6 @@ import { IGetTransactions, GET_TRANSACTIONS } from "graphql/queries/filterTransa
 import WalletIcon from "assets/images/account_balance_wallet.svg";
 
 function BillingInformation({ data }: { data: any }): JSX.Element {
-  console.log("userWallet", data);
   const { data: transactionsData } = useQuery<IGetTransactions>(GET_TRANSACTIONS, {
     variables: {
       filterInput: {},
@@ -93,6 +92,8 @@ function BillingInformation({ data }: { data: any }): JSX.Element {
               component="ul"
               display="flex"
               width="100%"
+              maxHeight="300px"
+              overflow="auto"
               flexDirection="column"
               p={0}
               m={0}
@@ -100,14 +101,6 @@ function BillingInformation({ data }: { data: any }): JSX.Element {
             >
               {transactionsData?.filterTransactionsPaginated?.data?.length > 0 ? (
                 transactionsData?.filterTransactionsPaginated?.data?.map((one: any, i: any) => {
-                  const name =
-                    one?.type === "CREDIT" && one?.status === "SUCCESS"
-                      ? "Credit Recharge"
-                      : one?.type === "CREDIT" && one?.status === "FAILED"
-                      ? "Credit Recharge Failed"
-                      : one?.type === "DEBIT" && one?.status === "success"
-                      ? "Credit Used"
-                      : `${one?.type} ${one?.status?.toLowerCase()?.charAt(0)?.toUpperCase()}`;
                   const transactionDate = dayjs(one?.updatedAt).format(
                     "DD MMMM YYYY, [at] HH:mm A"
                   );
@@ -116,9 +109,11 @@ function BillingInformation({ data }: { data: any }): JSX.Element {
                       key={i}
                       color={one?.status === "SUCCESS" ? "success" : "error"}
                       icon="add"
-                      name={name}
+                      name={one?.type === "DEBIT" ? "Debit" : "Credit"}
                       description={transactionDate}
-                      value={one?.amount}
+                      value={one?.status === "SUCCESS" ? one?.amount : "Failed"}
+                      kind={one?.kind === "ADMIN_UPDATE" ? "Admin Update" : "Wallet"}
+                      note={one?.notes}
                     />
                   );
                 })

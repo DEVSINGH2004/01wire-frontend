@@ -49,6 +49,7 @@ export const GET_ARTICLE_BY_ID = gql`
         price
         traffic
         type
+        image
       }
       publicationInfo {
         id
