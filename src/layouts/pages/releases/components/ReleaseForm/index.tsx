@@ -77,7 +77,7 @@ function getStepContent(
           refetch={fetchData}
           setSaveData={setSaveData}
           setPayable={setPayable}
-          disabled={article?.status === "PUBLISHED"}
+          disabled={article?.status !== "DRAFT"}
         />
       );
     case 3:
@@ -254,7 +254,8 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
             onClick={
               !isLastStep
                 ? () => setSaveData(true)
-                : article?.totalCredits <= userWallet?.getUserWallet?.balance
+                : article?.totalCredits <= userWallet?.getUserWallet?.balance ||
+                  article?.status === "AWAITING_APPROVAL"
                 ? handleSend
                 : handleAddCredits
             }
@@ -263,7 +264,8 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
             }}
           >
             {isLastStep
-              ? article?.totalCredits <= userWallet?.getUserWallet?.balance
+              ? article?.totalCredits <= userWallet?.getUserWallet?.balance ||
+                article?.status === "AWAITING_APPROVAL"
                 ? article?.status === "DRAFT"
                   ? "Submit"
                   : "Resubmit"

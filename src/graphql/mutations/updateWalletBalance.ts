@@ -1,7 +1,11 @@
 import { gql } from "@apollo/client";
-
+export interface WalletBalanceUpdateInput {
+  amount: number;
+  notes: string;
+  userId: string;
+}
 export const UPDATE_WALLET_BALANCE = gql`
-  mutation updateWalletBalance($amount: Int!, $notes: String!, $userId: ID!) {
-    updateWalletBalance(amount: $amount, notes: $notes, userId: $userId)
+  mutation updateWalletBalance($params: WalletBalanceUpdateInput!) {
+    updateWalletBalance(params: $params)
   }
 `;
