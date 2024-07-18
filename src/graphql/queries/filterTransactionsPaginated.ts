@@ -34,6 +34,7 @@ export const GET_TRANSACTIONS = gql`
         amount
         createdAt
         updatedAt
+        notes
       }
       paginationInfo {
         currentPage
