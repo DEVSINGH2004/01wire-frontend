@@ -78,13 +78,13 @@ function MDEditor({
     <MDEditorRoot ownerState={{ darkMode }}>
       <Editor
         readOnly={disabled}
-        editorClassName={noBorder ? "rdw-editor-main" : "editorClassName"}
+        editorClassName={noBorder ? "noBorder-editor-main" : "editorClassName"}
         toolbarHidden={disabled}
         editorStyle={{ minHeight: "352px" }}
         toolbar={config}
         editorState={editorState}
         onEditorStateChange={setEditorState}
-        wrapperClassName={noBorder && "rdw-editor-wrapper"}
+        wrapperClassName={noBorder && "noBorder-editor-wrapper"}
       />
     </MDEditorRoot>
   );
