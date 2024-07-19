@@ -200,14 +200,6 @@ export const makeColumns = (
                 { label: "REJECTED", value: "REJECTED" },
                 { label: "PUBLISHED", value: "PUBLISHED" },
               ]
-            : selectedStatus === "SUBMITTED"
-            ? [
-                { label: "REVIEW", value: "REVIEW" },
-                { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
-                { label: "SCHEDULED", value: "SCHEDULED" },
-                { label: "REJECTED", value: "REJECTED" },
-                { label: "PUBLISHED", value: "PUBLISHED" },
-              ]
             : [
                 { label: "AWAITING APPROVAL", value: "AWAITING_APPROVAL" },
                 { label: "SCHEDULED", value: "SCHEDULED" },

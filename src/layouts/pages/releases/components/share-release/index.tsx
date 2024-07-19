@@ -139,7 +139,7 @@ const ShareReleases = () => {
     mediaContact = {},
     content = "",
   }: any = data?.getArticleById || {};
-
+  const { facebook, instagram, twitter, linkedIn, youtube } = mediaContact || {};
   const htmlRef = useRef<HTMLDivElement>(null);
 
   const handleCopied = async () => {
@@ -338,42 +338,94 @@ const ShareReleases = () => {
                 <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
                   Address : {mediaContact?.address}
                 </MDTypography>
+                {(facebook || instagram || twitter || youtube || linkedIn) && (
+                  <>
+                    <MDTypography
+                      fontSize="20px"
+                      color="black"
+                      fontWeight="bold"
+                      sx={{ padding: "30px 0px 10px 0px" }}
+                    >
+                      Social Media
+                    </MDTypography>
 
-                <MDTypography
-                  fontSize="20px"
-                  color="black"
-                  fontWeight="bold"
-                  sx={{ padding: "30px 0px 10px 0px" }}
-                >
-                  Social Media
-                </MDTypography>
-
-                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                  Facebook :{" "}
-                  <Link
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                    href={mediaContact?.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {mediaContact?.facebook}
-                  </Link>
-                </MDTypography>
-                <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                  Instagram :{" "}
-                  <Link
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                    href={mediaContact?.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {mediaContact?.instagram}
-                  </Link>
-                </MDTypography>
+                    {facebook && (
+                      <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                        Facebook :{" "}
+                        <Link
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          href={facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {facebook}
+                        </Link>
+                      </MDTypography>
+                    )}
+                    {instagram && (
+                      <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                        Instagram :{" "}
+                        <Link
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          href={instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {instagram}
+                        </Link>
+                      </MDTypography>
+                    )}
+                    {linkedIn && (
+                      <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                        LinkedIn :{" "}
+                        <Link
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          href={linkedIn}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {linkedIn}
+                        </Link>
+                      </MDTypography>
+                    )}
+                    {twitter && (
+                      <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                        Twitter :{" "}
+                        <Link
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          href={twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {twitter}
+                        </Link>
+                      </MDTypography>
+                    )}
+                    {youtube && (
+                      <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
+                        Youtube :{" "}
+                        <Link
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          href={youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {youtube}
+                        </Link>
+                      </MDTypography>
+                    )}
+                  </>
+                )}
               </MDBox>
               {data?.getArticleById?.bundleInfo.length > 0 && (
                 <>

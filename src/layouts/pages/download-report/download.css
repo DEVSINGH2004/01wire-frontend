@@ -265,10 +265,10 @@
   margin: 0 auto;
   object-fit: contain;
 }
-.rdw-editor-wrapper {
+.noBorder-editor-wrapper {
   border: none !important;
 }
-.rdw-editor-main {
+.noBorder-editor-main {
   border: none !important;
   box-shadow: none !important;
 }
