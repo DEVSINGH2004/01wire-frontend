@@ -64,7 +64,7 @@ const PublicationsList = ({
       ),
     },
     {
-      Header: "Blacklisted Categories",
+      Header: "Content Type",
       accessor: "categories",
       width: "30%",
       Cell: ({ value }: { value: any }) => {

@@ -262,15 +262,45 @@ export const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 export const TimelineOptions = [
   { label: "Within One Day", value: "D1" },
   { label: "Within Two Days", value: "D2" },
+  { label: "Within Three Days", value: "D3" },
+  { label: "Within Four Days", value: "D4" },
   { label: "Within Five Days", value: "D5" },
   { label: "Within One Week", value: "W1" },
   { label: "Within Two Weeks", value: "W2" },
+  { label: "Within Three Weeks", value: "W3" },
+  { label: "Within Four Weeks", value: "W4" },
+  { label: "Within Five Weeks", value: "W5" },
 ];
 export const LinkTypeOptions = [
   { label: "Do Follow", value: "DO_FOLLOW" },
   { label: "No Follow", value: "NO_FOLLOW" },
 ];
-export const CategoryOptions = [{ label: "General", value: "GENERAL" }];
+export const CategoryOptions = [
+  { label: "General", value: "GENERAL" },
+  { label: "Awards", value: "AWARDS" },
+  { label: "Organic", value: "ORGANIC" },
+  { label: "Press Release", value: "PRESS_RELEASE" },
+  { label: "Sponsored", value: "SPONSORED" },
+  { label: "Company Name Change", value: "COMAPNY_NAME_CHANGE" },
+  { label: "Company Name Update", value: "COMAPNY_NAME_UPDATE" },
+  { label: "Conference Call", value: "CONFERENCE_CALL" },
+  { label: "Conferences", value: "CONFERENCES" },
+  { label: "Diversity", value: "DIVERSITY" },
+  { label: "Equity", value: "EQUITY" },
+  { label: "Dividend Earning", value: "DIVIDEND_EARNING" },
+  { label: "Environmental", value: "ENVIRONMENTAL" },
+  { label: "Social", value: "SOCIAL" },
+  { label: "Governance Exchange Listing", value: "GOVERNANCE_EXCHANGE_LISTING" },
+  { label: "IPO", value: "IPO" },
+  { label: "Lawsuits", value: "LAWSUITS" },
+  { label: "Management Changes", value: "MANAGEMENT_CHANGES" },
+  { label: "Merger", value: "MERGER" },
+  { label: "Acquisition", value: "ACQUISITION" },
+  { label: "Partnership", value: "PARTNERSHIP" },
+  { label: "Product Announcement", value: "PRODUCT_ANNOUNCEMENT" },
+  { label: "Regulatory", value: "REGULATORY" },
+  { label: "Shareholder Meeting", value: "SHAREHOLDER_MEETING" },
+];
 export const BundleCategoryOptions = [
   { label: "Web3", value: "WEB3" },
   { label: "Yahoo", value: "YAHOO" },
