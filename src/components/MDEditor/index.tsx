@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { EditorState, convertToRaw, ContentState } from "draft-js";
+import { EditorState, convertToRaw, convertFromRaw, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import MDEditorRoot from "components/MDEditor/MDEditorRoot";
@@ -68,7 +68,26 @@ function MDEditor({
       inputAccept: "image/jpeg,image/jpg,image/png,image/svg",
     },
   };
-
+  const handlePastedText = (
+    text: string,
+    html: string | undefined,
+    editorState: EditorState,
+    onChange: (editorState: EditorState) => void
+  ): boolean => {
+    if (html) {
+      const contentBlock = htmlToDraft(`<p></p>${html}<p></p>`);
+      if (contentBlock) {
+        const contentState = ContentState.createFromBlockArray(
+          contentBlock.contentBlocks,
+          contentBlock.entityMap
+        );
+        const newEditorState = EditorState.push(editorState, contentState, "insert-characters");
+        onChange(newEditorState);
+        return true;
+      }
+    }
+    return false;
+  };
   useEffect(() => {
     const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
     onChange(html);
@@ -85,6 +104,7 @@ function MDEditor({
         editorState={editorState}
         onEditorStateChange={setEditorState}
         wrapperClassName={noBorder && "noBorder-editor-wrapper"}
+        handlePastedText={handlePastedText}
       />
     </MDEditorRoot>
   );
