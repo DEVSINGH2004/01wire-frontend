@@ -170,7 +170,7 @@ function AddPress({
               type="file"
               subLabel="JPEG, PNG, JPG(max. 3MB)"
               name="featureImage"
-              label="Feature Image"
+              label="Feature Image (1280x720 pixels or 16:9)"
               control={control}
               defaultValue={data?.featureImage}
               disabled={disabled}

@@ -254,9 +254,9 @@ export const TermsAndConditionsList = [
   "Credits can be used across all One Wire features without restrictions.",
   "Purchases are secure, with all major credit cards and cryptocurrencies accepted.",
   "Any changes to credit packages will be communicated in advance.",
-  "Credits cannot be transferred between Rizely accounts.",
+  "Credits cannot be transferred between 01wire accounts.",
   "Bulk credit purchases may qualify for discounts or bonus credits.",
-  "Support is available for any credit purchase inquiries or issues at hello@rizely.net",
+  "Support is available for any credit purchase inquiries or issues at hello@01wire.com",
 ];
 export const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 export const TimelineOptions = [
