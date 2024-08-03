@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { EditorState, convertToRaw, convertFromRaw, ContentState } from "draft-js";
+import { EditorState, convertToRaw, ContentState, Modifier } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import MDEditorRoot from "components/MDEditor/MDEditorRoot";
@@ -75,19 +75,34 @@ function MDEditor({
     onChange: (editorState: EditorState) => void
   ): boolean => {
     if (html) {
+      // Convert the HTML to Draft.js content blocks
       const contentBlock = htmlToDraft(`<p></p>${html}<p></p>`);
       if (contentBlock) {
-        const contentState = ContentState.createFromBlockArray(
+        const newContentState = ContentState.createFromBlockArray(
           contentBlock.contentBlocks,
           contentBlock.entityMap
         );
-        const newEditorState = EditorState.push(editorState, contentState, "insert-characters");
+        const currentContentState = editorState.getCurrentContent();
+
+        // Merge the new content with the existing content
+        const mergedContentState = Modifier.replaceWithFragment(
+          currentContentState,
+          editorState.getSelection(),
+          newContentState.getBlockMap()
+        );
+
+        const newEditorState = EditorState.push(
+          editorState,
+          mergedContentState,
+          "insert-characters"
+        );
         onChange(newEditorState);
         return true;
       }
     }
     return false;
   };
+
   useEffect(() => {
     const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
     onChange(html);
