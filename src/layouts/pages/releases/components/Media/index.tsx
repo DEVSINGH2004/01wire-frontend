@@ -27,8 +27,26 @@ import { Divider } from "@mui/material";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 
 const CategoryOptions = [
+  { label: "Awards", value: "AWARDS" },
+  { label: "Company Name Change", value: "COMAPNY_NAME_CHANGE" },
+  { label: "Company Name Update", value: "COMAPNY_NAME_UPDATE" },
+  { label: "Conference Call", value: "CONFERENCE_CALL" },
+  { label: "Conference", value: "CONFERENCES" },
+  { label: "Diversity", value: "DIVERSITY" },
+  { label: "Equity", value: "EQUITY" },
+  { label: "Dividend Earning", value: "DIVIDEND_EARNING" },
+  { label: "Environmental", value: "ENVIRONMENTAL" },
+  { label: "Social", value: "SOCIAL" },
+  { label: "Governance Exchange lsiting", value: "GOVERNANCE_EXCHANGE_LISTING" },
+  { label: "IPO", value: "IPO" },
+  { label: "Lawsuits", value: "LAWSUITS" },
+  { label: "Management Changes", value: "MANAGEMENT_CHANGES" },
+  { label: "Merger", value: "MERGER" },
+  { label: "Acquisition", value: "ACQUISITION" },
   { label: "Partnership", value: "PARTNERSHIP" },
-  { label: "Fund Raising", value: "FUND_RAISING" },
+  { label: "Product Annoucement", value: "PRODUCT_ANNOUNCEMENT" },
+  { label: "Regulatory", value: "REGULATORY" },
+  { label: "Shareholder Meeting", value: "SHAREHOLDER_MEETING" }
 ];
 const pulishOptions = [
   { label: "Immedately", value: "IMMEDATELY" },
@@ -162,7 +180,6 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               variant="outlined"
               disabled={disabled}
             /> */}
-            
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormField
