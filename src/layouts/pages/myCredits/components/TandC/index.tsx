@@ -40,7 +40,8 @@ const TermsAndConditionsDialog = ({
     })
       .then((res: any) => {
         console.log("res>>>", res?.data);
-        setUrl(res?.data?.createTransaction);
+        // setUrl(res?.data?.createTransaction);
+        window.open(res?.data?.createTransaction, "_blank", "noopener,noreferrer");
         setLoading(false);
         onClose();
       })
