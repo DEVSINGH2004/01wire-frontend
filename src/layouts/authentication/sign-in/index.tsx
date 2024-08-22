@@ -29,7 +29,7 @@ import { LOGIN_VIA_OTP, ILoginOtpVars } from "graphql/mutations/loginViaOtp";
 import { VERIFY_OTP, IVerifyOtpVars } from "graphql/mutations/verifyOtp";
 import { RESET_PASSWORD, IResetPasswordVars } from "graphql/mutations/resetPassword";
 import { validateEmail } from "../utils";
-import { brandName } from "constants/index"
+import { brandName } from "constants/index";
 
 function SignIn(): JSX.Element {
   const navigate = useNavigate();
@@ -152,6 +152,7 @@ function SignIn(): JSX.Element {
         .then((res: any) => {
           if (res?.data?.signup?.token) {
             setShowOtp(res?.data?.signup?.token);
+            setIsSignUp(false);
           }
           setLoading(false);
         })
@@ -236,9 +237,7 @@ function SignIn(): JSX.Element {
   };
   return (
     <PageLayout>
-      <Grid
-        container
-      >
+      <Grid container>
         {loading && <MDCircularLoader overlayloader startLoader />}
         <Grid item xs={12} lg={6}>
           <MDBox
@@ -261,8 +260,7 @@ function SignIn(): JSX.Element {
                 borderTopLeftRadius: "16px",
                 borderBottomLeftRadius: "16px",
               }}
-            >
-            </MDBox>
+            ></MDBox>
             <MDBox
               display={{ xs: "none", lg: "flex" }}
               alignItems="center"
@@ -273,13 +271,13 @@ function SignIn(): JSX.Element {
               sx={{
                 borderTopRightRadius: "16px",
                 borderBottomRightRadius: "16px",
-                
               }}
             >
-              
-              <img src={OneWireLogo} alt="logo"
-               style={{width:'20%', position:'absolute', marginLeft:'-20.5%'}}
-               />
+              <img
+                src={OneWireLogo}
+                alt="logo"
+                style={{ width: "20%", position: "absolute", marginLeft: "-20.5%" }}
+              />
             </MDBox>
           </MDBox>
         </Grid>

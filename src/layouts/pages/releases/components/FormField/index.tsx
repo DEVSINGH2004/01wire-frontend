@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import MDInput from "components/MDInput";
@@ -15,11 +13,11 @@ import InfoIcon from "@mui/icons-material/Info";
 import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import dayjs, { Dayjs } from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 interface Option {
   label: string;
@@ -72,7 +70,7 @@ function FormField({
                     onChange(newValue);
                   }}
                   disabled={disabled}
-                  renderInput={(params) => <MDInput {...params} variant="outlined" />}
+                  renderInput={(params) => <MDInput {...params} {...rest} variant="outlined" />}
                 />
               )}
             />
@@ -230,7 +228,7 @@ function FormField({
         </MDBox>
       );
     }
-    case "Date": {
+    case "dateAndTime": {
       return (
         <MDBox mb={2}>
           {label && <MDLabel label={label} />}
@@ -241,12 +239,39 @@ function FormField({
               rules={rules}
               render={({ field: { onChange, value } }) => (
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["DateTimePicker", "DateTimePicker"]}>
-                    <DateTimePicker
-                      label="Select Date & Time"
-                      // onChange={ onChange}
-                      // value={value}
-                      // {...rest}
+                  <DemoContainer components={["DateTimePicker"]}>
+                    <DateTimePicker onChange={onChange} value={value} {...rest} />
+                  </DemoContainer>
+                </LocalizationProvider>
+              )}
+            />
+          </FormControl>
+          <FormHelperText error={true}>{errors?.[name]?.message}</FormHelperText>
+          {subLabel && (
+            <MDTypography fontWeight="regular" fontSize="13px">
+              {subLabel}
+            </MDTypography>
+          )}
+        </MDBox>
+      );
+    }
+    case "date": {
+      return (
+        <MDBox mb={2}>
+          {label && <MDLabel label={label} />}
+          <FormControl fullWidth>
+            <Controller
+              name={name}
+              control={control}
+              rules={rules}
+              render={({ field: { onChange, value } }) => (
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={["DatePicker"]}>
+                    <DatePicker
+                      sx={{ width: "100%" }}
+                      onChange={onChange}
+                      value={value}
+                      {...rest}
                     />
                   </DemoContainer>
                 </LocalizationProvider>

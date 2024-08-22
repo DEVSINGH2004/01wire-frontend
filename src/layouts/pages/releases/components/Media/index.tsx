@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
@@ -25,13 +26,14 @@ import { countryList } from "constants/index";
 import FormField from "../FormField";
 import { Divider } from "@mui/material";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
+import { Timezones } from "constants/index";
 
 const CategoryOptions = [
   { label: "Partnership", value: "PARTNERSHIP" },
   { label: "Fund Raising", value: "FUND_RAISING" },
 ];
 const pulishOptions = [
-  { label: "Immedately", value: "IMMEDATELY" },
+  { label: "Immediate", value: "IMMEDIATE" },
   { label: "Scheduled", value: "SCHEDULED" },
 ];
 interface Props {
@@ -49,7 +51,10 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
     formState: { errors, isDirty },
     reset,
     handleSubmit,
-  } = useForm({ defaultValues: { category: "", country: "" } });
+    watch,
+  } = useForm({
+    defaultValues: { category: "", country: "", publishType: "", timezone: "", publishAt: dayjs() },
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const onSubmit = (formVals: any) => {
@@ -70,6 +75,9 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
       others,
       category,
       instructions,
+      timezone,
+      publishType,
+      publishAt,
     } = formVals;
     updateArticle({
       variables: {
@@ -77,6 +85,9 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
           id: data?.id,
           category: category?.value,
           instructions,
+          timezone: timezone?.value,
+          publishType,
+          publishAt,
           mediaContact: {
             name,
             email,
@@ -118,16 +129,22 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
   }, [saveData, isDirty]);
   useEffect(() => {
     if (data?.id) {
-      const { category, instructions, mediaContact } = data;
+      const { category, instructions, mediaContact, timezone, publishType, publishAt } = data;
       const filteredCategory = CategoryOptions?.find((one) => one.value === category);
+      const filteredTimezone = Timezones?.find((one) => one.value === timezone);
       const defaultValues = {
         category: filteredCategory,
+        timezone: filteredTimezone,
+        publishType,
+        publishAt: dayjs(publishAt),
         instructions,
         ...mediaContact,
       };
       reset(defaultValues);
     }
   }, [data]);
+  const publishType = watch("publishType");
+
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -144,25 +161,45 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               variant="outlined"
               disabled={disabled}
             />
-            {/* <FormField
+            <FormField
               type="radio"
-              label1="Immedately"
+              label1="Immediate"
               label2="Scheduled"
-              label="Select Date & Time"
-              name="type"
+              label="Publish Date & Time"
+              name="publishType"
               control={control}
               opt={pulishOptions}
               variant="outlined"
             />
-            <FormField
-              type="Date"
-              name="category"
-              control={control}
-              options={CategoryOptions}
-              variant="outlined"
-              disabled={disabled}
-            /> */}
-            
+            {publishType === "SCHEDULED" && (
+              <Grid container columnGap={1}>
+                <Grid xs={6}>
+                  <FormField
+                    type="dateAndTime"
+                    name="publishAt"
+                    control={control}
+                    disabled={disabled}
+                  />
+                </Grid>
+                <Grid xs={5}>
+                  <FormField
+                    type="dropdown"
+                    placeholder="Select Timezone"
+                    name="timezone"
+                    control={control}
+                    options={Timezones}
+                    disabled={disabled}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "45px",
+                        marginTop: "7px",
+                        width: "260px",
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormField

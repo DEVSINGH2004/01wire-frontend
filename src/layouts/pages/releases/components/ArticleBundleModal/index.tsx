@@ -328,7 +328,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
         </MDBox>
         <></>
       </DialogContent>
-      {role === "ADMIN" && !isRejectedOrPublished && !loading && (
+      {role === "ADMIN" && !loading && (
         <>
           <Divider />
           <DialogActions
