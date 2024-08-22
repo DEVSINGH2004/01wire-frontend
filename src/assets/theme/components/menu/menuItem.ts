@@ -31,7 +31,7 @@ type Types = any;
 const menuItem: Types = {
   styleOverrides: {
     root: {
-      minWidth: pxToRem(160),
+      minWidth: "0px",
       minHeight: "unset",
       padding: `${pxToRem(4.8)} ${pxToRem(16)}`,
       borderRadius: borderRadius.md,
