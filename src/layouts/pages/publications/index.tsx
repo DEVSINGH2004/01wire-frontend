@@ -56,9 +56,10 @@ const Publications = () => {
 
   useEffect(() => {
     setLoader(true);
+    const visibility = getStatusArr(filters?.visibility);
     getPublications({
       variables: {
-        filterInput: {},
+        filterInput: { ...filters, visibility },
         paginationInput: {
           currentPage: 0,
           perPage: pageSize,
@@ -111,7 +112,7 @@ const Publications = () => {
       getPublications({
         variables: {
           paginationInput: {
-            perPage: PER_PAGE,
+            perPage: pageSize,
             currentPage: 0,
           },
           filterInput: {

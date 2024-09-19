@@ -19,6 +19,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
+// import TelegramIcon from "@mui/icons-material/Telegram";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { countryList } from "constants/index";
 
@@ -27,11 +28,31 @@ import FormField from "../FormField";
 import { Divider } from "@mui/material";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import { Timezones } from "constants/index";
+import { genericValidations } from "utils/helpers";
 
 const CategoryOptions = [
+  { label: "Awards", value: "AWARDS" },
+  { label: "Company Name Change", value: "COMAPNY_NAME_CHANGE" },
+  { label: "Company Name Update", value: "COMAPNY_NAME_UPDATE" },
+  { label: "Conference Call", value: "CONFERENCE_CALL" },
+  { label: "Conference", value: "CONFERENCES" },
+  { label: "Diversity", value: "DIVERSITY" },
+  { label: "Equity", value: "EQUITY" },
+  { label: "Dividend Earning", value: "DIVIDEND_EARNING" },
+  { label: "Environmental", value: "ENVIRONMENTAL" },
+  { label: "Social", value: "SOCIAL" },
+  { label: "Governance Exchange lsiting", value: "GOVERNANCE_EXCHANGE_LISTING" },
+  { label: "IPO", value: "IPO" },
+  { label: "Lawsuits", value: "LAWSUITS" },
+  { label: "Management Changes", value: "MANAGEMENT_CHANGES" },
+  { label: "Merger", value: "MERGER" },
+  { label: "Acquisition", value: "ACQUISITION" },
   { label: "Partnership", value: "PARTNERSHIP" },
-  { label: "Fund Raising", value: "FUND_RAISING" },
+  { label: "Product Annoucement", value: "PRODUCT_ANNOUNCEMENT" },
+  { label: "Regulatory", value: "REGULATORY" },
+  { label: "Shareholder Meeting", value: "SHAREHOLDER_MEETING" },
 ];
+
 const pulishOptions = [
   { label: "Immediate", value: "IMMEDIATE" },
   { label: "Scheduled", value: "SCHEDULED" },
@@ -72,6 +93,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
       linkedIn,
       twitter,
       youtube,
+      // telegram,
       others,
       category,
       instructions,
@@ -101,6 +123,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
             linkedIn,
             twitter,
             youtube,
+            // telegram,
             others,
           },
         },
@@ -127,6 +150,11 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
       cb();
     }
   }, [saveData, isDirty]);
+  useEffect(() => {
+    if (Object.keys(errors).length) {
+      setSaveData(false);
+    }
+  }, [Object.keys(errors).length]);
   useEffect(() => {
     if (data?.id) {
       const { category, instructions, mediaContact, timezone, publishType, publishAt } = data;
@@ -189,6 +217,8 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
                     control={control}
                     options={Timezones}
                     disabled={disabled}
+                    errors={errors}
+                    rules={genericValidations.dropdown}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         height: "45px",
@@ -428,6 +458,21 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               }}
               disabled={disabled}
             />
+            {/* <FormField
+              type="text"
+              label="Telegram"
+              name="telegram"
+              control={control}
+              variant="outlined"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <TelegramIcon />
+                  </InputAdornment>
+                ),
+              }}
+              disabled={disabled}
+            /> */}
           </Grid>
         </Grid>
       </MDBox>

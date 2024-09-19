@@ -262,15 +262,33 @@ export const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 export const TimelineOptions = [
   { label: "Within One Day", value: "D1" },
   { label: "Within Two Days", value: "D2" },
+  { label: "Within Three Days", value: "D3" },
+  { label: "Within Four Days", value: "D4" },
   { label: "Within Five Days", value: "D5" },
   { label: "Within One Week", value: "W1" },
   { label: "Within Two Weeks", value: "W2" },
+  { label: "Within Three Weeks", value: "W3" },
+  { label: "Within Four Weeks", value: "W4" },
+  { label: "Within Five Weeks", value: "W5" },
 ];
 export const LinkTypeOptions = [
   { label: "Do Follow", value: "DO_FOLLOW" },
   { label: "No Follow", value: "NO_FOLLOW" },
 ];
-export const CategoryOptions = [{ label: "General", value: "GENERAL" }];
+export const CategoryOptions = [
+  { label: "General", value: "GENERAL" },
+  { label: "Awards", value: "AWARDS" },
+  { label: "Press Release", value: "PRESS_RELEASE" },
+  { label: "Sponsored", value: "SPONSORED" },
+  { label: "Organic", value: "ORGANIC" },
+  { label: "Guest Post", value: "GUEST_POST" },
+  { label: "Listicle", value: "LISTICLE" },
+  { label: "Review", value: "REVIEW" },
+  { label: "Interview", value: "INTERVIEW" },
+  { label: "Casino", value: "CASINO" },
+  { label: "Gambling", value: "GAMBLING" },
+  { label: "Mining", value: "MINING" },
+];
 export const BundleCategoryOptions = [
   { label: "Web3", value: "WEB3" },
   { label: "Yahoo", value: "YAHOO" },
@@ -419,6 +437,7 @@ export const Timezones = [
   { label: "(GMT+05:00) Moscow+02 - Yekaterinburg", value: "Asia/Yekaterinburg" },
   { label: "(GMT+05:00) Tashkent", value: "Asia/Tashkent" },
   { label: "(GMT+05:30) Colombo", value: "Asia/Colombo" },
+  { label: "(GMT+05:30) Indian Standard Time - Kolkata", value: "Asia/Kolkata" },
   { label: "(GMT+06:00) Almaty", value: "Asia/Almaty" },
   { label: "(GMT+06:00) Dhaka", value: "Asia/Dhaka" },
   { label: "(GMT+06:30) Rangoon", value: "Asia/Rangoon" },

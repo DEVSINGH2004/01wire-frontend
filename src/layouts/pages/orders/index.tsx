@@ -68,7 +68,7 @@ const OrderManagement = () => {
       getOrders({
         variables: {
           paginationInput: {
-            perPage: PER_PAGE,
+            perPage: pageSize,
             currentPage: 0,
           },
           filterInput: {

@@ -5,14 +5,19 @@ import Grid from "@mui/material/Grid";
 import InfoIcon from "@mui/icons-material/Info";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDInput from "components/MDInput";
 import MDCircularLoader from "components/MDCircularLoader";
+import CircularProgress from "@mui/material/CircularProgress";
 import MDButton from "components/MDButton";
+import Autocomplete from "@mui/material/Autocomplete";
+import FormHelperText from "@mui/material/FormHelperText";
+
 import { useForm } from "react-hook-form";
 import EditorialGuidelines from "../EditorialGuidelines";
 
 // NewProduct page components
 import FormField from "../FormField";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { CREATE_ARTICLE, ICreateArticleVars } from "graphql/mutations/createArticle";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
@@ -36,34 +41,45 @@ function AddPress({
   setSaveData,
 }: Props): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
-  const { title, content, summary, featureImage, featureImageDesc } = data || {};
+  const [openAutocomplete, setOpenAutocomplete] = useState<boolean>(false);
+  const [showClientErr, setShowClientErr] = useState<boolean>(false);
+  const [options, setOptions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const { title, content, summary, featureImage, featureImageDesc, createdAt } = data || {};
   const {
     control,
     formState: { isDirty, errors },
     reset,
     handleSubmit,
   } = useForm({
-    defaultValues: { clientId: null, title, content, summary, featureImage, featureImageDesc },
-  });
-  const [loading, setLoading] = useState<boolean>(false);
-  const [createArticle] = useMutation<ICreateArticleVars>(CREATE_ARTICLE);
-  const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
-  const { data: clientsData } = useQuery<IGetClients, IGetClientsVars>(GET_CLIENTS, {
-    variables: {
-      filterInput: {},
-      paginationInput: {
-        currentPage: 0,
-        perPage: 200,
-      },
+    defaultValues: {
+      clientId: null,
+      title,
+      content: content && `<div>${content}</div>`,
+      summary,
+      featureImage,
+      featureImageDesc,
+      createdAt,
     },
   });
-  const clientsObj: any = clientsData?.filterClientsPaginated?.data?.map((el) => ({
-    label: el?.title,
-    value: el?.id,
-  }));
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedClient, setClient] = useState<any>(null);
+  const [createArticle] = useMutation<ICreateArticleVars>(CREATE_ARTICLE);
+  const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
+  const [fetchOptions, { loading: optionsLoading }] = useLazyQuery<IGetClients, IGetClientsVars>(
+    GET_CLIENTS,
+    {
+      onCompleted: (data) => {
+        const clientsObj: any = data?.filterClientsPaginated?.data?.map((el: any) => ({
+          label: el?.title,
+          value: el?.id,
+        }));
 
+        setOptions(clientsObj);
+      },
+    }
+  );
   const onSubmit = async (formVals: any) => {
-    const { clientId = {} } = formVals || {};
     setLoading(true);
     try {
       let res: any;
@@ -73,7 +89,7 @@ function AddPress({
             params: {
               id: data.id,
               ...formVals,
-              clientId: clientId?.value,
+              clientId: selectedClient?.value,
             },
           },
         });
@@ -82,7 +98,7 @@ function AddPress({
           variables: {
             params: {
               ...formVals,
-              clientId: clientId?.value,
+              clientId: selectedClient?.value,
             },
           },
         });
@@ -101,6 +117,9 @@ function AddPress({
   };
   useEffect(() => {
     if (saveData && isDirty) {
+      if (!selectedClient) {
+        setShowClientErr(true);
+      }
       handleSubmit(onSubmit)();
     } else if (saveData) {
       cb();
@@ -109,18 +128,38 @@ function AddPress({
 
   useEffect(() => {
     if (data?.id) {
-      const { clientId } = data;
-      const clientObj = clientsData?.filterClientsPaginated?.data?.find(
-        (el) => el?.id === clientId
-      );
-      reset({ clientId: clientObj?.title });
+      const { clientInfo } = data;
+      if (clientInfo) {
+        setClient({
+          label: clientInfo?.title,
+          value: clientInfo?.id,
+        });
+      }
     }
-  }, [data, clientsData]);
+  }, [data]);
   useEffect(() => {
     if (Object.keys(errors).length) {
       setSaveData(false);
     }
   }, [Object.keys(errors).length]);
+  useEffect(() => {
+    if (inputValue) {
+      fetchOptions({
+        variables: {
+          filterInput: {
+            title: inputValue,
+          },
+          paginationInput: {
+            currentPage: 0,
+            perPage: 6,
+          },
+        },
+      });
+    }
+  }, [inputValue]);
+  const handleInputChange = (event: any, value: any) => {
+    setInputValue(value);
+  };
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -129,19 +168,57 @@ function AddPress({
       <MDBox mt={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={7}>
-            <FormField
-              type="dropdown"
-              placeholder="Select Client"
-              label="Client"
-              name="clientId"
-              control={control}
-              options={clientsObj}
-              variant="outlined"
-              disabled={disabled}
-              errors={errors}
-              rules={genericValidations.dropdown}
-            />
-
+            <MDBox>
+              <MDTypography
+                component="label"
+                sx={{ mb: "0.5rem" }}
+                fontSize="1rem"
+                fontWeight="medium"
+                color="textSecondary"
+              >
+                Client
+              </MDTypography>
+              <Autocomplete
+                open={openAutocomplete}
+                onOpen={() => setOpenAutocomplete(true)}
+                onClose={() => setOpenAutocomplete(false)}
+                onInputChange={handleInputChange}
+                inputValue={inputValue}
+                onChange={(event, newValue) => {
+                  setClient(newValue);
+                }}
+                disabled={disabled}
+                value={selectedClient}
+                options={options}
+                getOptionLabel={(option: any) => option?.label}
+                loading={optionsLoading}
+                renderInput={(params) => (
+                  <MDInput
+                    {...params}
+                    variant="outlined"
+                    sx={{
+                      height: "42px",
+                      "& .MuiInputBase-root": {
+                        height: "42px",
+                      },
+                    }}
+                    placeholder="Search Client"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {optionsLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+              {!selectedClient && showClientErr && (
+                <FormHelperText error={true}>Please fill value</FormHelperText>
+              )}
+            </MDBox>
             <FormField
               type="text"
               label="Title"
@@ -164,13 +241,20 @@ function AddPress({
               errors={errors}
               rules={genericValidations.text}
             />
+            <FormField
+              label="Created At"
+              type="date"
+              name="createdAt"
+              control={control}
+              disabled={disabled}
+            />
           </Grid>
           <Grid item xs={12} sm={5}>
             <FormField
               type="file"
               subLabel="JPEG, PNG, JPG(max. 3MB)"
               name="featureImage"
-              label="Feature Image"
+              label="Feature Image (1280x720 pixels or 16:9)"
               control={control}
               defaultValue={data?.featureImage}
               disabled={disabled}

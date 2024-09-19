@@ -112,7 +112,7 @@ function Releases(): JSX.Element {
       getArticles({
         variables: {
           paginationInput: {
-            perPage: PER_PAGE,
+            perPage: pageSize,
             currentPage: 0,
           },
           filterInput: filterObj,

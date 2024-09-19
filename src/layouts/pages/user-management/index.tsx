@@ -39,7 +39,7 @@ const UserManagement = () => {
       getUsers({
         variables: {
           paginationInput: {
-            perPage: PER_PAGE,
+            perPage: pageSize,
             currentPage: 0,
           },
           filterInput: {
@@ -54,7 +54,7 @@ const UserManagement = () => {
     setInitLoader(true);
     getUsers({
       variables: {
-        filterInput: {},
+        filterInput: filters,
         paginationInput: {
           currentPage: 0,
           perPage: pageSize,
