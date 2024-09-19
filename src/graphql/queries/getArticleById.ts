@@ -32,6 +32,8 @@ export const GET_ARTICLE_BY_ID = gql`
       totalCredits
       publishAt
       clientInfo {
+        id
+        title
         email
         website
         title

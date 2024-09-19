@@ -31,6 +31,10 @@ export const GET_ARTICLE_BY_ID_RNP = gql`
       instructions
       publishAt
       totalCredits
+      clientInfo {
+        id
+        title
+      }
       bundleInfo {
         id
         publicationIds

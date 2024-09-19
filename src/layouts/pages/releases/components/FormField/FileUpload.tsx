@@ -59,6 +59,7 @@ const FileUpload = ({
     accept: {
       "image/jpeg": [],
       "image/png": [],
+      "image/svg+xml": [".svg"],
     },
   });
   useEffect(() => {

@@ -265,6 +265,9 @@
   margin: 0 auto;
   object-fit: contain;
 }
+.editorClassName a span {
+  color: #0000FF;
+}
 .noBorder-editor-wrapper {
   border: none !important;
 }
