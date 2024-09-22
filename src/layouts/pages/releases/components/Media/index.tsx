@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import Grid from "@mui/material/Grid";
 import MDBox from "components/MDBox";
@@ -18,6 +19,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
+// import TelegramIcon from "@mui/icons-material/Telegram";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { countryList } from "constants/index";
 
@@ -25,6 +27,8 @@ import { countryList } from "constants/index";
 import FormField from "../FormField";
 import { Divider } from "@mui/material";
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
+import { Timezones } from "constants/index";
+import { genericValidations } from "utils/helpers";
 
 const CategoryOptions = [
   { label: "Awards", value: "AWARDS" },
@@ -46,10 +50,11 @@ const CategoryOptions = [
   { label: "Partnership", value: "PARTNERSHIP" },
   { label: "Product Annoucement", value: "PRODUCT_ANNOUNCEMENT" },
   { label: "Regulatory", value: "REGULATORY" },
-  { label: "Shareholder Meeting", value: "SHAREHOLDER_MEETING" }
+  { label: "Shareholder Meeting", value: "SHAREHOLDER_MEETING" },
 ];
+
 const pulishOptions = [
-  { label: "Immedately", value: "IMMEDATELY" },
+  { label: "Immediate", value: "IMMEDIATE" },
   { label: "Scheduled", value: "SCHEDULED" },
 ];
 interface Props {
@@ -67,7 +72,10 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
     formState: { errors, isDirty },
     reset,
     handleSubmit,
-  } = useForm({ defaultValues: { category: "", country: "" } });
+    watch,
+  } = useForm({
+    defaultValues: { category: "", country: "", publishType: "", timezone: "", publishAt: dayjs() },
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const onSubmit = (formVals: any) => {
@@ -85,9 +93,13 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
       linkedIn,
       twitter,
       youtube,
+      // telegram,
       others,
       category,
       instructions,
+      timezone,
+      publishType,
+      publishAt,
     } = formVals;
     updateArticle({
       variables: {
@@ -95,6 +107,9 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
           id: data?.id,
           category: category?.value,
           instructions,
+          timezone: timezone?.value,
+          publishType,
+          publishAt,
           mediaContact: {
             name,
             email,
@@ -108,6 +123,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
             linkedIn,
             twitter,
             youtube,
+            // telegram,
             others,
           },
         },
@@ -135,17 +151,28 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
     }
   }, [saveData, isDirty]);
   useEffect(() => {
+    if (Object.keys(errors).length) {
+      setSaveData(false);
+    }
+  }, [Object.keys(errors).length]);
+  useEffect(() => {
     if (data?.id) {
-      const { category, instructions, mediaContact } = data;
+      const { category, instructions, mediaContact, timezone, publishType, publishAt } = data;
       const filteredCategory = CategoryOptions?.find((one) => one.value === category);
+      const filteredTimezone = Timezones?.find((one) => one.value === timezone);
       const defaultValues = {
         category: filteredCategory,
+        timezone: filteredTimezone,
+        publishType,
+        publishAt: dayjs(publishAt),
         instructions,
         ...mediaContact,
       };
       reset(defaultValues);
     }
   }, [data]);
+  const publishType = watch("publishType");
+
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
@@ -162,24 +189,47 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               variant="outlined"
               disabled={disabled}
             />
-            {/* <FormField
+            <FormField
               type="radio"
-              label1="Immedately"
+              label1="Immediate"
               label2="Scheduled"
-              label="Select Date & Time"
-              name="type"
+              label="Publish Date & Time"
+              name="publishType"
               control={control}
               opt={pulishOptions}
               variant="outlined"
             />
-            <FormField
-              type="Date"
-              name="category"
-              control={control}
-              options={CategoryOptions}
-              variant="outlined"
-              disabled={disabled}
-            /> */}
+            {publishType === "SCHEDULED" && (
+              <Grid container columnGap={1}>
+                <Grid xs={6}>
+                  <FormField
+                    type="dateAndTime"
+                    name="publishAt"
+                    control={control}
+                    disabled={disabled}
+                  />
+                </Grid>
+                <Grid xs={5}>
+                  <FormField
+                    type="dropdown"
+                    placeholder="Select Timezone"
+                    name="timezone"
+                    control={control}
+                    options={Timezones}
+                    disabled={disabled}
+                    errors={errors}
+                    rules={genericValidations.dropdown}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "45px",
+                        marginTop: "7px",
+                        width: "260px",
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormField
@@ -408,6 +458,21 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
               }}
               disabled={disabled}
             />
+            {/* <FormField
+              type="text"
+              label="Telegram"
+              name="telegram"
+              control={control}
+              variant="outlined"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <TelegramIcon />
+                  </InputAdornment>
+                ),
+              }}
+              disabled={disabled}
+            /> */}
           </Grid>
         </Grid>
       </MDBox>

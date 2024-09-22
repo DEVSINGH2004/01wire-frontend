@@ -85,13 +85,18 @@ const PRManagement = () => {
 
   useEffect(() => {
     setInitLoader(true);
+    const status = getStatusArr(filters?.status);
+    const filterInput = { ...filters, status };
+    if (!filterInput?.status?.length) {
+      delete filterInput.status;
+    }
     getArticles({
       variables: {
         paginationInput: {
           perPage: pageSize,
           currentPage: 0,
         },
-        filterInput: {},
+        filterInput,
       },
     })
       .then(() => setInitLoader(false))
@@ -108,7 +113,7 @@ const PRManagement = () => {
       getArticles({
         variables: {
           paginationInput: {
-            perPage: PER_PAGE,
+            perPage: pageSize,
             currentPage: 0,
           },
           filterInput,
