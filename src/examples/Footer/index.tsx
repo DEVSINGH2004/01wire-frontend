@@ -52,7 +52,7 @@ function Footer({ company, links }: Props): JSX.Element {
         color="text"
         fontSize={size.sm}
       >
-        &copy; {new Date().getFullYear()}, 01 wire
+        &copy; {new Date().getFullYear()}, 01wire
       </MDBox>
       <MDBox
         component="ul"
@@ -79,7 +79,7 @@ function Footer({ company, links }: Props): JSX.Element {
 
 // Declaring default props for Footer
 Footer.defaultProps = {
-  company: { href: "https://www.creative-tim.com/", name: "01 wire" },
+  company: { href: "https://www.creative-tim.com/", name: "01wire" },
   links: [
     { href: "https://www.creative-tim.com/presentation", name: "About Us" },
     { href: "https://www.creative-tim.com/license", name: "Contact Us" },

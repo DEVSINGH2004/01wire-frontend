@@ -251,7 +251,7 @@ export const countryList = {
 };
 export const TermsAndConditionsList = [
   "Credits are non-refundable.",
-  "Credits can be used across all 01 Wire features without restrictions.",
+  "Credits can be used across all 01wire features without restrictions.",
   "Purchases are secure, with all major credit cards and cryptocurrencies accepted.",
   "Any changes to credit packages will be communicated in advance.",
   "Credits cannot be transferred between 01wire accounts.",
