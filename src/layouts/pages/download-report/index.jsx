@@ -95,8 +95,8 @@ const Footer = ({ style }) => {
         className="decorative-line"
       />
       <Box className="footer-content">
-        <Box className="footer-title">One Wire</Box>
-        <Box className="footer-website">www.onewire.com</Box>
+        <Box className="footer-title">01 Wire</Box>
+        <Box className="footer-website">www.01wire.com</Box>
       </Box>
     </footer>
   );
