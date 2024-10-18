@@ -159,7 +159,7 @@ function PressReleaseReport() {
     fetchPolicy: "network-only",
     variables: {
       paginationInput: {
-        perPage: 200,
+        perPage: 500,
         currentPage: 0,
       },
       filterInput: {
