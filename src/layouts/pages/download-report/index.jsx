@@ -259,54 +259,56 @@ function PressReleaseReport() {
               </Box>
             </Box>
           </Box>
-          <Box mx="48px" mb="30px">
-            <h3 className="section-title">Follow Us</h3>
-            <Box
-              sx={{
-                justifyContent: "center",
-                display: "flex",
-                borderRadius: "6px",
-                border: "1px solid rgba(0, 0, 0, 0.1)",
-                backgroundColor: "#f9f9fd",
-                padding: "17px 27px",
-                marginBottom: "28px",
-                gap: "10px",
-              }}
-            >
-              {facebook && (
-                <SocialMediaLink
-                  IconComponent={FacebookIcon}
-                  platform="Facebook"
-                  bgColor={"#0766FF"}
-                  to={facebook}
-                />
-              )}
-              {twitter && (
-                <SocialMediaLink
-                  IconComponent={XIcon}
-                  platform="x.com"
-                  bgColor={"#0B66C2"}
-                  to={twitter}
-                />
-              )}
-              {instagram && (
-                <SocialMediaLink
-                  IconComponent={InstagramIcon}
-                  platform="Instagram"
-                  bgColor={`linear-gradient(0deg, #D9D9D9, #D9D9D9),linear-gradient(0deg, #0766FF, #0766FF),linear-gradient(49.12deg, #FFDD55 6.62%, #FF543E 50.06%, #C837AB 93.5%)`}
-                  to={instagram}
-                />
-              )}
-              {linkedIn && (
-                <SocialMediaLink
-                  IconComponent={LinkedInIcon}
-                  platform="Linkedin"
-                  bgColor={"#0B66C2"}
-                  to={linkedIn}
-                />
-              )}
+          {(facebook || twitter || linkedIn || instagram) && (
+            <Box mx="48px" mb="30px">
+              <h3 className="section-title">Follow Us</h3>
+              <Box
+                sx={{
+                  justifyContent: "center",
+                  display: "flex",
+                  borderRadius: "6px",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  backgroundColor: "#f9f9fd",
+                  padding: "17px 27px",
+                  marginBottom: "28px",
+                  gap: "10px",
+                }}
+              >
+                {facebook && (
+                  <SocialMediaLink
+                    IconComponent={FacebookIcon}
+                    platform="Facebook"
+                    bgColor={"#0766FF"}
+                    to={facebook}
+                  />
+                )}
+                {twitter && (
+                  <SocialMediaLink
+                    IconComponent={XIcon}
+                    platform="x.com"
+                    bgColor={"#0B66C2"}
+                    to={twitter}
+                  />
+                )}
+                {instagram && (
+                  <SocialMediaLink
+                    IconComponent={InstagramIcon}
+                    platform="Instagram"
+                    bgColor={`linear-gradient(0deg, #D9D9D9, #D9D9D9),linear-gradient(0deg, #0766FF, #0766FF),linear-gradient(49.12deg, #FFDD55 6.62%, #FF543E 50.06%, #C837AB 93.5%)`}
+                    to={instagram}
+                  />
+                )}
+                {linkedIn && (
+                  <SocialMediaLink
+                    IconComponent={LinkedInIcon}
+                    platform="Linkedin"
+                    bgColor={"#0B66C2"}
+                    to={linkedIn}
+                  />
+                )}
+              </Box>
             </Box>
-          </Box>
+          )}
 
           <Footer style={{ margin: "20px" }} />
         </header>
