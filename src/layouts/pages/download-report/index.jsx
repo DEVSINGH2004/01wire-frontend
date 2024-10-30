@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import "./download.css";
 import Box from "@mui/material/Box";
 import OneWireLogo from "assets/images/OneWireLogo_2.svg";
@@ -102,8 +103,9 @@ const Footer = ({ style }) => {
   );
 };
 function PressReleaseReport() {
-  const query = getId();
-  const id = query.get("id");
+  // const query = getId();
+  // const id = query.get("id");
+  const { id } = useParams();
   const componentRef = useRef();
   const [loader, setLoader] = useState(false);
   const handleDownloadPDF = async () => {

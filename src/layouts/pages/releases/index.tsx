@@ -179,7 +179,7 @@ function Releases(): JSX.Element {
     } else if (action === "view") {
       setViewModal(id);
     } else if (action === "navigate") {
-      navigate(`/download-report?id=${id}`);
+      navigate(`/download-report/${id}`);
     } else if (action === "delete") {
       setDeleteConf(id);
     }
