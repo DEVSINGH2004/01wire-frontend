@@ -82,7 +82,9 @@ export default function App() {
       }
     );
   const isSharePath =
-    pathname.startsWith("/share-estimation") || pathname.startsWith("/share-release");
+    pathname.startsWith("/share-estimation") ||
+    pathname.startsWith("/share-release") ||
+    pathname.startsWith("/download-report");
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -90,6 +92,7 @@ export default function App() {
         <Routes>
           <Route path="/share-estimation/:id" element={<ShareEstimation />} />
           <Route path="/share-release/:id" element={<ShareReleases />} />
+          <Route path="/download-report" element={<DownloadReport />} />
         </Routes>
       ) : !token ? (
         <SignIn />
@@ -114,7 +117,6 @@ export default function App() {
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/clients/:id" element={<Clients />} />
-              <Route path="/download-report" element={<DownloadReport />} />
               <Route path="/releases/:id" element={<Releases />} />
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />
