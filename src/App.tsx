@@ -85,6 +85,7 @@ export default function App() {
     pathname.startsWith("/share-estimation") ||
     pathname.startsWith("/share-release") ||
     pathname.startsWith("/download-report");
+  console.info("path", pathname, "isSharePath", isSharePath);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
