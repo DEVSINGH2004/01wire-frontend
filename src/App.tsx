@@ -93,7 +93,7 @@ export default function App() {
         <Routes>
           <Route path="/share-estimation/:id" element={<ShareEstimation />} />
           <Route path="/share-release/:id" element={<ShareReleases />} />
-          <Route path="/download-report" element={<DownloadReport />} />
+          <Route path="/download-report/:id" element={<DownloadReport />} />
         </Routes>
       ) : !token ? (
         <SignIn />

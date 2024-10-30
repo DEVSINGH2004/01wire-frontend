@@ -104,7 +104,7 @@ const OrderManagement = () => {
     } else if (action === "view") {
       setViewModal(id);
     } else if (action === "navigate") {
-      navigate(`/download-report?id=${id}`);
+      navigate(`/download-report/${id}`);
     } else if (action === "note") {
       setNoteModal({ id });
     } else if (action === "view-article") {

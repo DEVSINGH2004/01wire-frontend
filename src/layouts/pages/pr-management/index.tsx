@@ -162,7 +162,7 @@ const PRManagement = () => {
       setOpenForm(id);
       setStatus(row?.status);
     } else if (action === "navigate") {
-      window.open(`/download-report?id=${id}`, "_blank", "noopener,noreferrer");
+      window.open(`/download-report/${id}`, "_blank", "noopener,noreferrer");
     } else if (action === "view") {
       setViewModal(id);
     }
