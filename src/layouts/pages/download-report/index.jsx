@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./download.css";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import OneWireLogo from "assets/images/OneWireLogo_2.svg";
 import DownloadBg from "assets/images/download-report/downloadBg.png";
@@ -77,9 +79,9 @@ const DistributionItem = ({ logo, name, link, type, industry, countries, audienc
       View Release
     </a>
     <span className="distribution-type">{type}</span>
-    <span className="distribution-industry">{industry}</span>
-    <span className="distribution-countries">{countries}</span>
-    <span className="distribution-audience">{audience} visit/month</span>
+    {industry && <span className="distribution-industry">{industry}</span>}
+    {countries && <span className="distribution-countries">{countries}</span>}
+    {audience && <span className="distribution-audience">{audience} visit/month</span>}
   </Box>
 );
 
@@ -175,26 +177,32 @@ function PressReleaseReport() {
   const { email, phone, website, name, address, country, state } =
     data?.getArticleById?.mediaContact || {};
   const { linkedIn, facebook, instagram, twitter } = data?.getArticleById?.clientInfo?.social || {};
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <>
-      <Button
-        variant="contained"
-        sx={{
-          position: "sticky",
-          top: "10px",
-          left: "80%",
-          color: "#000",
-          background: "#fff",
-          "&:hover": {
+    <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "fixed", right: "20px", top: "10px" }}>
+        <Button
+          variant="contained"
+          sx={{
+            color: "#000",
             background: "#fff",
-          },
-        }}
-        onClick={handleDownloadPDF}
-        startIcon={<DownloadIcon fontSize="medium" />}
+            "&:hover": {
+              background: "#fff",
+            },
+          }}
+          onClick={handleDownloadPDF}
+          startIcon={<DownloadIcon fontSize="medium" />}
+        >
+          {loader ? "Downloading..." : "Download"}
+        </Button>
+      </Box>
+      <Box
+        margin="auto"
+        ref={componentRef}
+        style={{ padding: 20, width: isMobile ? "100%" : "210mm" /* A4 width */ }}
       >
-        {loader ? "Downloading..." : "Download"}
-      </Button>
-      <Box margin="auto" ref={componentRef} style={{ padding: 20, width: "210mm" /* A4 width */ }}>
         <header
           style={{
             backgroundColor: " #fff",
@@ -223,7 +231,7 @@ function PressReleaseReport() {
             <Box height={95} width={5} backgroundColor={"#FF4D53"} mr={1}></Box>
             <Typography
               sx={{
-                fontSize: "48px",
+                fontSize: isMobile ? "24px" : "48px",
                 fontWeight: "700",
                 lineHeight: "59.34px",
               }}
@@ -417,8 +425,8 @@ function PressReleaseReport() {
                   name="logo"
                   link={item?.url}
                   type={item?.publicationInfo?.title}
-                  industry="Finance"
-                  countries="Global"
+                  // industry="Finance"
+                  // countries="Global"
                   audience={item?.publicationInfo?.stats?.traffic}
                 />
               );
@@ -427,7 +435,7 @@ function PressReleaseReport() {
           </section>
         )}
       </Box>
-    </>
+    </Box>
   );
 }
 
