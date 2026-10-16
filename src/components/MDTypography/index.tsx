@@ -13,13 +13,15 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { FC, ReactNode, forwardRef } from "react";
+import { ReactNode, forwardRef } from "react";
 
 // @mui material components
 import { TypographyProps } from "@mui/material";
 
 // Custom styles for MDTypography
 import MDTypographyRoot from "components/MDTypography/MDTypographyRoot";
+
+const TypographyRoot = MDTypographyRoot as any;
 
 // Material Dashboard 2 PRO React TS contexts
 import { useMaterialUIController } from "context";
@@ -57,16 +59,16 @@ interface Props extends TypographyProps {
   [key: string]: any;
 }
 
-const MDTypography: FC<Props | any> = forwardRef(
+const MDTypography = forwardRef<HTMLSpanElement, Props>(
   (
     {
-      color,
-      width,
+      color = "dark",
+      width = "auto",
       fontWeight,
-      textTransform,
-      verticalAlign,
-      textGradient,
-      opacity,
+      textTransform = "none",
+      verticalAlign = "unset",
+      textGradient = false,
+      opacity = 1,
       children,
       ...rest
     },
@@ -76,7 +78,7 @@ const MDTypography: FC<Props | any> = forwardRef(
     const { darkMode } = controller;
 
     return (
-      <MDTypographyRoot
+      <TypographyRoot
         {...rest}
         ref={ref}
         ownerState={{
@@ -91,20 +93,9 @@ const MDTypography: FC<Props | any> = forwardRef(
         }}
       >
         {children}
-      </MDTypographyRoot>
+      </TypographyRoot>
     );
   }
 );
-
-// Declaring default props for MDTypography
-MDTypography.defaultProps = {
-  color: "dark",
-  fontWeight: undefined,
-  textTransform: "none",
-  verticalAlign: "unset",
-  textGradient: false,
-  opacity: 1,
-  width: "auto",
-};
 
 export default MDTypography;

@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { ReactNode, FC, forwardRef, createContext, useContext, useMemo } from "react";
+import { ReactNode, forwardRef, createContext, useContext, useMemo } from "react";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -44,8 +44,8 @@ interface Props {
   [key: string]: any;
 }
 
-const MDPagination: FC<Props | any> = forwardRef(
-  ({ item, variant, color, size, active, children, ...rest }, ref) => {
+const MDPagination = forwardRef<HTMLButtonElement, Props>(
+  ({ item = false, variant = "gradient", color = "info", size = "medium", active = false, children, ...rest }, ref) => {
     const context: any = useContext(Context);
     const paginationSize = context ? context.size : undefined;
 
@@ -86,14 +86,5 @@ const MDPagination: FC<Props | any> = forwardRef(
     );
   }
 );
-
-// Declaring default props for MDPagination
-MDPagination.defaultProps = {
-  item: false,
-  variant: "gradient",
-  color: "info",
-  size: "medium",
-  active: false,
-};
 
 export default MDPagination;

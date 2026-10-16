@@ -23,15 +23,10 @@ interface Props extends AvatarProps {
   [key: string]: any;
 }
 
-const MDAvatar = forwardRef<HTMLDivElement, Props>(({ bgColor, size, shadow, ...rest }, ref) => (
+const MDAvatar = forwardRef<HTMLDivElement, Props>(({ bgColor = "transparent", size = "md", shadow = "none", ...rest }, ref) => (
   <MDAvatarRoot ref={ref} ownerState={{ shadow, bgColor, size }} {...rest} />
 ));
 
-// Declaring default props for MDAvatar
-MDAvatar.defaultProps = {
-  bgColor: "transparent",
-  size: "md",
-  shadow: "none",
-};
+
 
 export default MDAvatar;

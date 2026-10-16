@@ -17,7 +17,7 @@ interface Props extends BoxProps {
 }
 
 const MDBox = forwardRef<HTMLDivElement, Props>(
-  ({ variant, bgColor, color, opacity, borderRadius, shadow, coloredShadow, ...rest }, ref) => (
+  ({ variant = "contained", bgColor = "transparent", color = "dark", opacity = 1, borderRadius = "none", shadow = "none", coloredShadow = "none", ...rest }, ref) => (
     <MDBoxRoot
       {...rest}
       ref={ref}
@@ -26,15 +26,7 @@ const MDBox = forwardRef<HTMLDivElement, Props>(
   )
 );
 
-// Declaring default props for MDBox
-MDBox.defaultProps = {
-  variant: "contained",
-  bgColor: "transparent",
-  color: "dark",
-  opacity: 1,
-  borderRadius: "none",
-  shadow: "none",
-  coloredShadow: "none",
-};
+
+
 
 export default MDBox;

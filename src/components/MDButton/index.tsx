@@ -31,7 +31,7 @@ interface Props extends Omit<ButtonProps, "color" | "variant"> {
 }
 
 const MDButton = forwardRef<HTMLButtonElement, Props>(
-  ({ color, variant, size, circular, iconOnly, children, ...rest }, ref) => {
+  ({ color = "white", variant = "contained", size = "medium", circular = false, iconOnly = false, children, ...rest }, ref) => {
     const [controller] = useMaterialUIController();
     const { darkMode } = controller;
 
@@ -51,12 +51,6 @@ const MDButton = forwardRef<HTMLButtonElement, Props>(
 );
 
 // Declaring default props for MDButton
-MDButton.defaultProps = {
-  color: "white",
-  variant: "contained",
-  size: "medium",
-  circular: false,
-  iconOnly: false,
-};
+
 
 export default MDButton;

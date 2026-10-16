@@ -36,8 +36,8 @@
     "jwt-decode": "^4.0.0",
     "lodash.debounce": "^4.0.8",
     "mui-one-time-password-input": "^2.0.2",
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-draft-wysiwyg": "^1.15.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.51.0",
@@ -52,10 +52,6 @@
     "stylis": "4.2.0",
     "typescript": "^5.3.3",
     "web-vitals": "3.3.1"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
   },
   "scripts": {
     "start": "react-scripts start",

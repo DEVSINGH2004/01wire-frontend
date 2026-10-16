@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { FC, forwardRef } from "react";
+import { forwardRef } from "react";
 
 // @mui material components
 import { OutlinedTextFieldProps, StandardTextFieldProps } from "@mui/material";
@@ -29,15 +29,11 @@ interface Props extends Omit<OutlinedTextFieldProps | StandardTextFieldProps, "v
   disabled?: boolean;
 }
 
-const MDInput: FC<Props | any> = forwardRef(({ error, success, disabled, ...rest }, ref) => (
+const MDInput = forwardRef<HTMLDivElement, Props>(({ error = false, success = false, disabled = false, ...rest }, ref) => (
   <MDInputRoot {...rest} ref={ref} ownerState={{ error, success, disabled }} />
 ));
 
 // Declaring default props for MDInput
-MDInput.defaultProps = {
-  error: false,
-  success: false,
-  disabled: false,
-};
+
 
 export default MDInput;

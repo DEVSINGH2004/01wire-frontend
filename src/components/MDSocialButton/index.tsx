@@ -29,7 +29,7 @@ interface Props extends Omit<ButtonProps, "color" | "variant"> {
 }
 
 const MDSocialButton = forwardRef<HTMLButtonElement, Props>(
-  ({ color, size, iconOnly, circular, children, ...rest }, ref) => (
+  ({ color = "facebook", size = "medium", iconOnly = false, circular = false, children, ...rest }, ref) => (
     <MDSocialButtonRoot
       {...rest}
       ref={ref}
@@ -42,13 +42,5 @@ const MDSocialButton = forwardRef<HTMLButtonElement, Props>(
     </MDSocialButtonRoot>
   )
 );
-
-// Setting default values for the props of MDSocialButton
-MDSocialButton.defaultProps = {
-  size: "medium",
-  color: "facebook",
-  iconOnly: false,
-  circular: false,
-};
 
 export default MDSocialButton;

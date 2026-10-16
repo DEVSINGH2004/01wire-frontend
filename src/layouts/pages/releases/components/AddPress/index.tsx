@@ -59,7 +59,6 @@ function AddPress({
       summary,
       featureImage,
       featureImageDesc,
-      createdAt,
     },
   });
   const [loading, setLoading] = useState<boolean>(false);
@@ -94,10 +93,11 @@ function AddPress({
           },
         });
       } else {
+        const { createdAt, ...articleParams } = formVals;
         res = await createArticle({
           variables: {
             params: {
-              ...formVals,
+              ...articleParams  ,
               clientId: selectedClient?.value,
             },
           },
@@ -241,13 +241,13 @@ function AddPress({
               errors={errors}
               rules={genericValidations.text}
             />
-            <FormField
+            {/* <FormField
               label="Created At"
               type="date"
               name="createdAt"
               control={control}
               disabled={disabled}
-            />
+            /> */}
           </Grid>
           <Grid item xs={12} sm={5}>
             <FormField
