@@ -20,6 +20,7 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.24",
     "@types/react-slick": "^0.23.13",
+    "ajv": "^8.20.0",
     "axios": "^1.6.7",
     "chroma-js": "2.4.2",
     "dayjs": "^1.11.10",
