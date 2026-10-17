@@ -25,7 +25,6 @@ import { ISignupVars, SIGNUP } from "graphql/mutations/signup";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { ILoginVars, LOGIN } from "graphql/mutations/login";
 import { GET_AUTH_STATUS, IGetAuthStatusVars, IGetAuthStatus } from "graphql/queries/getAuthStatus";
-import { LOGIN_VIA_OTP, ILoginOtpVars } from "graphql/mutations/loginViaOtp";
 import { VERIFY_OTP, IVerifyOtpVars } from "graphql/mutations/verifyOtp";
 import { RESET_PASSWORD, IResetPasswordVars } from "graphql/mutations/resetPassword";
 import { validateEmail } from "../utils";
@@ -54,7 +53,6 @@ function SignIn(): JSX.Element {
   const [resetPassword] = useMutation<IResetPasswordVars>(RESET_PASSWORD);
 
   const [getAuthStatus] = useLazyQuery<IGetAuthStatusVars>(GET_AUTH_STATUS);
-  const [loginViaOtp] = useMutation<ILoginOtpVars>(LOGIN_VIA_OTP);
 
   const handleEmailSubmit = async () => {
     setLoading(true);
@@ -93,23 +91,7 @@ function SignIn(): JSX.Element {
 
   const handleForgotPassword = async (resetPsw = false) => {
     setLoading(true);
-    loginViaOtp({
-      variables: {
-        email,
-      },
-    })
-      .then((res: any) => {
-        setShowOtp(res.data.loginViaOtp.token);
-        setIsSignUp(false);
-        if (resetPsw) setForgotPsw(res.data.loginViaOtp.token);
-        else setForgotPsw("");
-        setShowPassword(false);
-        setLoading(false);
-      })
-      .catch((e: any) => {
-        setLoading(false);
-        toast.error(e?.message);
-      });
+    setLoading(false);
   };
 
   const handleLogin = async () => {

@@ -151,3 +151,100 @@ Applied the same exclusion to the `updateArticle` call path if `ArticleUpdateInp
 | `npx tsc --noEmit` | 0 errors (unchanged) |
 | `npm run build` | Compiled successfully (unchanged) |
 | `createArticle` mutation with `createdAt` removed | GraphQL validation passes; mutation executes |
+
+---
+
+# Notes — Adding Test Admin Credentials (Backend Database Only)
+
+**Date:** 2026-10-17  
+**Project:** 01wire-fe (React + TypeScript, Create React App v5)  
+**Topic:** Test user / admin credentials for login testing  
+**Affected files:** `src/graphql/mutations/login.ts`, `src/graphql/mutations/signup.ts`, `src/layouts/authentication/sign-in/index.tsx`, `src/App.tsx`, `src/adminRoutes.tsx`, `src/routes.tsx`
+
+---
+
+## Summary
+
+**You cannot create an admin user from the frontend.** The frontend only reads the `type` field returned by the backend's `login` mutation; it cannot set `type: 'ADMIN'` during signup or login. Admin status must be set directly in the MongoDB backend database.
+
+## Why the frontend cannot create admins
+
+| File | Limitation |
+|------|------------|
+| `src/graphql/mutations/signup.ts` | `ISignupVars` only accepts `email`, `password`, `fullName` — no `type` or `role` field |
+| `src/graphql/mutations/login.ts` | `login` mutation returns `type` from backend; frontend stores it in `localStorage` |
+| `src/App.tsx` line 108, 116, 125 | Routes are gated on `role === "ADMIN"` from `localStorage.getItem("role")` |
+| `src/adminRoutes.tsx` | Admin-only routes (Manage Orders, Manage Users, Publications, Bundles) |
+
+## Backend database setup (MongoDB)
+
+Insert or update the test admin user directly in MongoDB:
+
+```js
+db.users.updateOne(
+  { email: 'testadmin@example.com' },
+  {
+    $set: {
+      email: 'testadmin@example.com',
+      rawEmail: 'testadminexamplecom',
+      password: '$2a$10$NOrD78PfbPhCt6Z.srtTM.gC12kkdHjqVtaYucVC7gaQQKH9vpvYW',
+      type: 'ADMIN',
+      isEmailVerified: true,
+      isBlocked: false,
+      fullName: 'Test Admin',
+      walletId: 'wallet-test-admin-1',
+      roles: [],
+      loginAttempts: 0
+    }
+  },
+  { upsert: true }
+);
+```
+
+Optionally, the regular test user:
+
+```js
+db.users.updateOne(
+  { email: 'testuser@example.com' },
+  {
+    $set: {
+      email: 'testuser@example.com',
+      rawEmail: 'testuserexamplecom',
+      password: '$2a$10$Y1K6IitNm/z2N63urTVlLOxwoLN7LnL2ktBkXw.hrHovY/dcpPiyW',
+      type: 'USER',
+      isEmailVerified: true,
+      isBlocked: false,
+      fullName: 'Test User',
+      walletId: null,
+      roles: [],
+      loginAttempts: 0
+    }
+  },
+  { upsert: true }
+);
+```
+
+## Frontend login flow (already fixed)
+
+The sign-in page (`src/layouts/authentication/sign-in/index.tsx`) now uses the `login` mutation (not `loginViaOtp`) when both `email` and `password` are provided:
+
+- `loginViaOtp` import and hook were **removed** from `sign-in/index.tsx`
+- `handleLogin` (lines ~115–144) calls `loginMutation({ variables: { email, password } })`
+- On success: stores `token` and `role` in `localStorage`, navigates admin to `/orders`, user to `/`
+
+## Test credentials after DB insert
+
+| Role | Email | Password (plain-text matching the bcrypt hash) | `type` |
+|------|-------|------------------------------------------------|--------|
+| Admin | `testadmin@example.com` | *(your chosen plain-text password)* | `ADMIN` |
+| User | `testuser@example.com` | *(your chosen plain-text password)* | `USER` |
+
+> ⚠️ The passwords shown above are **bcrypt hashes**, not plain text. Use the original plain-text passwords you hashed them from, or generate new hashes for passwords you choose.
+
+## Verification steps
+
+1. Run the MongoDB `updateOne` commands above (or `insertMany` if users don't exist)
+2. Restart the backend server
+3. Open the frontend sign-in page
+4. Enter `testadmin@example.com` + password → `getAuthStatus` returns verified → password login succeeds → `localStorage.role` = `"ADMIN"` → admin routes appear in sidebar
+5. Enter `testuser@example.com` + password → `localStorage.role` = `"USER"` → regular routes appear
