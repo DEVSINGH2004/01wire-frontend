@@ -121,12 +121,19 @@ const Filters = ({
 
   return (
     <>
-      <Box p={2} display="flex" alignItems="center" justifyContent="space-between">
-        <Box display="flex" alignItems="center">
+      <Box
+        p={2}
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        flexWrap="wrap"
+        gap={2}
+      >
+        <Box display="flex" alignItems="center" flexWrap="wrap" gap={2}>
           <Autocomplete
             id="asynchronous-demo"
             size="small"
-            sx={{ width: 252, height: 42, mr: 2 }}
+            sx={{ width: { xs: "100%", sm: 252 }, height: 42 }}
             open={open}
             onOpen={() => {
               setOpen(true);
@@ -174,7 +181,7 @@ const Filters = ({
             )}
           />
           <MDInput
-            sx={{ width: 130 }}
+            sx={{ width: { xs: "100%", sm: 130 } }}
             fullWidth
             type="text"
             onChange={handleInputChange}
@@ -190,7 +197,7 @@ const Filters = ({
           />
         </Box>
 
-        <Box display="flex" alignItems="center" justifyContent="flex-end">
+        <Box display="flex" alignItems="center" justifyContent="flex-end" flexWrap="wrap" gap={2}>
           <Box>
             <FormControl
               sx={{
@@ -270,7 +277,7 @@ const Filters = ({
             bgColor="white"
             sx={{
               height: "42px",
-              width: "300px",
+              width: { xs: "100%", sm: "300px" },
               p: 1.5,
               display: "flex",
               alignItems: "center",

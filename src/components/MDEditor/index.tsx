@@ -9,6 +9,7 @@ import axiosInstance from "utils/axiosInstance";
 import { toast } from "react-toastify";
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
+import { getImageUrl } from "utils/apiConfig";
 function MDEditor({
   value,
   onChange,
@@ -44,7 +45,7 @@ function MDEditor({
         .then((response) => {
           console.info("File uploaded successfully:", response);
           resolve({
-            data: { link: process.env.REACT_APP_IMAGE_BASE_URL + response?.data?.fileName },
+            data: { link: getImageUrl(response?.data?.fileName) },
           });
         })
         .catch((error) => {

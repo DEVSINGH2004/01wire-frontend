@@ -7,6 +7,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import TrendingUpIcon from "assets/images/icons/trendingIcon.png";
+import { getImageUrl } from "utils/apiConfig";
 
 // Declaring prop types for the ComplexProjectCard
 interface Props {
@@ -80,7 +81,7 @@ function ComplexProjectCard({
       <MDBox p={2}>
         <MDBox display="flex" alignItems="start">
           <MDAvatar
-            src={`${process.env.REACT_APP_IMAGE_BASE_URL}${image}`}
+            src={getImageUrl(image)}
             alt={title}
             variant="rounded"
             bgColor={color}

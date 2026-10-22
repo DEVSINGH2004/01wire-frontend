@@ -176,6 +176,16 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
           mb={{ xs: 1, md: 0 }}
           sx={(theme: Theme) => navbarRow(theme, { isMini })}
         >
+          {/* Below xl the sidenav is a hidden drawer; this is the only way to open it */}
+          <IconButton
+            size="small"
+            color="inherit"
+            aria-label="open navigation menu"
+            sx={[navbarIconButton, { display: { xs: "inline-flex", xl: "none" }, mr: 1 }]}
+            onClick={handleMiniSidenav}
+          >
+            <Icon sx={iconsStyle}>{miniSidenav ? "menu" : "menu_open"}</Icon>
+          </IconButton>
           <Breadcrumbs icon="home" title={title} route={route} light={light} />
         </MDBox>
 

@@ -17,6 +17,7 @@ import {
 import TiltArrowIcon from "assets/images/TiltArrow.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { getImageUrl } from "utils/apiConfig";
 
 const columns = [
   {
@@ -26,7 +27,7 @@ const columns = [
     Cell: ({ value }: { value: any }) => (
       <MDBox>
         <MDAvatar
-          src={value && `${process.env.REACT_APP_IMAGE_BASE_URL}${value}`}
+          src={value && getImageUrl(value)}
           variant="rounded"
           size="xxl"
           sx={{

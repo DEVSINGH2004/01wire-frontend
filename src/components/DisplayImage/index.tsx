@@ -1,3 +1,5 @@
+import { getImageUrl } from "utils/apiConfig";
+
 const DisplayImage = ({
   src,
   height,
@@ -12,13 +14,7 @@ const DisplayImage = ({
   [key: string]: any;
 }) => {
   return (
-    <img
-      src={`${process.env.REACT_APP_IMAGE_BASE_URL}${src}`}
-      height={height}
-      width={width}
-      style={{ ...styles }}
-      {...rest}
-    />
+    <img src={getImageUrl(src)} height={height} width={width} style={{ ...styles }} {...rest} />
   );
 };
 export default DisplayImage;

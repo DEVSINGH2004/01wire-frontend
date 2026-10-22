@@ -12,6 +12,7 @@ import YtIcon from "assets/images/yt.svg";
 import LinkedInIcon from "assets/images/LinkedIn.svg";
 import MDAvatar from "components/MDAvatar";
 import Link from "@mui/material/Link";
+import { getImageUrl } from "utils/apiConfig";
 
 const SocialMediaLink = ({ url, Icon }) => {
   return (
@@ -41,7 +42,7 @@ export const makeColumns = (handleAction) => {
         return (
           <MDBox mr={2}>
             <MDAvatar
-              src={value && `${process.env.REACT_APP_IMAGE_BASE_URL}${value}`}
+              src={value && getImageUrl(value)}
               variant="rounded"
               size="xl"
               sx={{

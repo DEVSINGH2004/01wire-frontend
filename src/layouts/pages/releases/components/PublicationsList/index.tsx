@@ -5,6 +5,7 @@ import MDAvatar from "components/MDAvatar";
 import MDTypography from "components/MDTypography";
 import { truncateString } from "utils/helpers";
 import MDCircularLoader from "components/MDCircularLoader";
+import { getImageUrl } from "utils/apiConfig";
 
 const PublicationsList = ({
   publications,
@@ -40,7 +41,7 @@ const PublicationsList = ({
       Cell: ({ value }: { value: "string" }) => (
         <MDBox mr={2}>
           <MDAvatar
-            src={`${process.env.REACT_APP_IMAGE_BASE_URL}${value}`}
+            src={getImageUrl(value)}
             variant="rounded"
             size="lg"
             sx={{

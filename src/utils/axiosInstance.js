@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "utils/apiConfig";
 
 const axiosInstance = axios.create({
-  baseURL: "https://api.01wire.com", // Set your base URL
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     // Add other common headers if needed
