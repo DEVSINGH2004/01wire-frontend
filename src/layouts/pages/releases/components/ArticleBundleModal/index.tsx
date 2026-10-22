@@ -21,6 +21,7 @@ import { useLazyQuery, useMutation } from "@apollo/client";
 import { statusOptions } from "../../../pr-management/components/makeColumns";
 import Divider from "@mui/material/Divider";
 import axiosInstance from "utils/axiosInstance";
+import { getBlobErrorMessage, getErrorMessage } from "utils/errors";
 import StatusIcon from "assets/images/icons/statusIcon.svg";
 import NoteModal from "../../../pr-management/components/NoteModal";
 import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
@@ -143,12 +144,14 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
   const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
     GET_ORDERS,
     {
-      onCompleted: (res) => {
-        setPaginationInfo(res?.filterOrdersPaginated?.paginationInfo);
-      },
       fetchPolicy: "network-only",
     }
   );
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!data) return;
+    setPaginationInfo(data?.filterOrdersPaginated?.paginationInfo);
+  }, [data]);
 
   useEffect(() => {
     getOrders({
@@ -186,6 +189,12 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
 
   const handleFileUpload = (e: any) => {
     const file = e?.target?.files[0];
+    // Let the same file be picked again after a failed attempt
+    if (e?.target) e.target.value = "";
+    if (file && !/\.(xlsx|xls)$/i.test(file.name)) {
+      toast.error("Please upload the Excel template (.xlsx or .xls).");
+      return;
+    }
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -200,11 +209,13 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
           .then((response) => {
             setLoader(false);
             console.log("File uploaded successfully:", response);
+            toast.success("Template uploaded successfully");
+            refetch?.();
           })
           .catch((error) => {
             setLoader(false);
             console.error("Error uploading file:", error);
-            toast.error(error?.message);
+            toast.error(getErrorMessage(error, "Could not upload the template. Please try again."));
           });
       } catch (error) {
         setLoader(false);
@@ -236,9 +247,11 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
           toast.success("Download successfully");
           setLoader(false);
         })
-        .catch((error) => {
+        .catch(async (error) => {
           setLoader(false);
-          toast.error(error?.message);
+          toast.error(
+            await getBlobErrorMessage(error, "Template isn't available for this order yet.")
+          );
         });
     } catch (error) {
       setLoader(false);

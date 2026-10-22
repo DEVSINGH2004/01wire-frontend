@@ -58,12 +58,14 @@ function Releases(): JSX.Element {
     IGetArticles,
     IGetArticlesVars
   >(GET_ARTICLES, {
-    onCompleted: (res) => {
-      setPaginationInfo(res?.filterArticlesPaginated?.paginationInfo);
-    },
     // skip: !!id,
     fetchPolicy: "network-only",
   });
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!articlesData) return;
+    setPaginationInfo(articlesData?.filterArticlesPaginated?.paginationInfo);
+  }, [articlesData]);
   const { data: clientsData } = useQuery<IGetClients, IGetClientsVars>(GET_CLIENTS, {
     variables: {
       filterInput: {},

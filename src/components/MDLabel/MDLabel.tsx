@@ -7,7 +7,7 @@ interface Props  {
   label: string;
   subLabel?: string;
   tooltip?: string;
-  required?: string;
+  required?: boolean | string;
 }
 
 const MDLabel = ({

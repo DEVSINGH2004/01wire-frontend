@@ -223,7 +223,7 @@ export const makeColumns = (
             ) : (
               <FormControl sx={{ width: "140px" }} size="medium">
                 <Select
-                  id="demo-select-small"
+                  id={`status-select-${row?.original?.id ?? row?.id}`}
                   displayEmpty
                   value={selectedStatus}
                   IconComponent={KeyboardArrowDownIcon}

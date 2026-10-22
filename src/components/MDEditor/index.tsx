@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 import { getImageUrl } from "utils/apiConfig";
+import { getErrorMessage } from "utils/errors";
+import { MAX_IMAGE_SIZE, MAX_IMAGE_SIZE_MB } from "constants/index";
 function MDEditor({
   value,
   onChange,
@@ -34,6 +36,11 @@ function MDEditor({
 
   const uploadCallback = (file: any) => {
     return new Promise((resolve, reject) => {
+      if (file?.size > MAX_IMAGE_SIZE) {
+        toast.error(`Image is too large. Maximum size is ${MAX_IMAGE_SIZE_MB}MB.`);
+        reject(new Error("file too large"));
+        return;
+      }
       const formData = new FormData();
       formData.append("file", file);
       axiosInstance
@@ -50,7 +57,7 @@ function MDEditor({
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
-          toast.error(error?.message);
+          toast.error(getErrorMessage(error, "Could not upload the image. Please try again."));
           reject(error);
         });
     });

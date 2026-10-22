@@ -9,7 +9,8 @@ import axiosInstance from "utils/axiosInstance";
 import MDAvatar from "components/MDAvatar";
 import DisplayImage from "components/DisplayImage";
 import CloseIcon from "@mui/icons-material/Close";
-import { MAX_IMAGE_SIZE } from "constants/index";
+import { MAX_IMAGE_SIZE, MAX_IMAGE_SIZE_MB } from "constants/index";
+import { getErrorMessage } from "utils/errors";
 import { toast } from "react-toastify";
 
 const FileUpload = ({
@@ -25,8 +26,10 @@ const FileUpload = ({
   const [loading, setLoading] = useState<boolean>(false);
   const onDrop = useCallback(async (acceptedFiles: any) => {
     const file = acceptedFiles?.[0];
-    if (file?.size > MAX_IMAGE_SIZE) {
-      toast.error("Image size exceeds the maximum allowed size (3MB).");
+    if (!file) {
+      toast.error("Please choose a JPG, PNG or SVG image.");
+    } else if (file.size > MAX_IMAGE_SIZE) {
+      toast.error(`Image is too large. Maximum size is ${MAX_IMAGE_SIZE_MB}MB.`);
     } else {
       setLoading(true);
       const formData = new FormData();
@@ -43,7 +46,7 @@ const FileUpload = ({
       } catch (error: any) {
         setLoading(false);
         console.error("Error uploading file:", error);
-        toast.error(error?.response?.data?.message);
+        toast.error(getErrorMessage(error, "Could not upload the image. Please try again."));
       }
     }
   }, []);

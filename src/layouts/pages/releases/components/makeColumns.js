@@ -111,7 +111,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
             ) : (
               <FormControl sx={{ width: "140px" }} size="medium">
                 <Select
-                  id="demo-select-small"
+                  id={`status-select-${row?.original?.id ?? row?.id}`}
                   displayEmpty
                   value={selectedStatus}
                   sx={{

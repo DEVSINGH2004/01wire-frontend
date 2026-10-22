@@ -45,11 +45,13 @@ const PRManagement = () => {
     GET_ARTICLES,
     {
       fetchPolicy: "network-only",
-      onCompleted: (res) => {
-        setPaginationInfo(res?.filterArticlesPaginated?.paginationInfo);
-      },
     }
   );
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!data) return;
+    setPaginationInfo(data?.filterArticlesPaginated?.paginationInfo);
+  }, [data]);
 
   const [loader, setLoader] = useState<boolean>(false);
   const [initLoading, setInitLoader] = useState<boolean>(false);

@@ -29,10 +29,12 @@ const UserManagement = () => {
 
   const [getUsers, { data, loading, refetch }] = useLazyQuery<IGetUsers, IGetUsersVars>(GET_USERS, {
     fetchPolicy: "network-only",
-    onCompleted: (res) => {
-      setPaginationInfo(res?.filterUsersPaginated?.paginationInfo);
-    },
   });
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!data) return;
+    setPaginationInfo(data?.filterUsersPaginated?.paginationInfo);
+  }, [data]);
 
   useEffect(() => {
     if (filters) {

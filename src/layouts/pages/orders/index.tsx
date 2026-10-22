@@ -38,12 +38,14 @@ const OrderManagement = () => {
   const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
     GET_ORDERS,
     {
-      onCompleted: (res) => {
-        setPaginationInfo(res?.filterOrdersPaginated?.paginationInfo);
-      },
       fetchPolicy: "network-only",
     }
   );
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!data) return;
+    setPaginationInfo(data?.filterOrdersPaginated?.paginationInfo);
+  }, [data]);
   const [updateArticleStatus] = useMutation<IUpdateOrderStatusVars>(UPDATE_ORDER_STATUS);
 
   useEffect(() => {

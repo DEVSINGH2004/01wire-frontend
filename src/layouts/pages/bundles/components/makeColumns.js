@@ -73,7 +73,7 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
           <FormControl sx={{ width: "140px" }} size="medium">
             <Select
               input={<OutlinedInput sx={{ color: "white" }} />}
-              id="demo-select-small"
+              id={`status-select-${row?.original?.id ?? row?.id}`}
               displayEmpty
               value={selectedStatus}
               sx={{

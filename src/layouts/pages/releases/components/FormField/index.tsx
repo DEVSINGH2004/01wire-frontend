@@ -51,11 +51,13 @@ function FormField({
   required = false,
   ...rest
 }: Props): JSX.Element {
+  // Show "*" whenever the field is validated as required, for every field type
+  const isRequired = required || !!rules?.required;
   switch (type) {
     case "dropdown": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}
@@ -87,7 +89,7 @@ function FormField({
     case "radio": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl>
             <Controller
               name={name}
@@ -127,7 +129,7 @@ function FormField({
     case "multiSelect": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}
@@ -171,7 +173,7 @@ function FormField({
     case "file": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}
@@ -208,7 +210,7 @@ function FormField({
     case "editor": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}
@@ -231,7 +233,7 @@ function FormField({
     case "dateAndTime": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}
@@ -258,7 +260,7 @@ function FormField({
     case "date": {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}
@@ -290,7 +292,7 @@ function FormField({
     default: {
       return (
         <MDBox mb={2}>
-          {label && <MDLabel label={label} required={required} />}
+          {label && <MDLabel label={label} required={isRequired} />}
           <FormControl fullWidth>
             <Controller
               name={name}

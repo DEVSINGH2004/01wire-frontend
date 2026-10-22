@@ -14,7 +14,12 @@ import { CREATE_PUBLICATION, ICreatePublicationVars } from "graphql/mutations/cr
 import { GET_PUBLICATION_BY_ID, IGetPublicationByIdVars } from "graphql/queries/getPublicationById";
 import { UPDATE_PUBLICATION, IUpdatePublicationVars } from "graphql/mutations/updatePublication";
 import { genericValidations } from "utils/helpers";
-import { TimelineOptions, LinkTypeOptions, CategoryOptions } from "constants/index";
+import {
+  TimelineOptions,
+  LinkTypeOptions,
+  CategoryOptions,
+  MAX_IMAGE_SIZE_MB,
+} from "constants/index";
 
 const PublicationForm = ({
   onClose,
@@ -241,7 +246,7 @@ const PublicationForm = ({
             <Grid item xs={12} sm={6}>
               <FormField
                 type="file"
-                subLabel="JPEG, PNG, JPG(max. 3MB)"
+                subLabel={`JPEG, PNG, JPG (max. ${MAX_IMAGE_SIZE_MB}MB)`}
                 name="image"
                 label="Image"
                 control={control}

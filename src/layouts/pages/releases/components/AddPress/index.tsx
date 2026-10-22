@@ -22,6 +22,7 @@ import { CREATE_ARTICLE, ICreateArticleVars } from "graphql/mutations/createArti
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { genericValidations } from "utils/helpers";
+import { MAX_IMAGE_SIZE_MB } from "constants/index";
 
 interface Props {
   cb?: any;
@@ -65,19 +66,19 @@ function AddPress({
   const [selectedClient, setClient] = useState<any>(null);
   const [createArticle] = useMutation<ICreateArticleVars>(CREATE_ARTICLE);
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
-  const [fetchOptions, { loading: optionsLoading }] = useLazyQuery<IGetClients, IGetClientsVars>(
-    GET_CLIENTS,
-    {
-      onCompleted: (data) => {
-        const clientsObj: any = data?.filterClientsPaginated?.data?.map((el: any) => ({
-          label: el?.title,
-          value: el?.id,
-        }));
-
-        setOptions(clientsObj);
-      },
-    }
-  );
+  const [fetchOptions, { data: clientsResult, loading: optionsLoading }] = useLazyQuery<
+    IGetClients,
+    IGetClientsVars
+  >(GET_CLIENTS);
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!clientsResult) return;
+    const clientsObj: any = clientsResult?.filterClientsPaginated?.data?.map((el: any) => ({
+      label: el?.title,
+      value: el?.id,
+    }));
+    setOptions(clientsObj);
+  }, [clientsResult]);
   const onSubmit = async (formVals: any) => {
     setLoading(true);
     try {
@@ -252,7 +253,7 @@ function AddPress({
           <Grid item xs={12} sm={5}>
             <FormField
               type="file"
-              subLabel="JPEG, PNG, JPG(max. 3MB)"
+              subLabel={`JPEG, PNG, JPG (max. ${MAX_IMAGE_SIZE_MB}MB)`}
               name="featureImage"
               label="Feature Image (1280x720 pixels or 16:9)"
               control={control}

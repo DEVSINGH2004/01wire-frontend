@@ -58,10 +58,14 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState<any>(false);
   const route = useLocation().pathname.split("/").slice(1);
-  const { data } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
+  const { data, loading: walletLoading } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
     fetchPolicy: "network-only",
     skip: role === "ADMIN",
+    // Picks up balance changes made elsewhere (e.g. an admin top-up)
+    pollInterval: 30000,
   });
+  // Placeholder only until the first response; a missing wallet shows 0
+  const balance = data?.getUserWallet?.balance ?? (walletLoading && !data ? undefined : 0);
   // useEffect(() => {
   //   let url;
   //   const eventSource = new EventSource(url);
@@ -221,7 +225,7 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
                 }}
               >
                 <MDTypography fontWeight="bold" fontSize="1rem" color="primary">
-                  {`${data?.getUserWallet?.balance || 0} Credits`}
+                  {balance === undefined ? "… Credits" : `${balance} Credits`}
                 </MDTypography>
               </MDBox>
             )}

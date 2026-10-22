@@ -119,6 +119,9 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
     fetchPolicy: "network-only",
   });
   const fetchData = () => {
+    // A brand-new PR has no id yet (steps call refetch right after create);
+    // the articleId effect below fetches it once the id is set
+    if (!articleId) return;
     setLoading(true);
     getArticleById({
       variables: {

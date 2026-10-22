@@ -39,11 +39,13 @@ const Bundles = () => {
     GET_BUNDLES,
     {
       fetchPolicy: "network-only",
-      onCompleted: (res) => {
-        setPaginationInfo(res.filterBundlesPaginated.paginationInfo);
-      },
     }
   );
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!data) return;
+    setPaginationInfo(data?.filterBundlesPaginated.paginationInfo);
+  }, [data]);
 
   useEffect(() => {
     setLoader(true);

@@ -22,6 +22,7 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { removeEmptyFields } from "utils/helpers";
 import { genericValidations } from "utils/helpers";
+import { MAX_IMAGE_SIZE_MB } from "constants/index";
 
 const ComanyTypeOptions = [
   { label: "Public", value: "PUBLIC" },
@@ -186,7 +187,8 @@ function ClientInfo({
     }
   };
   useEffect(() => {
-    if (saveData && isDirty) {
+    // A new client always runs validation; "no changes" only applies to edits
+    if (saveData && (isDirty || !data?.id)) {
       handleSubmit(onSubmit)();
     } else if (saveData) {
       toast.info("No changes to save");
@@ -279,7 +281,7 @@ function ClientInfo({
           <Grid item xs={12} sm={5}>
             <FormField
               type="file"
-              subLabel="JPEG, PNG, JPG(max. 3MB)"
+              subLabel={`JPEG, PNG, JPG (max. ${MAX_IMAGE_SIZE_MB}MB)`}
               name="logo"
               label="Logo"
               control={control}

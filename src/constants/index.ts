@@ -258,7 +258,9 @@ export const TermsAndConditionsList = [
   "Bulk credit purchases may qualify for discounts or bonus credits.",
   "Support is available for any credit purchase inquiries or issues at hello@01wire.com",
 ];
-export const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+// Matches the upload server's real limit (audit OLD-8); keep labels in sync
+export const MAX_IMAGE_SIZE_MB = 1;
+export const MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 export const TimelineOptions = [
   { label: "Within One Day", value: "D1" },
   { label: "Within Two Days", value: "D2" },

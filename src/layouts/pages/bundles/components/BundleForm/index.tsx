@@ -19,7 +19,7 @@ import {
 import { CREATE_BUNDLE, ICreateBundleVars } from "graphql/mutations/createBundle";
 import { UPDATE_BUNDLE, IUpdateBundleVars } from "graphql/mutations/updateBundle";
 import { genericValidations } from "utils/helpers";
-import { BundleCategoryOptions, BundleTypeOptions } from "constants/index";
+import { BundleCategoryOptions, BundleTypeOptions, MAX_IMAGE_SIZE_MB } from "constants/index";
 import { Chip } from "@mui/material";
 import PublicationsList from "layouts/pages/releases/components/PublicationsList";
 import MDInput from "components/MDInput";
@@ -203,7 +203,7 @@ const BundleForm = ({
             <Grid item xs={12} sm={5}>
               <FormField
                 type="file"
-                subLabel="JPEG, PNG, JPG(max. 3MB)"
+                subLabel={`JPEG, PNG, JPG (max. ${MAX_IMAGE_SIZE_MB}MB)`}
                 name="image"
                 label="Image"
                 control={control}

@@ -49,10 +49,12 @@ function Clients(): JSX.Element {
   >(GET_CLIENTS, {
     // skip: !!id,
     fetchPolicy: "network-only",
-    onCompleted: (res) => {
-      setPaginationInfo(res?.filterClientsPaginated?.paginationInfo);
-    },
   });
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!clientsData) return;
+    setPaginationInfo(clientsData?.filterClientsPaginated?.paginationInfo);
+  }, [clientsData]);
 
   useEffect(() => {
     setLoader(true);

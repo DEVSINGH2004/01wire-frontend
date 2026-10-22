@@ -49,10 +49,12 @@ const Publications = () => {
     IGetPublicationsVars
   >(GET_PUBLICATIONS, {
     fetchPolicy: "network-only",
-    onCompleted: (res) => {
-      setPaginationInfo(res.filterPublicationsPaginated.paginationInfo);
-    },
   });
+  // Derived from the query result (replaces the deprecated onCompleted option)
+  useEffect(() => {
+    if (!data) return;
+    setPaginationInfo(data?.filterPublicationsPaginated.paginationInfo);
+  }, [data]);
 
   useEffect(() => {
     setLoader(true);
