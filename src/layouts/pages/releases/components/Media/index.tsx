@@ -32,8 +32,8 @@ import { genericValidations } from "utils/helpers";
 
 const CategoryOptions = [
   { label: "Awards", value: "AWARDS" },
-  { label: "Company Name Change", value: "COMAPNY_NAME_CHANGE" },
-  { label: "Company Name Update", value: "COMAPNY_NAME_UPDATE" },
+  { label: "Company Name Change", value: "COMPANY_NAME_CHANGE" },
+  { label: "Company Name Update", value: "COMPANY_NAME_UPDATE" },
   { label: "Conference Call", value: "CONFERENCE_CALL" },
   { label: "Conference", value: "CONFERENCES" },
   { label: "Diversity", value: "DIVERSITY" },

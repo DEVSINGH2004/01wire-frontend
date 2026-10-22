@@ -37,15 +37,16 @@ const httpLink = new HttpLink({
   uri: process.env.REACT_APP_GRAPHQL_SERVER_URL,
 });
 const errorLink = onError(({ operation, graphQLErrors }) => {
+  if (typeof window === "undefined" || !localStorage.getItem("token")) return;
   const { response } = operation.getContext();
-  if (response?.status === 500) {
-    if (graphQLErrors?.length) {
-      if (graphQLErrors[0]?.message === "Context creation failed: invalid signature") {
-        if (typeof window !== "undefined") {
-          handleTokenExpiry();
-        }
-      }
-    }
+  // New API: HTTP 401 + code UNAUTHENTICATED. Older API: HTTP 500 + raw text.
+  const isSessionInvalid = graphQLErrors?.some(
+    (e) =>
+      e?.extensions?.code === "UNAUTHENTICATED" ||
+      (response?.status === 500 && e?.message === "Context creation failed: invalid signature")
+  );
+  if (isSessionInvalid) {
+    handleTokenExpiry();
   }
 });
 export const client = new ApolloClient({
