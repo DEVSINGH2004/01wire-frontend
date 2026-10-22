@@ -132,8 +132,14 @@ function SignIn(): JSX.Element {
         variables: { email, fullName, password },
       })
         .then((res: any) => {
-          if (res?.data?.signup?.token) {
-            setShowOtp(res?.data?.signup?.token);
+          const signup = res?.data?.signup;
+          if (signup?.status === "LOGGED_IN" && signup?.token) {
+            localStorage.setItem("token", signup.token);
+            localStorage.setItem("role", signup.type);
+            toast.success("Signup Successful!!");
+            navigate(signup.type === "ADMIN" ? "/orders" : "/");
+          } else if (signup?.token) {
+            setShowOtp(signup.token);
             setIsSignUp(false);
           }
           setLoading(false);
