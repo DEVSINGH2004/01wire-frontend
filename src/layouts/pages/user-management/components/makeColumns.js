@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import { IconButton } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import WalletIcon from "assets/images/wallet.svg";
+import ViewIcon from "assets/images/icons/viewIcon.svg";
+import RowAction from "components/RowAction";
 
-export const makeColumns = (navigate, setOpen) => {
+export const makeColumns = (navigate, setOpen, setViewUser) => {
   const columns = [
     {
       Header: "User Email",
@@ -51,6 +52,7 @@ export const makeColumns = (navigate, setOpen) => {
     {
       Header: "Action",
       align: "right",
+      sticky: true,
       width: "25%",
       Cell: ({ value, row }) => {
         return (
@@ -59,16 +61,23 @@ export const makeColumns = (navigate, setOpen) => {
               display: "flex",
             }}
           >
-            <IconButton onClick={() => setOpen(row?.original?.id)}>
-              <img width={36} height={36} alt="navigate" src={WalletIcon} />
-            </IconButton>
-            <IconButton
+            <RowAction
+              label="View details"
+              icon={ViewIcon}
+              onClick={() => setViewUser(row?.original)}
+            />
+            <RowAction
+              label="Update wallet"
+              icon={WalletIcon}
+              onClick={() => setOpen(row?.original?.id)}
+            />
+            <RowAction
+              label="View user's PRs"
+              icon={NavigateIcon}
               onClick={() =>
                 navigate(`/pr-management?userID=${row.original.id}&email=${row.original.email}`)
               }
-            >
-              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-            </IconButton>
+            />
           </MDBox>
         );
       },

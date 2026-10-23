@@ -188,6 +188,7 @@ function FormField({
                     borderRadius: "8px",
                     border: "1px dashed #F9565C !important",
                     padding: "20px 20px",
+                    overflow: "hidden",
                   }}
                 >
                   <FileUpload disabled={disabled} value={value} onChange={onChange} />

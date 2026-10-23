@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, IconButton, Chip } from "@mui/material";
+import { TableCell as MuiTableCell, Chip } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,6 +15,7 @@ import { truncateString } from "utils/helpers";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MessageIcon from "@mui/icons-material/Message";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import RowAction from "components/RowAction";
 
 export const statusOptions = [
   {
@@ -128,7 +129,8 @@ export const makeColumns = (
                 borderRadius={4}
               >
                 {" "}
-                <IconButton
+                <RowAction
+                  label="Filter by this user"
                   onClick={() => {
                     setEmail(value);
                     setOptions([{ userId: row.original.userId, email: value }]);
@@ -136,7 +138,7 @@ export const makeColumns = (
                   }}
                 >
                   <FilterListOutlinedIcon fontSize="small" />
-                </IconButton>
+                </RowAction>
               </MDBox>
             )}
           </Box>
@@ -268,6 +270,7 @@ export const makeColumns = (
       Header: "Action",
       width: "20%",
       align: "right",
+      sticky: true,
       Cell: ({ value, row }) => {
         return (
           <MDBox
@@ -276,17 +279,22 @@ export const makeColumns = (
             }}
           >
             {row.original.status === "PUBLISHED" && (
-              <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
-                <img width={36} height={36} alt="navigate" src={DownloadIcon} />
-              </IconButton>
+              <RowAction
+                label="Download report"
+                icon={DownloadIcon}
+                onClick={() => handleAction(row.original.id, "navigate")}
+              />
             )}
             {["PUBLISHED", "SCHEDULED"].includes(row.original.status) && (
-              <IconButton onClick={() => handleAction(row.original.id, "view")}>
-                <img width={36} height={36} alt="navigate" src={ViewIcon} />
-              </IconButton>
+              <RowAction
+                label="Publication status"
+                icon={ViewIcon}
+                onClick={() => handleAction(row.original.id, "view")}
+              />
             )}
             {["AWAITING_APPROVAL", "REJECTED"].includes(row.original.status) && (
-              <IconButton
+              <RowAction
+                label="Comments"
                 color="primary"
                 onClick={() => {
                   if (row?.original?.notes) {
@@ -303,9 +311,10 @@ export const makeColumns = (
                 }}
               >
                 <MessageIcon sx={{ fontSize: "10px" }} />
-              </IconButton>
+              </RowAction>
             )}
-            <IconButton
+            <RowAction
+              label="Preview"
               color="black"
               onClick={() => handleNextTab(row)}
               sx={{
@@ -318,10 +327,12 @@ export const makeColumns = (
               }}
             >
               <VisibilityIcon fontSize="small" />
-            </IconButton>
-            <IconButton onClick={() => handleAction(row.original.id, "edit", row?.original)}>
-              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-            </IconButton>
+            </RowAction>
+            <RowAction
+              label="View / update status"
+              icon={NavigateIcon}
+              onClick={() => handleAction(row.original.id, "edit", row?.original)}
+            />
           </MDBox>
         );
       },

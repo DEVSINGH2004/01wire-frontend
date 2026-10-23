@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, IconButton, Chip } from "@mui/material";
+import { TableCell as MuiTableCell, Chip } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,6 +14,7 @@ import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import { truncateString } from "utils/helpers";
 import { statusOptions } from "../../pr-management/components/makeColumns";
 import MessageIcon from "@mui/icons-material/Message";
+import RowAction from "components/RowAction";
 // import ShareIcon from "assets/images/icons/shareIcon.svg";
 // import { toast } from "react-toastify";
 
@@ -154,6 +155,7 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
     {
       Header: "Action",
       align: "right",
+      sticky: true,
       width: "15%",
       Cell: ({ value, row }) => {
         return (
@@ -163,35 +165,43 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
             }}
           >
             {row.original.status === "PUBLISHED" && (
-              <IconButton onClick={() => handleAction(row.original.id, "navigate")}>
-                <img width={36} height={36} alt="navigate" src={DownloadIcon} />
-              </IconButton>
+              <RowAction
+                label="Download report"
+                icon={DownloadIcon}
+                onClick={() => handleAction(row.original.id, "navigate")}
+              />
             )}
 
             {["DRAFT", "AWAITING_APPROVAL"].includes(row.original.status) && (
-              <IconButton onClick={() => handleAction(row.original.id, "edit")}>
-                <img width={36} height={36} alt="navigate" src={EditIcon} />
-              </IconButton>
+              <RowAction
+                label="Edit"
+                icon={EditIcon}
+                onClick={() => handleAction(row.original.id, "edit")}
+              />
             )}
 
             {["PUBLISHED", "SCHEDULED"].includes(row.original.status) && (
-              <IconButton onClick={() => handleAction(row.original.id, "view")}>
-                <img width={36} height={36} alt="navigate" src={ViewIcon} />
-              </IconButton>
+              <RowAction
+                label="Publication status"
+                icon={ViewIcon}
+                onClick={() => handleAction(row.original.id, "view")}
+              />
             )}
-            {["PUBLISHED", "REVIEW", "SCHEDULED"].includes(row.original.status) && (
-              <IconButton onClick={() => handleAction(row.original.id, "edit")}>
-                <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-              </IconButton>
+            {/* ReleaseForm opens read-only for every status that can't be edited */}
+            {["PUBLISHED", "REVIEW", "SCHEDULED", "SUBMITTED", "REJECTED"].includes(
+              row.original.status
+            ) && (
+              <RowAction
+                label="View"
+                icon={NavigateIcon}
+                onClick={() => handleAction(row.original.id, "edit")}
+              />
             )}
             {["AWAITING_APPROVAL", "REJECTED"].includes(row.original.status) && (
-              <IconButton
+              <RowAction
+                label="Comments"
                 color="primary"
-                onClick={() => {
-                  if (row?.original?.notes) {
-                    setOpen(row.original.notes);
-                  }
-                }}
+                onClick={() => setOpen(row?.original?.notes || "No comments provided")}
                 sx={{
                   width: "35px",
                   height: "35px",
@@ -202,12 +212,14 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
                 }}
               >
                 <MessageIcon sx={{ fontSize: "10px" }} />
-              </IconButton>
+              </RowAction>
             )}
             {["DRAFT", "REJECTED"].includes(row.original.status) && (
-              <IconButton onClick={() => handleAction(row.original.id, "delete")}>
-                <img width={36} height={36} alt="navigate" src={DeleteIcon} />
-              </IconButton>
+              <RowAction
+                label="Delete"
+                icon={DeleteIcon}
+                onClick={() => handleAction(row.original.id, "delete")}
+              />
             )}
           </MDBox>
         );

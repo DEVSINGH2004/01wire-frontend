@@ -89,6 +89,15 @@ function Releases(): JSX.Element {
     if (!arr?.length) return [];
     return arr?.map((one: any) => one?.value);
   };
+  const buildFilterInput = () => {
+    const status = getStatusArr(filters?.status);
+    const filterInput = { ...filters, status };
+    if (!filterInput?.status?.length) {
+      delete filterInput.status;
+    }
+    return filterInput;
+  };
+  // Single fetch for filter and page-size changes so a page-size change keeps the active filters
   useEffect(() => {
     setInitLoader(true);
     getArticles({
@@ -97,31 +106,12 @@ function Releases(): JSX.Element {
           perPage: pageSize,
           currentPage: 0,
         },
-        filterInput: {},
+        filterInput: buildFilterInput(),
       },
     })
       .then(() => setInitLoader(false))
       .catch(() => setInitLoader(false));
-  }, [pageSize]);
-
-  useEffect(() => {
-    if (filters) {
-      const status = getStatusArr(filters?.status);
-      const filterObj = { ...filters, status };
-      if (!filterObj?.status?.length) {
-        delete filterObj.status;
-      }
-      getArticles({
-        variables: {
-          paginationInput: {
-            perPage: pageSize,
-            currentPage: 0,
-          },
-          filterInput: filterObj,
-        },
-      });
-    }
-  }, [filters]);
+  }, [filters, pageSize]);
 
   const handleUpdateStatus = (row: any, status: string, notes?: string) => {
     const id = row?.original?.id;
@@ -199,18 +189,13 @@ function Releases(): JSX.Element {
   }, [id]);
 
   const handlePagination = (page: number) => {
-    const status = getStatusArr(filters?.status);
-    const filterInput = { ...filters, status };
-    if (!filterInput?.status?.length) {
-      delete filterInput.status;
-    }
     getArticles({
       variables: {
         paginationInput: {
           perPage: pageSize,
           currentPage: page,
         },
-        filterInput,
+        filterInput: buildFilterInput(),
       },
     });
   };
@@ -238,7 +223,12 @@ function Releases(): JSX.Element {
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <ReleaseForm idVal={openForm} onClose={() => setOpenForm(false)} refetch={refetch} />
+              <ReleaseForm idVal={openForm} onClose={() => {
+                  setOpenForm(false);
+                  navigate("/releases");
+                }}
+                refetch={refetch}
+              />
             </Card>
           ) : tableData?.rows?.length ? (
             <MDBox>

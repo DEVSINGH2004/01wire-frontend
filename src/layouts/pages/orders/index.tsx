@@ -16,6 +16,8 @@ import ArticleBundleModal from "../releases/components/ArticleBundleModal";
 import NoteModal from "../pr-management/components/NoteModal";
 import { UPDATE_ORDER_STATUS, IUpdateOrderStatusVars } from "graphql/mutations/updateOrderStatus";
 import { toast } from "react-toastify";
+import DetailsModal from "examples/DetailsModal";
+import { statusOptions } from "../pr-management/components/makeColumns";
 
 const PER_PAGE = 10;
 const OrderManagement = () => {
@@ -33,6 +35,7 @@ const OrderManagement = () => {
   const [options, setOptions] = useState<any>([]);
   const [noteModal, setNoteModal] = useState<any>(null);
   const [viewModal, setViewModal] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<any>(null);
   const [pageSize, setSize] = useState<number>(10);
 
   const [getOrders, { data, loading, refetch }] = useLazyQuery<IGetOrders, IGetOrdersVars>(
@@ -100,8 +103,10 @@ const OrderManagement = () => {
     setFilters(updatedFilters);
   };
 
-  const handleAction = (id: string, action: string) => {
-    if (action === "edit") {
+  const handleAction = (id: string, action: string, row?: any) => {
+    if (action === "details") {
+      setOrderDetails(row);
+    } else if (action === "edit") {
       setOpenForm(id);
     } else if (action === "view") {
       setViewModal(id);
@@ -217,6 +222,44 @@ const OrderManagement = () => {
         />
       )}
       {viewModal && <ArticleBundleModal onClose={() => setViewModal(null)} articleId={viewModal} />}
+      {orderDetails && (
+        <DetailsModal
+          title="Order Details"
+          onClose={() => setOrderDetails(null)}
+          rows={[
+            { label: "PR ID", value: orderDetails?.prId },
+            { label: "Release", value: orderDetails?.articleInfo?.title },
+            { label: "User", value: orderDetails?.user?.email },
+            {
+              label: "Publication / Bundle",
+              value: orderDetails?.publicationInfo?.title || orderDetails?.bundleInfo?.type,
+            },
+            {
+              label: "Status",
+              value:
+                statusOptions.find((el: any) => el?.value === orderDetails?.status)?.label ||
+                orderDetails?.status,
+            },
+            {
+              label: "Publish by",
+              value: orderDetails?.publishBy && dayjs(orderDetails.publishBy).format("DD MMM YYYY"),
+            },
+            {
+              label: "Published URL",
+              value: orderDetails?.url && (
+                <a href={orderDetails.url} target="_blank" rel="noopener noreferrer">
+                  {orderDetails.url}
+                </a>
+              ),
+            },
+            { label: "Notes", value: orderDetails?.notes },
+            {
+              label: "Ordered on",
+              value: orderDetails?.createdAt && dayjs(orderDetails.createdAt).format("DD MMM YYYY"),
+            },
+          ]}
+        />
+      )}
     </>
   );
 };

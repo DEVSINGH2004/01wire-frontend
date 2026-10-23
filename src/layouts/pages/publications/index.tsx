@@ -33,6 +33,7 @@ const Publications = () => {
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>(id || false);
+  const [viewOnly, setViewOnly] = useState<boolean>(false);
   const [filters, setFilters] = useState<any>({});
   const [deleteConf, setDeleteConf] = useState<any>(null);
   const [pageSize, setSize] = useState<number>(10);
@@ -74,9 +75,13 @@ const Publications = () => {
 
   const handleAction = (id: string, action: string) => {
     if (action === "edit") {
+      setViewOnly(false);
       navigate(`/publications/${id}`);
       setOpenForm(id);
-    } else {
+    } else if (action === "view") {
+      setViewOnly(true);
+      setOpenForm(id);
+    } else if (action === "delete") {
       setDeleteConf(id);
     }
   };
@@ -128,6 +133,7 @@ const Publications = () => {
   useEffect(() => {
     if (location?.pathname === "/publications") {
       setOpenForm(false);
+      setViewOnly(false);
     }
   }, [id, location]);
   const handlePagination = (page: number) => {
@@ -172,7 +178,16 @@ const Publications = () => {
   return (
     <>
       {(deleteLoader || updateLoader) && <MDCircularLoader overlayloader startLoader />}
-      <DashboardNavbar text="Add Publication" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <DashboardNavbar
+        text="Add Publication"
+        onsubmit={
+          !openForm &&
+          (() => {
+            setViewOnly(false);
+            setOpenForm(true);
+          })
+        }
+      />
       <MDBox px={2}>
         {!openForm && (
           <>
@@ -190,10 +205,12 @@ const Publications = () => {
               <PublicationForm
                 onClose={() => {
                   setOpenForm(false);
+                  setViewOnly(false);
                   refetch();
                 }}
                 refetch={refetch}
                 id={openForm}
+                disabled={viewOnly}
               />
             </Card>
           ) : loading || !!data?.filterPublicationsPaginated?.data?.length ? (

@@ -132,9 +132,14 @@ function PlanNPayment({
     setPublicationIds(ids);
   };
   const onSubmit = () => {
+    // Plan is locked once the PR leaves DRAFT; just move to the next step
+    if (disabled) {
+      cb();
+      return;
+    }
     const selectedBundleIds = selected?.map((bundle: any) => bundle.id);
     // A draft can't move on to Review & Publish with an empty, 0-credit plan
-    if (!disabled && !selectedBundleIds?.length && !publicationIds?.length) {
+    if (!selectedBundleIds?.length && !publicationIds?.length) {
       toast.error("Select at least one publication or bundle to continue.");
       setSaveData(false);
       return;

@@ -1,6 +1,7 @@
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 export const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
   <MDBox display="flex" alignItems="center" justifyContent="space-between">
@@ -10,24 +11,27 @@ export const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
           {one?.custom ? (
             <MDBox mx={1}>{one.custom}</MDBox>
           ) : (
-            <IconButton onClick={one?.onClick}>
-              {one?.label && (
-                <MDTypography
-                  fontSize="16px"
-                  fontWeight="medium"
-                  fontFamily="Roboto"
-                  color="primary"
-                  mr={1}
-                >
-                  {one.label}
-                </MDTypography>
-              )}
-              {one?.imgIcon ? (
-                <img src={one.imgIcon} height={one?.height} width={one?.width} />
-              ) : (
-                one?.Icon
-              )}
-            </IconButton>
+            // `tooltip` labels icon-only actions (tooltip + accessible name)
+            <Tooltip title={one?.tooltip || ""}>
+              <IconButton aria-label={one?.tooltip} onClick={one?.onClick}>
+                {one?.label && (
+                  <MDTypography
+                    fontSize="16px"
+                    fontWeight="medium"
+                    fontFamily="Roboto"
+                    color="primary"
+                    mr={1}
+                  >
+                    {one.label}
+                  </MDTypography>
+                )}
+                {one?.imgIcon ? (
+                  <img src={one.imgIcon} height={one?.height} width={one?.width} alt="" />
+                ) : (
+                  one?.Icon
+                )}
+              </IconButton>
+            </Tooltip>
           )}
         </MDBox>
       );

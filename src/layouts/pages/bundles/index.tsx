@@ -29,6 +29,7 @@ const Bundles = () => {
   const [paginationInfo, setPaginationInfo] = useState<any>({});
   const [loader, setLoader] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<any>(id || false);
+  const [viewOnly, setViewOnly] = useState<boolean>(false);
   const [deleteConf, setDeleteConf] = useState<any>(null);
   const [pageSize, setSize] = useState<number>(10);
   const [deleteBundle, { loading: deleteLoader }] = useMutation<IDeleteBundleVars>(DELETE_BUNDLE);
@@ -61,9 +62,10 @@ const Bundles = () => {
   }, [pageSize]);
 
   const handleAction = (id: string, action: string) => {
-    if (action === "edit") {
+    if (action === "edit" || action === "view") {
+      setViewOnly(action === "view");
       setOpenForm(id);
-    } else {
+    } else if (action === "delete") {
       setDeleteConf(id);
     }
   };
@@ -121,7 +123,16 @@ const Bundles = () => {
   return (
     <>
       {(deleteLoader || updateLoader) && <MDCircularLoader overlayloader startLoader />}
-      <DashboardNavbar text="Add Bundle" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <DashboardNavbar
+        text="Add Bundle"
+        onsubmit={
+          !openForm &&
+          (() => {
+            setViewOnly(false);
+            setOpenForm(true);
+          })
+        }
+      />
       <MDBox px={2}>
         <MDBox pt={openForm ? 3 : 2}>
           {loader ? (
@@ -135,9 +146,11 @@ const Bundles = () => {
                   navigate("/bundles");
                   refetch();
                   setOpenForm(false);
+                  setViewOnly(false);
                 }}
                 refetch={refetch}
                 id={openForm}
+                disabled={viewOnly}
               />
             </Card>
           ) : loading || !!data?.filterBundlesPaginated?.data?.length ? (

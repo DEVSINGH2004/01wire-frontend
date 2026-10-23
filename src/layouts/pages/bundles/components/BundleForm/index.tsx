@@ -135,7 +135,9 @@ const BundleForm = ({
       setSelectedP(publicationInfo);
     }
   }, [data]);
-  const currentPublications: any = publicationsData?.filterPublicationsPaginated?.data || [];
+  const currentPublications: any = disabled
+    ? selecetdP || []
+    : publicationsData?.filterPublicationsPaginated?.data || [];
   const handleSelectedRowsChange = (newSelectedRows: any[]) => {
     setSelectedP(newSelectedRows);
     const ids = newSelectedRows?.length > 0 ? newSelectedRows.map((item: any) => item.id) : [];
@@ -158,7 +160,7 @@ const BundleForm = ({
             <ArrowBackIosIcon />
           </IconButton>
           <MDTypography variant="h5">
-            {id && id !== true ? "Edit Bundle" : "Create Bundle"}
+            {disabled ? "View Bundle" : id && id !== true ? "Edit Bundle" : "Create Bundle"}
           </MDTypography>
         </MDBox>
         {(loading || pLoader || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
@@ -292,12 +294,14 @@ const BundleForm = ({
           onClick={onClose}
         >
           <MDTypography fontWeight="regular" fontSize="14px">
-            {"Cancel"}
+            {disabled ? "Close" : "Cancel"}
           </MDTypography>
         </MDButton>
-        <MDButton color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>
-          Submit
-        </MDButton>
+        {!disabled && (
+          <MDButton color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>
+            Submit
+          </MDButton>
+        )}
       </MDBox>
       {open && (
         <BundlePublicationModal onClose={() => setOpen(false)} currentPublications={selecetdP} />

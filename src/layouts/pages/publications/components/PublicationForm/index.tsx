@@ -166,7 +166,11 @@ const PublicationForm = ({
           </IconButton>
           <MDTypography variant="h5">
             {" "}
-            {id && id !== true ? "Edit Publication" : "Create Publication"}
+            {disabled
+              ? "View Publication"
+              : id && id !== true
+              ? "Edit Publication"
+              : "Create Publication"}
           </MDTypography>
         </MDBox>
         {(loading || fetchLoading) && <MDCircularLoader overlayloader startLoader />}
@@ -327,12 +331,14 @@ const PublicationForm = ({
           onClick={onClose}
         >
           <MDTypography fontWeight="regular" fontSize="14px">
-            {"Cancel"}
+            {disabled ? "Close" : "Cancel"}
           </MDTypography>
         </MDButton>
-        <MDButton color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>
-          Submit
-        </MDButton>
+        {!disabled && (
+          <MDButton color="primary" variant="contained" onClick={handleSubmit(onSubmit)}>
+            Submit
+          </MDButton>
+        )}
       </MDBox>
     </>
   );

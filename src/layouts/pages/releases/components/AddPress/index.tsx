@@ -117,7 +117,8 @@ function AddPress({
     }
   };
   useEffect(() => {
-    if (saveData && isDirty) {
+    // Read-only PRs can still report isDirty after load; never save them
+    if (saveData && isDirty && !disabled) {
       if (!selectedClient) {
         setShowClientErr(true);
       }

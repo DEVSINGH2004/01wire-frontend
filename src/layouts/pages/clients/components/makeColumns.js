@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, IconButton } from "@mui/material";
+import { TableCell as MuiTableCell } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import { truncateString } from "utils/helpers";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import EditIcon from "assets/images/icons/editIcon.svg";
+import ViewIcon from "assets/images/icons/viewIcon.svg";
+import RowAction from "components/RowAction";
 import FBIcon from "assets/images/FB.svg";
 import InstaIcon from "assets/images/insta.svg";
 import TwitterIcon from "assets/images/twitter.svg";
@@ -93,6 +95,7 @@ export const makeColumns = (handleAction) => {
       accessor: "actions",
       width: "10%",
       align: "right",
+      sticky: true,
       Cell: ({ value, row }) => (
         <MDBox
           sx={{
@@ -100,12 +103,21 @@ export const makeColumns = (handleAction) => {
           }}
         >
           <>
-            <IconButton onClick={() => handleAction(row?.original?.id, "edit")}>
-              <img width={36} height={36} alt="navigate" src={EditIcon} />
-            </IconButton>
-            <IconButton onClick={() => handleAction(row?.original?.id, "delete")}>
-              <img width={36} height={36} alt="navigate" src={DeleteIcon} />
-            </IconButton>
+            <RowAction
+              label="View"
+              icon={ViewIcon}
+              onClick={() => handleAction(row?.original?.id, "view")}
+            />
+            <RowAction
+              label="Edit"
+              icon={EditIcon}
+              onClick={() => handleAction(row?.original?.id, "edit")}
+            />
+            <RowAction
+              label="Delete"
+              icon={DeleteIcon}
+              onClick={() => handleAction(row?.original?.id, "delete")}
+            />
           </>
         </MDBox>
       ),

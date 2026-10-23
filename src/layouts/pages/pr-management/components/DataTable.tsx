@@ -183,10 +183,6 @@ function DataTable({
             boxShadow: "none",
             overflow: "auto",
             maxHeight: maxHeight,
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": {
-              display: "none",
-            },
           }}
         >
           {entriesPerPage ? (
@@ -236,6 +232,14 @@ function DataTable({
                         width={column.width ? column.width : "auto"}
                         py={1.5}
                         px={2}
+                        sx={
+                          column.sticky && {
+                            position: "sticky",
+                            right: 0,
+                            zIndex: 2,
+                            background: "#fff",
+                          }
+                        }
                       >
                         <MDBox
                           position="relative"
@@ -282,6 +286,7 @@ function DataTable({
                         key={key}
                         noBorder={noEndBorder && rows.length - 1 === key}
                         align={cell.column.align ? cell.column.align : "center"}
+                        sticky={!!cell.column.sticky}
                         {...cell.getCellProps()}
                       >
                         {cell.render("Cell")}

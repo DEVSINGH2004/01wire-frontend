@@ -144,7 +144,8 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
       });
   };
   useEffect(() => {
-    if (saveData && isDirty) {
+    // Read-only PRs can still report isDirty after load; never save them
+    if (saveData && isDirty && !disabled) {
       handleSubmit(onSubmit)();
     } else if (saveData) {
       cb();

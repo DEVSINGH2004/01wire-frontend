@@ -69,18 +69,30 @@ const FileUpload = ({
     setSelectedFile(value);
   }, [value]);
   return (
-    <MDBox height="100%" display="flex" alignItems="center" justifyContent="center">
+    <MDBox height="100%" width="100%" display="flex" alignItems="center" justifyContent="center">
       {loading ? (
         <MDCircularLoader overlayloader startLoader />
       ) : selectedFile ? (
-        <MDBox position="relative" display="flex" alignItems="center" justifyContent="center">
+        <MDBox
+          position="relative"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          maxWidth="400px"
+          minWidth={0}
+        >
+          {/* Fit the preview inside the zone at any width without distorting the image */}
           <DisplayImage
             src={selectedFile}
             height="140px"
-            width="400px"
+            width="100%"
             alt="logo"
             styles={{
               borderRadius: "3.47px",
+              display: "block",
+              maxWidth: "100%",
+              objectFit: "contain",
             }}
           />
           {!disabled && (

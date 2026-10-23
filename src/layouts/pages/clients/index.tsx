@@ -9,6 +9,8 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 // Material Dashboard 2 PRO React TS examples components
 import ClientForm from "./components/ClientForm";
+import ClientProfile from "./components/ClientProfile";
+import MDButton from "components/MDButton";
 import { useLazyQuery } from "@apollo/client";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import MDCircularLoader from "components/MDCircularLoader";
@@ -37,6 +39,7 @@ function Clients(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
   const [openForm, setOpenForm] = useState<any>(false);
+  const [viewId, setViewId] = useState<string | null>(null);
   const [loader, setLoader] = useState<boolean>(true);
   const [tableData, setData] = useState<any>([]);
   const [paginationInfo, setPaginationInfo] = useState<any>({});
@@ -75,7 +78,9 @@ function Clients(): JSX.Element {
     if (action === "edit") {
       navigate(`/clients/${id}`);
       setOpenForm(id);
-    } else {
+    } else if (action === "view") {
+      setViewId(id);
+    } else if (action === "delete") {
       setDeleteConf(id);
     }
   };
@@ -87,6 +92,7 @@ function Clients(): JSX.Element {
   }, [clientsData]);
 
   useEffect(() => {
+    setViewId(null);
     if (id) {
       setOpenForm(id);
     } else {
@@ -124,7 +130,10 @@ function Clients(): JSX.Element {
   return (
     <>
       {deleteLoader && <MDCircularLoader overlayloader startLoader />}
-      <DashboardNavbar text="Add New Client" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <DashboardNavbar
+        text="Add New Client"
+        onsubmit={!openForm && !viewId && (() => setOpenForm(true))}
+      />
       <MDBox px={2}>
         <MDBox pt={openForm ? 6 : 2} sx={{ minHeight: "570px" }}>
           {loader ? (
@@ -134,6 +143,23 @@ function Clients(): JSX.Element {
           ) : openForm ? (
             <Card>
               <ClientForm id={openForm} onClose={() => setOpenForm(false)} refetchList={refetch} />
+            </Card>
+          ) : viewId ? (
+            <Card>
+              <MDBox p={2}>
+                <MDButton
+                  size="small"
+                  variant="outlined"
+                  color="light"
+                  sx={{ mb: 2 }}
+                  onClick={() => setViewId(null)}
+                >
+                  <MDTypography fontWeight="regular" fontSize="14px">
+                    Back
+                  </MDTypography>
+                </MDButton>
+                <ClientProfile id={viewId} />
+              </MDBox>
             </Card>
           ) : loading || clientsData?.filterClientsPaginated?.data?.length ? (
             <DataTable

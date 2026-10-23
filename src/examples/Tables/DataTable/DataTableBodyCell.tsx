@@ -26,9 +26,11 @@ interface Props {
   children: ReactNode;
   noBorder?: boolean;
   align?: "left" | "right" | "center";
+  // Pin the cell to the right edge while the table scrolls horizontally
+  sticky?: boolean;
 }
 
-function DataTableBodyCell({ noBorder, align, children }: Props): JSX.Element {
+function DataTableBodyCell({ noBorder, align, sticky, children }: Props): JSX.Element {
   return (
     <MDBox
       component="td"
@@ -38,6 +40,7 @@ function DataTableBodyCell({ noBorder, align, children }: Props): JSX.Element {
       sx={({ palette: { light }, typography: { size }, borders: { borderWidth } }: Theme) => ({
         fontSize: size.sm,
         borderBottom: noBorder ? "none" : `${borderWidth[1]} solid ${light.main}`,
+        ...(sticky && { position: "sticky", right: 0, zIndex: 1, background: "#fff" }),
       })}
     >
       <MDBox
@@ -56,6 +59,7 @@ function DataTableBodyCell({ noBorder, align, children }: Props): JSX.Element {
 DataTableBodyCell.defaultProps = {
   noBorder: false,
   align: "left",
+  sticky: false,
 };
 
 export default DataTableBodyCell;

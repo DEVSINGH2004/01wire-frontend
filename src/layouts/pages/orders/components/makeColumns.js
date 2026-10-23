@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, IconButton } from "@mui/material";
+import { TableCell as MuiTableCell } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,7 +12,9 @@ import ViewIcon from "assets/images/icons/viewIcon.svg";
 import StatusIcon from "assets/images/icons/statusIcon.svg";
 import NavigateIcon from "assets/images/icons/navigateIcon.svg";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { truncateString } from "utils/helpers";
+import RowAction from "components/RowAction";
 
 export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, filters) => {
   const columns = [
@@ -66,7 +68,8 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
                 borderRadius={4}
               >
                 {" "}
-                <IconButton
+                <RowAction
+                  label="Filter by this user"
                   onClick={() => {
                     setEmail(value);
                     setOptions([{ userId: row.original.articleInfo.userId, email: value }]);
@@ -74,7 +77,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
                   }}
                 >
                   <FilterListOutlinedIcon />
-                </IconButton>
+                </RowAction>
               </MDBox>
             )}
           </Box>
@@ -111,6 +114,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
     {
       Header: "Action",
       align: "right",
+      sticky: true,
       width: "15%",
       accessor: "status",
       Cell: ({ value, row }) => {
@@ -126,25 +130,35 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
             >
               <img width={36} height={36} alt="navigate" src={DownloadIcon} />
             </IconButton> */}
-            <IconButton
+            <RowAction
+              label="Order details"
+              color="black"
+              onClick={() => handleAction(row.original.id, "details", row.original)}
+              sx={{
+                width: "35px",
+                height: "35px",
+                margin: "9px ",
+                backgroundColor: "#f8f8fc",
+                border: "1px solid #e0e0e4",
+              }}
+            >
+              <InfoOutlinedIcon fontSize="small" />
+            </RowAction>
+            <RowAction
+              label="Release status"
+              icon={ViewIcon}
               onClick={() => handleAction(row.original.articleId, "view")}
-              // sx={{
-              //   visibility: !["PUBLISHED", "SCHEDULED"].includes(value) ? "collapse" : "",
-              // }}
-            >
-              <img width={36} height={36} alt="navigate" src={ViewIcon} />
-            </IconButton>
-            <IconButton
-              // sx={{
-              //   visibility: ["PUBLISHED", "REJECTED"].includes(value) ? "collapse" : "",
-              // }}
+            />
+            <RowAction
+              label="Update status"
+              icon={StatusIcon}
               onClick={() => handleAction(row.original.id, "note")}
-            >
-              <img width={36} height={36} alt="navigate" src={StatusIcon} />
-            </IconButton>
-            <IconButton onClick={() => handleAction(row.original.articleId, "view-article")}>
-              <img width={36} height={36} alt="navigate" src={NavigateIcon} />
-            </IconButton>
+            />
+            <RowAction
+              label="Open article"
+              icon={NavigateIcon}
+              onClick={() => handleAction(row.original.articleId, "view-article")}
+            />
           </MDBox>
         );
       },

@@ -15,6 +15,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "../pr-management/components/DataTable";
 import { truncateString } from "utils/helpers";
 import ShareIcon from "assets/images/icons/shareIcon.svg";
+import ViewIcon from "assets/images/icons/viewIcon.svg";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import { ActionsCellRenderer } from "utils/helpers";
 import MDButton from "components/MDButton";
@@ -94,6 +95,7 @@ const columns = [
     Header: "Actions",
     accessor: "actions",
     align: "right",
+    sticky: true,
     width: "30%",
     Cell: ({ value }: { value: any }) => <ActionsCellRenderer actions={value} />,
   },
@@ -157,6 +159,14 @@ const MyEstimates = () => {
           credits: one?.totalCredits,
           actions: [
             {
+              tooltip: "View",
+              imgIcon: ViewIcon,
+              height: "36px",
+              width: "36px",
+              onClick: () => navigate(`/share-estimation/${one?.id}`),
+            },
+            {
+              tooltip: "Copy share link",
               imgIcon: ShareIcon,
               height: "36px",
               width: "36px",
@@ -171,6 +181,7 @@ const MyEstimates = () => {
               },
             },
             {
+              tooltip: "Delete",
               imgIcon: DeleteIcon,
               height: "36px",
               width: "36px",

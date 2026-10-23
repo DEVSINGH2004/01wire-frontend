@@ -45,7 +45,7 @@ const Filters = ({
 
   const checkPrIdAvail = useCallback(
     debounce((val: string) => {
-      handleFilters("prId", Number(val));
+      handleFilters("prId", val ? Number(val) : undefined);
     }, 500),
     []
   );
@@ -56,7 +56,7 @@ const Filters = ({
   };
 
   const handleClientChange = (event: any, values: any) => {
-    handleFilters("clientId", values?.clientId);
+    handleFilters("clientId", values?.value || undefined);
   };
   console.log("userId", filters);
 

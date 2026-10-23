@@ -32,6 +32,10 @@ interface Props {
   refetch?: any;
 }
 
+// Backend only accepts edits/resubmits while the PR is DRAFT or AWAITING_APPROVAL
+const EDITABLE_STATUSES = ["DRAFT", "AWAITING_APPROVAL"];
+const isReadOnly = (article: any) => !!article && !EDITABLE_STATUSES.includes(article?.status);
+
 function getSteps(): string[] {
   return ["Add Press Release", "Category & Media", "Plan & Payment", "Review & Publish"];
 }
@@ -54,7 +58,7 @@ function getStepContent(
           data={article}
           refetch={fetchData}
           setSaveData={setSaveData}
-          disabled={article?.status === "PUBLISHED"}
+          disabled={isReadOnly(article)}
         />
       );
     case 1:
@@ -63,7 +67,7 @@ function getStepContent(
           cb={handleNext}
           saveData={saveData}
           data={article}
-          disabled={article?.status === "PUBLISHED"}
+          disabled={isReadOnly(article)}
           refetch={fetchData}
           setSaveData={setSaveData}
         />
@@ -263,7 +267,7 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
                 : handleAddCredits
             }
             sx={{
-              visibility: isLastStep && article?.status === "PUBLISHED" && "collapse",
+              visibility: isLastStep && isReadOnly(article) && "collapse",
             }}
           >
             {isLastStep

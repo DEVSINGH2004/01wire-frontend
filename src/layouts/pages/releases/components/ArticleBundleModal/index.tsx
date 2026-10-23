@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
+import RowAction from "components/RowAction";
 import DataTable from "layouts/pages/pr-management/components/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
@@ -78,9 +79,11 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
       Cell: ({ value, row }: any) => (
         <MDBox>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {row.original.status === "PUBLISHED"
-              ? row.original?.url
-              : value
+            {row.original.status === "PUBLISHED" && row.original?.url ? (
+              <a href={row.original.url} target="_blank" rel="noopener noreferrer">
+                {truncateString(row.original.url, 70)}
+              </a>
+            ) : value
               ? truncateString(value, 70)
               : "-"}
           </MDTypography>
@@ -89,7 +92,7 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
     },
     {
       Header: "Action",
-      Align: "right",
+      align: "right",
       width: "10%",
       Cell: ({ value, row }: any) => {
         return (
@@ -99,18 +102,17 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
             }}
           >
             {!["PUBLISHED", "REJECTED"].includes(row.original?.status) && role === "ADMIN" && (
-              <IconButton onClick={() => setNoteOpen({ id: row.original.id })}>
-                <img width={36} height={36} alt="navigate" src={StatusIcon} />
-              </IconButton>
+              <RowAction
+                label="Update status"
+                icon={StatusIcon}
+                onClick={() => setNoteOpen({ id: row.original.id })}
+              />
             )}
             {["REJECTED", "AWAITING_APPROVAL"].includes(row.original?.status) && (
-              <IconButton
+              <RowAction
+                label="Comments"
                 color="primary"
-                onClick={() => {
-                  if (row?.original?.notes) {
-                    setOpen(row.original.notes);
-                  }
-                }}
+                onClick={() => setOpen(row?.original?.notes || "No comments provided")}
                 sx={{
                   width: "35px",
                   height: "35px",
@@ -120,7 +122,7 @@ const getColumns = (setNoteOpen: any, setOpen?: any) => {
                 }}
               >
                 <MessageIcon sx={{ fontSize: "10px" }} />
-              </IconButton>
+              </RowAction>
             )}
           </MDBox>
         );
