@@ -23,6 +23,8 @@ import DisplayBundles from "../DisplayBundles";
 import PublicationsList from "../PublicationsList";
 import SearchIcon from "assets/images/icons/searchIcon.svg";
 import BundlePublicationModal from "../BundlePublicationModal";
+import OrderSummary, { creditsText } from "../OrderSummary";
+import { getCart, saveCart } from "utils/mediaCart";
 import debounce from "lodash.debounce";
 
 const perPage = 10;
@@ -50,22 +52,28 @@ function PlanNPayment({
   const location = useLocation();
   const estimation = location?.state?.estimation || {};
   const estimatePIds = estimation?.selectedPublications?.map((p: any) => p?.id);
-  const savedBundlePids =
-    data?.bundleInfo?.length > 0
-      ? [...new Set(data.bundleInfo?.flatMap((bundle: any) => bundle.publicationIds))]
-      : [];
+  // The Marketplace page and a PR without a saved plan start from the media cart
+  const hasSavedPlan = data?.bundleIds?.length > 0 || data?.publicationIds?.length > 0;
+  const cart =
+    !disabled && !hasSavedPlan && !estimation?.selectedBundles && !estimation?.selectedPublications
+      ? getCart()
+      : null;
+  const initialBundles = estimation?.selectedBundles || cart?.bundles || data?.bundleInfo || [];
+  const savedBundlePids = [
+    ...new Set(initialBundles.flatMap((bundle: any) => bundle?.publicationIds || [])),
+  ];
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
   const [loading, setLoading] = useState<boolean>(false);
   const [publicationIds, setPublicationIds] = useState<any>(
-    estimatePIds || (data?.publicationIds ? data?.publicationIds : [])
+    estimatePIds ||
+      cart?.publications?.map((p: any) => p?.id) ||
+      (data?.publicationIds ? data?.publicationIds : [])
   );
   const [totalCredits, setCredits] = useState<number>(0);
   const [selectedP, setSelectedP] = useState<any>(
-    estimation?.selectedPublications || data?.publicationInfo || []
+    estimation?.selectedPublications || cart?.publications || data?.publicationInfo || []
   );
-  const [selected, setSelected] = useState<any>(
-    estimation?.selectedBundles || data?.bundleInfo || []
-  );
+  const [selected, setSelected] = useState<any>(initialBundles);
   const [bundlePids, setBundlePids] = useState<any>(savedBundlePids);
   const [selectedCategory, setCategory] = useState<string | null>();
   const [currentPage, setPage] = useState<number>(0);
@@ -226,10 +234,23 @@ function PlanNPayment({
       setPayable(totalCredits);
     }
   }, [totalCredits]);
+  // Marketplace picks stay in the cart until they are paid for
+  useEffect(() => {
+    if (createEstimate) saveCart(selected, selectedP);
+  }, [selected, selectedP]);
 
   return (
     <MDBox>
       {loading && <MDCircularLoader overlayloader startLoader />}
+      {!createEstimate && (
+        <MDBox mb={3}>
+          <OrderSummary
+            bundles={selected}
+            publications={selectedP}
+            total={disabled ? data?.totalCredits : undefined}
+          />
+        </MDBox>
+      )}
       {!disabled && groupedData && (
         <MDBox
           sx={{
@@ -335,9 +356,11 @@ function PlanNPayment({
           }}
         >
           <MDBox>
-            <MDTypography variant="h6">Estimated Amount in Credits</MDTypography>
+            <MDTypography variant="h6">
+              {(selected?.length || 0) + (selectedP?.length || 0)} media selected
+            </MDTypography>
             <MDTypography fontWeight="bold" fontSize="20px" color="primary">
-              {totalCredits > 0 ? totalCredits : 0}
+              Total {creditsText(totalCredits > 0 ? totalCredits : 0)}
             </MDTypography>
           </MDBox>
           <MDBox>
@@ -370,7 +393,7 @@ function PlanNPayment({
                 });
               }}
             >
-              Create PR
+              Continue to Add PR
             </MDButton>
           </MDBox>
         </MDBox>

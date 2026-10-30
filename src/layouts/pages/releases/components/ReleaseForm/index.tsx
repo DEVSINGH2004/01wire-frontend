@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 // @mui material components
 import Stepper from "@mui/material/Stepper";
@@ -14,7 +14,7 @@ import AddPress from "../AddPress";
 import Media from "../Media";
 import PlanNPayment from "../PlanNPayment";
 import ReviewNPublish from "../ReviewNPublish";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   GET_ARTICLE_BY_ID,
   IGetArticleByIdVars,
@@ -25,7 +25,6 @@ import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import ReleasePreview from "../ReleasePreview";
-import { GET_USER_WALLET, IGetUserWallet } from "graphql/queries/getUserWallet";
 import {
   UPDATE_ARTICLE_STATUS,
   IUpdateArticleStatusVars,
@@ -99,7 +98,9 @@ function getStepContent(
 
 function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
   const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const location = useLocation();
+  // The payment page sends the user back to a given step (Review & Publish after paying)
+  const [activeStep, setActiveStep] = useState<number>(location?.state?.step || 0);
   const [saveData, setSaveData] = useState<boolean>(false);
   const [articleId, setId] = useState<string>(idVal && idVal !== true && idVal);
   const [article, setArticle] = useState<any>();
@@ -133,9 +134,15 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
 
+  const isDraft = article?.status === "DRAFT";
   const handleNext = (id?: any) => {
     if (id) setId(id);
     setSaveData(false);
+    // A draft is paid for on its own page; Review & Publish comes after payment
+    if (activeStep === 2 && isDraft) {
+      navigate(`/releases/${id || articleId}/payment`);
+      return;
+    }
     setActiveStep(activeStep + 1);
   };
   const handleBack = () => {
@@ -148,9 +155,6 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
   };
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [getArticleById] = useLazyQuery<IGetArticleById, IGetArticleByIdVars>(GET_ARTICLE_BY_ID, {
-    fetchPolicy: "network-only",
-  });
-  const { data: userWallet } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
     fetchPolicy: "network-only",
   });
   const fetchData = () => {
@@ -177,7 +181,8 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
       fetchData();
     }
   }, [articleId]);
-  const handleSend = () => {
+  // Resubmit after the admin asked for changes; already paid, so no payment step
+  const handleResubmit = () => {
     updateArticleStatus({
       variables: {
         params: {
@@ -187,16 +192,13 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
       },
     })
       .then(() => {
-        toast.success("Submitted successfully");
+        toast.success("Resubmitted for review");
         refetch();
         onClose();
       })
       .catch((err) => {
         toast.error(err?.message);
       });
-  };
-  const handleAddCredits = () => {
-    navigate("/my-credits");
   };
   return (
     <>
@@ -219,8 +221,11 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
       </MDBox>
       <MDBox p={2}>
         <MDBox>
-          {loading ? (
-            <MDCircularLoader startLoader />
+          {/* Steps read the saved PR when they mount, so wait for it */}
+          {loading || (articleId && !article) ? (
+            <MDBox py={8}>
+              <MDCircularLoader startLoader />
+            </MDBox>
           ) : (
             <>
               {getStepContent(
@@ -268,7 +273,7 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
           </MDTypography>
         </MDButton>
         <MDBox display="flex" alignItems="center">
-          {[2, 3].includes(activeStep) && article?.status === "DRAFT" && (
+          {activeStep === 2 && isDraft && (
             <MDBox mr={2}>
               <MDTypography
                 fontWeight="regular"
@@ -298,25 +303,15 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
           </MDButton>
           <MDButton
             color="primary"
-            onClick={
-              !isLastStep
-                ? () => setSaveData(true)
-                : article?.totalCredits <= userWallet?.getUserWallet?.balance ||
-                  article?.status === "AWAITING_APPROVAL"
-                ? handleSend
-                : handleAddCredits
-            }
+            onClick={isLastStep ? handleResubmit : () => setSaveData(true)}
             sx={{
-              visibility: isLastStep && isReadOnly(article) && "collapse",
+              visibility: isLastStep && article?.status !== "AWAITING_APPROVAL" && "collapse",
             }}
           >
             {isLastStep
-              ? article?.totalCredits <= userWallet?.getUserWallet?.balance ||
-                article?.status === "AWAITING_APPROVAL"
-                ? article?.status === "DRAFT"
-                  ? "Submit"
-                  : "Resubmit"
-                : "Add Credits"
+              ? "Resubmit for review"
+              : activeStep === 2 && isDraft
+              ? "Proceed to Payment"
               : "next"}
           </MDButton>
         </MDBox>

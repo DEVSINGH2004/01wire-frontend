@@ -31,6 +31,7 @@ export const GET_ARTICLE_BY_ID_RNP = gql`
       instructions
       publishAt
       totalCredits
+      updatedAt
       clientInfo {
         id
         title

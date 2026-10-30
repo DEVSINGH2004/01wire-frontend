@@ -27,6 +27,7 @@ import PRManagement from "layouts/pages/pr-management";
 import DownloadReport from "layouts/pages/download-report";
 import ShareEstimation from "layouts/pages/share-estimation";
 import ShareReleases from "layouts/pages/releases/components/share-release";
+import ReleasePayment from "layouts/pages/releases/payment";
 import "../src/layouts/pages/download-report/download.css";
 
 export default function App() {
@@ -119,6 +120,7 @@ export default function App() {
               <Route path="/payment-failed" element={<PaymentFailed />} />
               <Route path="/clients/:id" element={<Clients />} />
               <Route path="/releases/:id" element={<Releases />} />
+              <Route path="/releases/:id/payment" element={<ReleasePayment />} />
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />
               <Route path="/bundles/:id" element={<Bundles />} />
