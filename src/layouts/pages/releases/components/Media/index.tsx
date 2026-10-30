@@ -9,10 +9,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import InputAdornment from "@mui/material/InputAdornment";
 import InfoIconOutlined from "@mui/icons-material/InfoOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import XIcon from "@mui/icons-material/X";
-import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -21,7 +18,6 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
 // import TelegramIcon from "@mui/icons-material/Telegram";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { countryList } from "constants/index";
 
 // NewProduct page components
 import FormField from "../FormField";
@@ -74,20 +70,18 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
     handleSubmit,
     watch,
   } = useForm({
-    defaultValues: { category: "", country: "", publishType: "", timezone: "", publishAt: dayjs() },
+    defaultValues: { category: "", publishType: "", timezone: "", publishAt: dayjs() },
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { __typename, ...existingContact } = data?.mediaContact || {};
   const onSubmit = (formVals: any) => {
     setLoading(true);
     const {
-      name,
-      email,
-      phone,
       website,
       address,
       state,
-      country,
       facebook,
       instagram,
       linkedIn,
@@ -110,14 +104,12 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
           timezone: timezone?.value,
           publishType,
           publishAt,
+          // The API replaces mediaContact as a whole, so keep the step-1 contact fields
           mediaContact: {
-            name,
-            email,
-            phone,
+            ...existingContact,
             website,
             address,
             state,
-            country,
             facebook,
             instagram,
             linkedIn,
@@ -251,55 +243,8 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
         <Divider sx={{ width: "80%", p: 0 }} orientation="horizontal" />
       </MDBox>
       <MDBox mt={2}>
-        <Grid container spacing={6}>
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type="text"
-              label="Name"
-              name="name"
-              control={control}
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <AccountCircleOutlinedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              disabled={disabled}
-            />
-            <FormField
-              type="text"
-              label="Phone"
-              name="phone"
-              control={control}
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <LocalPhoneOutlinedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              disabled={disabled}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormField
-              type="email"
-              label="Email"
-              name="email"
-              control={control}
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <EmailOutlinedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              disabled={disabled}
-            />
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={12}>
             <FormField
               type="text"
               label="Website"
@@ -404,16 +349,6 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormField
-              type="dropdown"
-              placeholder="Select Country"
-              label="Country"
-              name="country"
-              control={control}
-              options={Object.keys(countryList)}
-              variant="outlined"
-              disabled={disabled}
-            />
             <FormField
               type="text"
               label="Instagram"

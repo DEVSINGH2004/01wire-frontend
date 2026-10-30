@@ -22,7 +22,15 @@ import { CREATE_ARTICLE, ICreateArticleVars } from "graphql/mutations/createArti
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { genericValidations } from "utils/helpers";
-import { MAX_IMAGE_SIZE_MB } from "constants/index";
+import { MAX_IMAGE_SIZE_MB, countryList } from "constants/index";
+import InputAdornment from "@mui/material/InputAdornment";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+
+// Matches the API limits (MAX_TITLE / MAX_SUMMARY)
+const MAX_TITLE = 200;
+const MAX_SUBHEADING = 1000;
 
 interface Props {
   cb?: any;
@@ -47,11 +55,14 @@ function AddPress({
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const { title, content, summary, featureImage, featureImageDesc, createdAt } = data || {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { __typename, ...existingContact } = data?.mediaContact || {};
   const {
     control,
     formState: { isDirty, errors },
     reset,
     handleSubmit,
+    watch,
   } = useForm({
     defaultValues: {
       clientId: null,
@@ -60,8 +71,14 @@ function AddPress({
       summary,
       featureImage,
       featureImageDesc,
+      city: existingContact.city,
+      country: existingContact.country,
+      contactName: existingContact.name,
+      contactEmail: existingContact.email,
+      contactPhone: existingContact.phone,
     },
   });
+  const titleLength = watch("title")?.length || 0;
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedClient, setClient] = useState<any>(null);
   const [createArticle] = useMutation<ICreateArticleVars>(CREATE_ARTICLE);
@@ -79,8 +96,18 @@ function AddPress({
     }));
     setOptions(clientsObj);
   }, [clientsResult]);
-  const onSubmit = async (formVals: any) => {
+  const onSubmit = async (allVals: any) => {
     setLoading(true);
+    const { city, country, contactName, contactEmail, contactPhone, ...formVals } = allVals;
+    // The API replaces mediaContact as a whole, so keep the step-2 contact fields
+    const mediaContact = {
+      ...existingContact,
+      city,
+      country,
+      name: contactName,
+      email: contactEmail,
+      phone: contactPhone,
+    };
     try {
       let res: any;
       if (data?.id) {
@@ -90,6 +117,7 @@ function AddPress({
               id: data.id,
               ...formVals,
               clientId: selectedClient?.value,
+              mediaContact,
             },
           },
         });
@@ -98,8 +126,9 @@ function AddPress({
         res = await createArticle({
           variables: {
             params: {
-              ...articleParams  ,
+              ...articleParams,
               clientId: selectedClient?.value,
+              mediaContact,
             },
           },
         });
@@ -117,16 +146,31 @@ function AddPress({
     }
   };
   useEffect(() => {
+    if (!saveData) return;
     // Read-only PRs can still report isDirty after load; never save them
-    if (saveData && isDirty && !disabled) {
-      if (!selectedClient) {
-        setShowClientErr(true);
-      }
-      handleSubmit(onSubmit)();
-    } else if (saveData) {
+    if (disabled) {
       cb();
+      return;
     }
-  }, [saveData, isDirty]);
+    // Validate on every Next (not only when dirty) so required fields always block it;
+    // save only when something changed
+    handleSubmit(
+      (formVals) => {
+        if (!selectedClient) {
+          setShowClientErr(true);
+          setSaveData(false);
+        } else if (isDirty) {
+          onSubmit(formVals);
+        } else {
+          cb();
+        }
+      },
+      () => {
+        if (!selectedClient) setShowClientErr(true);
+        setSaveData(false);
+      }
+    )();
+  }, [saveData]);
 
   useEffect(() => {
     if (data?.id) {
@@ -229,11 +273,18 @@ function AddPress({
               variant="outlined"
               disabled={disabled}
               errors={errors}
-              rules={genericValidations.text}
+              subLabel={`${titleLength}/${MAX_TITLE} characters`}
+              rules={{
+                ...genericValidations.text,
+                maxLength: {
+                  value: MAX_TITLE,
+                  message: `Title must be ${MAX_TITLE} characters or less`,
+                },
+              }}
             />
             <FormField
               type="text"
-              label="Summary"
+              label="Sub-heading (optional)"
               name="summary"
               control={control}
               multiline
@@ -241,7 +292,13 @@ function AddPress({
               disabled={disabled}
               rows={!disabled && 4}
               errors={errors}
-              rules={genericValidations.text}
+              subLabel="A short line shown under the title"
+              rules={{
+                maxLength: {
+                  value: MAX_SUBHEADING,
+                  message: `Sub-heading must be ${MAX_SUBHEADING} characters or less`,
+                },
+              }}
             />
             {/* <FormField
               label="Created At"
@@ -270,6 +327,94 @@ function AddPress({
               control={control}
               variant="outlined"
               disabled={disabled}
+            />
+          </Grid>
+        </Grid>
+      </MDBox>
+      <MDBox mt={2}>
+        <MDTypography variant="h5">Location & Contact</MDTypography>
+        <Grid container columnSpacing={3} mt={1}>
+          <Grid item xs={12} sm={6}>
+            <FormField
+              type="text"
+              label="City"
+              name="city"
+              control={control}
+              variant="outlined"
+              disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormField
+              type="dropdown"
+              placeholder="Select Country"
+              label="Country"
+              name="country"
+              control={control}
+              options={Object.keys(countryList)}
+              variant="outlined"
+              disabled={disabled}
+              errors={errors}
+              rules={genericValidations.dropdown}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormField
+              type="text"
+              label="Contact Name"
+              name="contactName"
+              control={control}
+              variant="outlined"
+              disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <AccountCircleOutlinedIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormField
+              type="email"
+              label="Contact Email"
+              name="contactEmail"
+              control={control}
+              variant="outlined"
+              disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <EmailOutlinedIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormField
+              type="text"
+              label="Contact Phone"
+              name="contactPhone"
+              control={control}
+              variant="outlined"
+              disabled={disabled}
+              errors={errors}
+              rules={genericValidations.text}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <LocalPhoneOutlinedIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
         </Grid>

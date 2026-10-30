@@ -76,6 +76,7 @@ export const GET_ARTICLE_BY_ID = gql`
         website
         address
         state
+        city
         country
         facebook
         instagram

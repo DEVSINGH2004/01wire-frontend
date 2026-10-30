@@ -286,9 +286,12 @@ const ShareReleases = () => {
                   styles={{ borderRadius: "10px" }}
                 />
               </MDBox>
-              <MDTypography sx={{ marginTop: "40px", textAlign: "justify" }} fontSize="20px">
-                {data?.getArticleById?.summary}
-              </MDTypography>
+              {/* Sub-heading is optional */}
+              {data?.getArticleById?.summary && (
+                <MDTypography sx={{ marginTop: "40px", textAlign: "justify" }} fontSize="20px">
+                  {data.getArticleById.summary}
+                </MDTypography>
+              )}
               <MDTypography
                 fontSize="35px"
                 color="black"

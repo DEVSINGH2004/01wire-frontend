@@ -70,6 +70,7 @@ export type ArticleMediaContactType = {
   website: string;
   address: string;
   state: string;
+  city: string;
   country: string;
   facebook: string;
   instagram: string;

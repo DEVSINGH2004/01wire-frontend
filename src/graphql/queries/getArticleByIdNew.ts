@@ -92,6 +92,7 @@ export const GET_ARTICLE_BY_ID_RNP = gql`
         website
         address
         state
+        city
         country
         facebook
         instagram
