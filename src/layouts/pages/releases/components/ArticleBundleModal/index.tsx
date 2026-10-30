@@ -22,6 +22,7 @@ import { useLazyQuery, useMutation } from "@apollo/client";
 import { statusOptions } from "../../../pr-management/components/makeColumns";
 import Divider from "@mui/material/Divider";
 import axiosInstance from "utils/axiosInstance";
+import { ORDER_API_BASE_URL } from "utils/apiConfig";
 import { getBlobErrorMessage, getErrorMessage } from "utils/errors";
 import StatusIcon from "assets/images/icons/statusIcon.svg";
 import NoteModal from "../../../pr-management/components/NoteModal";
@@ -204,6 +205,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
         setLoader(true);
         axiosInstance
           .post(`/order/upload-update`, formData, {
+            baseURL: ORDER_API_BASE_URL,
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -231,6 +233,7 @@ const ArticleBundleModal = ({ onClose, articleId }: Props) => {
     try {
       axiosInstance
         .get(`/order/pending?articleId=${articleId}`, {
+          baseURL: ORDER_API_BASE_URL,
           responseType: "blob",
         })
         .then(async (response: any) => {
