@@ -12,6 +12,9 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import IconButton from "@mui/material/IconButton";
+import CardActionArea from "@mui/material/CardActionArea";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import PostAddIcon from "@mui/icons-material/PostAdd";
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -29,6 +32,22 @@ import Appro from "assets/images/appro.svg";
 import Schedule from "assets/images/schedule.svg";
 
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+
+// `openForm` router state makes the target page open its add form on arrival
+const quickActions = [
+  {
+    title: "Add Client",
+    subtitle: "Create a new client profile",
+    route: "/clients",
+    Icon: PersonAddAlt1Icon,
+  },
+  {
+    title: "Add PR",
+    subtitle: "Write and submit a press release",
+    route: "/releases",
+    Icon: PostAddIcon,
+  },
+];
 
 function Overview(): JSX.Element {
   const navigate = useNavigate();
@@ -71,6 +90,44 @@ function Overview(): JSX.Element {
   return (
     <>
       <DashboardNavbar />
+      <MDBox px={2}>
+        <MDTypography mt={3} variant="h6" fontWeight="medium">
+          Quick Actions
+        </MDTypography>
+        <Grid mt={1} container spacing={2}>
+          {quickActions.map(({ title, subtitle, route, Icon }) => (
+            <Grid item xs={12} md={6} key={route}>
+              <Card sx={{ borderRadius: "12px", border: "1px solid #ee5c61" }}>
+                <CardActionArea
+                  onClick={() => navigate(route, { state: { openForm: true } })}
+                  sx={{ p: 2, display: "flex", justifyContent: "flex-start", gap: 2 }}
+                >
+                  <MDBox
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    width="56px"
+                    height="56px"
+                    borderRadius="12px"
+                    flexShrink={0}
+                    sx={{ backgroundColor: "#ee5c61" }}
+                  >
+                    <Icon sx={{ color: "#fff", fontSize: "28px !important" }} />
+                  </MDBox>
+                  <MDBox>
+                    <MDTypography fontSize="18px" fontWeight="bold">
+                      {title}
+                    </MDTypography>
+                    <MDTypography fontSize="14px" fontWeight="light" color="text">
+                      {subtitle}
+                    </MDTypography>
+                  </MDBox>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </MDBox>
       {loading || hLoading ? (
         <MDCircularLoader startLoader />
       ) : (

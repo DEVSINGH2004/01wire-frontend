@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client";
 import Card from "@mui/material/Card";
@@ -38,7 +38,10 @@ const ActionsCellRenderer = ({ actions = [] }: { actions: any }) => (
 function Clients(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [openForm, setOpenForm] = useState<any>(false);
+  const location = useLocation();
+  // Set by the dashboard "Add Client" quick action
+  const openAdd = location?.state?.openForm;
+  const [openForm, setOpenForm] = useState<any>(openAdd || false);
   const [viewId, setViewId] = useState<string | null>(null);
   const [loader, setLoader] = useState<boolean>(true);
   const [tableData, setData] = useState<any>([]);
@@ -95,10 +98,15 @@ function Clients(): JSX.Element {
     setViewId(null);
     if (id) {
       setOpenForm(id);
-    } else {
+    } else if (!openAdd) {
       setOpenForm(false);
     }
   }, [id]);
+
+  // Consume the quick-action flag so a refresh or Back doesn't reopen the form
+  useEffect(() => {
+    if (openAdd) navigate(location.pathname, { replace: true, state: null });
+  }, []);
   const handleDeleteClient = (clientId: string | undefined) => {
     if (!clientId) return;
     deleteClient({

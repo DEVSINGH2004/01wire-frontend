@@ -39,9 +39,11 @@ function Releases(): JSX.Element {
   const location = useLocation();
   const estimation = location?.state?.estimation;
   const PRStatus = location?.state?.status;
+  // Set by the dashboard "Add PR" quick action
+  const openAdd = location?.state?.openForm;
   const selectedStatus = statusOptions?.filter((one) => one?.value === PRStatus);
   const [loader, setLoader] = useState<boolean>(false);
-  const [openForm, setOpenForm] = useState<any>((estimation && true) || id || false);
+  const [openForm, setOpenForm] = useState<any>((estimation && true) || openAdd || id || false);
   const [tableData, setData] = useState<any>({ rows: [], columns: [] });
   const [filters, setFilters] = useState<any>(PRStatus ? { status: selectedStatus } : {});
   const [paginationInfo, setPaginationInfo] = useState<any>({});
@@ -183,10 +185,15 @@ function Releases(): JSX.Element {
   }, [articlesData]);
 
   useEffect(() => {
-    if (location?.pathname === "/releases" && !estimation) {
+    if (location?.pathname === "/releases" && !estimation && !openAdd) {
       setOpenForm(false);
     }
   }, [id]);
+
+  // Consume the quick-action flag so a refresh or Back doesn't reopen the form
+  useEffect(() => {
+    if (openAdd) navigate(location.pathname, { replace: true, state: null });
+  }, []);
 
   const handlePagination = (page: number) => {
     getArticles({
@@ -223,7 +230,9 @@ function Releases(): JSX.Element {
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>
-              <ReleaseForm idVal={openForm} onClose={() => {
+              <ReleaseForm
+                idVal={openForm}
+                onClose={() => {
                   setOpenForm(false);
                   navigate("/releases");
                 }}
