@@ -67,10 +67,10 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "PR Estimation",
-    key: "pr-estimation",
+    name: "Marketplace",
+    key: "marketplace",
     noCollapse: true,
-    route: "/pr-estimation",
+    route: "/marketplace",
     icon: <img src={PREstimateIcon} width="24px" height="24px" />,
     component: <PREstimation />,
     // collapse: [

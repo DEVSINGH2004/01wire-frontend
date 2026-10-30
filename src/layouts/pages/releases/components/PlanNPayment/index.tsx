@@ -266,7 +266,7 @@ function PlanNPayment({
         </MDBox>
       )}
       {((disabled && currentPublications?.length > 0) || !disabled) && (
-        <MDBox>
+        <MDBox id="marketplace-publications" sx={{ scrollMarginTop: "100px" }}>
           <MDBox py={2} display="flex" justifyContent="space-between">
             <MDBox display="flex" alignItems="center">
               <MDTypography variant="h6">

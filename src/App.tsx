@@ -122,6 +122,8 @@ export default function App() {
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />
               <Route path="/bundles/:id" element={<Bundles />} />
+              {/* Marketplace used to live at /pr-estimation */}
+              <Route path="/pr-estimation" element={<Navigate to="/marketplace" replace />} />
               {role === "ADMIN" ? (
                 <Route path="*" element={<Navigate to="/orders" />} />
               ) : (

@@ -188,21 +188,21 @@ function AddPress({
       setSaveData(false);
     }
   }, [Object.keys(errors).length]);
+  // Opening the dropdown lists all of the user's clients (API max 200);
+  // typing searches by name. The selected client's label isn't a search.
   useEffect(() => {
-    if (inputValue) {
-      fetchOptions({
-        variables: {
-          filterInput: {
-            title: inputValue,
-          },
-          paginationInput: {
-            currentPage: 0,
-            perPage: 6,
-          },
+    if (!openAutocomplete) return;
+    const search = inputValue && inputValue !== selectedClient?.label ? inputValue : "";
+    fetchOptions({
+      variables: {
+        filterInput: search ? { title: search } : {},
+        paginationInput: {
+          currentPage: 0,
+          perPage: 200,
         },
-      });
-    }
-  }, [inputValue]);
+      },
+    });
+  }, [openAutocomplete, inputValue]);
   const handleInputChange = (event: any, value: any) => {
     setInputValue(value);
   };
@@ -237,7 +237,13 @@ function AddPress({
                 value={selectedClient}
                 options={options}
                 getOptionLabel={(option: any) => option?.label}
+                isOptionEqualToValue={(option: any, val: any) => option?.value === val?.value}
                 loading={optionsLoading}
+                noOptionsText={
+                  inputValue && inputValue !== selectedClient?.label
+                    ? "No matching clients"
+                    : "No clients yet"
+                }
                 renderInput={(params) => (
                   <MDInput
                     {...params}

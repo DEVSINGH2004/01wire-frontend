@@ -32,6 +32,7 @@ import Appro from "assets/images/appro.svg";
 import Schedule from "assets/images/schedule.svg";
 
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import MarketplacePreview from "./components/MarketplacePreview";
 
 // `openForm` router state makes the target page open its add form on arrival
 const quickActions = [
@@ -263,6 +264,7 @@ function Overview(): JSX.Element {
               </Card>
             </Grid>
           </Grid>
+          <MarketplacePreview />
           <MDBox mt={3} display="flex" alignItems="center" justifyContent="space-between">
             <MDTypography variant="h6" fontWeight="medium">
               History
