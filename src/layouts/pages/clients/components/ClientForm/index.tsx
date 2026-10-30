@@ -15,9 +15,12 @@ interface Props {
   id?: any;
   onClose?: () => void;
   refetchList?: () => void;
+  // Embedded in another page (popup): Back only closes, Save returns the client
+  embedded?: boolean;
+  onSaved?: (client: any) => void;
 }
 
-function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
+function ClientForm({ id, refetchList, onClose, embedded = false, onSaved }: Props): JSX.Element {
   const navigate = useNavigate();
   const [saveData, setSaveData] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,7 +55,7 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
   }, [clientId]);
   const handleCloseForm = () => {
     if (onClose) onClose();
-    navigate(`/clients`);
+    if (!embedded) navigate(`/clients`);
   };
   return (
     <>
@@ -67,6 +70,7 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
               refetch={refetchList}
               onClose={onClose}
               setSaveData={setSaveData}
+              onSaved={onSaved}
             />
           )}
         </MDBox>
@@ -81,7 +85,7 @@ function ClientForm({ id, refetchList, onClose }: Props): JSX.Element {
           sx={{
             position: "sticky",
             bottom: 0,
-            marginLeft:'-1.2%',
+            marginLeft: "-1.2%",
             padding: "2rem 1rem",
             boxShadow:
               "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",

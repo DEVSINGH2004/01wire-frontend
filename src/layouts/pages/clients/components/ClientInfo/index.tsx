@@ -74,12 +74,16 @@ function ClientInfo({
   refetch,
   onClose,
   setSaveData,
+  onSaved,
 }: {
   saveData: any;
   data: any;
   refetch: any;
   onClose: any;
   setSaveData: any;
+  // When given (e.g. the PR form's Add Client popup), hand back the saved client
+  // instead of navigating to the client list
+  onSaved?: (client: any) => void;
 }): JSX.Element {
   const {
     control,
@@ -177,6 +181,10 @@ function ClientInfo({
       setLoading(false);
       toast.success(data?.id ? "Updated Successfully" : "Saved Successfully");
       if (refetch) refetch();
+      if (onSaved) {
+        onSaved(res?.data?.createClient || res?.data?.updateClient);
+        return;
+      }
       onClose();
       navigate("/clients");
     } catch (err: any) {

@@ -10,7 +10,6 @@ import { useMutation } from "@apollo/client";
 import InputAdornment from "@mui/material/InputAdornment";
 import InfoIconOutlined from "@mui/icons-material/InfoOutlined";
 import XIcon from "@mui/icons-material/X";
-import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -79,8 +78,6 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
   const onSubmit = (formVals: any) => {
     setLoading(true);
     const {
-      website,
-      address,
       state,
       facebook,
       instagram,
@@ -107,8 +104,6 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
           // The API replaces mediaContact as a whole, so keep the step-1 contact fields
           mediaContact: {
             ...existingContact,
-            website,
-            address,
             state,
             facebook,
             instagram,
@@ -243,48 +238,6 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
         <Divider sx={{ width: "80%", p: 0 }} orientation="horizontal" />
       </MDBox>
       <MDBox mt={2}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
-            <FormField
-              type="text"
-              label="Website"
-              name="website"
-              control={control}
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <LanguageOutlinedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              disabled={disabled}
-            />
-          </Grid>
-        </Grid>
-      </MDBox>
-      <MDBox>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
-            <FormField
-              type="text"
-              label="Address"
-              name="address"
-              control={control}
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <HomeOutlinedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              disabled={disabled}
-            />
-          </Grid>
-        </Grid>
-      </MDBox>
-      <MDBox>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
             <FormField

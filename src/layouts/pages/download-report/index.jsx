@@ -255,15 +255,15 @@ function PressReleaseReport() {
               <Box className="info-grid">
                 <Box className="info-column">
                   <CompanyInfoItem label="Company Name" value={name || "-"} />
-                  <CompanyInfoItem label="Phone" value={phone || "-"} />
+                  {phone && <CompanyInfoItem label="Phone" value={phone} />}
                   <CompanyInfoItem label="Email" value={email || "-"} />
                 </Box>
                 <Box className="info-column">
                   <CompanyInfoItem label="Country" value={country || "-"} />
-                  <CompanyInfoItem label="Website" value={website || "-"} />
+                  {website && <CompanyInfoItem label="Website" value={website} />}
                 </Box>
                 <Box className="info-column">
-                  <CompanyInfoItem label="Address 1" value={address || "-"} />
+                  {address && <CompanyInfoItem label="Address 1" value={address} />}
                   <CompanyInfoItem label="State" value={state || "-"} />
                 </Box>
               </Box>

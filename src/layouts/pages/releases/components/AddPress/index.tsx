@@ -28,6 +28,10 @@ import InputAdornment from "@mui/material/InputAdornment";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import Dialog from "@mui/material/Dialog";
+import ClientForm from "layouts/pages/clients/components/ClientForm";
 
 // Matches the API limits (MAX_TITLE / MAX_SUMMARY / MAX_CONTENT)
 const MAX_TITLE = 200;
@@ -41,6 +45,8 @@ interface Props {
   refetch?: () => void;
   disabled?: any;
   setSaveData?: any;
+  // Live form values, used by the wizard's Preview
+  onValuesChange?: (values: any) => void;
 }
 
 function AddPress({
@@ -50,8 +56,10 @@ function AddPress({
   refetch,
   disabled = false,
   setSaveData,
+  onValuesChange,
 }: Props): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
+  const [addClientOpen, setAddClientOpen] = useState<boolean>(false);
   const [openAutocomplete, setOpenAutocomplete] = useState<boolean>(false);
   const [showClientErr, setShowClientErr] = useState<boolean>(false);
   const [options, setOptions] = useState([]);
@@ -78,9 +86,25 @@ function AddPress({
       contactName: existingContact.name,
       contactEmail: existingContact.email,
       contactPhone: existingContact.phone,
+      website: existingContact.website,
     },
   });
   const titleLength = watch("title")?.length || 0;
+  useEffect(() => {
+    if (!onValuesChange) return undefined;
+    onValuesChange(watch());
+    const subscription = watch((values) => onValuesChange(values));
+    return () => subscription.unsubscribe();
+  }, [watch]);
+  // Add a client without leaving the PR form; the new client is selected
+  const handleAddClient = () => setAddClientOpen(true);
+  const handleClientCreated = (client: any) => {
+    if (client?.id) {
+      setClient({ label: client.title, value: client.id });
+      setShowClientErr(false);
+    }
+    setAddClientOpen(false);
+  };
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedClient, setClient] = useState<any>(null);
   const [createArticle] = useMutation<ICreateArticleVars>(CREATE_ARTICLE);
@@ -88,7 +112,10 @@ function AddPress({
   const [fetchOptions, { data: clientsResult, loading: optionsLoading }] = useLazyQuery<
     IGetClients,
     IGetClientsVars
-  >(GET_CLIENTS);
+  >(GET_CLIENTS, {
+    // Always fresh, so a client added in the popup (or elsewhere) is listed
+    fetchPolicy: "network-only",
+  });
   // Derived from the query result (replaces the deprecated onCompleted option)
   useEffect(() => {
     if (!clientsResult) return;
@@ -100,7 +127,8 @@ function AddPress({
   }, [clientsResult]);
   const onSubmit = async (allVals: any) => {
     setLoading(true);
-    const { city, country, contactName, contactEmail, contactPhone, ...formVals } = allVals;
+    const { city, country, contactName, contactEmail, contactPhone, website, ...formVals } =
+      allVals;
     // The API replaces mediaContact as a whole, so keep the step-2 contact fields
     const mediaContact = {
       ...existingContact,
@@ -109,6 +137,7 @@ function AddPress({
       name: contactName,
       email: contactEmail,
       phone: contactPhone,
+      website,
     };
     try {
       let res: any;
@@ -217,15 +246,28 @@ function AddPress({
         <Grid container spacing={3}>
           <Grid item xs={12} sm={7}>
             <MDBox>
-              <MDTypography
-                component="label"
-                sx={{ mb: "0.5rem" }}
-                fontSize="1rem"
-                fontWeight="medium"
-                color="textSecondary"
-              >
-                Client
-              </MDTypography>
+              <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                <MDTypography
+                  component="label"
+                  sx={{ mb: "0.5rem" }}
+                  fontSize="1rem"
+                  fontWeight="medium"
+                  color="textSecondary"
+                >
+                  Client
+                </MDTypography>
+                {!disabled && (
+                  <MDButton
+                    variant="text"
+                    color="primary"
+                    size="small"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddClient}
+                  >
+                    Add Client
+                  </MDButton>
+                )}
+              </MDBox>
               <Autocomplete
                 open={openAutocomplete}
                 onOpen={() => setOpenAutocomplete(true)}
@@ -242,9 +284,22 @@ function AddPress({
                 isOptionEqualToValue={(option: any, val: any) => option?.value === val?.value}
                 loading={optionsLoading}
                 noOptionsText={
-                  inputValue && inputValue !== selectedClient?.label
-                    ? "No matching clients"
-                    : "No clients yet"
+                  <MDBox display="flex" alignItems="center" justifyContent="space-between">
+                    {inputValue && inputValue !== selectedClient?.label
+                      ? "No matching clients"
+                      : "No clients yet"}
+                    <MDButton
+                      variant="text"
+                      color="primary"
+                      size="small"
+                      startIcon={<AddIcon />}
+                      // mousedown keeps the dropdown from closing before the click lands
+                      onMouseDown={(e: any) => e.preventDefault()}
+                      onClick={handleAddClient}
+                    >
+                      Add Client
+                    </MDButton>
+                  </MDBox>
                 }
                 renderInput={(params) => (
                   <MDInput
@@ -415,7 +470,6 @@ function AddPress({
               variant="outlined"
               disabled={disabled}
               errors={errors}
-              rules={genericValidations.text}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">
@@ -425,8 +479,35 @@ function AddPress({
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={12}>
+            <FormField
+              type="text"
+              label="Website"
+              name="website"
+              control={control}
+              variant="outlined"
+              disabled={disabled}
+              errors={errors}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <LanguageOutlinedIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
         </Grid>
       </MDBox>
+      {addClientOpen && (
+        <Dialog open onClose={() => setAddClientOpen(false)} maxWidth="lg" fullWidth scroll="paper">
+          <ClientForm
+            embedded
+            onClose={() => setAddClientOpen(false)}
+            onSaved={handleClientCreated}
+          />
+        </Dialog>
+      )}
       <MDBox mt={2}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>

@@ -21,6 +21,10 @@ import {
   IGetArticleById,
 } from "graphql/queries/getArticleById";
 import MDTypography from "components/MDTypography";
+import Dialog from "@mui/material/Dialog";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import ReleasePreview from "../ReleasePreview";
 import { GET_USER_WALLET, IGetUserWallet } from "graphql/queries/getUserWallet";
 import {
   UPDATE_ARTICLE_STATUS,
@@ -47,7 +51,8 @@ function getStepContent(
   article: any,
   fetchData: any,
   setSaveData: any,
-  setPayable: any
+  setPayable: any,
+  onValuesChange: (values: any) => void
 ): JSX.Element {
   switch (stepIndex) {
     case 0:
@@ -59,6 +64,7 @@ function getStepContent(
           refetch={fetchData}
           setSaveData={setSaveData}
           disabled={isReadOnly(article)}
+          onValuesChange={onValuesChange}
         />
       );
     case 1:
@@ -99,6 +105,31 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
   const [article, setArticle] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [payable, setPayable] = useState<number>(0);
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  // Step-1 values as typed (not yet saved), so the preview shows them
+  const [liveValues, setLiveValues] = useState<any>(null);
+  const previewArticle = () => {
+    if (activeStep !== 0 || !liveValues) return article;
+    const { title, summary, content, featureImage } = liveValues;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { __typename, ...contact } = article?.mediaContact || {};
+    return {
+      ...article,
+      title,
+      summary,
+      content,
+      featureImage,
+      mediaContact: {
+        ...contact,
+        city: liveValues.city,
+        country: liveValues.country,
+        name: liveValues.contactName,
+        email: liveValues.contactEmail,
+        phone: liveValues.contactPhone,
+        website: liveValues.website,
+      },
+    };
+  };
   const steps = getSteps();
   const isLastStep: boolean = activeStep === steps.length - 1;
 
@@ -199,7 +230,8 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
                 article,
                 fetchData,
                 setSaveData,
-                setPayable
+                setPayable,
+                setLiveValues
               )}
             </>
           )}
@@ -257,6 +289,14 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
             </MDBox>
           )}
           <MDButton
+            variant="outlined"
+            color="primary"
+            sx={{ mr: 2 }}
+            onClick={() => setPreviewOpen(true)}
+          >
+            Preview
+          </MDButton>
+          <MDButton
             color="primary"
             onClick={
               !isLastStep
@@ -281,6 +321,26 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
           </MDButton>
         </MDBox>
       </MDBox>
+      {previewOpen && (
+        <Dialog fullScreen open onClose={() => setPreviewOpen(false)}>
+          <MDBox
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            px={3}
+            py={2}
+            sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.08)" }}
+          >
+            <MDTypography variant="h6">Preview</MDTypography>
+            <IconButton aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </MDBox>
+          <MDBox sx={{ padding: { xs: "24px 16px", md: "40px 180px" } }}>
+            <ReleasePreview article={previewArticle()} />
+          </MDBox>
+        </Dialog>
+      )}
     </>
   );
 }
