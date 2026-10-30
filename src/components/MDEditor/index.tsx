@@ -12,6 +12,76 @@ import htmlToDraft from "html-to-draftjs";
 import { getImageUrl } from "utils/apiConfig";
 import { getErrorMessage } from "utils/errors";
 import { MAX_IMAGE_SIZE, MAX_IMAGE_SIZE_MB } from "constants/index";
+
+// Upload one image and return its public URL
+const uploadImage = async (file: Blob, name?: string): Promise<string> => {
+  const formData = new FormData();
+  if (name) formData.append("file", file, name);
+  else formData.append("file", file);
+  const response = await axiosInstance.post("/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return getImageUrl(response?.data?.fileName);
+};
+
+// Decoded by hand (not fetch) so a Content-Security-Policy can't block it
+const dataUrlToBlob = (dataUrl: string): Blob => {
+  const [meta, data = ""] = dataUrl.split(",");
+  const type = meta.match(/^data:([^;,]+)/)?.[1] || "";
+  const bytes = meta.includes(";base64") ? atob(data) : decodeURIComponent(data);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type });
+};
+
+// HTML pasted from Word/Docs/web carries images as base64 data: URLs, which made the
+// article too large for the API (413). Upload them and keep links instead.
+const uploadPastedImages = async (html: string): Promise<string> => {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const images = Array.from(doc.querySelectorAll<HTMLImageElement>('img[src^="data:"]'));
+  let dropped = 0;
+  await Promise.all(
+    images.map(async (img, i) => {
+      try {
+        const blob = dataUrlToBlob(img.getAttribute("src") || "");
+        if (!blob.type.startsWith("image/") || blob.size > MAX_IMAGE_SIZE) {
+          throw new Error("unsupported pasted image");
+        }
+        const ext = blob.type.split("/")[1].replace("jpeg", "jpg").replace("svg+xml", "svg");
+        img.setAttribute("src", await uploadImage(blob, `pasted-${i + 1}.${ext}`));
+      } catch {
+        img.remove();
+        dropped += 1;
+      }
+    })
+  );
+  if (dropped) {
+    toast.warning(
+      `${dropped} pasted image${dropped > 1 ? "s" : ""} couldn't be added ` +
+        `(max ${MAX_IMAGE_SIZE_MB}MB, JPG/PNG/WebP/SVG). Use the image button to add them.`
+    );
+  }
+  return doc.body.innerHTML;
+};
+
+// Insert pasted HTML at the current selection
+const insertHtml = (state: EditorState, html: string): EditorState => {
+  const contentBlock = htmlToDraft(`<p></p>${html}<p></p>`);
+  if (!contentBlock) return state;
+  const newContentState = ContentState.createFromBlockArray(
+    contentBlock.contentBlocks,
+    contentBlock.entityMap
+  );
+  const mergedContentState = Modifier.replaceWithFragment(
+    state.getCurrentContent(),
+    state.getSelection(),
+    newContentState.getBlockMap()
+  );
+  return EditorState.push(state, mergedContentState, "insert-characters");
+};
+
 function MDEditor({
   value,
   onChange,
@@ -41,18 +111,10 @@ function MDEditor({
         reject(new Error("file too large"));
         return;
       }
-      const formData = new FormData();
-      formData.append("file", file);
-      axiosInstance
-        .post("/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          console.info("File uploaded successfully:", response);
+      uploadImage(file)
+        .then((link) => {
           resolve({
-            data: { link: getImageUrl(response?.data?.fileName) },
+            data: { link },
           });
         })
         .catch((error) => {
@@ -82,33 +144,17 @@ function MDEditor({
     editorState: EditorState,
     onChange: (editorState: EditorState) => void
   ): boolean => {
-    if (html) {
-      // Convert the HTML to Draft.js content blocks
-      const contentBlock = htmlToDraft(`<p></p>${html}<p></p>`);
-      if (contentBlock) {
-        const newContentState = ContentState.createFromBlockArray(
-          contentBlock.contentBlocks,
-          contentBlock.entityMap
-        );
-        const currentContentState = editorState.getCurrentContent();
-
-        // Merge the new content with the existing content
-        const mergedContentState = Modifier.replaceWithFragment(
-          currentContentState,
-          editorState.getSelection(),
-          newContentState.getBlockMap()
-        );
-
-        const newEditorState = EditorState.push(
-          editorState,
-          mergedContentState,
-          "insert-characters"
-        );
-        onChange(newEditorState);
-        return true;
-      }
+    if (!html) return false;
+    if (/<img[^>]+src\s*=\s*["']?data:/i.test(html)) {
+      // Upload embedded images first, then insert at the (current) cursor
+      const toastId = toast.info("Uploading pasted images…", { autoClose: false });
+      uploadPastedImages(html)
+        .then((cleanHtml) => setEditorState((current) => insertHtml(current, cleanHtml)))
+        .finally(() => toast.dismiss(toastId));
+      return true;
     }
-    return false;
+    onChange(insertHtml(editorState, html));
+    return true;
   };
 
   useEffect(() => {

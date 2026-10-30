@@ -22,15 +22,17 @@ import { CREATE_ARTICLE, ICreateArticleVars } from "graphql/mutations/createArti
 import { UPDATE_ARTICLE, IUpdateArticleVars } from "graphql/mutations/updateArticle";
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { genericValidations } from "utils/helpers";
+import { getErrorMessage } from "utils/errors";
 import { MAX_IMAGE_SIZE_MB, countryList } from "constants/index";
 import InputAdornment from "@mui/material/InputAdornment";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 
-// Matches the API limits (MAX_TITLE / MAX_SUMMARY)
+// Matches the API limits (MAX_TITLE / MAX_SUMMARY / MAX_CONTENT)
 const MAX_TITLE = 200;
 const MAX_SUBHEADING = 1000;
+const MAX_CONTENT = 100000;
 
 interface Props {
   cb?: any;
@@ -141,7 +143,7 @@ function AddPress({
     } catch (err: any) {
       setLoading(false);
       console.error("Error in saving data:", err);
-      toast.error(err?.message);
+      toast.error(getErrorMessage(err));
       setSaveData(false);
     }
   };
@@ -461,7 +463,14 @@ function AddPress({
               variant="outlined"
               disabled={disabled}
               errors={errors}
-              rules={genericValidations.text}
+              rules={{
+                ...genericValidations.text,
+                validate: (html: string) =>
+                  (html?.length || 0) <= MAX_CONTENT ||
+                  `Content is too long: ${(
+                    html?.length || 0
+                  ).toLocaleString()} / ${MAX_CONTENT.toLocaleString()} characters`,
+              }}
             />
           </Grid>
         </Grid>

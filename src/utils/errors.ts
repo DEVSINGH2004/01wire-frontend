@@ -12,6 +12,9 @@ export const getErrorMessage = (error: any, fallback: string = GENERIC_ERROR): s
   if (Array.isArray(serverMessage) && serverMessage[0]) return String(serverMessage[0]);
 
   if (error?.response?.status === 413) return "File is too large.";
+  if (error?.networkError?.statusCode === 413) {
+    return "Your press release is too large to save. Remove large pasted images or shorten it.";
+  }
   if (error?.isAxiosError) {
     return error?.response ? fallback : "Could not reach the server. Please try again.";
   }
