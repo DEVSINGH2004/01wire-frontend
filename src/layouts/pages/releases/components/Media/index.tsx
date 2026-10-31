@@ -10,7 +10,6 @@ import { useMutation } from "@apollo/client";
 import InputAdornment from "@mui/material/InputAdornment";
 import InfoIconOutlined from "@mui/icons-material/InfoOutlined";
 import XIcon from "@mui/icons-material/X";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
@@ -48,6 +47,10 @@ const CategoryOptions = [
   { label: "Shareholder Meeting", value: "SHAREHOLDER_MEETING" },
 ];
 
+// Usual search-snippet limits; the API enforces the same
+const MAX_META_TITLE = 60;
+const MAX_META_DESCRIPTION = 160;
+
 const pulishOptions = [
   { label: "Immediate", value: "IMMEDIATE" },
   { label: "Scheduled", value: "SCHEDULED" },
@@ -69,7 +72,14 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
     handleSubmit,
     watch,
   } = useForm({
-    defaultValues: { category: "", publishType: "", timezone: "", publishAt: dayjs() },
+    defaultValues: {
+      category: "",
+      publishType: "",
+      timezone: "",
+      publishAt: dayjs(),
+      metaTitle: "",
+      metaDescription: "",
+    },
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [updateArticle] = useMutation<IUpdateArticleVars>(UPDATE_ARTICLE);
@@ -78,7 +88,8 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
   const onSubmit = (formVals: any) => {
     setLoading(true);
     const {
-      state,
+      metaTitle,
+      metaDescription,
       facebook,
       instagram,
       linkedIn,
@@ -101,10 +112,11 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
           timezone: timezone?.value,
           publishType,
           publishAt,
+          metaTitle,
+          metaDescription,
           // The API replaces mediaContact as a whole, so keep the step-1 contact fields
           mediaContact: {
             ...existingContact,
-            state,
             facebook,
             instagram,
             linkedIn,
@@ -145,7 +157,16 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
   }, [Object.keys(errors).length]);
   useEffect(() => {
     if (data?.id) {
-      const { category, instructions, mediaContact, timezone, publishType, publishAt } = data;
+      const {
+        category,
+        instructions,
+        mediaContact,
+        timezone,
+        publishType,
+        publishAt,
+        metaTitle,
+        metaDescription,
+      } = data;
       const filteredCategory = CategoryOptions?.find((one) => one.value === category);
       const filteredTimezone = Timezones?.find((one) => one.value === timezone);
       const defaultValues = {
@@ -155,11 +176,15 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
         publishAt: dayjs(publishAt),
         instructions,
         ...mediaContact,
+        metaTitle: metaTitle || "",
+        metaDescription: metaDescription || "",
       };
       reset(defaultValues);
     }
   }, [data]);
   const publishType = watch("publishType");
+  const metaTitleLength = watch("metaTitle")?.length || 0;
+  const metaDescriptionLength = watch("metaDescription")?.length || 0;
 
   return (
     <MDBox>
@@ -234,7 +259,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
         </Grid>
       </MDBox>
       <MDBox mt={2} display="flex" alignItems="center">
-        <MDTypography variant="h5">Media Contact</MDTypography> <InfoIconOutlined color="action" />
+        <MDTypography variant="h5">SEO (optional)</MDTypography>
         <Divider sx={{ width: "80%", p: 0 }} orientation="horizontal" />
       </MDBox>
       <MDBox mt={2}>
@@ -242,19 +267,50 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
           <Grid item xs={12} sm={6}>
             <FormField
               type="text"
-              label="State"
-              name="state"
+              label="Meta Title (optional)"
+              name="metaTitle"
               control={control}
               variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <HomeOutlinedIcon />
-                  </InputAdornment>
-                ),
-              }}
               disabled={disabled}
+              errors={errors}
+              subLabel={`${metaTitleLength}/${MAX_META_TITLE} characters`}
+              rules={{
+                maxLength: {
+                  value: MAX_META_TITLE,
+                  message: `Meta title must be ${MAX_META_TITLE} characters or less`,
+                },
+              }}
             />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormField
+              type="text"
+              label="Meta Description (optional)"
+              name="metaDescription"
+              control={control}
+              multiline
+              variant="outlined"
+              disabled={disabled}
+              rows={!disabled && 3}
+              errors={errors}
+              subLabel={`${metaDescriptionLength}/${MAX_META_DESCRIPTION} characters`}
+              rules={{
+                maxLength: {
+                  value: MAX_META_DESCRIPTION,
+                  message: `Meta description must be ${MAX_META_DESCRIPTION} characters or less`,
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
+      </MDBox>
+      <MDBox mt={2} display="flex" alignItems="center">
+        <MDTypography variant="h5">Media Contact</MDTypography> <InfoIconOutlined color="action" />
+        <Divider sx={{ width: "80%", p: 0 }} orientation="horizontal" />
+      </MDBox>
+      <MDBox mt={2}>
+        <Grid container spacing={6}>
+          <Grid item xs={12} sm={6}>
             <FormField
               type="text"
               label="Facebook"

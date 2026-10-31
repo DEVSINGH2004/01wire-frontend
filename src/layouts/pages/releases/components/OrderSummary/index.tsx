@@ -48,7 +48,7 @@ function OrderSummary({ bundles = [], publications = [], total }: Props): JSX.El
       </MDBox>
       {!lines.length ? (
         <MDTypography px={1.5} py={2} fontSize="15px" sx={{ color: "#7B809A" }}>
-          No media selected yet. Pick a bundle or publications to see the price.
+          No media selected yet. Choose a bundle or publications in the Marketplace.
         </MDTypography>
       ) : (
         <MDBox component="table" width="100%" sx={{ borderCollapse: "collapse" }}>

@@ -29,6 +29,8 @@ export const GET_ARTICLE_BY_ID_RNP = gql`
       timezone
       notes
       instructions
+      metaTitle
+      metaDescription
       publishAt
       totalCredits
       updatedAt

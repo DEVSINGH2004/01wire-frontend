@@ -15,6 +15,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
     summary,
   } = article || {};
   const { facebook, instagram, twitter, linkedIn, youtube } = mediaContact || {};
+  const place = [mediaContact?.city, mediaContact?.country].filter(Boolean).join(", ");
   // Optional contact fields (e.g. phone, website) are left out when empty
   const contactLine = (label: string, value?: string) =>
     value ? (
@@ -42,22 +43,28 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
           {summary}
         </MDTypography>
       )}
-      <MDTypography fontSize="35px" color="black" fontWeight="bold" sx={{ marginTop: "20px" }}>
-        Introduction
-      </MDTypography>
+      {place && (
+        <MDTypography
+          fontSize="18px"
+          fontWeight="medium"
+          sx={{ marginTop: "24px", color: "#344767" }}
+        >
+          {place}
+        </MDTypography>
+      )}
       {content && <MDEditor noBorder disabled onChange={() => {}} value={content} />}
       {/* <MDTypography sx={{ marginTop: "20px", textAlign: "justify" }} fontSize="20px">
       <div className="press-release-text" dangerouslySetInnerHTML={{ __html: content }} />
     </MDTypography> */}
+      {/* Contact box sits at the bottom-left, under the release */}
       <MDBox
         sx={{
-          minHeight: "300px",
           marginTop: "50px",
-          width: "100%",
-          boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
+          width: { xs: "100%", md: "50%" },
+          border: "1px solid rgba(0, 0, 0, 0.12)",
           borderRadius: "10px",
-          textAlign: "center",
-          padding: "20px 0px",
+          textAlign: "left",
+          padding: "20px 24px",
         }}
         bgColor="white"
       >

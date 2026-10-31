@@ -13,6 +13,7 @@ export const GET_ARTICLE_BY_ID = gql`
   query getArticleById($id: String!) {
     getArticleById(id: $id) {
       id
+      prId
       userId
       clientId
       title
@@ -29,6 +30,8 @@ export const GET_ARTICLE_BY_ID = gql`
       timezone
       notes
       instructions
+      metaTitle
+      metaDescription
       totalCredits
       publishAt
       clientInfo {

@@ -27,6 +27,7 @@ import { MAX_IMAGE_SIZE_MB, countryList } from "constants/index";
 import InputAdornment from "@mui/material/InputAdornment";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import { COMPANY_EMAIL_MESSAGE, isPersonalEmail } from "utils/companyEmail";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import AddIcon from "@mui/icons-material/Add";
@@ -451,7 +452,10 @@ function AddPress({
               variant="outlined"
               disabled={disabled}
               errors={errors}
-              rules={genericValidations.text}
+              rules={{
+                ...genericValidations.email,
+                validate: (val: string) => !isPersonalEmail(val) || COMPANY_EMAIL_MESSAGE,
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">

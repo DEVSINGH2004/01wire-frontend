@@ -174,7 +174,7 @@ function PressReleaseReport() {
   const filteredOrders = orderData?.filterOrdersPaginated?.data?.filter(
     (one) => one?.status !== "REJECTED"
   );
-  const { email, phone, website, name, address, country, state } =
+  const { email, phone, website, name, address, country } =
     data?.getArticleById?.mediaContact || {};
   const { linkedIn, facebook, instagram, twitter } = data?.getArticleById?.clientInfo?.social || {};
   const theme = useTheme();
@@ -264,7 +264,6 @@ function PressReleaseReport() {
                 </Box>
                 <Box className="info-column">
                   {address && <CompanyInfoItem label="Address 1" value={address} />}
-                  <CompanyInfoItem label="State" value={state || "-"} />
                 </Box>
               </Box>
             </Box>

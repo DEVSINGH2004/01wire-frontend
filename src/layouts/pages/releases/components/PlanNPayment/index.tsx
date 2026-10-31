@@ -37,6 +37,8 @@ interface Props {
   setSaveData?: any;
   createEstimate?: any;
   setPayable?: any;
+  // Number of selected media, so the wizard can block payment with none
+  setMediaCount?: (count: number) => void;
 }
 function PlanNPayment({
   data,
@@ -47,15 +49,21 @@ function PlanNPayment({
   setSaveData,
   createEstimate = false,
   setPayable,
+  setMediaCount,
 }: Props): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation || {};
   const estimatePIds = estimation?.selectedPublications?.map((p: any) => p?.id);
-  // The Marketplace page and a PR without a saved plan start from the media cart
+  // Marketplace opened from a PR's "Change media": its button leads back to that PR
+  const forPr = location?.state?.forPr;
+  // The Marketplace page and a PR without a saved plan start from the media cart;
+  // so does a PR coming back from "Change media" (the cart then replaces its plan)
   const hasSavedPlan = data?.bundleIds?.length > 0 || data?.publicationIds?.length > 0;
   const cart =
-    !disabled && !hasSavedPlan && !estimation?.selectedBundles && !estimation?.selectedPublications
+    !disabled &&
+    (location?.state?.useCart ||
+      (!hasSavedPlan && !estimation?.selectedBundles && !estimation?.selectedPublications))
       ? getCart()
       : null;
   const initialBundles = estimation?.selectedBundles || cart?.bundles || data?.bundleInfo || [];
@@ -90,7 +98,7 @@ function PlanNPayment({
       },
     },
     fetchPolicy: "network-only",
-    skip: disabled,
+    skip: disabled || !createEstimate,
   });
   const {
     data: publicationsData,
@@ -107,7 +115,7 @@ function PlanNPayment({
         perPage: pageSize,
       },
     },
-    skip: disabled,
+    skip: disabled || !createEstimate,
   });
   const currentPublications: any =
     (disabled && data?.publicationInfo) ||
@@ -148,7 +156,7 @@ function PlanNPayment({
     const selectedBundleIds = selected?.map((bundle: any) => bundle.id);
     // A draft can't move on to Review & Publish with an empty, 0-credit plan
     if (!selectedBundleIds?.length && !publicationIds?.length) {
-      toast.error("Select at least one publication or bundle to continue.");
+      toast.error("Choose media in the Marketplace first.");
       setSaveData(false);
       return;
     }
@@ -234,6 +242,14 @@ function PlanNPayment({
       setPayable(totalCredits);
     }
   }, [totalCredits]);
+  useEffect(() => {
+    if (setMediaCount) setMediaCount((selected?.length || 0) + (selectedP?.length || 0));
+  }, [selected, selectedP]);
+  // Take this PR's media to the Marketplace to change it, then come back to it
+  const openMarketplace = () => {
+    saveCart(selected || [], selectedP || []);
+    navigate("/marketplace", { state: { forPr: { id: data?.id, prId: data?.prId } } });
+  };
   // Marketplace picks stay in the cart until they are paid for
   useEffect(() => {
     if (createEstimate) saveCart(selected, selectedP);
@@ -249,9 +265,18 @@ function PlanNPayment({
             publications={selectedP}
             total={disabled ? data?.totalCredits : undefined}
           />
+          {!disabled && (
+            <MDBox mt={2} display="flex" justifyContent="flex-end">
+              <MDButton variant="outlined" color="primary" onClick={openMarketplace}>
+                {selected?.length || selectedP?.length
+                  ? "Change media"
+                  : "Choose media in Marketplace"}
+              </MDButton>
+            </MDBox>
+          )}
         </MDBox>
       )}
-      {!disabled && groupedData && (
+      {createEstimate && !disabled && groupedData && (
         <MDBox
           sx={{
             display: "flex",
@@ -272,7 +297,7 @@ function PlanNPayment({
           })}
         </MDBox>
       )}
-      {(groupedData || (disabled && data?.bundleInfo?.length > 0)) && (
+      {createEstimate && (groupedData || (disabled && data?.bundleInfo?.length > 0)) && (
         <MDBox mt={3}>
           <MDTypography variant="h6">
             {disabled ? "Selected Bundle" : "Select Bundles"}
@@ -286,7 +311,7 @@ function PlanNPayment({
           />
         </MDBox>
       )}
-      {((disabled && currentPublications?.length > 0) || !disabled) && (
+      {createEstimate && ((disabled && currentPublications?.length > 0) || !disabled) && (
         <MDBox id="marketplace-publications" sx={{ scrollMarginTop: "100px" }}>
           <MDBox py={2} display="flex" justifyContent="space-between">
             <MDBox display="flex" alignItems="center">
@@ -383,6 +408,10 @@ function PlanNPayment({
               color="primary"
               disabled={!selected?.length && !publicationIds?.length}
               onClick={() => {
+                if (forPr?.id) {
+                  navigate(`/releases/${forPr.id}`, { state: { step: 2, useCart: true } });
+                  return;
+                }
                 navigate("/releases", {
                   state: {
                     estimation: {
@@ -393,7 +422,9 @@ function PlanNPayment({
                 });
               }}
             >
-              Continue to Add PR
+              {forPr?.id
+                ? `Back to PR${forPr.prId ? ` #${forPr.prId}` : ""}`
+                : "Continue to Add PR"}
             </MDButton>
           </MDBox>
         </MDBox>

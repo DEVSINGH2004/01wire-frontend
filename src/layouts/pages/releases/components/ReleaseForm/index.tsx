@@ -22,8 +22,7 @@ import {
 } from "graphql/queries/getArticleById";
 import MDTypography from "components/MDTypography";
 import Dialog from "@mui/material/Dialog";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ReleasePreview from "../ReleasePreview";
 import {
   UPDATE_ARTICLE_STATUS,
@@ -51,7 +50,8 @@ function getStepContent(
   fetchData: any,
   setSaveData: any,
   setPayable: any,
-  onValuesChange: (values: any) => void
+  onValuesChange: (values: any) => void,
+  setMediaCount: (count: number) => void
 ): JSX.Element {
   switch (stepIndex) {
     case 0:
@@ -86,6 +86,7 @@ function getStepContent(
           refetch={fetchData}
           setSaveData={setSaveData}
           setPayable={setPayable}
+          setMediaCount={setMediaCount}
           disabled={article?.status !== "DRAFT"}
         />
       );
@@ -106,6 +107,7 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
   const [article, setArticle] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [payable, setPayable] = useState<number>(0);
+  const [mediaCount, setMediaCount] = useState<number>(0);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   // Step-1 values as typed (not yet saved), so the preview shows them
   const [liveValues, setLiveValues] = useState<any>(null);
@@ -236,7 +238,8 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
                 fetchData,
                 setSaveData,
                 setPayable,
-                setLiveValues
+                setLiveValues,
+                setMediaCount
               )}
             </>
           )}
@@ -304,6 +307,8 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
           <MDButton
             color="primary"
             onClick={isLastStep ? handleResubmit : () => setSaveData(true)}
+            // Media is chosen in the Marketplace; nothing to pay for without it
+            disabled={activeStep === 2 && isDraft && !mediaCount}
             sx={{
               visibility: isLastStep && article?.status !== "AWAITING_APPROVAL" && "collapse",
             }}
@@ -326,10 +331,15 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
             py={2}
             sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.08)" }}
           >
+            <MDButton
+              variant="outlined"
+              color="dark"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => setPreviewOpen(false)}
+            >
+              Go Back
+            </MDButton>
             <MDTypography variant="h6">Preview</MDTypography>
-            <IconButton aria-label="Close preview" onClick={() => setPreviewOpen(false)}>
-              <CloseIcon />
-            </IconButton>
           </MDBox>
           <MDBox sx={{ padding: { xs: "24px 16px", md: "40px 180px" } }}>
             <ReleasePreview article={previewArticle()} />
