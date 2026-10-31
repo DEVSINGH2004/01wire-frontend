@@ -168,7 +168,8 @@ function MDEditor({
         readOnly={disabled}
         editorClassName={noBorder ? "noBorder-editor-main" : "editorClassName"}
         toolbarHidden={disabled}
-        editorStyle={{ minHeight: "352px" }}
+        // Read-only display (preview, share page, report) is as tall as its text
+        editorStyle={{ minHeight: noBorder ? 0 : "352px" }}
         toolbar={config}
         editorState={editorState}
         onEditorStateChange={setEditorState}
