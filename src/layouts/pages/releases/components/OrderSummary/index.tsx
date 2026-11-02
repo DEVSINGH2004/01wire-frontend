@@ -15,14 +15,22 @@ export const creditsText = (n: number) => `${n} ${Number(n) === 1 ? "credit" : "
 const titleCase = (val: string) =>
   val ? val.charAt(0).toUpperCase() + val.slice(1).toLowerCase() : "";
 
-// e.g. "Basic · Yahoo bundle"
+// A package has its own name; an old-style bundle is "Basic · Yahoo bundle"
 export const bundleName = (bundle: any) =>
+  bundle?.name ||
   [
     titleCase(bundle?.type),
     BundleCategoryOptions.find((c) => c.value === bundle?.category)?.label || titleCase(bundle?.category),
   ]
     .filter(Boolean)
     .join(" · ") + " bundle";
+
+// "12 media + 250+ Medias" for a package, "3 publications" for a bundle
+export const bundleDetail = (bundle: any) => {
+  if (!bundle?.name) return `${bundle?.publicationIds?.length || 0} publications`;
+  const n = bundle?.mediaCount ?? bundle?.media?.length ?? 0;
+  return [`${n} named media`, bundle?.coverage].filter(Boolean).join(" + ");
+};
 
 const cell = { py: 1.25, px: 1.5, borderBottom: "1px solid rgba(0, 0, 0, 0.08)" };
 
@@ -31,8 +39,8 @@ function OrderSummary({ bundles = [], publications = [], total }: Props): JSX.El
     ...bundles.map((b: any) => ({
       id: b?.id,
       name: bundleName(b),
-      detail: `${b?.publicationIds?.length || 0} publications`,
-      type: "Bundle",
+      detail: bundleDetail(b),
+      type: b?.name ? "Package" : "Bundle",
       price: b?.price || 0,
     })),
     ...publications.map((p: any) => ({

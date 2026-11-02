@@ -232,8 +232,26 @@ const OrderManagement = () => {
             { label: "User", value: orderDetails?.user?.email },
             {
               label: "Publication / Bundle",
-              value: orderDetails?.publicationInfo?.title || orderDetails?.bundleInfo?.type,
+              value: orderDetails?.publicationInfo?.title ||
+                orderDetails?.bundleInfo?.name ||
+                orderDetails?.bundleInfo?.type,
             },
+            ...(orderDetails?.bundleInfo?.name && !orderDetails?.publicationInfo
+              ? [
+                  {
+                    label: "Package media",
+                    value:
+                      (orderDetails.bundleInfo.media || []).map((m: any) => m.name).join(", ") +
+                      (orderDetails.bundleInfo.coverage ? ` (+ ${orderDetails.bundleInfo.coverage})` : ""),
+                  },
+                  {
+                    label: "Vendor",
+                    value: [orderDetails.bundleInfo.vendor, orderDetails.bundleInfo.vendorPackageName]
+                      .filter(Boolean)
+                      .join(" · ") || "-",
+                  },
+                ]
+              : []),
             {
               label: "Status",
               value:

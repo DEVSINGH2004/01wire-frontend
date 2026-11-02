@@ -67,7 +67,7 @@ export const adminRoutes = [
   },
   {
     type: "collapse",
-    name: "Bundles",
+    name: "Packages",
     icon: <img src={BundleIcon} width="24px" height="24px" />,
     key: "bundles",
     noCollapse: true,

@@ -52,6 +52,15 @@ export const GET_ORDERS = gql`
         bundleInfo {
           id
           type
+          category
+          name
+          tier
+          coverage
+          vendor
+          vendorPackageName
+          media {
+            name
+          }
         }
         publicationInfo {
           id

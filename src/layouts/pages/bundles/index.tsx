@@ -124,7 +124,7 @@ const Bundles = () => {
     <>
       {(deleteLoader || updateLoader) && <MDCircularLoader overlayloader startLoader />}
       <DashboardNavbar
-        text="Add Bundle"
+        text="Add Package"
         onsubmit={
           !openForm &&
           (() => {

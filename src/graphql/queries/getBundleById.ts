@@ -21,6 +21,26 @@ export const GET_BUNDLE_BY_ID = gql`
       category
       traffic
       price
+      visibility
+      name
+      tier
+      packageType
+      media {
+        name
+        image
+      }
+      coverage
+      contentRule
+      backlinks
+      disclaimer
+      language
+      tat
+      vendor
+      vendorPackageName
+      vendorPriceInr
+      markupPercent
+      internalNotes
+      source
       createdAt
       updatedAt
       publicationInfo {

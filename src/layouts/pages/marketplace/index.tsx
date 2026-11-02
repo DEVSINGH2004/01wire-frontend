@@ -19,9 +19,10 @@ import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { IMarketplaceListings, MARKETPLACE_LISTINGS } from "graphql/queries/marketplaceListings";
+import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import { getImageUrl } from "utils/apiConfig";
 import { getCart, saveCart } from "utils/mediaCart";
-import { bundleName, creditsText } from "layouts/pages/releases/components/OrderSummary";
+import { bundleDetail, bundleName, creditsText } from "layouts/pages/releases/components/OrderSummary";
 import CreateEstimation from "layouts/pages/pr-estimation/components/CreateEstimateModal";
 import BundlesTab from "./BundlesTab";
 import FilterBar from "./filters/FilterBar";
@@ -45,7 +46,7 @@ import { hostOf, toCartItem, toSites } from "./listings";
 // Marketplace: every published offering, one row per website. Filters live in the URL
 // (shareable /marketplace?… links, see filters/model.ts). Picked offerings go into the media
 // cart (utils/mediaCart) and on to a PR through "Continue to Add PR", like before.
-// A second tab (/marketplace?tab=bundles) lists bundles; they go into the same cart.
+// A second tab (/marketplace?tab=bundles) lists PR packages; they go into the same cart.
 
 const PER_PAGE = 25;
 const MUTED = "#7B809A";
@@ -135,6 +136,22 @@ function Marketplace(): JSX.Element {
   const [bundles, setBundles] = useState<any[]>(initialCart?.bundles || []);
   const [picked, setPicked] = useState<any[]>(initialCart?.publications || []);
   useEffect(() => saveCart(bundles, picked), [bundles, picked]);
+
+  // Packages: loaded here so a cart entry for a package that is gone (deleted or
+  // hidden) is dropped before it can reach a PR
+  const pkgQuery = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
+    variables: { paginationInput: { currentPage: 0, perPage: 200 } },
+    fetchPolicy: "cache-and-network",
+  });
+  const packages = useMemo(
+    () => (pkgQuery.data?.filterBundlesPaginated?.data || []).filter((b: any) => b?.visibility === "PUBLISHED"),
+    [pkgQuery.data]
+  );
+  useEffect(() => {
+    if (!pkgQuery.data || pkgQuery.loading) return;
+    const live = new Set(packages.map((b: any) => b.id));
+    setBundles((prev) => (prev.some((b) => !live.has(b?.id)) ? prev.filter((b) => live.has(b?.id)) : prev));
+  }, [pkgQuery.data, pkgQuery.loading, packages]);
   const pickedIds = useMemo(() => new Set(picked.map((p) => p?.id)), [picked]);
   const toggle = (site: Site, v: Variant) =>
     setPicked((prev) => (prev.some((p) => p?.id === v.id) ? prev.filter((p) => p?.id !== v.id) : [...prev, toCartItem(site, v)]));
@@ -397,9 +414,21 @@ function Marketplace(): JSX.Element {
           sx={{ mb: 2, maxWidth: 420, background: "#fff", borderRadius: "10px", p: 0.5, boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
         >
           <Tab value="publications" label={`Publications${data ? ` · ${sites.length}` : ""}`} data-testid="tab-publications" />
-          <Tab value="bundles" label="Bundles" data-testid="tab-bundles" />
+          <Tab value="bundles" label={`Packages${pkgQuery.data ? ` · ${packages.length}` : ""}`} data-testid="tab-bundles" />
         </Tabs>
-        {tab === "bundles" ? <BundlesTab isPhone={isPhone} bundles={bundles} setBundles={setBundles} /> : body()}
+        {tab === "bundles" ? (
+          <BundlesTab
+            isPhone={isPhone}
+            all={packages}
+            loading={pkgQuery.loading}
+            error={!!pkgQuery.error}
+            refetch={() => pkgQuery.refetch()}
+            bundles={bundles}
+            setBundles={setBundles}
+          />
+        ) : (
+          body()
+        )}
       </MDBox>
 
       {/* selection bar */}
@@ -608,7 +637,7 @@ function SelectionDialog({
   onClose: () => void;
 }): JSX.Element {
   const lines = [
-    ...bundles.map((b) => ({ key: `b-${b?.id}`, name: bundleName(b), detail: `${b?.publicationIds?.length || 0} publications`, price: Number(b?.price) || 0, remove: () => onRemoveBundle(b?.id) })),
+    ...bundles.map((b) => ({ key: `b-${b?.id}`, name: bundleName(b), detail: bundleDetail(b), price: Number(b?.price) || 0, remove: () => onRemoveBundle(b?.id) })),
     ...publications.map((p) => ({ key: `p-${p?.id}`, name: p?.title, detail: p?.domain || p?.url, price: Number(p?.price ?? p?.credits) || 0, remove: () => onRemove(p?.id) })),
   ];
   return (

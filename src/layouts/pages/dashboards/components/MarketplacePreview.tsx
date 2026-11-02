@@ -15,6 +15,7 @@ import { IMarketplaceListings, MARKETPLACE_LISTINGS } from "graphql/queries/mark
 import { toSites } from "layouts/pages/marketplace/listings";
 import { getImageUrl } from "utils/apiConfig";
 import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
+import { bundleDetail } from "layouts/pages/releases/components/OrderSummary";
 import { BundleCategoryOptions, BundleTypeOptions } from "constants/index";
 
 const PREVIEW_SIZE = 3;
@@ -197,11 +198,8 @@ function MarketplacePreview(): JSX.Element {
   const bundles: PreviewItem[] = (bData?.filterBundlesPaginated?.data || []).map((b: any) => ({
     id: b?.id,
     image: b?.image,
-    title: `${labelOf(BundleTypeOptions, b?.type)} · ${labelOf(
-      BundleCategoryOptions,
-      b?.category
-    )}`,
-    meta: `${b?.publicationIds?.length || 0} publications`,
+    title: b?.name || `${labelOf(BundleTypeOptions, b?.type)} · ${labelOf(BundleCategoryOptions, b?.category)}`,
+    meta: [b?.tier, bundleDetail(b)].filter(Boolean).join(" · "),
     price: b?.price,
   }));
 
@@ -227,8 +225,8 @@ function MarketplacePreview(): JSX.Element {
         </Grid>
         <Grid item xs={12} md={6}>
           <CategoryPreview
-            title="Bundles"
-            subtitle="Ready-made publication bundles"
+            title="Packages"
+            subtitle="Ready-made PR packages"
             Icon={Inventory2OutlinedIcon}
             items={bundles}
             total={bData?.filterBundlesPaginated?.paginationInfo?.itemCount}

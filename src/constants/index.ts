@@ -295,6 +295,8 @@ export const BundleCategoryOptions = [
   { label: "Web3", value: "WEB3" },
   { label: "Yahoo", value: "YAHOO" },
 ];
+// Package tiers, cheapest first (used for the Marketplace filter and admin form)
+export const PackageTierOptions = ["Starter", "Standard", "Good", "Very Good", "Premium", "Elite"];
 export const BundleTypeOptions = [
   { label: "Basic", value: "BASIC" },
   { label: "Standard", value: "STANDARD" },

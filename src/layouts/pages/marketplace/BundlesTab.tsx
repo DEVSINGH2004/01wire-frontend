@@ -1,101 +1,135 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@apollo/client";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
 import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
-import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import { getImageUrl } from "utils/apiConfig";
-import { BundleCategoryOptions } from "constants/index";
-import { bundleName, creditsText } from "layouts/pages/releases/components/OrderSummary";
+import { PackageTierOptions } from "constants/index";
+import { bundleDetail, bundleName, creditsText } from "layouts/pages/releases/components/OrderSummary";
 
-// Bundles tab of the Marketplace: ready-made sets of publications at one price.
-// "Add" puts the bundle in the same media cart as single publications.
+// Packages tab of the Marketplace: ready-made PR packages at one price.
+// "Add" puts a package in the same media cart as single publications.
 
 const MUTED = "#7B809A";
 const INK = "#344767";
 const GREEN = "#2E7D32";
-const dash = (v: any) => (v === null || v === undefined || v === "" || v === 0 ? "-" : v);
-const hostOf = (url: string) => {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url || "";
-  }
-};
-const linkText = (t: string) => (t === "DO_FOLLOW" ? "Do-follow" : t === "NO_FOLLOW" ? "No-follow" : "-");
-const worthOf = (b: any) => (b?.publicationInfo || []).reduce((acc: number, p: any) => acc + (Number(p?.price) || 0), 0);
-// Strip the "Sample bundle · …:" lead-in and the site list (shown separately) from the description
-const blurb = (b: any) => {
-  const d: string = b?.description || "";
-  const m = d.match(/^(?:Sample bundle · )?([^:]+):.*?\)\.\s*(.*)$/);
-  return m ? `${m[1]}. ${m[2]}` : d;
+const PREVIEW = 8;
+const TIER_COLOURS: Record<string, string> = {
+  Starter: "#607D8B",
+  Standard: "#1A73E8",
+  Good: "#00897B",
+  "Very Good": "#43A047",
+  Premium: "#8E24AA",
+  Elite: "#C77700",
 };
 
-function Logo({ p, size = 28 }: { p: any; size?: number }): JSX.Element {
-  const src = getImageUrl(p?.image);
+// Named media of a package, or the publications of an old-style bundle
+export const mediaOf = (b: any): { name: string; image?: string }[] =>
+  b?.media?.length ? b.media : (b?.publicationInfo || []).map((p: any) => ({ name: p.title, image: p.image }));
+
+// What the cart keeps for a package (OrderSummary / PR form read these fields)
+const toCartBundle = (b: any) => ({
+  id: b.id,
+  name: b.name,
+  tier: b.tier,
+  type: b.type,
+  category: b.category,
+  price: b.price,
+  publicationIds: b.publicationIds,
+  mediaCount: mediaOf(b).length,
+  coverage: b.coverage,
+});
+
+function Logo({ m, size = 28 }: { m: { name: string; image?: string }; size?: number }): JSX.Element | null {
+  const src = getImageUrl(m.image);
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [src]);
-  const box = { width: size, height: size, minWidth: size, borderRadius: "8px", border: "2px solid #fff", boxSizing: "border-box" as const };
-  if (src && !failed) {
-    return (
-      <MDBox component="img" src={src} alt={`${p?.title} logo`} loading="lazy" onError={() => setFailed(true)} sx={{ ...box, objectFit: "contain", background: "#fff", boxShadow: "0 0 0 1px rgba(0,0,0,0.1)" }} />
-    );
-  }
+  if (!src || failed) return null;
   return (
-    <MDBox display="flex" alignItems="center" justifyContent="center" sx={{ ...box, background: "#E9ECEF", color: INK, fontWeight: 700, fontSize: size * 0.4 }}>
-      {(p?.title || "?").replace(/^https?:\/\//, "")[0]?.toUpperCase()}
-    </MDBox>
+    <MDBox
+      component="img"
+      src={src}
+      alt={`${m.name} logo`}
+      title={m.name}
+      loading="lazy"
+      onError={() => setFailed(true)}
+      sx={{ width: size, height: size, minWidth: size, borderRadius: "8px", objectFit: "contain", background: "#fff", border: "2px solid #fff", boxShadow: "0 0 0 1px rgba(0,0,0,0.1)", boxSizing: "border-box" }}
+    />
   );
 }
 
-// What the cart keeps for a bundle (OrderSummary / PR form read these fields)
-const toCartBundle = (b: any) => ({ id: b.id, type: b.type, category: b.category, price: b.price, publicationIds: b.publicationIds });
+const TierChip = ({ tier }: { tier?: string }) =>
+  tier ? (
+    <Chip size="small" label={tier} sx={{ background: TIER_COLOURS[tier] || "#607D8B", color: "#fff", fontWeight: 600, height: 22 }} />
+  ) : null;
+
+const fact = (label: string, value?: string) =>
+  value ? (
+    <MDBox>
+      <MDTypography fontSize="11px" sx={{ color: MUTED, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+        {label}
+      </MDTypography>
+      <MDTypography fontSize="13px" sx={{ color: INK }}>
+        {value}
+      </MDTypography>
+    </MDBox>
+  ) : null;
 
 interface Props {
   isPhone: boolean;
+  all: any[];
+  loading: boolean;
+  error: boolean;
+  refetch: () => void;
   bundles: any[];
   setBundles: (fn: (prev: any[]) => any[]) => void;
 }
 
-function BundlesTab({ isPhone, bundles, setBundles }: Props): JSX.Element {
-  const { data, loading, error, refetch } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
-    variables: { paginationInput: { currentPage: 0, perPage: 100 } },
-    fetchPolicy: "cache-and-network",
-  });
-  const [category, setCategory] = useState<string>("ALL");
+function BundlesTab({ isPhone, all, loading, error, refetch, bundles, setBundles }: Props): JSX.Element {
+  const [tier, setTier] = useState<string>("ALL");
+  const [type, setType] = useState<string>("ALL");
+  const [q, setQ] = useState<string>("");
+  const [sort, setSort] = useState<string>("priceAsc");
   const [details, setDetails] = useState<any>(null);
-  const all = useMemo(
-    () =>
-      (data?.filterBundlesPaginated?.data || [])
-        .filter((b: any) => b?.visibility === "PUBLISHED")
-        .sort((a: any, b: any) => a.category.localeCompare(b.category) || a.price - b.price),
-    [data]
-  );
-  const list = category === "ALL" ? all : all.filter((b: any) => b.category === category);
+
+  const tiers = PackageTierOptions.filter((t) => all.some((b) => b.tier === t));
+  const types = useMemo(() => [...new Set(all.map((b) => b.packageType).filter(Boolean))].sort(), [all]);
+  const list = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    const rows = all.filter(
+      (b) =>
+        (tier === "ALL" || b.tier === tier) &&
+        (type === "ALL" || b.packageType === type) &&
+        (!needle || `${bundleName(b)} ${mediaOf(b).map((m) => m.name).join(" ")}`.toLowerCase().includes(needle))
+    );
+    return rows.sort((a, b) => (sort === "priceDesc" ? b.price - a.price : a.price - b.price));
+  }, [all, tier, type, q, sort]);
   const addedIds = useMemo(() => new Set(bundles.map((b) => b?.id)), [bundles]);
   const toggle = (b: any) =>
     setBundles((prev) => (prev.some((x) => x?.id === b.id) ? prev.filter((x) => x?.id !== b.id) : [...prev, toCartBundle(b)]));
 
-  if (loading && !data) {
+  if (loading && !all.length) {
     return (
       <Card sx={{ p: 3 }}>
         <MDTypography fontSize="15px" sx={{ color: MUTED }}>
-          Loading bundles…
+          Loading packages…
         </MDTypography>
       </Card>
     );
   }
-  if (error && !data) {
+  if (error && !all.length) {
     return (
       <Card sx={{ p: 3 }}>
         <MDTypography fontSize="15px" sx={{ color: INK }}>
-          Could not load bundles. Check your connection and try again.
+          Could not load packages. Check your connection and try again.
         </MDTypography>
         <MDButton color="primary" size="small" sx={{ mt: 1.5 }} onClick={() => refetch()}>
           Try again
@@ -104,74 +138,96 @@ function BundlesTab({ isPhone, bundles, setBundles }: Props): JSX.Element {
     );
   }
 
-  const categories = BundleCategoryOptions.filter((c) => all.some((b: any) => b.category === c.value));
-
   return (
     <>
-      <MDBox display="flex" alignItems="center" gap={1} mb={2} flexWrap="wrap">
-        {[{ label: "All", value: "ALL" }, ...categories].map((c) => (
-          <Chip
-            key={c.value}
-            label={c.label}
-            color={category === c.value ? "primary" : "default"}
-            variant={category === c.value ? "filled" : "outlined"}
-            onClick={() => setCategory(c.value)}
+      <Card sx={{ p: 2, mb: 2 }}>
+        <MDBox display="flex" gap={1.5} flexWrap="wrap" alignItems="center">
+          <TextField
+            size="small"
+            placeholder="Search package or media…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            sx={{ flex: isPhone ? "1 1 100%" : "1 1 260px", "& .MuiInputBase-root": { height: 40 } }}
+            InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment>) }}
+            inputProps={{ "aria-label": "Search packages" }}
           />
-        ))}
-        <MDTypography fontSize="14px" sx={{ color: MUTED, ml: 1 }}>
-          {list.length} {list.length === 1 ? "bundle" : "bundles"}
-        </MDTypography>
-      </MDBox>
+          <TextField select size="small" label="Package type" value={type} onChange={(e) => setType(e.target.value)} SelectProps={{ MenuProps: { disableScrollLock: true } }} sx={{ minWidth: 220, flex: isPhone ? "1 1 100%" : "0 0 auto", "& .MuiInputBase-root": { height: 40 } }}>
+            <MenuItem value="ALL">All types</MenuItem>
+            {types.map((t) => (
+              <MenuItem key={t} value={t}>
+                {t}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField select size="small" label="Sort by" value={sort} onChange={(e) => setSort(e.target.value)} SelectProps={{ MenuProps: { disableScrollLock: true } }} sx={{ minWidth: 170, flex: isPhone ? "1 1 100%" : "0 0 auto", "& .MuiInputBase-root": { height: 40 } }}>
+            <MenuItem value="priceAsc">Price: low to high</MenuItem>
+            <MenuItem value="priceDesc">Price: high to low</MenuItem>
+          </TextField>
+        </MDBox>
+        <MDBox display="flex" alignItems="center" gap={1} mt={1.5} flexWrap="wrap">
+          {["ALL", ...tiers].map((t) => (
+            <Chip
+              key={t}
+              label={t === "ALL" ? "All tiers" : t}
+              color={tier === t ? "primary" : "default"}
+              variant={tier === t ? "filled" : "outlined"}
+              onClick={() => setTier(t)}
+            />
+          ))}
+          <MDTypography fontSize="14px" sx={{ color: MUTED, ml: 1 }} data-testid="package-count">
+            {list.length} {list.length === 1 ? "package" : "packages"}
+          </MDTypography>
+        </MDBox>
+      </Card>
       {!list.length && (
         <Card sx={{ p: 3 }}>
           <MDTypography fontSize="15px" sx={{ color: MUTED }}>
-            No bundles are available right now.
+            {all.length ? "No packages match these filters." : "No packages are available right now."}
           </MDTypography>
         </Card>
       )}
-      <MDBox display="grid" gridTemplateColumns={isPhone ? "1fr" : "repeat(auto-fill, minmax(340px, 1fr))"} gap={2}>
+      <MDBox display="grid" gridTemplateColumns={isPhone ? "1fr" : "repeat(auto-fill, minmax(330px, 1fr))"} gap={2}>
         {list.map((b: any) => {
           const on = addedIds.has(b.id);
-          const worth = worthOf(b);
-          const save = worth > b.price ? worth - b.price : 0;
-          const pubs = b.publicationInfo || [];
+          const media = mediaOf(b);
+          const logos = media.filter((m) => m.image).slice(0, 7);
           return (
             <Card key={b.id} data-testid="bundle-card" sx={{ p: 2.5, display: "flex", flexDirection: "column", border: on ? `2px solid ${GREEN}` : "2px solid transparent" }}>
               <MDBox display="flex" justifyContent="space-between" alignItems="flex-start" gap={1}>
-                <MDTypography fontSize="17px" fontWeight="bold" sx={{ color: INK }}>
+                <MDTypography fontSize="17px" fontWeight="bold" sx={{ color: INK, lineHeight: 1.3 }}>
                   {bundleName(b)}
                 </MDTypography>
-                {save > 0 && (
-                  <Chip size="small" label={`Save ${Math.round((save / worth) * 100)}%`} sx={{ background: "#E8F5E9", color: GREEN, fontWeight: 600 }} />
-                )}
+                <TierChip tier={b.tier} />
               </MDBox>
-              <MDTypography fontSize="13px" sx={{ color: MUTED, mt: 0.5 }}>
-                {pubs.length} publications
-              </MDTypography>
-              <MDBox display="flex" mt={1.5} sx={{ "& > *:not(:first-of-type)": { ml: "-6px" } }}>
-                {pubs.slice(0, 6).map((p: any) => (
-                  <Logo key={p.id} p={p} />
-                ))}
-              </MDBox>
-              <MDTypography fontSize="13px" sx={{ color: INK, mt: 1.25, lineHeight: 1.45 }}>
-                {pubs.map((p: any) => p.title).join(", ")}
-              </MDTypography>
-              {b.description && (
-                <MDTypography fontSize="12px" sx={{ color: MUTED, mt: 0.75, lineHeight: 1.4 }}>
-                  {blurb(b)}
+              {b.packageType && (
+                <MDTypography fontSize="13px" sx={{ color: MUTED, mt: 0.5 }}>
+                  {b.packageType}
                 </MDTypography>
               )}
-              <MDBox flexGrow={1} />
-              <MDBox display="flex" alignItems="baseline" gap={1} mt={2}>
-                <MDTypography fontSize="20px" fontWeight="bold" color="primary">
-                  {creditsText(b.price)}
-                </MDTypography>
-                {save > 0 && (
-                  <MDTypography fontSize="14px" sx={{ color: MUTED, textDecoration: "line-through" }}>
-                    {creditsText(worth)}
+              {logos.length > 0 && (
+                <MDBox display="flex" mt={1.5} sx={{ "& > *:not(:first-of-type)": { ml: "-6px" } }}>
+                  {logos.map((m) => (
+                    <Logo key={m.name} m={m} />
+                  ))}
+                </MDBox>
+              )}
+              <MDTypography fontSize="13px" sx={{ color: INK, mt: 1.25, lineHeight: 1.45 }}>
+                {media.slice(0, PREVIEW).map((m) => m.name).join(", ")}
+                {media.length > PREVIEW && (
+                  <MDTypography component="span" fontSize="13px" sx={{ color: MUTED }}>
+                    {` + ${media.length - PREVIEW} more`}
                   </MDTypography>
                 )}
-              </MDBox>
+              </MDTypography>
+              <MDTypography fontSize="12px" sx={{ color: MUTED, mt: 0.75 }}>
+                {bundleDetail(b)}
+                {b.language ? ` · ${b.language}` : ""}
+                {b.tat ? ` · TAT ${b.tat}` : ""}
+              </MDTypography>
+              <MDBox flexGrow={1} />
+              <MDTypography fontSize="20px" fontWeight="bold" color="primary" mt={2}>
+                {creditsText(b.price)}
+              </MDTypography>
               <MDTypography fontSize="11px" sx={{ color: MUTED }}>
                 incl. GST
               </MDTypography>
@@ -196,89 +252,73 @@ function BundlesTab({ isPhone, bundles, setBundles }: Props): JSX.Element {
         })}
       </MDBox>
       {details && (
-        <BundleDetails bundle={details} isPhone={isPhone} added={addedIds.has(details.id)} onToggle={() => toggle(details)} onClose={() => setDetails(null)} />
+        <PackageDetails bundle={details} isPhone={isPhone} added={addedIds.has(details.id)} onToggle={() => toggle(details)} onClose={() => setDetails(null)} />
       )}
     </>
   );
 }
 
-function BundleDetails({ bundle: b, isPhone, added, onToggle, onClose }: { bundle: any; isPhone: boolean; added: boolean; onToggle: () => void; onClose: () => void }): JSX.Element {
-  const pubs = b.publicationInfo || [];
-  const worth = worthOf(b);
-  const cols = isPhone ? "1fr auto" : "minmax(0, 2fr) 80px 90px 90px";
+function PackageDetails({ bundle: b, isPhone, added, onToggle, onClose }: { bundle: any; isPhone: boolean; added: boolean; onToggle: () => void; onClose: () => void }): JSX.Element {
+  const media = mediaOf(b);
   return (
     <Dialog open onClose={onClose} maxWidth="md" fullWidth fullScreen={isPhone}>
       <MDBox p={3} data-testid="bundle-details">
         <MDBox display="flex" justifyContent="space-between" alignItems="flex-start" gap={2}>
           <MDBox>
-            <MDTypography variant="h5" sx={{ color: INK }}>
-              {bundleName(b)}
-            </MDTypography>
-            <MDTypography fontSize="14px" sx={{ color: MUTED }}>
-              {pubs.length} publications · worth {creditsText(worth)} if bought separately
-            </MDTypography>
+            <MDBox display="flex" alignItems="center" gap={1} flexWrap="wrap">
+              <MDTypography variant="h5" sx={{ color: INK }}>
+                {bundleName(b)}
+              </MDTypography>
+              <TierChip tier={b.tier} />
+            </MDBox>
+            {b.packageType && (
+              <MDTypography fontSize="14px" sx={{ color: MUTED }}>
+                {b.packageType}
+              </MDTypography>
+            )}
           </MDBox>
-          <IconButton aria-label="Close bundle details" onClick={onClose}>
+          <IconButton aria-label="Close package details" onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </MDBox>
         {b.description && (
           <MDTypography fontSize="14px" sx={{ color: INK, mt: 1.5 }}>
-            {blurb(b)}
+            {b.description}
           </MDTypography>
         )}
-        <MDBox mt={2} sx={{ border: "1px solid rgba(0,0,0,0.08)", borderRadius: "8px", overflow: "hidden" }}>
-          {!isPhone && (
-            <MDBox display="grid" gridTemplateColumns={cols} gap={1.5} px={2} py={1} sx={{ background: "#F8F9FA" }}>
-              {["Publication", "DA / DR", "Link", "Price"].map((h) => (
-                <MDTypography key={h} fontSize="12px" fontWeight="medium" sx={{ color: MUTED, textTransform: "uppercase" }}>
-                  {h}
-                </MDTypography>
-              ))}
-            </MDBox>
-          )}
-          {pubs.map((p: any) => (
-            <MDBox key={p.id} display="grid" gridTemplateColumns={cols} gap={1.5} px={2} py={1.25} alignItems="center" sx={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}>
-              <MDBox display="flex" alignItems="center" gap={1.25} minWidth={0}>
-                <Logo p={p} size={32} />
-                <MDBox minWidth={0}>
-                  <MDTypography fontSize="14px" fontWeight="medium" sx={{ color: INK, wordBreak: "break-word" }}>
-                    {p.title}
-                  </MDTypography>
-                  {p.url && (
-                    <Link href={p.url} target="_blank" rel="noopener noreferrer" fontSize="12px" sx={{ color: MUTED }}>
-                      {hostOf(p.url)}
-                    </Link>
-                  )}
-                </MDBox>
-              </MDBox>
-              {!isPhone && (
-                <>
-                  <MDTypography fontSize="14px" sx={{ color: INK }}>
-                    {dash(p?.stats?.da)} / {dash(p?.stats?.dr)}
-                  </MDTypography>
-                  <MDTypography fontSize="14px" sx={{ color: INK }}>
-                    {linkText(p.linkType)}
-                  </MDTypography>
-                </>
-              )}
-              <MDTypography fontSize="14px" sx={{ color: MUTED }}>
-                {creditsText(p.price)}
+        <MDBox display="grid" gridTemplateColumns={isPhone ? "1fr 1fr" : "repeat(3, 1fr)"} gap={2} mt={2}>
+          {fact("Named media", String(media.length))}
+          {fact("Extra coverage", b.coverage)}
+          {fact("Language", b.language)}
+          {fact("Content", b.contentRule)}
+          {fact("Backlinks", b.backlinks)}
+          {fact("Disclaimer", b.disclaimer)}
+          {fact("Turnaround", b.tat)}
+        </MDBox>
+        <MDTypography variant="h6" sx={{ color: INK, mt: 3, mb: 1 }}>
+          Media included
+        </MDTypography>
+        <MDBox display="flex" flexWrap="wrap" gap={1}>
+          {media.map((m, i) => (
+            <MDBox key={`${m.name}-${i}`} display="flex" alignItems="center" gap={0.75} px={1.25} py={0.5} sx={{ border: "1px solid rgba(0,0,0,0.12)", borderRadius: "16px" }}>
+              <Logo m={m} size={20} />
+              <MDTypography fontSize="13px" sx={{ color: INK }}>
+                {m.name}
               </MDTypography>
             </MDBox>
           ))}
         </MDBox>
-        <MDBox display="flex" justifyContent="space-between" alignItems="center" gap={2} mt={2} flexWrap="wrap">
+        <MDBox display="flex" justifyContent="space-between" alignItems="center" gap={2} mt={3} flexWrap="wrap">
           <MDBox>
             <MDTypography fontSize="18px" fontWeight="bold" color="primary">
               {creditsText(b.price)}
             </MDTypography>
             <MDTypography fontSize="12px" sx={{ color: MUTED }}>
-              Bundle price, incl. 18% GST
+              Package price, incl. 18% GST
             </MDTypography>
           </MDBox>
           <MDButton color={added ? "success" : "primary"} variant={added ? "outlined" : "contained"} onClick={onToggle} aria-pressed={added}>
-            {added ? "Added ✓" : "Add bundle"}
+            {added ? "Added ✓" : "Add package"}
           </MDButton>
         </MDBox>
       </MDBox>

@@ -89,9 +89,18 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
       accessor: "publicationInfo.title",
       width: "20%",
       Cell: ({ value, row }) => {
+        // Package orders have no publication: show the package instead
+        const pkg = !value && row?.original?.bundleInfo;
         return (
           <MDBox>
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+              {value || (pkg ? pkg.name || `${pkg.type || ""} ${pkg.category || ""} bundle` : "-")}
+            </MDTypography>
+            {pkg && (
+              <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }}>
+                Package{pkg.tier ? ` · ${pkg.tier}` : ""}
+              </MDTypography>
+            )}
           </MDBox>
         );
       },

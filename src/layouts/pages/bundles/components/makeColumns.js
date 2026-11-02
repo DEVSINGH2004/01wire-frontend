@@ -15,51 +15,44 @@ import MenuItem from "@mui/material/MenuItem";
 export const makeColumns = (handleAction, handleUpdateStatus) => {
   const columns = [
     {
-      Header: "Category",
-      accessor: "category",
-      width: "25%",
-      Cell: ({ value }) => (
+      Header: "Package",
+      accessor: "name",
+      width: "30%",
+      Cell: ({ value, row }) => {
+        const b = row.original;
+        const title = value || `${b.type || ""} · ${b.category || ""} bundle`;
+        return (
+          <MDBox>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>{truncateString(title, 45)}</MDTypography>
+            <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }}>
+              {[b.tier, b.packageType].filter(Boolean).join(" · ") || "Publication bundle"}
+            </MDTypography>
+          </MDBox>
+        );
+      },
+    },
+    {
+      Header: "Media",
+      accessor: "media",
+      width: "10%",
+      Cell: ({ value, row }) => (
+        <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
+          {value?.length || row.original.publicationInfo?.length || 0}
+        </MDTypography>
+      ),
+    },
+    {
+      Header: "Vendor",
+      accessor: "vendor",
+      width: "18%",
+      Cell: ({ value, row }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {truncateString(value, 25)}
+          <MDTypography sx={{ fontSize: "13px" }}>{value || "-"}</MDTypography>
+          <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }}>
+            {[row.original.vendorPackageName, row.original.vendorPriceInr ? `₹${Number(row.original.vendorPriceInr).toLocaleString("en-IN")}` : null]
+              .filter(Boolean)
+              .join(" · ")}
           </MDTypography>
-        </MDBox>
-      ),
-    },
-    {
-      Header: "Type",
-      accessor: "type",
-      width: "25%",
-      Cell: ({ value }) => (
-        <Chip
-          label={value}
-          sx={{
-            color: "#000",
-            minWidth: "140px",
-            backgroundColor: "#EBEBEB",
-          }}
-        />
-      ),
-    },
-    {
-      Header: "Traffic",
-      accessor: "traffic",
-      width: "25%",
-      Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
-            {value ? value : "-"}
-          </MDTypography>
-        </MDBox>
-      ),
-    },
-    {
-      Header: "Publications",
-      accessor: "publicationInfo",
-      width: "15%",
-      Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>{value?.length}</MDTypography>
         </MDBox>
       ),
     },

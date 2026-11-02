@@ -24,6 +24,25 @@ export const GET_BUNDLES = gql`
         price
         image
         visibility
+        name
+        tier
+        packageType
+        media {
+          name
+          image
+        }
+        coverage
+        contentRule
+        backlinks
+        disclaimer
+        language
+        tat
+        vendor
+        vendorPackageName
+        vendorPriceInr
+        markupPercent
+        internalNotes
+        source
         createdAt
         updatedAt
         publicationInfo {
