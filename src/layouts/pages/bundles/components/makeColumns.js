@@ -23,7 +23,10 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
         const title = value || `${b.type || ""} · ${b.category || ""} bundle`;
         return (
           <MDBox>
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>{truncateString(title, 45)}</MDTypography>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
+              {b.featured ? `★ ${b.featuredRank && b.featuredRank < 999 ? `#${b.featuredRank} ` : ""}` : ""}
+              {truncateString(title, 45)}
+            </MDTypography>
             <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }}>
               {[b.tier, b.packageType].filter(Boolean).join(" · ") || "Publication bundle"}
             </MDTypography>

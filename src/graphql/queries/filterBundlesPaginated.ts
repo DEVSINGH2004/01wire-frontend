@@ -37,6 +37,8 @@ export const GET_BUNDLES = gql`
         disclaimer
         language
         tat
+        featured
+        featuredRank
         vendor
         vendorPackageName
         vendorPriceInr

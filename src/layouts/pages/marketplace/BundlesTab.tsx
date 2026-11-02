@@ -22,6 +22,12 @@ const MUTED = "#7B809A";
 const INK = "#344767";
 const GREEN = "#2E7D32";
 const PREVIEW = 8;
+const POPULAR = "#E65100";
+// Popular (featured) packages first in their rank order, then cheapest first
+const byPopular = (a: any, b: any) =>
+  Number(!!b.featured) - Number(!!a.featured) ||
+  (a.featuredRank ?? 999) - (b.featuredRank ?? 999) ||
+  a.price - b.price;
 const TIER_COLOURS: Record<string, string> = {
   Starter: "#607D8B",
   Standard: "#1A73E8",
@@ -66,6 +72,10 @@ function Logo({ m, size = 28 }: { m: { name: string; image?: string }; size?: nu
   );
 }
 
+export const PopularBadge = () => (
+  <Chip size="small" label="★ Popular" data-testid="popular-badge" sx={{ background: POPULAR, color: "#fff", fontWeight: 700, height: 22 }} />
+);
+
 const TierChip = ({ tier }: { tier?: string }) =>
   tier ? (
     <Chip size="small" label={tier} sx={{ background: TIER_COLOURS[tier] || "#607D8B", color: "#fff", fontWeight: 600, height: 22 }} />
@@ -97,19 +107,21 @@ function BundlesTab({ isPhone, all, loading, error, refetch, bundles, setBundles
   const [tier, setTier] = useState<string>("ALL");
   const [type, setType] = useState<string>("ALL");
   const [q, setQ] = useState<string>("");
-  const [sort, setSort] = useState<string>("priceAsc");
+  const [sort, setSort] = useState<string>("popular");
   const [details, setDetails] = useState<any>(null);
 
   const tiers = PackageTierOptions.filter((t) => all.some((b) => b.tier === t));
+  const hasPopular = all.some((b) => b.featured);
   const types = useMemo(() => [...new Set(all.map((b) => b.packageType).filter(Boolean))].sort(), [all]);
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const rows = all.filter(
       (b) =>
-        (tier === "ALL" || b.tier === tier) &&
+        (tier === "ALL" || (tier === "POPULAR" ? b.featured : b.tier === tier)) &&
         (type === "ALL" || b.packageType === type) &&
         (!needle || `${bundleName(b)} ${mediaOf(b).map((m) => m.name).join(" ")}`.toLowerCase().includes(needle))
     );
+    if (sort === "popular") return rows.sort(byPopular);
     return rows.sort((a, b) => (sort === "priceDesc" ? b.price - a.price : a.price - b.price));
   }, [all, tier, type, q, sort]);
   const addedIds = useMemo(() => new Set(bundles.map((b) => b?.id)), [bundles]);
@@ -160,15 +172,16 @@ function BundlesTab({ isPhone, all, loading, error, refetch, bundles, setBundles
             ))}
           </TextField>
           <TextField select size="small" label="Sort by" value={sort} onChange={(e) => setSort(e.target.value)} SelectProps={{ MenuProps: { disableScrollLock: true } }} sx={{ minWidth: 170, flex: isPhone ? "1 1 100%" : "0 0 auto", "& .MuiInputBase-root": { height: 40 } }}>
+            <MenuItem value="popular">Most popular</MenuItem>
             <MenuItem value="priceAsc">Price: low to high</MenuItem>
             <MenuItem value="priceDesc">Price: high to low</MenuItem>
           </TextField>
         </MDBox>
         <MDBox display="flex" alignItems="center" gap={1} mt={1.5} flexWrap="wrap">
-          {["ALL", ...tiers].map((t) => (
+          {["ALL", ...(hasPopular ? ["POPULAR"] : []), ...tiers].map((t) => (
             <Chip
               key={t}
-              label={t === "ALL" ? "All tiers" : t}
+              label={t === "ALL" ? "All tiers" : t === "POPULAR" ? "★ Popular" : t}
               color={tier === t ? "primary" : "default"}
               variant={tier === t ? "filled" : "outlined"}
               onClick={() => setTier(t)}
@@ -192,12 +205,26 @@ function BundlesTab({ isPhone, all, loading, error, refetch, bundles, setBundles
           const media = mediaOf(b);
           const logos = media.filter((m) => m.image).slice(0, 7);
           return (
-            <Card key={b.id} data-testid="bundle-card" sx={{ p: 2.5, display: "flex", flexDirection: "column", border: on ? `2px solid ${GREEN}` : "2px solid transparent" }}>
+            <Card
+              key={b.id}
+              data-testid="bundle-card"
+              data-popular={b.featured ? "true" : undefined}
+              sx={{
+                p: 2.5,
+                display: "flex",
+                flexDirection: "column",
+                border: on ? `2px solid ${GREEN}` : b.featured ? `2px solid ${POPULAR}` : "2px solid transparent",
+                background: b.featured && !on ? "#FFF8F1" : undefined,
+              }}
+            >
               <MDBox display="flex" justifyContent="space-between" alignItems="flex-start" gap={1}>
                 <MDTypography fontSize="17px" fontWeight="bold" sx={{ color: INK, lineHeight: 1.3 }}>
                   {bundleName(b)}
                 </MDTypography>
-                <TierChip tier={b.tier} />
+                <MDBox display="flex" gap={0.5} flexWrap="wrap" justifyContent="flex-end">
+                  {b.featured && <PopularBadge />}
+                  <TierChip tier={b.tier} />
+                </MDBox>
               </MDBox>
               {b.packageType && (
                 <MDTypography fontSize="13px" sx={{ color: MUTED, mt: 0.5 }}>
@@ -269,6 +296,7 @@ function PackageDetails({ bundle: b, isPhone, added, onToggle, onClose }: { bund
               <MDTypography variant="h5" sx={{ color: INK }}>
                 {bundleName(b)}
               </MDTypography>
+              {b.featured && <PopularBadge />}
               <TierChip tier={b.tier} />
             </MDBox>
             {b.packageType && (

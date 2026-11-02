@@ -5,6 +5,8 @@ import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
@@ -37,6 +39,8 @@ const EMPTY = {
   markupPercent: "",
   internalNotes: "",
   source: "",
+  featured: false as boolean,
+  featuredRank: "",
 };
 type Values = typeof EMPTY;
 const TEXT_KEYS: (keyof Values)[] = ["name", "tier", "packageType", "coverage", "contentRule", "backlinks", "disclaimer", "language", "tat", "description", "vendor", "vendorPackageName", "internalNotes", "source"];
@@ -69,6 +73,8 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
     v.media = (existing.media?.length ? existing.media.map((m: any) => m.name) : (existing.publicationInfo || []).map((p: any) => p.title)).join("\n");
     v.vendorPriceInr = existing.vendorPriceInr ?? "";
     v.markupPercent = existing.markupPercent ?? "";
+    v.featured = !!existing.featured;
+    v.featuredRank = existing.featuredRank && existing.featuredRank < 999 ? String(existing.featuredRank) : "";
     setValues(v);
     setInitial(v);
   }, [existing]);
@@ -79,6 +85,7 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
   if (!splitMedia(values.media).length) errors.media = "Add at least one media name";
   if (!(Number(values.vendorPriceInr) > 0)) errors.vendorPriceInr = "Enter the vendor price in ₹";
   if (values.markupPercent !== "" && !(Number(values.markupPercent) >= 0)) errors.markupPercent = "Enter 0 or more";
+  if (values.featuredRank !== "" && !(Number(values.featuredRank) >= 1)) errors.featuredRank = "Enter 1 or more";
   const show = (k: keyof Values) => (touched ? errors[k] : undefined);
 
   const onSubmit = () => {
@@ -94,8 +101,18 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
       media: splitMedia(values.media).map((name) => ({ name, image: images.get(name) || null })),
       vendorPriceInr: Math.round(Number(values.vendorPriceInr)),
       markupPercent: values.markupPercent === "" ? null : Math.round(Number(values.markupPercent)),
+      featured: !!values.featured,
+      featuredRank: values.featured && values.featuredRank !== "" ? Math.round(Number(values.featuredRank)) : null,
     };
-    TEXT_KEYS.forEach((k) => (params[k] = values[k].trim() || null));
+    TEXT_KEYS.forEach((k) => (params[k] = (values[k] as string).trim() || null));
+    // A live package can only change its Popular setting; other edits need it suppressed
+    const onlyFeatured =
+      editing &&
+      existing?.visibility === "PUBLISHED" &&
+      Object.keys(EMPTY).every((k) => ["featured", "featuredRank"].includes(k) || (values as any)[k] === (initial as any)[k]);
+    if (onlyFeatured) {
+      Object.keys(params).forEach((k) => !["featured", "featuredRank"].includes(k) && delete params[k]);
+    }
     setSaving(true);
     (editing ? updateBundle({ variables: { params: { id, ...params } } }) : createBundle({ variables: { params } }))
       .then(() => {
@@ -193,6 +210,23 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
             {field("vendorPackageName", "Vendor package name")}
             {field("vendorPriceInr", "Vendor price (₹) *", { type: "number" })}
             {field("markupPercent", "Markup % (blank = default)", { type: "number" })}
+            <MDBox mt={1} p={1.5} sx={{ border: "1px solid rgba(0,0,0,0.12)", borderRadius: "8px" }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!!values.featured}
+                    disabled={disabled}
+                    onChange={(e) => setValues((p) => ({ ...p, featured: e.target.checked }))}
+                  />
+                }
+                label="★ Popular (shown first to users)"
+              />
+              {values.featured &&
+                field("featuredRank", "Popular order (1 = first)", { type: "number", helperText: "Blank = after the numbered ones" })}
+              <MDTypography fontSize="12px" sx={{ color: "#7B809A" }}>
+                This can be changed while the package is live.
+              </MDTypography>
+            </MDBox>
             {field("internalNotes", "Internal notes", { multiline: true, minRows: 2 })}
             {field("source", "Source")}
             {editing && existing && (

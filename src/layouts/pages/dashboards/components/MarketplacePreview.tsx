@@ -199,7 +199,7 @@ function MarketplacePreview(): JSX.Element {
     id: b?.id,
     image: b?.image,
     title: b?.name || `${labelOf(BundleTypeOptions, b?.type)} · ${labelOf(BundleCategoryOptions, b?.category)}`,
-    meta: [b?.tier, bundleDetail(b)].filter(Boolean).join(" · "),
+    meta: [b?.featured ? "★ Popular" : null, b?.tier, bundleDetail(b)].filter(Boolean).join(" · "),
     price: b?.price,
   }));
 
