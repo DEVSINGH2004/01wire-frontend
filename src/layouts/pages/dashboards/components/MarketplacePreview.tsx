@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import Grid from "@mui/material/Grid";
@@ -10,12 +11,9 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-import DisplayImage from "components/DisplayImage";
-import {
-  GET_PUBLICATIONS,
-  IGetPublications,
-  IGetPublicationsVars,
-} from "graphql/queries/filterPublicationsPaginated";
+import { IMarketplaceListings, MARKETPLACE_LISTINGS } from "graphql/queries/marketplaceListings";
+import { toSites } from "layouts/pages/marketplace/listings";
+import { getImageUrl } from "utils/apiConfig";
 import { GET_BUNDLES, IGetBundles, IGetBundlesVars } from "graphql/queries/filterBundlesPaginated";
 import { BundleCategoryOptions, BundleTypeOptions } from "constants/index";
 
@@ -29,7 +27,43 @@ interface PreviewItem {
   title: string;
   meta: string;
   price?: number;
+  priceFrom?: boolean;
 }
+
+// Logo, or the item's initials when there is none or it fails to load
+const Thumb = ({ src, title }: { src?: string; title: string }) => {
+  const [failed, setFailed] = useState(false);
+  const url = getImageUrl(src);
+  const box = { width: 40, height: 40, borderRadius: "8px", flexShrink: 0 };
+  if (url && !failed) {
+    return (
+      <MDBox
+        component="img"
+        src={url}
+        alt=""
+        onError={() => setFailed(true)}
+        sx={{ ...box, objectFit: "contain", border: "1px solid rgba(0,0,0,0.08)" }}
+      />
+    );
+  }
+  const letters = title
+    .split(/[\s.-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+  return (
+    <MDBox
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ ...box, backgroundColor: "#ee5c61", color: "#fff", fontWeight: 700, fontSize: "14px" }}
+    >
+      {letters || "?"}
+    </MDBox>
+  );
+};
 
 // One category column: header, up to PREVIEW_SIZE items, "View all"
 const CategoryPreview = ({
@@ -98,13 +132,7 @@ const CategoryPreview = ({
               textAlign: "left",
             }}
           >
-            <DisplayImage
-              src={item.image}
-              height="40px"
-              width="40px"
-              alt=""
-              styles={{ borderRadius: "8px", objectFit: "cover", flexShrink: 0 }}
-            />
+            <Thumb src={item.image} title={item.title} />
             <MDBox flexGrow={1} minWidth={0}>
               <MDTypography fontSize="14px" fontWeight="medium" noWrap>
                 {item.title}
@@ -115,6 +143,7 @@ const CategoryPreview = ({
             </MDBox>
             {item.price !== undefined && item.price !== null && (
               <MDTypography fontSize="14px" fontWeight="bold" color="primary" flexShrink={0}>
+                {item.priceFrom ? "from " : ""}
                 {item.price} {item.price === 1 ? "credit" : "credits"}
               </MDTypography>
             )}
@@ -137,32 +166,34 @@ const CategoryPreview = ({
 
 function MarketplacePreview(): JSX.Element {
   const navigate = useNavigate();
-  const { data: pData, loading: pLoading } = useQuery<IGetPublications, IGetPublicationsVars>(
-    GET_PUBLICATIONS,
-    {
-      variables: { filterInput: {}, paginationInput: { currentPage: 0, perPage: PREVIEW_SIZE } },
-      fetchPolicy: "network-only",
-    }
+  const { data: pData, loading: pLoading } = useQuery<IMarketplaceListings>(
+    MARKETPLACE_LISTINGS,
+    { fetchPolicy: "cache-and-network" }
   );
   const { data: bData, loading: bLoading } = useQuery<IGetBundles, IGetBundlesVars>(GET_BUNDLES, {
     variables: { paginationInput: { currentPage: 0, perPage: PREVIEW_SIZE } },
     fetchPolicy: "network-only",
   });
 
-  const publications: PreviewItem[] = (pData?.filterPublicationsPaginated?.data || []).map(
-    (p: any) => ({
-      id: p?.id,
-      image: p?.image,
-      title: p?.title,
+  // Marketplace websites (offerings grouped by domain), highest DA first
+  const sites = toSites(pData?.marketplaceListings || []);
+  const publications: PreviewItem[] = [...sites]
+    .sort((a, b) => (b.da ?? -1) - (a.da ?? -1) || a.name.localeCompare(b.name))
+    .slice(0, PREVIEW_SIZE)
+    .map((s) => ({
+      id: s.id,
+      image: s.image,
+      title: s.name,
       meta: [
-        p?.stats?.da !== undefined && p?.stats?.da !== null && `DA ${p.stats.da}`,
-        p?.stats?.traffic && `Traffic ${p.stats.traffic}`,
+        s.domain,
+        s.da !== null && `DA ${s.da}`,
+        s.variants.length > 1 && `${s.variants.length} options`,
       ]
         .filter(Boolean)
         .join(" · "),
-      price: p?.price,
-    })
-  );
+      price: s.price,
+      priceFrom: s.variants.length > 1,
+    }));
   const bundles: PreviewItem[] = (bData?.filterBundlesPaginated?.data || []).map((b: any) => ({
     id: b?.id,
     image: b?.image,
@@ -174,9 +205,7 @@ function MarketplacePreview(): JSX.Element {
     price: b?.price,
   }));
 
-  // `section` tells the Marketplace page where to scroll
-  const open = (section: "publications" | "bundles") =>
-    navigate("/marketplace", { state: { section } });
+  const open = () => navigate("/marketplace");
 
   return (
     <MDBox mt={3}>
@@ -186,13 +215,13 @@ function MarketplacePreview(): JSX.Element {
       <Grid mt={0} container spacing={2}>
         <Grid item xs={12} md={6}>
           <CategoryPreview
-            title="Single Packages"
-            subtitle="Pick individual publications"
+            title="Publications"
+            subtitle="Pick websites to publish on"
             Icon={ArticleOutlinedIcon}
             items={publications}
-            total={pData?.filterPublicationsPaginated?.paginationInfo?.itemCount}
-            loading={pLoading}
-            onOpen={() => open("publications")}
+            total={pData ? sites.length : undefined}
+            loading={pLoading && !pData}
+            onOpen={open}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -203,7 +232,7 @@ function MarketplacePreview(): JSX.Element {
             items={bundles}
             total={bData?.filterBundlesPaginated?.paginationInfo?.itemCount}
             loading={bLoading}
-            onOpen={() => open("bundles")}
+            onOpen={open}
           />
         </Grid>
       </Grid>

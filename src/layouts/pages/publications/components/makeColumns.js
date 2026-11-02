@@ -1,96 +1,156 @@
 /* eslint-disable react/prop-types */
-import { TableCell as MuiTableCell, OutlinedInput } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
-import { truncateString } from "utils/helpers";
+import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "assets/images/icons/deleteIcon.svg";
 import EditIcon from "assets/images/icons/editIcon.svg";
 import ViewIcon from "assets/images/icons/viewIcon.svg";
 import RowAction from "components/RowAction";
+import DisplayImage from "components/DisplayImage";
 import { visibilityOptions } from "../../../../constants";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import { formatInr } from "./pricing";
 
-export const makeColumns = (handleAction, handleUpdateStatus) => {
+const text = { fontSize: "14px", fontWeight: "400" };
+const dash = (v) => (v === null || v === undefined || v === "" ? "-" : v);
+
+// Logo, or the site's initials when it has none (imported sites usually don't)
+const Logo = ({ src, name }) => {
+  const initials = String(name || "?")
+    .replace(/^www\./, "")
+    .slice(0, 2)
+    .toUpperCase();
+  return src ? (
+    <DisplayImage
+      src={src}
+      height="36px"
+      width="36px"
+      alt=""
+      styles={{ objectFit: "contain", borderRadius: 6, background: "#fff" }}
+    />
+  ) : (
+    <MDBox
+      width="36px"
+      height="36px"
+      borderRadius="6px"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ background: "#EE5C6114", color: "#F9565C", fontSize: "12px", fontWeight: 600 }}
+    >
+      {initials}
+    </MDBox>
+  );
+};
+
+export const makeColumns = (handleAction, handleUpdateStatus, settings) => {
   const columns = [
     {
-      Header: "Title",
-      accessor: "title",
-      width: "25%",
+      // Logo sits in the website cell so the table fits next to the sticky actions
+      Header: "Website / offering",
+      accessor: "domain",
       align: "left",
-      Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {truncateString(value, 25)}
-          </MDTypography>
-        </MDBox>
-      ),
-    },
-    {
-      Header: "Traffic",
-      accessor: "stats.traffic",
-      width: "10%",
-      Cell: ({ value }) => {
+      Cell: ({ value, row }) => {
+        const p = row.original;
         return (
-          <MDBox>
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-              {value ? value : "-"}
-            </MDTypography>
+          <MDBox display="flex" alignItems="center" gap={1.25}>
+            <MDBox flexShrink={0}>
+              <Logo src={p.image} name={value || p.title} />
+            </MDBox>
+            <MDBox minWidth="130px" maxWidth="200px">
+              <Tooltip title={p.title || ""} placement="top-start">
+                <MDTypography sx={{ fontSize: "14px", fontWeight: "600" }} noWrap>
+                  {value || p.title}
+                </MDTypography>
+              </Tooltip>
+              <MDTypography sx={{ fontSize: "12px", color: "#606F7B" }} noWrap>
+                {p.variantLabel || (value ? "Standard article" : "Legacy (no domain)")}
+              </MDTypography>
+            </MDBox>
           </MDBox>
         );
       },
     },
     {
-      Header: "Website",
-      accessor: "url",
-      width: "20%",
+      Header: "Language",
+      accessor: "language",
+      Cell: ({ value }) => <MDTypography sx={text}>{dash(value)}</MDTypography>,
+    },
+    {
+      Header: "Link",
+      accessor: "linkType",
       Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
-            {truncateString(value, 30)}
-          </MDTypography>
-        </MDBox>
+        <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
+          {value === "DO_FOLLOW" ? "Do-follow" : value === "NO_FOLLOW" ? "No-follow" : "-"}
+        </MDTypography>
       ),
     },
     {
-      Header: "Link Type",
-      accessor: "linkType",
-      width: "15%",
+      Header: "TAT",
+      accessor: "tat",
       Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            {value === "DO_FOLLOW" ? "Do Follow" : "No Follow"}
-          </MDTypography>
-        </MDBox>
+        <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>{dash(value)}</MDTypography>
       ),
     },
-
+    {
+      Header: "DA",
+      accessor: "stats.da",
+      Cell: ({ value }) => <MDTypography sx={text}>{value ? value : "-"}</MDTypography>,
+    },
     {
       Header: "Credits",
       accessor: "price",
-      width: "10%",
       Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            <strong>{value}</strong>
-          </MDTypography>
-        </MDBox>
+        <MDTypography sx={text}>
+          <strong>{value}</strong>
+        </MDTypography>
       ),
     },
     {
+      Header: () => <span style={{ whiteSpace: "nowrap" }}>Vendor ₹</span>,
+      accessor: "vendorPriceInr",
+      Cell: ({ value }) => (
+        <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
+          {value == null ? "-" : formatInr(value)}
+        </MDTypography>
+      ),
+    },
+    {
+      Header: "Markup",
+      accessor: "markupPercent",
+      Cell: ({ value, row }) => {
+        const vendorPriced = row.original.vendorPriceInr != null;
+        return (
+          <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
+            {value != null ? (
+              <strong>{value}%</strong>
+            ) : vendorPriced ? (
+              <span style={{ color: "#606F7B" }}>
+                default{settings ? ` (${settings.markupPercent}%)` : ""}
+              </span>
+            ) : (
+              "-"
+            )}
+          </MDTypography>
+        );
+      },
+    },
+    {
       Header: "Visibility",
-      width: "12%",
       accessor: "visibility",
       Cell: ({ value, row }) => {
         const selectedStatus = value;
         const selected = visibilityOptions.find((el) => selectedStatus === el?.value);
 
         return (
-          <FormControl sx={{ width: "140px" }} size="medium">
+          <FormControl sx={{ width: "112px" }} size="medium">
             <Select
-              // input={<OutlinedInput sx={{ color: "white" }} />}
               id={`status-select-${row?.original?.id ?? row?.id}`}
+              inputProps={{
+                "aria-label": `Visibility of ${row.original.domain || row.original.title}`,
+              }}
               displayEmpty
               value={selectedStatus}
               sx={{
@@ -102,9 +162,8 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                 background: selected?.background,
                 textTransform: "uppercase",
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "transparent", // Remove hover border color
+                  borderColor: "transparent",
                 },
-
                 "& .MuiOutlinedInput-input": {
                   padding: "10px",
                   color: "#fff",
@@ -114,26 +173,20 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
                   border: "none",
                   boxShadow: "none",
                   "&.Mui-focused, &.Mui-focusVisible": {
-                    outline: "none", // Remove the default focus outline
-                    boxShadow: "none", // Remove the shadow which causes the blue outline
+                    outline: "none",
+                    boxShadow: "none",
                   },
                 },
               }}
-              renderValue={(selected) => {
-                if (selectedStatus === "") {
-                  return <em>Select an option</em>;
-                }
-                return selectedStatus ? selectedStatus : "";
-              }}
+              renderValue={() => (selectedStatus ? selectedStatus : <em>Select an option</em>)}
               onChange={(e) => handleUpdateStatus(row, e.target.value)}
             >
-              {visibilityOptions
-                .filter((option) => option !== selectedStatus) // Filter out the selected value
-                .map((option) => (
-                  <MenuItem key={option.label} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
+              {/* every option stays in the list: MUI warns when the value has no option */}
+              {visibilityOptions.map((option) => (
+                <MenuItem key={option.label} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         );
@@ -143,34 +196,25 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
       Header: "Action",
       align: "right",
       sticky: true,
-      width: "15%",
-      Cell: ({ value, row }) => {
-        return (
-          <MDBox
-            sx={{
-              display: "flex",
-            }}
-          >
-            <>
-              <RowAction
-                label="View"
-                icon={ViewIcon}
-                onClick={() => handleAction(row.original.id, "view")}
-              />
-              <RowAction
-                label="Edit"
-                icon={EditIcon}
-                onClick={() => handleAction(row.original.id, "edit")}
-              />
-              <RowAction
-                label="Delete"
-                icon={DeleteIcon}
-                onClick={() => handleAction(row.original.id, "delete")}
-              />
-            </>
-          </MDBox>
-        );
-      },
+      Cell: ({ row }) => (
+        <MDBox sx={{ display: "flex" }}>
+          <RowAction
+            label="View"
+            icon={ViewIcon}
+            onClick={() => handleAction(row.original.id, "view")}
+          />
+          <RowAction
+            label="Edit"
+            icon={EditIcon}
+            onClick={() => handleAction(row.original.id, "edit")}
+          />
+          <RowAction
+            label="Delete"
+            icon={DeleteIcon}
+            onClick={() => handleAction(row.original.id, "delete")}
+          />
+        </MDBox>
+      ),
     },
   ];
 

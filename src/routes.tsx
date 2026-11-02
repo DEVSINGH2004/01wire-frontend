@@ -18,7 +18,7 @@ import Dashboards from "layouts/pages/dashboards";
 import MyCredits from "layouts/pages/myCredits";
 import Releases from "layouts/pages/releases";
 import Clients from "layouts/pages/clients";
-import PREstimation from "layouts/pages/pr-estimation";
+import Marketplace from "layouts/pages/marketplace";
 import MyEstimates from "layouts/pages/my-estimates";
 // Material Dashboard 2 PRO React TS components
 import ClientIcon from "assets/images/icons/sidebarClient.svg";
@@ -72,7 +72,7 @@ const routes = [
     noCollapse: true,
     route: "/marketplace",
     icon: <img src={PREstimateIcon} width="24px" height="24px" />,
-    component: <PREstimation />,
+    component: <Marketplace />,
     // collapse: [
     //   {
     //     name: "My Estimates",
