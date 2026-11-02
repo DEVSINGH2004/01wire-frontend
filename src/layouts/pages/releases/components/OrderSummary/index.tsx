@@ -1,6 +1,7 @@
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import { BundleCategoryOptions } from "constants/index";
 
 interface Props {
   bundles?: any[];
@@ -14,8 +15,14 @@ export const creditsText = (n: number) => `${n} ${Number(n) === 1 ? "credit" : "
 const titleCase = (val: string) =>
   val ? val.charAt(0).toUpperCase() + val.slice(1).toLowerCase() : "";
 
+// e.g. "Basic · Yahoo bundle"
 export const bundleName = (bundle: any) =>
-  [titleCase(bundle?.type), bundle?.category].filter(Boolean).join(" · ") + " bundle";
+  [
+    titleCase(bundle?.type),
+    BundleCategoryOptions.find((c) => c.value === bundle?.category)?.label || titleCase(bundle?.category),
+  ]
+    .filter(Boolean)
+    .join(" · ") + " bundle";
 
 const cell = { py: 1.25, px: 1.5, borderBottom: "1px solid rgba(0, 0, 0, 0.08)" };
 

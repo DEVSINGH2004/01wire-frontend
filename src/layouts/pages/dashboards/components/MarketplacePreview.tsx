@@ -206,6 +206,7 @@ function MarketplacePreview(): JSX.Element {
   }));
 
   const open = () => navigate("/marketplace");
+  const openBundles = () => navigate("/marketplace?tab=bundles");
 
   return (
     <MDBox mt={3}>
@@ -232,7 +233,7 @@ function MarketplacePreview(): JSX.Element {
             items={bundles}
             total={bData?.filterBundlesPaginated?.paginationInfo?.itemCount}
             loading={bLoading}
-            onOpen={open}
+            onOpen={openBundles}
           />
         </Grid>
       </Grid>

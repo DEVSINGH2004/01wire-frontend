@@ -296,8 +296,10 @@ export const BundleCategoryOptions = [
   { label: "Yahoo", value: "YAHOO" },
 ];
 export const BundleTypeOptions = [
+  { label: "Basic", value: "BASIC" },
   { label: "Standard", value: "STANDARD" },
   { label: "Premium", value: "PREMIUM" },
+  { label: "Silver", value: "SILVER" },
   { label: "Gold", value: "GOLD" },
   { label: "Diamond", value: "DIAMOND" },
 ];

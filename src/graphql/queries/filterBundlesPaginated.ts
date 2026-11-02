@@ -29,6 +29,7 @@ export const GET_BUNDLES = gql`
         publicationInfo {
           id
           title
+          domain
           image
           stats {
             da

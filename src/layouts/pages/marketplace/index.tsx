@@ -7,6 +7,8 @@ import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
 import Pagination from "@mui/material/Pagination";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
@@ -21,6 +23,7 @@ import { getImageUrl } from "utils/apiConfig";
 import { getCart, saveCart } from "utils/mediaCart";
 import { bundleName, creditsText } from "layouts/pages/releases/components/OrderSummary";
 import CreateEstimation from "layouts/pages/pr-estimation/components/CreateEstimateModal";
+import BundlesTab from "./BundlesTab";
 import FilterBar from "./filters/FilterBar";
 import FilterDrawer from "./filters/FilterDrawer";
 import {
@@ -42,6 +45,7 @@ import { hostOf, toCartItem, toSites } from "./listings";
 // Marketplace: every published offering, one row per website. Filters live in the URL
 // (shareable /marketplace?… links, see filters/model.ts). Picked offerings go into the media
 // cart (utils/mediaCart) and on to a PR through "Continue to Add PR", like before.
+// A second tab (/marketplace?tab=bundles) lists bundles; they go into the same cart.
 
 const PER_PAGE = 25;
 const MUTED = "#7B809A";
@@ -118,6 +122,9 @@ function Marketplace(): JSX.Element {
   const rawSort = searchParams.get("sort") || "";
   const sort = SORTS.some((o) => o.value === rawSort) ? rawSort : "name";
   const pageParam = Math.max(1, Math.floor(Number(searchParams.get("page")) || 1));
+  const tab = searchParams.get("tab") === "bundles" ? "bundles" : "publications";
+  // Switching tabs drops the publication filters (they only apply to that tab)
+  const setTab = (t: string) => setParams(new URLSearchParams(t === "bundles" ? { tab: "bundles" } : {}));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [details, setDetails] = useState<Site | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
@@ -383,7 +390,16 @@ function Marketplace(): JSX.Element {
     <MDBox>
       <DashboardNavbar text="Marketplace" />
       <MDBox px={2} pt={3} pb={4}>
-        {body()}
+        <Tabs
+          value={tab}
+          onChange={(_, t) => setTab(t)}
+          aria-label="Marketplace sections"
+          sx={{ mb: 2, maxWidth: 420, background: "#fff", borderRadius: "10px", p: 0.5, boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+        >
+          <Tab value="publications" label={`Publications${data ? ` · ${sites.length}` : ""}`} data-testid="tab-publications" />
+          <Tab value="bundles" label="Bundles" data-testid="tab-bundles" />
+        </Tabs>
+        {tab === "bundles" ? <BundlesTab isPhone={isPhone} bundles={bundles} setBundles={setBundles} /> : body()}
       </MDBox>
 
       {/* selection bar */}
@@ -430,7 +446,7 @@ function Marketplace(): JSX.Element {
         </MDBox>
       </MDBox>
 
-      {data && (
+      {data && tab === "publications" && (
         <FilterDrawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
