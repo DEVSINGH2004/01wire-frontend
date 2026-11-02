@@ -14,8 +14,9 @@ export function backlinkAllowed(backlinks: string): string {
 }
 
 const unique = (list: string[]) => Array.from(new Set(list.filter(Boolean)));
+// DA/DR of 0 means "not known" (publication stats default to 0), so it is shown as "-"
 const maxOf = (list: (number | null | undefined)[]) => {
-  const nums = list.filter((n): n is number => typeof n === "number");
+  const nums = list.filter((n): n is number => typeof n === "number" && n > 0);
   return nums.length ? Math.max(...nums) : null;
 };
 
