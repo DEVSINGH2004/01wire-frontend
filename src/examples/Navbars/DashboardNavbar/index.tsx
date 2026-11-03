@@ -138,6 +138,13 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
+      {role === "ADMIN" && (
+        <MDBox px={2} pt={0.5} pb={1} data-testid="admin-menu-label">
+          <MDTypography fontSize="0.8rem" color="text">
+            Signed in as <strong style={{ color: "#ee5c61" }}>Admin</strong>
+          </MDTypography>
+        </MDBox>
+      )}
       <NotificationItem
         onClick={handleProfileClick}
         icon={<Icon>account_circle</Icon>}
@@ -229,8 +236,30 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
                 </MDTypography>
               </MDBox>
             )}
-            <MDBox color={light ? "white" : "inherit"}>
+            <MDBox color={light ? "white" : "inherit"} display="flex" alignItems="center">
+              {/* Badge and account icon stay together, also when the navbar wraps on phones */}
+              {role === "ADMIN" && (
+                <MDBox
+                  data-testid="admin-badge"
+                  title="You are signed in with an admin account"
+                  py={{ xs: 0.5, sm: 1 }}
+                  px={{ xs: 1.25, sm: 2 }}
+                  display="flex"
+                  alignItems="center"
+                  sx={{
+                    borderRadius: "8px",
+                    backgroundColor: white.main,
+                    border: "1px solid #ee5c61",
+                  }}
+                >
+                  <Icon sx={{ color: "#ee5c61", fontSize: "1.1rem !important" }}>admin_panel_settings</Icon>
+                  <MDTypography fontWeight="bold" fontSize={{ xs: "0.875rem", sm: "1rem" }} sx={{ color: "#ee5c61", ml: 0.75 }}>
+                    Admin
+                  </MDTypography>
+                </MDBox>
+              )}
               <IconButton
+                aria-label={role === "ADMIN" ? "Account menu (admin)" : "Account menu"}
                 size="small"
                 color="inherit"
                 sx={navbarIconButton}
