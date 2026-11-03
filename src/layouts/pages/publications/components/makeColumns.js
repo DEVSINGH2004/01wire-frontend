@@ -14,7 +14,9 @@ import MenuItem from "@mui/material/MenuItem";
 import { formatInr } from "./pricing";
 
 const text = { fontSize: "14px", fontWeight: "400" };
+const sub = { fontSize: "12px", color: "#606F7B" };
 const dash = (v) => (v === null || v === undefined || v === "" ? "-" : v);
+const LINK = { DO_FOLLOW: "Do-follow", NO_FOLLOW: "No-follow" };
 
 // Logo, or the site's initials when it has none (imported sites usually don't)
 const Logo = ({ src, name }) => {
@@ -65,8 +67,13 @@ export const makeColumns = (handleAction, handleUpdateStatus, settings) => {
                   {value || p.title}
                 </MDTypography>
               </Tooltip>
-              <MDTypography sx={{ fontSize: "12px", color: "#606F7B" }} noWrap>
-                {p.variantLabel || (value ? "Standard article" : "Legacy (no domain)")}
+              <MDTypography sx={sub} noWrap>
+                {(() => {
+                  const label = p.variantLabel || (value ? "Standard article" : "Legacy (no domain)");
+                  // The separate Link column is gone: add the link type when the label lacks it
+                  const link = LINK[p.linkType];
+                  return link && !/follow/i.test(label) ? `${label} · ${link}` : label;
+                })()}
               </MDTypography>
             </MDBox>
           </MDBox>
@@ -74,66 +81,50 @@ export const makeColumns = (handleAction, handleUpdateStatus, settings) => {
       },
     },
     {
-      Header: "Language",
+      // Language, TAT and DA in one cell (link type is in the website cell)
+      Header: "Details",
       accessor: "language",
-      Cell: ({ value }) => <MDTypography sx={text}>{dash(value)}</MDTypography>,
-    },
-    {
-      Header: "Link",
-      accessor: "linkType",
-      Cell: ({ value }) => (
-        <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
-          {value === "DO_FOLLOW" ? "Do-follow" : value === "NO_FOLLOW" ? "No-follow" : "-"}
-        </MDTypography>
-      ),
-    },
-    {
-      Header: "TAT",
-      accessor: "tat",
-      Cell: ({ value }) => (
-        <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>{dash(value)}</MDTypography>
-      ),
-    },
-    {
-      Header: "DA",
-      accessor: "stats.da",
-      Cell: ({ value }) => <MDTypography sx={text}>{value ? value : "-"}</MDTypography>,
-    },
-    {
-      Header: "Credits",
-      accessor: "price",
-      Cell: ({ value }) => (
-        <MDTypography sx={text}>
-          <strong>{value}</strong>
-        </MDTypography>
-      ),
-    },
-    {
-      Header: () => <span style={{ whiteSpace: "nowrap" }}>Vendor ₹</span>,
-      accessor: "vendorPriceInr",
-      Cell: ({ value }) => (
-        <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
-          {value == null ? "-" : formatInr(value)}
-        </MDTypography>
-      ),
-    },
-    {
-      Header: "Markup",
-      accessor: "markupPercent",
+      align: "left",
+      hideBelow: "md",
       Cell: ({ value, row }) => {
-        const vendorPriced = row.original.vendorPriceInr != null;
+        const p = row.original;
         return (
-          <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
-            {value != null ? (
-              <strong>{value}%</strong>
-            ) : vendorPriced ? (
-              <span style={{ color: "#606F7B" }}>
-                default{settings ? ` (${settings.markupPercent}%)` : ""}
-              </span>
-            ) : (
-              "-"
-            )}
-          </MDTypography>
+          <MDBox data-testid="pub-details">
+            <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
+              {dash(value)} · {p.tat ? p.tat : "TAT -"}
+            </MDTypography>
+            <MDTypography sx={{ ...sub, whiteSpace: "nowrap" }}>DA {p.stats?.da ? p.stats.da : "-"}</MDTypography>
+          </MDBox>
+        );
+      },
+    },
+    {
+      // Credits on top; vendor price and markup below (admin only)
+      Header: "Price",
+      accessor: "price",
+      align: "left",
+      Cell: ({ value, row }) => {
+        const p = row.original;
+        const vendorPriced = p.vendorPriceInr != null;
+        return (
+          <MDBox data-testid="pub-price">
+            <MDTypography sx={{ ...text, whiteSpace: "nowrap" }}>
+              <strong>{value}</strong> credits
+            </MDTypography>
+            <MDTypography sx={{ ...sub, whiteSpace: "nowrap" }}>
+              {vendorPriced ? formatInr(p.vendorPriceInr) : "No vendor ₹"}
+              {p.markupPercent != null ? (
+                <>
+                  {" · "}
+                  <strong style={{ color: "#344767" }}>{p.markupPercent}%</strong>
+                </>
+              ) : vendorPriced ? (
+                ` · ${settings ? `${settings.markupPercent}% ` : ""}default`
+              ) : (
+                ""
+              )}
+            </MDTypography>
+          </MDBox>
         );
       },
     },

@@ -28,9 +28,13 @@ interface Props {
   align?: "left" | "right" | "center";
   // Pin the cell to the right edge while the table scrolls horizontally
   sticky?: boolean;
+  // Shadow on the pinned cell's left edge (set while the table scrolls sideways)
+  stickyShadow?: string;
+  // Hide the cell below this breakpoint, e.g. "md"
+  hideBelow?: string;
 }
 
-function DataTableBodyCell({ noBorder, align, sticky, children }: Props): JSX.Element {
+function DataTableBodyCell({ noBorder, align, sticky, stickyShadow, hideBelow, children }: Props): JSX.Element {
   return (
     <MDBox
       component="td"
@@ -40,7 +44,14 @@ function DataTableBodyCell({ noBorder, align, sticky, children }: Props): JSX.El
       sx={({ palette: { light }, typography: { size }, borders: { borderWidth } }: Theme) => ({
         fontSize: size.sm,
         borderBottom: noBorder ? "none" : `${borderWidth[1]} solid ${light.main}`,
-        ...(sticky && { position: "sticky", right: 0, zIndex: 1, background: "#fff" }),
+        ...(hideBelow && { display: { xs: "none", [hideBelow]: "table-cell" } }),
+        ...(sticky && {
+          position: "sticky",
+          right: 0,
+          zIndex: 1,
+          background: "#fff",
+          boxShadow: stickyShadow || "none",
+        }),
       })}
     >
       <MDBox

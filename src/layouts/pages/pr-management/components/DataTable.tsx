@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 // react-table components
 import { useTable, usePagination, useGlobalFilter, useSortBy } from "react-table";
 // @mui material components
@@ -174,11 +174,35 @@ function DataTable({
       setSelectedRows(defaultSelectedRows);
     }
   }, [defaultSelectedRows]);
+
+  // Shadow on the pinned Action column only while the table is wider than its box
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [overflowing, setOverflowing] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return undefined;
+    const check = () => setOverflowing(el.scrollWidth - el.clientWidth > 1);
+    check();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(check) : null;
+    ro?.observe(el);
+    if (el.firstElementChild) ro?.observe(el.querySelector("table") || el.firstElementChild);
+    window.addEventListener("resize", check);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", check);
+    };
+  }, [table?.rows, loading]);
+  const stickyShadow = overflowing ? "-8px 0 8px -6px rgba(52, 71, 103, 0.18)" : "none";
+  // A column can hide on small screens, e.g. hideBelow: "md"
+  const hideSx = (column: any) =>
+    column.hideBelow ? { display: { xs: "none", [column.hideBelow]: "table-cell" } } : {};
   return (
     <>
       <Card sx={{ flex: 1 }}>
         {loading && <MDCircularLoader overlayloader startLoader />}
         <TableContainer
+          ref={scrollRef}
+          data-overflowing={overflowing ? "true" : "false"}
           sx={{
             boxShadow: "none",
             overflow: "auto",
@@ -232,14 +256,17 @@ function DataTable({
                         width={column.width ? column.width : "auto"}
                         py={1.5}
                         px={2}
-                        sx={
-                          column.sticky && {
+                        sx={{
+                          ...hideSx(column),
+                          ...(column.sticky && {
                             position: "sticky",
                             right: 0,
                             zIndex: 2,
-                            background: "#fff",
-                          }
-                        }
+                            // same grey as the rest of the header strip
+                            background: "#F8F8FC",
+                            boxShadow: stickyShadow,
+                          }),
+                        }}
                       >
                         <MDBox
                           position="relative"
@@ -287,6 +314,8 @@ function DataTable({
                         noBorder={noEndBorder && rows.length - 1 === key}
                         align={cell.column.align ? cell.column.align : "center"}
                         sticky={!!cell.column.sticky}
+                        stickyShadow={stickyShadow}
+                        hideBelow={cell.column.hideBelow}
                         {...cell.getCellProps()}
                       >
                         {cell.render("Cell")}
