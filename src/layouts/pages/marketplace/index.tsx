@@ -97,11 +97,12 @@ function LogoTile({ site, size = 40 }: { site: Site; size?: number }): JSX.Eleme
   );
 }
 
-const COLUMNS = "minmax(220px, 2fr) 80px 90px 70px 96px 76px 92px 128px 176px";
+// Small columns shrink to fit; actions take what the two buttons need (fits from 1200px up)
+const COLUMNS = "minmax(170px, 2.2fr) repeat(6, minmax(60px, 1fr)) minmax(104px, 1.2fr) max-content";
 
 function Marketplace(): JSX.Element {
   const theme = useTheme();
-  const isPhone = useMediaQuery(theme.breakpoints.down("lg"));
+  const isPhone = useMediaQuery(theme.breakpoints.down("xl"));
   const navigate = useNavigate();
   const location = useLocation();
   // Opened from a PR's "Change media": the main button leads back to that PR

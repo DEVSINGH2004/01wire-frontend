@@ -11,12 +11,14 @@ export interface IVerifyOtpVars {
 
 export interface IVerifyOtp {
   token: string;
+  type?: string;
 }
 
 export const VERIFY_OTP = gql`
   mutation verifyOtp($params: OtpVerifyInput!) {
     verifyOtp(params: $params) {
       token
+      type
     }
   }
 `;

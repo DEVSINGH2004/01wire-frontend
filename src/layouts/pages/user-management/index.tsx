@@ -164,7 +164,7 @@ const UserManagement = () => {
               { label: "Role", value: viewUser?.type },
               { label: "Email verified", value: yesNo(viewUser?.isEmailVerified) },
               { label: "KYC verified", value: yesNo(viewUser?.isKycVerified) },
-              { label: "Wallet balance", value: viewUser?.walletInfo?.balance },
+              { label: "Wallet balance", value: viewUser?.walletInfo?.balance ?? 0 },
               {
                 label: "Joined",
                 value: viewUser?.createdAt && dayjs(viewUser.createdAt).format("DD MMM YYYY"),

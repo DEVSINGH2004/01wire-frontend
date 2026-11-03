@@ -44,7 +44,7 @@ const columns = [
     ),
   },
   {
-    Header: "Bundles",
+    Header: "Packages",
     accessor: "bundles",
     width: "5%",
     Cell: ({ value }: { value: any }) => {

@@ -31,7 +31,7 @@ import EstimateIcon from "assets/images/icons/money.svg";
 const routes = [
   {
     type: "collapse",
-    name: "Dashboards",
+    name: "Dashboard",
     key: "dashboards",
     icon: <img src={DashboardIcon} width="24px" height="24px" />,
     noCollapse: true,
@@ -40,7 +40,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Press Release",
+    name: "Press Releases",
     icon: <img src={ReleaseIcon} width="24px" height="24px" />,
     key: "releases",
     noCollapse: true,
@@ -49,7 +49,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Client",
+    name: "Clients",
     icon: <img src={ClientIcon} width="24px" height="24px" />,
     key: "clients",
     noCollapse: true,

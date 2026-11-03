@@ -19,7 +19,7 @@ import RowAction from "components/RowAction";
 export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, filters) => {
   const columns = [
     {
-      Header: "PR ID",
+      Header: () => <span style={{ whiteSpace: "nowrap" }}>PR ID</span>,
       accessor: "prId",
       width: "7%",
       Cell: ({ value }) => (

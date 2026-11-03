@@ -85,7 +85,7 @@ function BillingInformation({ data }: { data: any }): JSX.Element {
                 fontWeight="bold"
                 textTransform="uppercase"
               >
-                Past Recharges
+                Credit history
               </MDTypography>
             </MDBox>
             <MDBox
@@ -102,16 +102,21 @@ function BillingInformation({ data }: { data: any }): JSX.Element {
               {transactionsData?.filterTransactionsPaginated?.data?.length > 0 ? (
                 transactionsData?.filterTransactionsPaginated?.data?.map((one: any, i: any) => {
                   const transactionDate = dayjs(one?.updatedAt).format(
-                    "DD MMMM YYYY, [at] HH:mm A"
+                    "DD MMMM YYYY, [at] hh:mm A"
                   );
                   return (
                     <Transaction
                       key={i}
-                      color={one?.status === "SUCCESS" ? "success" : "error"}
+                      // Debits in red with a minus, credits in green with a plus
+                      color={one?.status !== "SUCCESS" || one?.type === "DEBIT" ? "error" : "success"}
                       icon="add"
                       name={one?.type === "DEBIT" ? "Debit" : "Credit"}
                       description={transactionDate}
-                      value={one?.status === "SUCCESS" ? one?.amount : "Failed"}
+                      value={
+                        one?.status === "SUCCESS"
+                          ? `${one?.type === "DEBIT" ? "−" : "+"}${one?.amount}`
+                          : "Failed"
+                      }
                       kind={one?.kind === "ADMIN_UPDATE" ? "Admin Update" : "Wallet"}
                       note={one?.notes}
                     />

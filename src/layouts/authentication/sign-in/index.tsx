@@ -70,7 +70,7 @@ function SignIn(): JSX.Element {
             if (status === "NOT_FOUND") {
               setIsSignUp(true);
             } else if (status === "EMAIL_NOT_VERIFIED") {
-              toast.error("Email not verified, please verified it.");
+              toast.error("Your email isn't verified yet. We've sent you a code.");
               await handleForgotPassword(true);
             } else {
               setShowPassword(true);
@@ -170,8 +170,11 @@ function SignIn(): JSX.Element {
       .then((res: any) => {
         if (!forgotPsw) {
           localStorage.setItem("token", res.data.verifyOtp.token);
+          // Keep the role too (Admin badge, admin menu and landing page depend on it)
+          const otpRole = res.data.verifyOtp.type;
+          if (otpRole) localStorage.setItem("role", otpRole);
           toast.success("Logged in successfully");
-          navigate("/");
+          navigate(otpRole === "ADMIN" ? "/orders" : "/");
         } else {
           setForgotPsw(res.data.verifyOtp.token);
           setShowOtp("");
@@ -199,7 +202,7 @@ function SignIn(): JSX.Element {
     })
       .then(() => {
         localStorage.setItem("token", forgotPsw);
-        toast.success("Password reset succesfully");
+        toast.success("Password reset successfully");
         navigate("/");
       })
       .catch((e: any) => {

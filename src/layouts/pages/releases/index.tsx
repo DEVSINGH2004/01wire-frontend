@@ -211,7 +211,7 @@ function Releases(): JSX.Element {
     <>
       {loader && <MDCircularLoader overlayloader startLoader />}
 
-      <DashboardNavbar text="ADD PR" onsubmit={!openForm && (() => setOpenForm(true))} />
+      <DashboardNavbar text="Add PR" onsubmit={!openForm && (() => setOpenForm(true))} />
       <MDBox px={2}>
         {!openForm && (
           <>

@@ -19,6 +19,7 @@ import NotificationItem from "examples/Items/NotificationItem";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import MDButton from "components/MDButton";
 import { adminRoutes } from "adminRoutes";
+import userRoutes from "routes";
 
 // Custom styles for DashboardNavbar
 import {
@@ -174,7 +175,9 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
   });
 
   const title =
-    adminRoutes.find((el) => el?.key === route[route.length - 1])?.name || route[route.length - 1];
+    // Same name as the sidebar (admin or user menu), else the URL segment
+    [...adminRoutes, ...(userRoutes as any[])].find((el: any) => el?.key === route[route.length - 1])?.name ||
+    route[route.length - 1];
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
