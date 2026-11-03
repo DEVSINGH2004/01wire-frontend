@@ -328,7 +328,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
             />
             <FormField
               type="text"
-              label="Linkedin"
+              label="LinkedIn"
               name="linkedIn"
               control={control}
               variant="outlined"
@@ -343,7 +343,7 @@ function Media({ cb, saveData, data, refetch, disabled = false, setSaveData }: P
             />
             <FormField
               type="text"
-              label="Youtube"
+              label="YouTube"
               name="youtube"
               control={control}
               variant="outlined"

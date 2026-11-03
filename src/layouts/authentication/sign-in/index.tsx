@@ -320,7 +320,7 @@ function SignIn(): JSX.Element {
                   {showOtp
                     ? "We've sent a One-Time Password(OTP) to your email. Please enter it below to verify your account."
                     : isSignup
-                    ? "Lets get started!"
+                    ? "Let's get started!"
                     : forgotPsw
                     ? "Now! Please enter your new password to unlock your Account."
                     : "Let's get you connected. Please enter your work email to begin."}
@@ -480,7 +480,7 @@ function SignIn(): JSX.Element {
 
                 <MDBox mt={4}>
                   <MDButton onClick={handleSubmit} color="secondary" size="large" fullWidth>
-                    {showOtp || showPassword || forgotPsw ? "Submit" : " Next"}
+                    {showOtp || showPassword || forgotPsw ? "Submit" : isSignup ? "Sign up" : "Next"}
                   </MDButton>
                 </MDBox>
                 {(showPassword || showOtp) && (

@@ -77,7 +77,7 @@ const NoteModal = ({
               // onClose();
             }}
           >
-            {orderPage ? "PUBLISH" : "UPDATE"}
+            {orderPage ? "Publish" : "Update"}
           </MDButton>
         </DialogActions>
       </Dialog>

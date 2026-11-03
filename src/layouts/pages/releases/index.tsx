@@ -19,6 +19,8 @@ import {
 import { GET_CLIENTS, IGetClientsVars, IGetClients } from "graphql/queries/filterClientsPaginated";
 import { DELETE_ARTICLE, IDeleteArticleVars } from "graphql/mutations/deleteArticle";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { CRUMB_ARTICLE } from "examples/Navbars/DashboardNavbar/useRecordCrumb";
+import MDButton from "components/MDButton";
 import DataTable from "../pr-management/components/DataTable";
 import NoteModal from "../pr-management/components/NoteModal";
 import { makeColumns } from "./components/makeColumns";
@@ -35,6 +37,8 @@ import { statusOptions } from "constants/index";
 const PER_PAGE = 10;
 function Releases(): JSX.Element {
   const { id } = useParams();
+  // Is the PR in the URL real? (same small query as the breadcrumb, so one request)
+  const articleCheck = useQuery(CRUMB_ARTICLE, { variables: { id }, skip: !id });
   const navigate = useNavigate();
   const location = useLocation();
   const estimation = location?.state?.estimation;
@@ -227,6 +231,19 @@ function Releases(): JSX.Element {
           {initLoading || loading ? (
             <Card sx={{ minHeight: "300px" }}>
               <MDCircularLoader overlayloader startLoader />
+            </Card>
+          ) : id && articleCheck.called && !articleCheck.loading && !articleCheck.data?.getArticleById ? (
+            // A wrong or old link: say so instead of showing an empty PR form
+            <Card sx={{ minHeight: "300px" }} data-testid="pr-not-found">
+              <MDBox m="auto" textAlign="center" p={4}>
+                <MDTypography variant="h5">This press release wasn't found</MDTypography>
+                <MDTypography fontSize="14px" color="text" mt={1} mb={3}>
+                  The link may be wrong, or the press release was deleted.
+                </MDTypography>
+                <MDButton color="primary" onClick={() => { setOpenForm(false); navigate("/releases"); }}>
+                  Back to Press Releases
+                </MDButton>
+              </MDBox>
             </Card>
           ) : openForm ? (
             <Card sx={{ minHeight: "300px" }}>

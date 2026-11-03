@@ -3,7 +3,7 @@ import DataTable from "layouts/pages/pr-management/components/DataTable";
 import MDBox from "components/MDBox";
 import MDAvatar from "components/MDAvatar";
 import MDTypography from "components/MDTypography";
-import { truncateString } from "utils/helpers";
+import { truncateString, humanize } from "utils/helpers";
 import MDCircularLoader from "components/MDCircularLoader";
 import { getImageUrl } from "utils/apiConfig";
 
@@ -58,7 +58,7 @@ const PublicationsList = ({
       align: "left",
       Cell: ({ value }: { value: any }) => (
         <MDBox>
-          <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
+          <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }} title={value || ""}>
             {value && truncateString(value, 15)}
           </MDTypography>
         </MDBox>
@@ -71,8 +71,8 @@ const PublicationsList = ({
       Cell: ({ value }: { value: any }) => {
         return (
           <MDBox>
-            <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-              {value && truncateString(value, 15)}
+            <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }} title={humanize(value)}>
+              {value && truncateString(humanize(value), 15)}
             </MDTypography>
           </MDBox>
         );
@@ -146,7 +146,7 @@ const PublicationsList = ({
       Cell: ({ value }: { value: any }) => {
         return (
           <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-            {value}
+            {humanize(value) || "-"}
           </MDTypography>
         );
       },

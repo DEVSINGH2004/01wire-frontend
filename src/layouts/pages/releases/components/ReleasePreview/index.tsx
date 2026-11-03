@@ -20,7 +20,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
   const contactLine = (label: string, value?: string) =>
     value ? (
       <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-        {label} : {value}
+        {label}: {value}
       </MDTypography>
     ) : null;
   return (
@@ -94,7 +94,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
 
             {facebook && (
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Facebook :{" "}
+                Facebook:{" "}
                 <Link
                   sx={{
                     cursor: "pointer",
@@ -109,7 +109,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
             )}
             {instagram && (
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Instagram :{" "}
+                Instagram:{" "}
                 <Link
                   sx={{
                     cursor: "pointer",
@@ -124,7 +124,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
             )}
             {linkedIn && (
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                LinkedIn :{" "}
+                LinkedIn:{" "}
                 <Link
                   sx={{
                     cursor: "pointer",
@@ -139,7 +139,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
             )}
             {twitter && (
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Twitter :{" "}
+                Twitter:{" "}
                 <Link
                   sx={{
                     cursor: "pointer",
@@ -154,7 +154,7 @@ function ReleasePreview({ article }: { article: any }): JSX.Element {
             )}
             {youtube && (
               <MDTypography fontSize="17px" sx={{ lineHeight: 1.3 }}>
-                Youtube :{" "}
+                Youtube:{" "}
                 <Link
                   sx={{
                     cursor: "pointer",

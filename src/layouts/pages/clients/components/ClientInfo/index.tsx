@@ -333,7 +333,7 @@ function ClientInfo({
             />
             <FormField
               type="text"
-              label="Linkedin"
+              label="LinkedIn"
               name="linkedIn"
               control={control}
               errors={errors}
@@ -349,7 +349,7 @@ function ClientInfo({
             />
             <FormField
               type="text"
-              label="Youtube"
+              label="YouTube"
               name="youtube"
               control={control}
               errors={errors}

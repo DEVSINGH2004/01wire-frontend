@@ -9,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
 import SuccessIcon from "assets/images/success.svg";
 
 const PaymentSuccess = () => {
@@ -16,15 +17,16 @@ const PaymentSuccess = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const navigate = useNavigate();
+  // Opened from a payment redirect, so "back" may leave the app: go to My Credits instead
   const onClose = () => {
-    navigate(-1);
+    navigate("/my-credits");
   };
   return (
     <>
       <Dialog
         PaperProps={{
           style: {
-            height: "274px",
+            minHeight: "274px",
             width: isMobile ? "100%" : "454px",
             boxShadow: "0px 4px 16px 0px rgba(0, 0, 0, 0.2)",
             border: "0.5px solid rgba(0, 0, 0, 0.2)",
@@ -59,6 +61,12 @@ const PaymentSuccess = () => {
             >
               Payment Successful
             </MDTypography>
+            <MDTypography fontSize="14px" color="text" mt={1}>
+              Your credits will appear in My Credits in a moment.
+            </MDTypography>
+            <MDButton color="primary" sx={{ mt: 2.5, mb: 1 }} onClick={onClose}>
+              Go to My Credits
+            </MDButton>
           </MDBox>
         </DialogContent>
       </Dialog>

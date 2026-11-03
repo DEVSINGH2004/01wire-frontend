@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
@@ -139,7 +140,7 @@ const PricingSettingsDialog = ({
           </MDTypography>
           <MDTypography fontSize="12px" color="text" mt={0.5}>
             Last updated:{" "}
-            {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleString() : "never"}
+            {settings?.updatedAt ? dayjs(settings.updatedAt).format("DD MMM YYYY, h:mm A") : "never"}
           </MDTypography>
         </MDBox>
         <Alert severity="warning" sx={{ mt: 2, fontSize: "13px" }}>

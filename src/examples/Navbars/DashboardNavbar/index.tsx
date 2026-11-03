@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
+import useRecordCrumb from "examples/Navbars/DashboardNavbar/useRecordCrumb";
 // react-router components
 import { useLocation, useNavigate } from "react-router-dom";
 // @material-ui core components
@@ -174,10 +175,13 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
     },
   });
 
-  const title =
-    // Same name as the sidebar (admin or user menu), else the URL segment
-    [...adminRoutes, ...(userRoutes as any[])].find((el: any) => el?.key === route[route.length - 1])?.name ||
-    route[route.length - 1];
+  // Breadcrumb names: the sidebar name for each page; a record id becomes a friendly label
+  const names: Record<string, string> = { payment: "Payment" };
+  [...adminRoutes, ...(userRoutes as any[])].forEach((el: any) => {
+    if (el?.key && el?.name && !names[el.key]) names[el.key] = el.name;
+  });
+  const recordCrumb = useRecordCrumb(route);
+  const title = names[route[route.length - 1]] || route[route.length - 1];
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -200,7 +204,7 @@ function DashboardNavbar({ absolute, light, isMini, onsubmit, text }: Props): JS
           >
             <Icon sx={iconsStyle}>{miniSidenav ? "menu" : "menu_open"}</Icon>
           </IconButton>
-          <Breadcrumbs icon="home" title={title} route={route} light={light} />
+          <Breadcrumbs icon="home" title={title} route={route} light={light} names={names} recordCrumb={recordCrumb} />
         </MDBox>
 
         {isMini ? null : (

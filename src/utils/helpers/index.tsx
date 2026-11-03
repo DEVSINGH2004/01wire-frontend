@@ -114,3 +114,19 @@ export const truncateString = (str: string, maxLength: number) => {
   }
   return str;
 };
+
+// Raw stored values for people: "DO_FOLLOW"/"DO FOLLOW" → "Do-follow", "GENERAL" → "General".
+// Mixed-case text is left as it is; arrays are joined with commas.
+export const humanize = (v: any): string => {
+  if (v === null || v === undefined || v === "") return "";
+  if (Array.isArray(v)) return v.map(humanize).filter(Boolean).join(", ");
+  const s = String(v).trim();
+  const key = s.replace(/[_\s-]+/g, " ").toUpperCase();
+  if (key === "DO FOLLOW") return "Do-follow";
+  if (key === "NO FOLLOW") return "No-follow";
+  if (s === s.toUpperCase() && /[A-Z]{2}/.test(s)) {
+    const t = s.replace(/_/g, " ").toLowerCase();
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  }
+  return s;
+};

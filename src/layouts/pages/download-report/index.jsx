@@ -81,7 +81,7 @@ const DistributionItem = ({ logo, name, link, type, industry, countries, audienc
     <span className="distribution-type">{type}</span>
     {industry && <span className="distribution-industry">{industry}</span>}
     {countries && <span className="distribution-countries">{countries}</span>}
-    {audience && <span className="distribution-audience">{audience} visit/month</span>}
+    {audience && <span className="distribution-audience">{audience} {Number(audience) === 1 ? "visit" : "visits"}/month</span>}
   </Box>
 );
 

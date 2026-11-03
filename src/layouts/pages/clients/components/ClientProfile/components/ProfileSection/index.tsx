@@ -10,6 +10,7 @@ import ClientProfileBg from "assets/images/ClientProfileBg.png";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import DisplayImage from "components/DisplayImage";
+import { humanize } from "utils/helpers";
 import FactoryIcon from "assets/images/factory.svg";
 import EmailIcon from "assets/images/mail.svg";
 import WebIcon from "assets/images/web.svg";
@@ -57,6 +58,7 @@ const ProfileSection = ({ data = {} }: { data: any }) => {
       <MDBox display="flex" px={2}>
         <DisplayImage
           src={logo}
+          fallbackText={title}
           height="111px"
           width="109px"
           styles={{ borderRadius: "11.78px", marginTop: "-50px", zIndex: 1 }}
@@ -70,12 +72,12 @@ const ProfileSection = ({ data = {} }: { data: any }) => {
             fontWeight="regular"
             sx={{ lineHeight: "19.6px", color: "rgba(132, 135, 142, 1)" }}
           >
-            {type}
+            {humanize(type)}
           </MDTypography>
         </MDBox>
       </MDBox>
       <MDBox mt={4} px={2} display="flex" alignItems="center" justifyContent="space-between">
-        <DisplayLabelValue startIcon={FactoryIcon} label={"Industry Type"} value={category} />
+        <DisplayLabelValue startIcon={FactoryIcon} label={"Industry Type"} value={humanize(category)} />
         <Divider orientation="vertical" sx={{ height: "50px", background: "rgba(0, 0, 0, 0.2)" }} />
         <DisplayLabelValue startIcon={EmailIcon} label={"Email"} value={email} />
         <Divider orientation="vertical" sx={{ height: "50px", background: "rgba(0, 0, 0, 0.2)" }} />
@@ -114,7 +116,7 @@ const ProfileSection = ({ data = {} }: { data: any }) => {
         {youtube && (
           <Grid item xs={12} md={2}>
             <Link href={youtube} target="_blank" rel="noopener noreferrer">
-              <SocialCard icon={YtIcon} title="Youtube" />
+              <SocialCard icon={YtIcon} title="YouTube" />
             </Link>
           </Grid>
         )}

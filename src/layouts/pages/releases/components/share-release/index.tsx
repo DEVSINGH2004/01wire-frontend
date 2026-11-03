@@ -1,3 +1,4 @@
+import { humanize } from "utils/helpers";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { useRef, useState } from "react";
@@ -106,13 +107,13 @@ const columnsPub = [
     },
   },
   {
-    Header: "LinkType",
+    Header: "Link type",
     accessor: "linkType",
     width: "25%",
     align: "right",
     Cell: ({ value }: { value: any }) => (
       <MDTypography fontWeight="regular" sx={{ fontSize: "14px", fontFamily: "Roboto" }}>
-        {value.split("_").join(" ")}
+        {humanize(value) || "-"}
       </MDTypography>
     ),
   },

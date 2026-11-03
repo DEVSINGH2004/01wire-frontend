@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
 import { useLocation } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -49,7 +50,7 @@ function PaidReceipt({ article, justPaid }: { article: any; justPaid: boolean })
       {row("Amount paid", creditsText(article?.totalCredits ?? 0))}
       {row("Paid with", "01Wire Credits")}
       {row("Status", STATUS_TEXT[article?.status] || article?.status)}
-      {article?.updatedAt && row("Last updated", new Date(article.updatedAt).toLocaleString())}
+      {article?.updatedAt && row("Last updated", dayjs(article.updatedAt).format("DD MMM YYYY, h:mm A"))}
     </MDBox>
   );
 }

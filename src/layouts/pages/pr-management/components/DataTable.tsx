@@ -160,9 +160,11 @@ function DataTable({
 
   // Handle select all checkbox change
   const handleSelectAllCheckboxChange = () => {
+    // Add only the rows of this page that aren't picked yet (ticking 2 rows then "all" = 25, not 27)
+    const picked = new Set(selectedRows.map((r: any) => r?.id));
     const newSelectedRows = isAllRowsSelected
       ? []
-      : [...selectedRows, ...page.map((row: any) => row.original)];
+      : [...selectedRows, ...page.map((row: any) => row.original).filter((r: any) => !picked.has(r?.id))];
 
     setSelectedRows(newSelectedRows);
     onSelectedRowsChange(newSelectedRows); // Pass the selected rows to the parent

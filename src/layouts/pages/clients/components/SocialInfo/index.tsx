@@ -125,7 +125,7 @@ function SocialInfo({
             />
             <FormField
               type="text"
-              label="Linkedin"
+              label="LinkedIn"
               name="linkedIn"
               control={control}
               variant="outlined"
@@ -139,7 +139,7 @@ function SocialInfo({
             />
             <FormField
               type="text"
-              label="Youtube"
+              label="YouTube"
               name="youtube"
               control={control}
               variant="outlined"

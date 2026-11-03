@@ -85,8 +85,8 @@ const ShareEstimation = () => {
               <Grid item xs={12} md={6}>
                 <DisplayCount
                   count={data?.getEstimateById?.totalCredits}
-                  title="Credits"
-                  subTitle="Total Prize"
+                  title={data?.getEstimateById?.totalCredits === 1 ? "Credit" : "Credits"}
+                  subTitle="Total price"
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -100,7 +100,7 @@ const ShareEstimation = () => {
             {data?.getEstimateById?.bundleInfo?.length > 0 && (
               <MDBox>
                 <MDTypography my={3} variant="h6">
-                  Bundles
+                  Packages
                 </MDTypography>
                 <DisplayBundles
                   bundles={data?.getEstimateById?.bundleInfo}

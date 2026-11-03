@@ -317,7 +317,7 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
               ? "Resubmit for review"
               : activeStep === 2 && isDraft
               ? "Proceed to Payment"
-              : "next"}
+              : "Next"}
           </MDButton>
         </MDBox>
       </MDBox>

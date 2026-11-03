@@ -35,8 +35,17 @@ interface Props {
   [key: string]: any;
 }
 
-function Breadcrumbs({ icon, title, route, light }: Props): JSX.Element {
-  const routes: string[] | any = route.slice(0, -1);
+function Breadcrumbs({ icon, title, route, light, names = {}, recordCrumb = "" }: Props): JSX.Element {
+  const segs: string[] = Array.isArray(route) ? route : [route];
+  // Page names come from the sidebar; any other segment after the first is a record id,
+  // shown as e.g. "PR #50" instead of the raw id
+  const label = (seg: string, i: number) => {
+    if (names[seg]) return names[seg];
+    if (i > 0) return recordCrumb || "…";
+    return seg.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+  };
+  const parents = segs.slice(0, -1);
+  const last = segs.length ? label(segs[segs.length - 1], segs.length - 1) : title;
 
   return (
     <MDBox mr={{ xs: 0, xl: 8 }}>
@@ -47,30 +56,28 @@ function Breadcrumbs({ icon, title, route, light }: Props): JSX.Element {
           },
         }}
       >
-        
-        {routes.map((el: string) => (
-          <Link to={`/${el}`} key={el}>
+        {parents.map((el: string, i: number) => (
+          <Link to={`/${segs.slice(0, i + 1).join("/")}`} key={`${i}-${el}`}>
             <MDTypography
               component="span"
               variant="button"
               fontWeight="regular"
-              textTransform="capitalize"
               color={light ? "white" : "dark"}
               opacity={light ? 0.8 : 0.5}
               sx={{ lineHeight: 0 }}
             >
-              {el}
+              {label(el, i)}
             </MDTypography>
           </Link>
         ))}
         <MDTypography
           variant="button"
           fontWeight="regular"
-          textTransform="capitalize"
           color={light ? "white" : "dark"}
           sx={{ lineHeight: 0 }}
+          data-testid="breadcrumb-current"
         >
-          {title.replace("-", " ")}
+          {last}
         </MDTypography>
       </MuiBreadcrumbs>
       {/* <MDTypography
