@@ -17,18 +17,20 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
     {
       Header: "Package",
       accessor: "name",
-      width: "30%",
+      align: "left",
       Cell: ({ value, row }) => {
         const b = row.original;
         const title = value || `${b.type || ""} · ${b.category || ""} bundle`;
+        const subtitle = [b.tier, b.packageType].filter(Boolean).join(" · ") || "Publication bundle";
         return (
-          <MDBox>
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
+          // Capped width (full text on hover) so long names don't push the table past the screen
+          <MDBox maxWidth="300px">
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }} noWrap title={title}>
               {b.featured ? `★ ${b.featuredRank && b.featuredRank < 999 ? `#${b.featuredRank} ` : ""}` : ""}
               {truncateString(title, 45)}
             </MDTypography>
-            <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }}>
-              {[b.tier, b.packageType].filter(Boolean).join(" · ") || "Publication bundle"}
+            <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }} noWrap title={subtitle}>
+              {subtitle}
             </MDTypography>
           </MDBox>
         );
@@ -37,7 +39,6 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
     {
       Header: "Media",
       accessor: "media",
-      width: "10%",
       Cell: ({ value, row }) => (
         <MDTypography sx={{ fontSize: "14px", fontWeight: "500" }}>
           {value?.length || row.original.publicationInfo?.length || 0}
@@ -45,30 +46,41 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
       ),
     },
     {
-      Header: "Vendor",
-      accessor: "vendor",
-      width: "18%",
-      Cell: ({ value, row }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "13px" }}>{value || "-"}</MDTypography>
-          <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }}>
-            {[row.original.vendorPackageName, row.original.vendorPriceInr ? `₹${Number(row.original.vendorPriceInr).toLocaleString("en-IN")}` : null]
-              .filter(Boolean)
-              .join(" · ")}
-          </MDTypography>
-        </MDBox>
-      ),
+      // Credits on top; vendor price, vendor and vendor package below (admin only).
+      // Replaces the separate Vendor + Credits columns so the table fits without sliding.
+      Header: "Price",
+      accessor: "price",
+      align: "left",
+      Cell: ({ value, row }) => {
+        const b = row.original;
+        const vendorLine = [
+          b.vendorPriceInr ? `₹${Number(b.vendorPriceInr).toLocaleString("en-IN")}` : null,
+          b.vendor,
+          b.vendorPackageName,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+        return (
+          <MDBox data-testid="pkg-price" maxWidth="200px">
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400", whiteSpace: "nowrap" }}>
+              <strong>{value}</strong> credits
+            </MDTypography>
+            <MDTypography sx={{ fontSize: "12px", color: "#7B809A" }} noWrap title={vendorLine}>
+              {vendorLine || "No vendor price"}
+            </MDTypography>
+          </MDBox>
+        );
+      },
     },
     {
       Header: "Visibility",
-      width: "12%",
       accessor: "visibility",
       Cell: ({ value, row }) => {
         const selectedStatus = value;
         const selected = visibilityOptions.find((el) => selectedStatus === el?.value);
 
         return (
-          <FormControl sx={{ width: "140px" }} size="medium">
+          <FormControl sx={{ width: "120px" }} size="medium">
             <Select
               input={<OutlinedInput sx={{ color: "white" }} />}
               id={`status-select-${row?.original?.id ?? row?.id}`}
@@ -118,22 +130,9 @@ export const makeColumns = (handleAction, handleUpdateStatus) => {
       },
     },
     {
-      Header: "Credits",
-      accessor: "price",
-      width: "10%",
-      Cell: ({ value }) => (
-        <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
-            <strong>{value}</strong>
-          </MDTypography>
-        </MDBox>
-      ),
-    },
-    {
       Header: "Action",
       align: "right",
       sticky: true,
-      width: "15%",
       Cell: ({ value, row }) => {
         return (
           <MDBox
