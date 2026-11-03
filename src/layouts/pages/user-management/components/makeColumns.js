@@ -13,9 +13,26 @@ export const makeColumns = (navigate, setOpen, setViewUser) => {
       accessor: "email",
       align: "left",
       width: "25%",
-      Cell: ({ value }) => (
-        <MDBox>
+      Cell: ({ value, row }) => (
+        <MDBox display="flex" alignItems="center" gap={1}>
           <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
+          {row?.original?.type === "ADMIN" && (
+            <MDBox
+              data-testid="user-admin-tag"
+              title="This is an admin account"
+              px={1}
+              sx={{
+                border: "1px solid #ee5c61",
+                borderRadius: "6px",
+                color: "#ee5c61",
+                fontSize: "12px",
+                fontWeight: 700,
+                lineHeight: "20px",
+              }}
+            >
+              Admin
+            </MDBox>
+          )}
         </MDBox>
       ),
     },
@@ -33,9 +50,10 @@ export const makeColumns = (navigate, setOpen, setViewUser) => {
       Header: "Wallet Balance",
       accessor: "walletInfo.balance",
       width: "25%",
+      // No wallet yet = 0 credits (was an empty cell)
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value}</MDTypography>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>{value ?? 0}</MDTypography>
         </MDBox>
       ),
     },

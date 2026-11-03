@@ -96,7 +96,7 @@ export const makeColumns = (
       align: "left",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }} title={value || ""}>
             {truncateString(value, 15)}
           </MDTypography>
         </MDBox>
@@ -116,7 +116,7 @@ export const makeColumns = (
               justifyContent: "space-between",
             }}
           >
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }} title={value || ""}>
               {truncateString(value, 17)}
             </MDTypography>
             {!filters?.userId && (

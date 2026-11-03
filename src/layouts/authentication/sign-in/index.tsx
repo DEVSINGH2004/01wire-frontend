@@ -110,7 +110,7 @@ function SignIn(): JSX.Element {
               localStorage.setItem("token", res.data.login.token);
               localStorage.setItem("role", roleVal);
               const routeVal = roleVal === "ADMIN" ? "/orders" : "/";
-              toast.success("Login Successful!!");
+              toast.success("Logged in successfully");
               navigate(routeVal);
             }
           })
@@ -170,7 +170,7 @@ function SignIn(): JSX.Element {
       .then((res: any) => {
         if (!forgotPsw) {
           localStorage.setItem("token", res.data.verifyOtp.token);
-          toast.success("Login Successful!!");
+          toast.success("Logged in successfully");
           navigate("/");
         } else {
           setForgotPsw(res.data.verifyOtp.token);

@@ -136,6 +136,8 @@ const Filters = ({
             getOptionLabel={(option: any) => option?.email}
             options={options}
             loading={loading}
+            noOptionsText="No user found with this email"
+            loadingText="Searching…"
             value={
               filters?.userId ? options.find((el: any) => el.userId === filters?.userId) : null
             }
@@ -210,6 +212,7 @@ const Filters = ({
                 Start Date
               </MDTypography>
               <DatePicker
+                format="DD/MM/YYYY"
                 value={from ? dayjs(from) : null}
                 onChange={(newValue) => setFrom(newValue)}
                 slotProps={{
@@ -247,6 +250,7 @@ const Filters = ({
                 To
               </MDTypography>
               <DatePicker
+                format="DD/MM/YYYY"
                 value={to ? dayjs(to) : null}
                 onChange={(newValue) => setTo(newValue)}
                 slotProps={{

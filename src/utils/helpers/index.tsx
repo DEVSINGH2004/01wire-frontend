@@ -107,6 +107,8 @@ export function removeEmptyFields(obj: { [key: string]: any }): { [key: string]:
 }
 
 export const truncateString = (str: string, maxLength: number) => {
+  // A missing value would otherwise crash the table cell
+  if (!str) return str ?? "";
   if (str.length > maxLength) {
     return str.slice(0, maxLength - 3) + "...";
   }

@@ -35,7 +35,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
       width: "28%",
       Cell: ({ value }) => (
         <MDBox>
-          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+          <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }} title={value || ""}>
             {truncateString(value, 35)}
           </MDTypography>
         </MDBox>
@@ -55,7 +55,7 @@ export const makeColumns = (handleAction, handleFilters, setEmail, setOptions, f
               justifyContent: "space-between",
             }}
           >
-            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }}>
+            <MDTypography sx={{ fontSize: "14px", fontWeight: "400" }} title={value || ""}>
               {truncateString(value, 20)}
             </MDTypography>
             {!filters?.userId && (
