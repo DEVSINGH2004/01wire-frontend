@@ -30,6 +30,25 @@ import { RESET_PASSWORD, IResetPasswordVars } from "graphql/mutations/resetPassw
 import { validateEmail } from "../utils";
 import { brandName } from "constants/index";
 
+// Turns any sign-in error into a clear message for the person signing in
+const SERVER_MESSAGES: [RegExp, string][] = [
+  [/incorrect username or password|no account found/i, "Incorrect email or password"],
+  [/otp invalid/i, "That code is not right. Please try again."],
+  [/otp expired/i, "That code has expired. Please ask for a new one."],
+  [/otp blocked/i, "Too many wrong codes. Please ask for a new one."],
+];
+const friendlyError = (err: any): string => {
+  const raw = err?.graphQLErrors?.[0]?.message || err?.message || "";
+  if (err?.networkError || /failed to fetch|networkerror|load failed|network request failed/i.test(raw)) {
+    return "Can't reach the server. Check your internet and try again.";
+  }
+  const known = SERVER_MESSAGES.find(([re]) => re.test(raw));
+  if (known) return known[1];
+  return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : "Something went wrong. Please try again.";
+};
+// Same message only once on screen, even if Enter is pressed again
+const showError = (message: string) => toast.error(message, { toastId: message });
+
 function SignIn(): JSX.Element {
   const navigate = useNavigate();
   const [controller] = useMaterialUIController();
@@ -66,6 +85,12 @@ function SignIn(): JSX.Element {
           },
         })
           .then(async (res: any) => {
+            // A lazy query resolves (not rejects) when the request fails
+            if (res?.error || !res?.data?.getAuthStatus) {
+              setLoading(false);
+              showError(friendlyError(res?.error));
+              return;
+            }
             const status = res.data.getAuthStatus.status;
             if (status === "NOT_FOUND") {
               setIsSignUp(true);
@@ -78,13 +103,16 @@ function SignIn(): JSX.Element {
             setLoading(false);
           })
           .catch((err) => {
-            console.error("There was an error fetching email data:", err);
+            setLoading(false);
+            showError(friendlyError(err));
           });
       } else {
         setEmailError("Invalid Email Address");
+        showError("Please enter a valid email address");
       }
     } else {
       setEmailError("Invalid Email Address");
+      showError("Please enter your email");
     }
     setLoading(false);
   };
@@ -116,12 +144,14 @@ function SignIn(): JSX.Element {
           })
           .catch((err) => {
             setLoading(false);
-            toast.error(err.message || "An error occurred during login");
+            showError(friendlyError(err));
           });
       } catch (error: any) {
         setLoading(false);
-        toast.error(error);
+        showError(friendlyError(error));
       }
+    } else {
+      showError("Please enter your password");
     }
   };
 
@@ -136,7 +166,7 @@ function SignIn(): JSX.Element {
           if (signup?.status === "LOGGED_IN" && signup?.token) {
             localStorage.setItem("token", signup.token);
             localStorage.setItem("role", signup.type);
-            toast.success("Signup Successful!!");
+            toast.success("Signed up successfully");
             navigate(signup.type === "ADMIN" ? "/orders" : "/");
           } else if (signup?.token) {
             setShowOtp(signup.token);
@@ -146,16 +176,16 @@ function SignIn(): JSX.Element {
         })
         .catch((err) => {
           setLoading(false);
-          toast.error(err?.response?.data?.message || "Error fetching email data");
+          showError(friendlyError(err));
         });
     } else {
-      toast.error(`Please enter the ${!fullName ? "name" : "password"}`);
+      showError(`Please enter your ${!fullName ? "name" : "password"}`);
     }
   };
 
   const handleVerifyOtp = async () => {
     if (otp.length !== 4) {
-      toast.error("Invalid Otp");
+      showError("Please enter the 4-digit code");
       return;
     }
     setLoading(true);
@@ -184,7 +214,7 @@ function SignIn(): JSX.Element {
       .catch((err: any) => {
         setLoading(false);
         setOtp("");
-        toast.error(err?.message || "Invalid OTP");
+        showError(friendlyError(err));
       });
   };
 
@@ -207,7 +237,7 @@ function SignIn(): JSX.Element {
       })
       .catch((e: any) => {
         setLoading(false);
-        toast.error(e?.message);
+        showError(friendlyError(e));
       });
   };
 
