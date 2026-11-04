@@ -5,9 +5,15 @@ import TopUpPackages from "./components/TopUpPackages";
 import { useQuery } from "@apollo/client";
 import { IGetUserWallet, GET_USER_WALLET } from "graphql/queries/getUserWallet";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Card from "@mui/material/Card";
+import MDTypography from "components/MDTypography";
+import { PAYMENT_METHODS, IPaymentMethods } from "graphql/mutations/razorpay";
 
 function MyCredits(): JSX.Element {
   const { data, loading, refetch } = useQuery<IGetUserWallet>(GET_USER_WALLET, {
+    fetchPolicy: "network-only",
+  });
+  const { data: methodsData } = useQuery<IPaymentMethods>(PAYMENT_METHODS, {
     fetchPolicy: "network-only",
   });
 
@@ -21,7 +27,17 @@ function MyCredits(): JSX.Element {
             <BillingInformation data={data} />
           </Grid>
           <Grid item xs={12} md={7}>
-            <TopUpPackages />
+            {/* Buying credits with money is open only to allowed accounts for now */}
+            {methodsData?.paymentMethods?.creditPacks ? (
+              <TopUpPackages />
+            ) : (
+              <Card sx={{ p: 3 }} data-testid="topup-closed">
+                <MDTypography variant="h6">Buying credits</MDTypography>
+                <MDTypography fontSize="14px" color="text" mt={1}>
+                  Online credit purchases aren't available yet. To add credits, please contact the 01 Wire team.
+                </MDTypography>
+              </Card>
+            )}
           </Grid>
         </Grid>
       </MDBox>

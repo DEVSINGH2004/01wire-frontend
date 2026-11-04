@@ -91,6 +91,8 @@ function ReleasePayment(): JSX.Element {
   const hasMedia = article?.bundleIds?.length > 0 || article?.publicationIds?.length > 0;
   const razorpayOn = !!methodsData?.paymentMethods?.razorpay;
   const shopifyOn = !!methodsData?.paymentMethods?.shopify;
+  // Test keys / test store: shown only to test accounts, labelled so nobody mistakes it
+  const testTag = (on?: boolean) => (on ? " · TEST MODE" : "");
   const inrPerCredit = Number(methodsData?.paymentMethods?.inrPerCredit || 0);
   const amountInr = Math.round(amount * inrPerCredit * 100) / 100;
   // A gateway is used only when the server has it set up; otherwise credits
@@ -346,11 +348,15 @@ function ReleasePayment(): JSX.Element {
             </MDTypography>
             {methodCard("CREDITS", "01Wire Credits", `Balance: ${creditsText(balance)}`)}
             {razorpayOn &&
-              methodCard("RAZORPAY", "Razorpay", `UPI, cards, netbanking · ${inrText(amountInr)}`)}
+              methodCard(
+                "RAZORPAY",
+                `Razorpay${testTag(methodsData?.paymentMethods?.razorpayTest)}`,
+                `UPI, cards, netbanking · ${inrText(amountInr)}`
+              )}
             {shopifyOn &&
               methodCard(
                 "SHOPIFY",
-                "Shopify checkout",
+                `Shopify checkout${testTag(methodsData?.paymentMethods?.shopifyTest)}`,
                 `Pay on Shopify's secure checkout · ${inrText(amountInr)}`
               )}
             <MDBox mb={1} />

@@ -1,13 +1,23 @@
 import { gql } from "@apollo/client";
 
 export interface IPaymentMethods {
-  paymentMethods: { razorpay: boolean; shopify: boolean; inrPerCredit: number };
+  paymentMethods: {
+    razorpay: boolean;
+    shopify: boolean;
+    razorpayTest: boolean;
+    shopifyTest: boolean;
+    creditPacks: boolean;
+    inrPerCredit: number;
+  };
 }
 export const PAYMENT_METHODS = gql`
   query paymentMethods {
     paymentMethods {
       razorpay
       shopify
+      razorpayTest
+      shopifyTest
+      creditPacks
       inrPerCredit
     }
   }
