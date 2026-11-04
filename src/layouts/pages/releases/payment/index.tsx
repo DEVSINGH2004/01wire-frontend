@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
@@ -30,6 +30,10 @@ import {
   ICreateRazorpayOrder,
   VERIFY_RAZORPAY_PAYMENT,
   IVerifyRazorpayPayment,
+  CREATE_SHOPIFY_CHECKOUT,
+  ICreateShopifyCheckout,
+  CHECK_SHOPIFY_PAYMENT,
+  ICheckShopifyPayment,
 } from "graphql/mutations/razorpay";
 import { clearCart } from "utils/mediaCart";
 import { inrText, loadRazorpay } from "utils/razorpay";
@@ -45,12 +49,16 @@ const row = (label: string, value: any, bold = false) => (
   </MDBox>
 );
 
-type Method = "CREDITS" | "RAZORPAY";
+type Method = "CREDITS" | "RAZORPAY" | "SHOPIFY";
+
+// While the user pays on Shopify (in another tab) the page asks the server every few seconds
+const SHOPIFY_POLL_MS = 5000;
+const SHOPIFY_POLL_FOR_MS = 20 * 60 * 1000;
 
 // Final step of a new order: pay for the plan, then the PR goes to review.
-// Methods: 01Wire Credits, or Razorpay (UPI / card / netbanking) for the full
-// amount in INR when the server has Razorpay keys. The server confirms a
-// Razorpay payment, adds the credits and submits the PR in one go.
+// Methods: 01Wire Credits, Razorpay (UPI / card / netbanking) or Shopify checkout for
+// the full amount in INR when the server has that gateway's keys. The server confirms
+// the payment with the gateway, adds the credits and submits the PR in one go.
 function ReleasePayment(): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -69,6 +77,12 @@ function ReleasePayment(): JSX.Element {
   const [updateArticleStatus] = useMutation<IUpdateArticleStatusVars>(UPDATE_ARTICLE_STATUS);
   const [createRazorpayOrder] = useMutation<ICreateRazorpayOrder>(CREATE_RAZORPAY_ORDER);
   const [verifyRazorpayPayment] = useMutation<IVerifyRazorpayPayment>(VERIFY_RAZORPAY_PAYMENT);
+  const [createShopifyCheckout] = useMutation<ICreateShopifyCheckout>(CREATE_SHOPIFY_CHECKOUT);
+  const [checkShopifyPayment] = useMutation<ICheckShopifyPayment>(CHECK_SHOPIFY_PAYMENT);
+  // Set while waiting for a Shopify payment: the checkout link and when we started
+  const [shopifyWait, setShopifyWait] = useState<{ url: string; since: number } | null>(null);
+  const [checking, setChecking] = useState(false);
+  const checkingRef = useRef(false);
 
   const article: any = data?.getArticleById;
   const amount = Number(article?.totalCredits || 0);
@@ -76,9 +90,17 @@ function ReleasePayment(): JSX.Element {
   const shortBy = Math.max(0, amount - balance);
   const hasMedia = article?.bundleIds?.length > 0 || article?.publicationIds?.length > 0;
   const razorpayOn = !!methodsData?.paymentMethods?.razorpay;
+  const shopifyOn = !!methodsData?.paymentMethods?.shopify;
   const inrPerCredit = Number(methodsData?.paymentMethods?.inrPerCredit || 0);
   const amountInr = Math.round(amount * inrPerCredit * 100) / 100;
-  const byCredits = method === "CREDITS" || !razorpayOn;
+  // A gateway is used only when the server has it set up; otherwise credits
+  const gateway: Method | null =
+    method === "RAZORPAY" && razorpayOn
+      ? "RAZORPAY"
+      : method === "SHOPIFY" && shopifyOn
+      ? "SHOPIFY"
+      : null;
+  const byCredits = !gateway;
 
   const backToPlan = () => navigate(`/releases/${id}`, { state: { step: 2 } });
   const viewOrder = (paid = false) => navigate(`/releases/${id}`, { state: { step: 3, paid } });
@@ -170,10 +192,73 @@ function ReleasePayment(): JSX.Element {
     }
   };
 
-  const handlePay = () => (byCredits ? payWithCredits() : payWithRazorpay());
+  // ---- Shopify: open its checkout in a new tab, then ask the server until it is paid ----
+  const checkShopify = (manual = false) => {
+    if (checkingRef.current) return;
+    checkingRef.current = true;
+    setChecking(true);
+    checkShopifyPayment({ variables: { articleId: id }, refetchQueries: ["getUserWallet"] })
+      .then(({ data: v }) => {
+        const r = v.checkShopifyPayment;
+        if (r.status === "PAID") {
+          setShopifyWait(null);
+          if (r.submitted) paidAndSubmitted();
+          else toast.warning(r.message, { autoClose: false });
+        } else if (manual) {
+          toast.info(r.message || "Not paid yet. Finish the payment in the Shopify tab.", {
+            toastId: "shopify-wait",
+          });
+        }
+      })
+      .catch((err: any) => {
+        if (manual) toast.error(err?.message, { toastId: "shopify-error" });
+      })
+      .finally(() => {
+        checkingRef.current = false;
+        setChecking(false);
+      });
+  };
+
+  useEffect(() => {
+    if (!shopifyWait) return undefined;
+    const t = setInterval(() => {
+      if (Date.now() - shopifyWait.since > SHOPIFY_POLL_FOR_MS) {
+        clearInterval(t);
+        return;
+      }
+      checkShopify();
+    }, SHOPIFY_POLL_MS);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shopifyWait]);
+
+  const payWithShopify = async () => {
+    // Open the tab now (inside the click), so the browser does not block it as a pop-up
+    const tab = window.open("", "_blank");
+    setPaying(true);
+    try {
+      const res = await createShopifyCheckout({ variables: { articleId: id } });
+      const url = res.data.createShopifyCheckout.checkoutUrl;
+      if (tab) tab.location.href = url;
+      setShopifyWait({ url, since: Date.now() });
+    } catch (err: any) {
+      if (tab) tab.close();
+      toast.error(err?.message);
+    } finally {
+      setPaying(false);
+    }
+  };
+
+  const handlePay = () =>
+    gateway === "SHOPIFY"
+      ? payWithShopify()
+      : gateway === "RAZORPAY"
+      ? payWithRazorpay()
+      : payWithCredits();
 
   const methodCard = (value: Method, title: string, sub: string) => {
-    const on = (value === "CREDITS") === byCredits;
+    // Exactly one card is selected: credits, or the gateway in use
+    const on = byCredits ? value === "CREDITS" : value === gateway;
     return (
       <MDBox
         display="flex"
@@ -262,6 +347,12 @@ function ReleasePayment(): JSX.Element {
             {methodCard("CREDITS", "01Wire Credits", `Balance: ${creditsText(balance)}`)}
             {razorpayOn &&
               methodCard("RAZORPAY", "Razorpay", `UPI, cards, netbanking · ${inrText(amountInr)}`)}
+            {shopifyOn &&
+              methodCard(
+                "SHOPIFY",
+                "Shopify checkout",
+                `Pay on Shopify's secure checkout · ${inrText(amountInr)}`
+              )}
             <MDBox mb={1} />
             {row("Order total", creditsText(amount))}
             {byCredits && row("Credits balance", creditsText(balance))}
@@ -284,7 +375,11 @@ function ReleasePayment(): JSX.Element {
               >
                 <MDTypography fontSize="14px">
                   You need {creditsText(shortBy)} more to pay for this order
-                  {razorpayOn ? ", or pay with Razorpay." : "."}
+                  {razorpayOn || shopifyOn
+                    ? `, or pay with ${[razorpayOn && "Razorpay", shopifyOn && "Shopify"]
+                        .filter(Boolean)
+                        .join(" or ")}.`
+                    : "."}
                 </MDTypography>
                 <MDButton
                   variant="outlined"
@@ -296,19 +391,62 @@ function ReleasePayment(): JSX.Element {
                 </MDButton>
               </MDBox>
             )}
-            <MDButton
-              color="primary"
-              fullWidth
-              sx={{ mt: 3 }}
-              disabled={(byCredits && shortBy > 0) || paying}
-              onClick={handlePay}
-            >
-              {paying
-                ? "Processing..."
-                : byCredits
-                ? `Pay ${creditsText(amount)}`
-                : `Pay ${inrText(amountInr)} with Razorpay`}
-            </MDButton>
+            {shopifyWait ? (
+              <MDBox
+                mt={3}
+                p={2}
+                data-testid="shopify-waiting"
+                sx={{ background: "#F0F7FF", borderRadius: "8px", border: "1px solid #CFE3FF" }}
+              >
+                <MDTypography fontSize="15px" fontWeight="medium">
+                  Waiting for your payment on Shopify…
+                </MDTypography>
+                <MDTypography fontSize="13px" mt={0.5} sx={{ color: "#7B809A" }}>
+                  Finish paying in the Shopify tab. This page checks every few seconds and moves on
+                  by itself once Shopify confirms the payment.
+                </MDTypography>
+                <MDBox display="flex" gap={1} mt={1.5} flexWrap="wrap">
+                  <MDButton
+                    color="primary"
+                    size="small"
+                    disabled={checking}
+                    onClick={() => checkShopify(true)}
+                  >
+                    {checking ? "Checking…" : "I've paid – check now"}
+                  </MDButton>
+                  <MDButton
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    onClick={() => window.open(shopifyWait.url, "_blank")}
+                  >
+                    Open Shopify checkout again
+                  </MDButton>
+                  <MDButton
+                    variant="text"
+                    color="dark"
+                    size="small"
+                    onClick={() => setShopifyWait(null)}
+                  >
+                    Cancel
+                  </MDButton>
+                </MDBox>
+              </MDBox>
+            ) : (
+              <MDButton
+                color="primary"
+                fullWidth
+                sx={{ mt: 3 }}
+                disabled={(byCredits && shortBy > 0) || paying}
+                onClick={handlePay}
+              >
+                {paying
+                  ? "Processing..."
+                  : byCredits
+                  ? `Pay ${creditsText(amount)}`
+                  : `Pay ${inrText(amountInr)} with ${gateway === "SHOPIFY" ? "Shopify" : "Razorpay"}`}
+              </MDButton>
+            )}
             <MDTypography fontSize="13px" mt={1} textAlign="center" sx={{ color: "#7B809A" }}>
               Your PR goes to review as soon as the payment is done.
             </MDTypography>
