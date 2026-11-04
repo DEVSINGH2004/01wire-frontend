@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { toast } from "react-toastify";
+import MDButton from "components/MDButton";
 import { useLocation } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 // Material Dashboard 2 PRO React TS components
@@ -15,6 +17,14 @@ import {
   IGetArticleById,
   IGetArticleByIdVars,
 } from "graphql/queries/getArticleByIdNew";
+import {
+  ARTICLE_PAYMENTS,
+  IArticlePayments,
+  MARK_PAYMENT_REVIEWED,
+  gatewayLabel,
+  inrFromPaise,
+  providerName,
+} from "graphql/queries/payments";
 
 const STATUS_TEXT: Record<string, string> = {
   SUBMITTED: "Submitted for review",
@@ -27,6 +37,21 @@ const STATUS_TEXT: Record<string, string> = {
 
 // Shown once the order is paid (any status after Draft)
 function PaidReceipt({ article, justPaid }: { article: any; justPaid: boolean }): JSX.Element {
+  // Admins also see which gateway payment paid for it (order no., refunds, problems)
+  const isAdmin = localStorage.getItem("role") === "ADMIN";
+  const { data: payData, refetch } = useQuery<IArticlePayments>(ARTICLE_PAYMENTS, {
+    variables: { articleId: article?.id },
+    skip: !isAdmin || !article?.id,
+    fetchPolicy: "network-only",
+  });
+  const [markReviewed] = useMutation(MARK_PAYMENT_REVIEWED);
+  const payments = payData?.articlePayments || [];
+  const gw = payments.find((p) => p.status === "PAID");
+  const paidWith = gw
+    ? `${gatewayLabel(gw)} · ${inrFromPaise(gw.amount)}${
+        gw.test ? " · TEST" : ""
+      }`
+    : "01Wire Credits";
   const row = (label: string, value: any) => (
     <MDBox display="flex" justifyContent="space-between" py={0.5}>
       <MDTypography fontSize="15px" sx={{ color: "#7B809A" }}>
@@ -48,9 +73,50 @@ function PaidReceipt({ article, justPaid }: { article: any; justPaid: boolean })
         <MDTypography variant="h6">{justPaid ? "Payment successful" : "Order paid"}</MDTypography>
       </MDBox>
       {row("Amount paid", creditsText(article?.totalCredits ?? 0))}
-      {row("Paid with", "01Wire Credits")}
+      {row("Paid with", paidWith)}
+      {gw && gw.refundedAmount > 0 &&
+        row(
+          "Refunded",
+          `${inrFromPaise(gw.refundedAmount)} · ${gw.reversedCredits} credit${gw.reversedCredits === 1 ? "" : "s"} taken back`
+        )}
       {row("Status", STATUS_TEXT[article?.status] || article?.status)}
       {article?.updatedAt && row("Last updated", dayjs(article.updatedAt).format("DD MMM YYYY, h:mm A"))}
+      {isAdmin &&
+        payments
+          .filter((p) => p.issue)
+          .map((p) => (
+            <MDBox
+              key={p.id}
+              mt={1.5}
+              p={1.5}
+              data-testid="payment-issue"
+              sx={{ background: "#FFF4E5", borderRadius: "8px", border: "1px solid #FFD8A8" }}
+            >
+              <MDTypography fontSize="14px" fontWeight="medium">
+                ⚠ Payment needs review ({providerName(p.provider)}
+                {p.gatewayRef ? ` ${p.gatewayRef}` : ""} · {inrFromPaise(p.amount)})
+              </MDTypography>
+              <MDTypography fontSize="13px" mt={0.5}>
+                {p.issue}
+              </MDTypography>
+              <MDButton
+                size="small"
+                variant="outlined"
+                color="dark"
+                sx={{ mt: 1 }}
+                onClick={() =>
+                  markReviewed({ variables: { id: p.id } })
+                    .then(() => {
+                      toast.success("Marked as reviewed");
+                      refetch();
+                    })
+                    .catch((e: any) => toast.error(e?.message))
+                }
+              >
+                Mark reviewed
+              </MDButton>
+            </MDBox>
+          ))}
     </MDBox>
   );
 }

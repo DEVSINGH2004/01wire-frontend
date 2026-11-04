@@ -11,6 +11,7 @@ import OrderDetail from "./components/orderDetail";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "../pr-management/components/DataTable";
 import Filters from "./components/Filters";
+import PaymentsReview from "./components/PaymentsReview";
 import { makeColumns } from "./components/makeColumns";
 import ArticleBundleModal from "../releases/components/ArticleBundleModal";
 import NoteModal from "../pr-management/components/NoteModal";
@@ -166,6 +167,7 @@ const OrderManagement = () => {
       <MDBox px={2}>
         {!openForm && (
           <>
+            <PaymentsReview />
             <Filters
               setFilters={setFilters}
               email={email}
