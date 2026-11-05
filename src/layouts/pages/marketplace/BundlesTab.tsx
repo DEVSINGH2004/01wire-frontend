@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
 import Dialog from "@mui/material/Dialog";
@@ -28,7 +29,7 @@ const byPopular = (a: any, b: any) =>
   Number(!!b.featured) - Number(!!a.featured) ||
   (a.featuredRank ?? 999) - (b.featuredRank ?? 999) ||
   a.price - b.price;
-const TIER_COLOURS: Record<string, string> = {
+export const TIER_COLOURS: Record<string, string> = {
   Starter: "#607D8B",
   Standard: "#1A73E8",
   Good: "#00897B",
@@ -109,6 +110,15 @@ function BundlesTab({ isPhone, all, loading, error, refetch, bundles, setBundles
   const [q, setQ] = useState<string>("");
   const [sort, setSort] = useState<string>("popular");
   const [details, setDetails] = useState<any>(null);
+  // Opened from the Dashboard ("View" on a package card): show that package straight away
+  const [params] = useSearchParams();
+  useEffect(() => {
+    const id = params.get("package");
+    if (id && all.length && !details) {
+      const b = all.find((x) => x.id === id);
+      if (b) setDetails(b);
+    }
+  }, [all]);
 
   const tiers = PackageTierOptions.filter((t) => all.some((b) => b.tier === t));
   const hasPopular = all.some((b) => b.featured);
