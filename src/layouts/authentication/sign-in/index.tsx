@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Grid, InputAdornment } from "@mui/material";
 
@@ -27,6 +27,7 @@ import { ILoginVars, LOGIN } from "graphql/mutations/login";
 import { GET_AUTH_STATUS, IGetAuthStatusVars, IGetAuthStatus } from "graphql/queries/getAuthStatus";
 import { VERIFY_OTP, IVerifyOtpVars } from "graphql/mutations/verifyOtp";
 import { RESET_PASSWORD, IResetPasswordVars } from "graphql/mutations/resetPassword";
+import { LOGIN_VIA_OTP, ILoginOtpVars } from "graphql/mutations/loginViaOtp";
 import { validateEmail } from "../utils";
 import { brandName } from "constants/index";
 
@@ -36,7 +37,15 @@ const SERVER_MESSAGES: [RegExp, string][] = [
   [/otp invalid/i, "That code is not right. Please try again."],
   [/otp expired/i, "That code has expired. Please ask for a new one."],
   [/otp blocked/i, "Too many wrong codes. Please ask for a new one."],
+  [/user not found/i, "No account found with this email."],
 ];
+// Same rule the new-password screen shows
+const passwordProblem = (p: string): string =>
+  p.length < 8
+    ? "Use at least 8 characters for your new password"
+    : !/[A-Za-z]/.test(p) || !/[0-9]/.test(p)
+    ? "Use at least one letter and one number in your new password"
+    : "";
 const friendlyError = (err: any): string => {
   const raw = err?.graphQLErrors?.[0]?.message || err?.message || "";
   if (err?.networkError || /failed to fetch|networkerror|load failed|network request failed/i.test(raw)) {
@@ -62,6 +71,8 @@ function SignIn(): JSX.Element {
   const [showOtp, setShowOtp] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [forgotPsw, setForgotPsw] = useState<string>("");
+  // true while going through "Forgot password": code -> new password
+  const [resetMode, setResetMode] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const [emailError, setEmailError] = useState("");
@@ -70,6 +81,7 @@ function SignIn(): JSX.Element {
   const [loginMutation] = useMutation<ILoginVars>(LOGIN);
   const [verifyOtp] = useMutation<IVerifyOtpVars>(VERIFY_OTP);
   const [resetPassword] = useMutation<IResetPasswordVars>(RESET_PASSWORD);
+  const [sendCode] = useMutation<any, ILoginOtpVars>(LOGIN_VIA_OTP);
 
   const [getAuthStatus] = useLazyQuery<IGetAuthStatusVars>(GET_AUTH_STATUS);
 
@@ -117,9 +129,39 @@ function SignIn(): JSX.Element {
     setLoading(false);
   };
 
+  // Emails a 4-digit code (also used by "Resend OTP?"); resetPsw = then ask for a new password
   const handleForgotPassword = async (resetPsw = false) => {
+    if (!email) {
+      showError("Please enter your email");
+      return;
+    }
     setLoading(true);
-    setLoading(false);
+    try {
+      const res: any = await sendCode({ variables: { email } });
+      const token = res?.data?.loginViaOtp?.token;
+      if (!token) throw new Error("Could not send the code. Please try again.");
+      setResetMode(resetPsw);
+      setShowPassword(false);
+      setPassword("");
+      setOtp("");
+      setForgotPsw("");
+      setShowOtp(token);
+      toast.success(`We've sent a 4-digit code to ${email}`, { toastId: "otp-sent" });
+    } catch (err) {
+      showError(friendlyError(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Back from the code / new-password screens to the normal sign-in
+  const backToSignIn = () => {
+    setShowOtp("");
+    setForgotPsw("");
+    setResetMode(false);
+    setOtp("");
+    setPassword("");
+    setShowPassword(!!email);
   };
 
   const handleLogin = async () => {
@@ -198,7 +240,7 @@ function SignIn(): JSX.Element {
       },
     })
       .then((res: any) => {
-        if (!forgotPsw) {
+        if (!resetMode) {
           localStorage.setItem("token", res.data.verifyOtp.token);
           // Keep the role too (Admin badge, admin menu and landing page depend on it)
           const otpRole = res.data.verifyOtp.type;
@@ -208,6 +250,7 @@ function SignIn(): JSX.Element {
         } else {
           setForgotPsw(res.data.verifyOtp.token);
           setShowOtp("");
+          setPassword("");
         }
         setLoading(false);
       })
@@ -219,6 +262,11 @@ function SignIn(): JSX.Element {
   };
 
   const handleResetPassword = async () => {
+    const problem = passwordProblem(password);
+    if (problem) {
+      showError(problem);
+      return;
+    }
     setLoading(true);
     resetPassword({
       variables: {
@@ -243,9 +291,9 @@ function SignIn(): JSX.Element {
 
   const handleSubmit = () => {
     if (isSignup) handleSignup();
-    else if (showPassword) handleLogin();
     else if (showOtp) handleVerifyOtp();
-    else if (!showOtp && forgotPsw) handleResetPassword();
+    else if (forgotPsw) handleResetPassword();
+    else if (showPassword) handleLogin();
     else handleEmailSubmit();
   };
 
@@ -318,11 +366,11 @@ function SignIn(): JSX.Element {
 
                 <MDTypography variant="body2" color="text" fontWeight="regular">
                   {showOtp
-                    ? "We've sent a One-Time Password(OTP) to your email. Please enter it below to verify your account."
+                    ? `We've sent a 4-digit code to ${email}. Enter it below${resetMode ? " to set a new password" : ""}.`
                     : isSignup
                     ? "Let's get started!"
                     : forgotPsw
-                    ? "Now! Please enter your new password to unlock your Account."
+                    ? "Choose a new password: at least 8 characters, with a letter and a number."
                     : "Let's get you connected. Please enter your work email to begin."}
                 </MDTypography>
               </>
@@ -427,7 +475,7 @@ function SignIn(): JSX.Element {
                       fontWeight="medium"
                       color="textSecondary"
                     >
-                      Password
+                      New password
                     </MDTypography>
                     <MDInput
                       InputLabelProps={{
@@ -488,18 +536,36 @@ function SignIn(): JSX.Element {
                     <MDTypography variant="button" color="secondary">
                       {showOtp ? "" : showPassword ? "" : "Don't have an account?"}
                       <MDTypography
-                        component={Link}
+                        component="button"
+                        type="button"
+                        data-testid={showOtp ? "resend-otp" : "forgot-password"}
                         onClick={() => {
-                          if (showPassword || showOtp) handleForgotPassword(true);
+                          if (showPassword || showOtp) handleForgotPassword(showOtp ? resetMode : true);
                         }}
                         variant="button"
                         color="primary"
                         fontWeight="medium"
                         textGradient
-                        sx={{ ml: 1 }}
+                        sx={{ ml: 1, border: 0, p: 0, cursor: "pointer" }}
                       >
                         {showOtp ? "Resend OTP?" : showPassword ? "Forgot Password?" : "Signup"}
                       </MDTypography>
+                    </MDTypography>
+                  </MDBox>
+                )}
+                {(showOtp || forgotPsw) && (
+                  <MDBox mt={1} textAlign="left">
+                    <MDTypography
+                      component="button"
+                      type="button"
+                      data-testid="back-to-sign-in"
+                      onClick={backToSignIn}
+                      variant="button"
+                      color="secondary"
+                      fontWeight="medium"
+                      sx={{ background: "none", border: 0, p: 0, cursor: "pointer" }}
+                    >
+                      Back to sign in
                     </MDTypography>
                   </MDBox>
                 )}
