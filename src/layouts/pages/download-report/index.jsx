@@ -4,7 +4,7 @@ import "./download.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import OneWireLogo from "assets/images/OneWireLogo_2.svg";
+import OneWireLogo from "assets/images/01wire-logo.png";
 import DownloadBg from "assets/images/download-report/downloadBg.png";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -218,7 +218,7 @@ function PressReleaseReport() {
                 position: "absolute",
               }}
             >
-              <img loading="lazy" src={OneWireLogo} alt="Wire logo" height={75} width={168} />
+              <img loading="lazy" src={OneWireLogo} alt="01 Wire" height={63} width={168} />
             </Box>
           </Box>
           <Box

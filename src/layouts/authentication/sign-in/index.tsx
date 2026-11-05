@@ -16,7 +16,7 @@ import PageLayout from "examples/LayoutContainers/PageLayout";
 import { MuiOtpInput } from "mui-one-time-password-input";
 
 // Image
-import OneWireLogo from "assets/images/OneWireLogo_2.svg";
+import OneWireLogo from "assets/images/01wire-logo.png";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -322,31 +322,12 @@ function SignIn(): JSX.Element {
               display={{ xs: "none", lg: "flex" }}
               alignItems="center"
               justifyContent="center"
-              width="45%"
-              height="calc(100vh - 2rem)"
-              bgColor="grey-800"
-              sx={{
-                borderTopLeftRadius: "16px",
-                borderBottomLeftRadius: "16px",
-              }}
-            ></MDBox>
-            <MDBox
-              display={{ xs: "none", lg: "flex" }}
-              alignItems="center"
-              justifyContent="center"
-              width="55%"
+              width="100%"
               height="calc(100vh - 2rem)"
               bgColor="white"
-              sx={{
-                borderTopRightRadius: "16px",
-                borderBottomRightRadius: "16px",
-              }}
+              sx={{ borderRadius: "16px" }}
             >
-              <img
-                src={OneWireLogo}
-                alt="logo"
-                style={{ width: "20%", position: "absolute", marginLeft: "-20.5%" }}
-              />
+              <img src={OneWireLogo} alt="01 Wire" data-testid="signin-logo" style={{ width: "45%", maxWidth: "420px", height: "auto" }} />
             </MDBox>
           </MDBox>
         </Grid>

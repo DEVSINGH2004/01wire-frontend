@@ -1,10 +1,10 @@
 {
-  "short_name": "Material Dashboard",
-  "name": "Material Dashboard 2 PRO React TS",
+  "short_name": "01 Wire",
+  "name": "01 Wire Dashboard",
   "icons": [
     {
       "src": "favicon.png",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "32x32",
       "type": "image/png"
     }
   ],

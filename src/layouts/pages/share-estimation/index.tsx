@@ -5,7 +5,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import { GET_ESTIMATE_BY_ID, IGetEstimateByIdVars } from "graphql/queries/getEstimateById";
-import OneWireLogo from "assets/images/OneWireLogo_2.svg";
+import OneWireLogo from "assets/images/01wire-logo.png";
 import DisplayBundles from "../releases/components/DisplayBundles";
 import PublicationsList from "../releases/components/PublicationsList";
 import Footer from "examples/Footer";
@@ -72,7 +72,7 @@ const ShareEstimation = () => {
       >
         <Toolbar sx={{ height: "100%" }}>
           <MDBox m="auto">
-            <img src={OneWireLogo} height={"46px"} width="100%" />
+            <img src={OneWireLogo} alt="01 Wire" height={"46px"} width="auto" style={{ maxWidth: "100%" }} />
           </MDBox>
         </Toolbar>
       </AppBar>

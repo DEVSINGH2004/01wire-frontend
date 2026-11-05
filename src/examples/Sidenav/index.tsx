@@ -300,7 +300,20 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
           alignItems="center"
           justifyContent="center"
         >
-          {brand && <MDBox component="img" src={brand} alt="Brand" height="65px" width="130px" />}
+          {brand && (
+            <MDBox
+              bgColor="white"
+              borderRadius="lg"
+              px={1.5}
+              py={1}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              data-testid="sidenav-logo"
+            >
+              <MDBox component="img" src={brand} alt="01 Wire" width="150px" height="auto" sx={{ display: "block" }} />
+            </MDBox>
+          )}
           {/* <MDBox
             width={!brandName && "100%"}
             sx={(theme: any) => sidenavLogoLabel(theme, { miniSidenav })}
