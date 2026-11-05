@@ -40,6 +40,7 @@ const CLIENT = gql`
 const KIND: Record<string, "article" | "publication" | "bundle" | "client"> = {
   releases: "article",
   "pr-management": "article",
+  "pr-orders": "article",
   publications: "publication",
   bundles: "bundle",
   clients: "client",

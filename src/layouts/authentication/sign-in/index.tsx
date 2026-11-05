@@ -179,7 +179,7 @@ function SignIn(): JSX.Element {
               const roleVal = res?.data?.login?.type;
               localStorage.setItem("token", res.data.login.token);
               localStorage.setItem("role", roleVal);
-              const routeVal = roleVal === "ADMIN" ? "/orders" : "/";
+              const routeVal = roleVal === "ADMIN" ? "/pr-orders" : "/";
               toast.success("Logged in successfully");
               navigate(routeVal);
             }
@@ -209,7 +209,7 @@ function SignIn(): JSX.Element {
             localStorage.setItem("token", signup.token);
             localStorage.setItem("role", signup.type);
             toast.success("Signed up successfully");
-            navigate(signup.type === "ADMIN" ? "/orders" : "/");
+            navigate(signup.type === "ADMIN" ? "/pr-orders" : "/");
           } else if (signup?.token) {
             setShowOtp(signup.token);
             setIsSignUp(false);
@@ -246,7 +246,7 @@ function SignIn(): JSX.Element {
           const otpRole = res.data.verifyOtp.type;
           if (otpRole) localStorage.setItem("role", otpRole);
           toast.success("Logged in successfully");
-          navigate(otpRole === "ADMIN" ? "/orders" : "/");
+          navigate(otpRole === "ADMIN" ? "/pr-orders" : "/");
         } else {
           setForgotPsw(res.data.verifyOtp.token);
           setShowOtp("");

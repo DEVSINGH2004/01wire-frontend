@@ -52,7 +52,7 @@ function PaymentsReview(): JSX.Element | null {
             </MDTypography>
           </MDBox>
           <MDBox display="flex" gap={1}>
-            <MDButton size="small" variant="outlined" color="primary" onClick={() => navigate(`/pr-management/${p.articleId}`)}>
+            <MDButton size="small" variant="outlined" color="primary" onClick={() => navigate(`/pr-orders/${p.articleId}`)}>
               Open PR
             </MDButton>
             <MDButton

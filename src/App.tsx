@@ -11,7 +11,8 @@ import theme from "assets/theme";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import routes from "routes";
-import adminRoutes from "adminRoutes";
+import adminRoutes, { legacyAdminRoutes } from "adminRoutes";
+import PrOrders from "layouts/pages/pr-orders";
 import { useMaterialUIController, setMiniSidenav } from "context";
 // Images
 import brandLogo from "assets/images/01wire-logo.png";
@@ -123,11 +124,13 @@ export default function App() {
               <Route path="/releases/:id/payment" element={<ReleasePayment />} />
               <Route path="/publications/:id" element={<Publications />} />
               <Route path="/pr-management/:id" element={<PRManagement />} />
+              {role === "ADMIN" && <Route path="/pr-orders/:id" element={<PrOrders />} />}
+              {role === "ADMIN" && legacyAdminRoutes.map((r) => <Route key={r.key} path={r.route} element={r.component} />)}
               <Route path="/bundles/:id" element={<Bundles />} />
               {/* Marketplace used to live at /pr-estimation */}
               <Route path="/pr-estimation" element={<Navigate to="/marketplace" replace />} />
               {role === "ADMIN" ? (
-                <Route path="*" element={<Navigate to="/orders" />} />
+                <Route path="*" element={<Navigate to="/pr-orders" />} />
               ) : (
                 <Route path="*" element={<Navigate to="/dashboards" />} />
               )}

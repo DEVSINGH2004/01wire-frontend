@@ -20,8 +20,8 @@ import Bundles from "layouts/pages/bundles";
 import PublishedOrders from "layouts/pages/publishedOrder";
 import PRManagement from "layouts/pages/pr-management";
 import OrderManagement from "layouts/pages/orders";
+import PrOrders from "layouts/pages/pr-orders";
 // Material Dashboard 2 PRO React TS components
-import ReleaseIcon from "assets/images/icons/sidebarRelease.svg";
 import OrdersIcon from "assets/images/icons/ordersIcon.svg";
 import UserIcon from "assets/images/account_box.svg";
 import PublicationIcon from "assets/images/publicationIcon.svg";
@@ -29,23 +29,16 @@ import BundleIcon from "assets/images/bundle.svg";
 import PublishedOrder from "assets/images/published.svg";
 
 export const adminRoutes = [
+  // One place for every purchase: replaces "Manage Orders" + "Manage Articles"
+  // (those pages still open at /orders and /pr-management, see App.tsx)
   {
     type: "collapse",
-    name: "Manage Orders",
+    name: "PR Orders",
     icon: <img src={OrdersIcon} width="24px" height="24px" />,
-    key: "orders",
+    key: "pr-orders",
     noCollapse: true,
-    route: "/orders",
-    component: <OrderManagement />,
-  },
-  {
-    type: "collapse",
-    name: "Manage Articles",
-    icon: <img src={ReleaseIcon} width="24px" height="24px" />,
-    key: "pr-management",
-    noCollapse: true,
-    route: "/pr-management",
-    component: <PRManagement />,
+    route: "/pr-orders",
+    component: <PrOrders />,
   },
   {
     type: "collapse",
@@ -83,6 +76,12 @@ export const adminRoutes = [
   //   route: "/published-order",
   //   component: <PublishedOrders />,
   // },
+];
+
+// Old admin pages, reachable by address only (not in the sidebar)
+export const legacyAdminRoutes = [
+  { key: "orders", route: "/orders", component: <OrderManagement /> },
+  { key: "pr-management", route: "/pr-management", component: <PRManagement /> },
 ];
 
 export default adminRoutes;
