@@ -43,7 +43,7 @@ export const mediaOf = (b: any): { name: string; image?: string }[] =>
   b?.media?.length ? b.media : (b?.publicationInfo || []).map((p: any) => ({ name: p.title, image: p.image }));
 
 // What the cart keeps for a package (OrderSummary / PR form read these fields)
-const toCartBundle = (b: any) => ({
+export const toCartBundle = (b: any) => ({
   id: b.id,
   name: b.name,
   tier: b.tier,
