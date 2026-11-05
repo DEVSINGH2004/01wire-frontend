@@ -130,7 +130,7 @@ export default function App() {
               {/* Marketplace used to live at /pr-estimation */}
               <Route path="/pr-estimation" element={<Navigate to="/marketplace" replace />} />
               {role === "ADMIN" ? (
-                <Route path="*" element={<Navigate to="/pr-orders" />} />
+                <Route path="*" element={<Navigate to="/overview" />} />
               ) : (
                 <Route path="*" element={<Navigate to="/dashboards" />} />
               )}

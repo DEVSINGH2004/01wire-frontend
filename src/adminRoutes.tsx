@@ -21,6 +21,8 @@ import PublishedOrders from "layouts/pages/publishedOrder";
 import PRManagement from "layouts/pages/pr-management";
 import OrderManagement from "layouts/pages/orders";
 import PrOrders from "layouts/pages/pr-orders";
+import AdminOverview from "layouts/pages/admin-overview";
+import SpaceDashboardOutlinedIcon from "@mui/icons-material/SpaceDashboardOutlined";
 // Material Dashboard 2 PRO React TS components
 import OrdersIcon from "assets/images/icons/ordersIcon.svg";
 import UserIcon from "assets/images/account_box.svg";
@@ -29,6 +31,16 @@ import BundleIcon from "assets/images/bundle.svg";
 import PublishedOrder from "assets/images/published.svg";
 
 export const adminRoutes = [
+  // Admin landing page: work waiting + last 7 days
+  {
+    type: "collapse",
+    name: "Overview",
+    icon: <SpaceDashboardOutlinedIcon sx={{ color: "#fff", fontSize: "24px !important" }} />,
+    key: "overview",
+    noCollapse: true,
+    route: "/overview",
+    component: <AdminOverview />,
+  },
   // One place for every purchase: replaces "Manage Orders" + "Manage Articles"
   // (those pages still open at /orders and /pr-management, see App.tsx)
   {
