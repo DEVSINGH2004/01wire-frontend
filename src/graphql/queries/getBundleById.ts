@@ -33,6 +33,7 @@ export const GET_BUNDLE_BY_ID = gql`
       contentRule
       backlinks
       disclaimer
+      sampleUrls
       language
       tat
       featured

@@ -35,6 +35,7 @@ export const GET_BUNDLES = gql`
         contentRule
         backlinks
         disclaimer
+        sampleUrls
         language
         tat
         featured

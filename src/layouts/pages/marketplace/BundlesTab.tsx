@@ -12,6 +12,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
+import Link from "@mui/material/Link";
 import { getImageUrl } from "utils/apiConfig";
 import { PackageTierOptions } from "constants/index";
 import { bundleDetail, bundleName, creditsText } from "layouts/pages/releases/components/OrderSummary";
@@ -81,6 +82,25 @@ const TierChip = ({ tier }: { tier?: string }) =>
   tier ? (
     <Chip size="small" label={tier} sx={{ background: TIER_COLOURS[tier] || "#607D8B", color: "#fff", fontWeight: 600, height: 22 }} />
   ) : null;
+
+// "Sample: View" (or "Samples: View 1 · View 2 · View 3"), like the publications table; nothing when there is none
+export function SampleLinks({ urls, size = "13px" }: { urls?: string[]; size?: string }): JSX.Element | null {
+  const list = (urls || []).filter(Boolean).slice(0, 3);
+  if (!list.length) return null;
+  return (
+    <MDTypography component="div" fontSize={size} sx={{ color: MUTED }} data-testid="package-samples">
+      {list.length === 1 ? "Sample: " : "Samples: "}
+      {list.map((u, i) => (
+        <span key={u + i}>
+          {i > 0 && " · "}
+          <Link href={u} target="_blank" rel="noopener noreferrer" fontSize={size} onClick={(e) => e.stopPropagation()} sx={{ color: "#1A73E8", fontWeight: 600 }}>
+            {list.length === 1 ? "View" : `View ${i + 1}`}
+          </Link>
+        </span>
+      ))}
+    </MDTypography>
+  );
+}
 
 const fact = (label: string, value?: string) =>
   value ? (
@@ -261,6 +281,9 @@ function BundlesTab({ isPhone, all, loading, error, refetch, bundles, setBundles
                 {b.language ? ` · ${b.language}` : ""}
                 {b.tat ? ` · TAT ${b.tat}` : ""}
               </MDTypography>
+              <MDBox mt={0.5}>
+                <SampleLinks urls={b.sampleUrls} />
+              </MDBox>
               <MDBox flexGrow={1} />
               <MDTypography fontSize="20px" fontWeight="bold" color="primary" mt={2}>
                 {creditsText(b.price)}
@@ -332,6 +355,14 @@ function PackageDetails({ bundle: b, isPhone, added, onToggle, onClose }: { bund
           {fact("Backlinks", b.backlinks)}
           {fact("Disclaimer", b.disclaimer)}
           {fact("Turnaround", b.tat)}
+          {b.sampleUrls?.length ? (
+            <MDBox>
+              <MDTypography fontSize="11px" sx={{ color: MUTED, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                Sample reports
+              </MDTypography>
+              <SampleLinks urls={b.sampleUrls} />
+            </MDBox>
+          ) : null}
         </MDBox>
         <MDTypography variant="h6" sx={{ color: INK, mt: 3, mb: 1 }}>
           Media included

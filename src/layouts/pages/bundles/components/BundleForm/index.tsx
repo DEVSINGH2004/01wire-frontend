@@ -41,7 +41,14 @@ const EMPTY = {
   source: "",
   featured: false as boolean,
   featuredRank: "",
+  sample1: "",
+  sample2: "",
+  sample3: "",
 };
+const SAMPLE_KEYS = ["sample1", "sample2", "sample3"] as const;
+// Fields a live package may change without being suppressed first
+const LIVE_EDITABLE = ["featured", "featuredRank", ...SAMPLE_KEYS] as string[];
+const isLink = (v: string) => /^https?:\/\/\S+\.\S+$/i.test(v.trim());
 type Values = typeof EMPTY;
 const TEXT_KEYS: (keyof Values)[] = ["name", "tier", "packageType", "coverage", "contentRule", "backlinks", "disclaimer", "language", "tat", "description", "vendor", "vendorPackageName", "internalNotes", "source"];
 
@@ -75,6 +82,7 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
     v.markupPercent = existing.markupPercent ?? "";
     v.featured = !!existing.featured;
     v.featuredRank = existing.featuredRank && existing.featuredRank < 999 ? String(existing.featuredRank) : "";
+    SAMPLE_KEYS.forEach((k, i) => (v[k] = existing.sampleUrls?.[i] || ""));
     setValues(v);
     setInitial(v);
   }, [existing]);
@@ -86,6 +94,9 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
   if (!(Number(values.vendorPriceInr) > 0)) errors.vendorPriceInr = "Enter the vendor price in ₹";
   if (values.markupPercent !== "" && !(Number(values.markupPercent) >= 0)) errors.markupPercent = "Enter 0 or more";
   if (values.featuredRank !== "" && !(Number(values.featuredRank) >= 1)) errors.featuredRank = "Enter 1 or more";
+  SAMPLE_KEYS.forEach((k) => {
+    if (values[k].trim() && !isLink(values[k])) errors[k] = "Enter a full link starting with https://";
+  });
   const show = (k: keyof Values) => (touched ? errors[k] : undefined);
 
   const onSubmit = () => {
@@ -103,15 +114,16 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
       markupPercent: values.markupPercent === "" ? null : Math.round(Number(values.markupPercent)),
       featured: !!values.featured,
       featuredRank: values.featured && values.featuredRank !== "" ? Math.round(Number(values.featuredRank)) : null,
+      sampleUrls: SAMPLE_KEYS.map((k) => values[k].trim()).filter(Boolean),
     };
     TEXT_KEYS.forEach((k) => (params[k] = (values[k] as string).trim() || null));
-    // A live package can only change its Popular setting; other edits need it suppressed
+    // A live package can only change its Popular setting and sample links; other edits need it suppressed
     const onlyFeatured =
       editing &&
       existing?.visibility === "PUBLISHED" &&
-      Object.keys(EMPTY).every((k) => ["featured", "featuredRank"].includes(k) || (values as any)[k] === (initial as any)[k]);
+      Object.keys(EMPTY).every((k) => LIVE_EDITABLE.includes(k) || (values as any)[k] === (initial as any)[k]);
     if (onlyFeatured) {
-      Object.keys(params).forEach((k) => !["featured", "featuredRank"].includes(k) && delete params[k]);
+      Object.keys(params).forEach((k) => !["featured", "featuredRank", "sampleUrls"].includes(k) && delete params[k]);
     }
     setSaving(true);
     (editing ? updateBundle({ variables: { params: { id, ...params } } }) : createBundle({ variables: { params } }))
@@ -150,7 +162,7 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
         {(saving || loading) && <MDCircularLoader overlayloader startLoader />}
         {editing && existing && existing.visibility === "PUBLISHED" && !disabled && (
           <MDBox mt={2} p={1.5} sx={{ background: "#FFF4E5", borderRadius: "8px" }}>
-            <MDTypography fontSize="14px">This package is live. Set it to Suppressed in the list before editing it.</MDTypography>
+            <MDTypography fontSize="14px">This package is live. You can change Popular and the sample links now; for other edits, set it to Suppressed in the list first.</MDTypography>
           </MDBox>
         )}
         <Grid container spacing={3} mt={0}>
@@ -201,6 +213,15 @@ const BundleForm = ({ onClose, disabled = false, refetch, id }: { onClose: any; 
               </Grid>
             </Grid>
             {field("description", "Description", { multiline: true, minRows: 2 })}
+            <MDTypography variant="h6" mt={2}>
+              Sample reports
+            </MDTypography>
+            <MDTypography fontSize="13px" color="text">
+              Up to 3 links (PDF, Google Drive or a live article). Clients see them as "View" on the package card.
+            </MDTypography>
+            {SAMPLE_KEYS.map((k, i) => (
+              <MDBox key={k}>{field(k, `Sample link ${i + 1}`, { placeholder: "https://…", inputProps: { "data-testid": `sample-input-${i + 1}` } })}</MDBox>
+            ))}
           </Grid>
           <Grid item xs={12} md={5}>
             <MDTypography variant="h6" mt={1}>
