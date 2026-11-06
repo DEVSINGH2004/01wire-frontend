@@ -25,6 +25,7 @@ export const ADMIN_OVERVIEW = gql`
         newPaidPrs sitesPublished newCustomers creditsSpent creditsRefunded
         gatewayPayments gatewayPaymentsTest gatewayInr gatewayInrTest razorpayInr shopifyInr
       }
+      offlineThisMonth { month count paid owedToVendors owedCount }
     }
   }
 `;
@@ -145,6 +146,21 @@ function AdminOverview(): JSX.Element {
                 <Grid item xs={6} md={3}><Stat testId="stat-rejected" label="Rejected" value={o.counts.rejected} color="#b71c1c" onClick={tab("rejected")} /></Grid>
                 <Grid item xs={6} md={3}><Stat testId="stat-all" label="All paid" value={o.counts.all} onClick={tab("all")} /></Grid>
                 <Grid item xs={6} md={3}><Stat testId="stat-drafts" label="Unpaid drafts" value={o.counts.drafts} note="Not paid yet" onClick={tab("drafts")} /></Grid>
+              </Grid>
+            </Section>
+
+            <Section title={`Offline orders · ${dayjs(`${o.offlineThisMonth.month}-01`).format("MMMM YYYY")}`}>
+              <Grid container spacing={2}>
+                <Grid item xs={6} md={4}><Stat testId="offline-count" label="Orders this month" value={o.offlineThisMonth.count} onClick={() => navigate("/offline-orders")} /></Grid>
+                <Grid item xs={6} md={4}><Stat testId="offline-paid" label="Customers paid" value={inr(o.offlineThisMonth.paid * 100)} onClick={() => navigate("/offline-orders")} /></Grid>
+                <Grid item xs={12} md={4}>
+                  <Stat
+                    testId="offline-owed" label="Owed to vendors" value={inr(o.offlineThisMonth.owedToVendors * 100)}
+                    color={o.offlineThisMonth.owedToVendors ? "#b71c1c" : INK}
+                    note={`${o.offlineThisMonth.owedCount} ${o.offlineThisMonth.owedCount === 1 ? "order" : "orders"} not paid yet`}
+                    onClick={() => navigate("/offline-orders")}
+                  />
+                </Grid>
               </Grid>
             </Section>
 

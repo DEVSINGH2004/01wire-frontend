@@ -22,6 +22,8 @@ import PRManagement from "layouts/pages/pr-management";
 import OrderManagement from "layouts/pages/orders";
 import PrOrders from "layouts/pages/pr-orders";
 import AdminOverview from "layouts/pages/admin-overview";
+import OfflineOrders from "layouts/pages/offline-orders";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import SpaceDashboardOutlinedIcon from "@mui/icons-material/SpaceDashboardOutlined";
 // Material Dashboard 2 PRO React TS components
 import OrdersIcon from "assets/images/icons/ordersIcon.svg";
@@ -51,6 +53,16 @@ export const adminRoutes = [
     noCollapse: true,
     route: "/pr-orders",
     component: <PrOrders />,
+  },
+  // Orders taken outside the dashboard (monthly sheet import); admin only
+  {
+    type: "collapse",
+    name: "Offline Orders",
+    icon: <ReceiptLongOutlinedIcon sx={{ color: "#fff", fontSize: "24px !important" }} />,
+    key: "offline-orders",
+    noCollapse: true,
+    route: "/offline-orders",
+    component: <OfflineOrders />,
   },
   {
     type: "collapse",
