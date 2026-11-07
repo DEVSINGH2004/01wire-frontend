@@ -26,6 +26,7 @@ export interface IOfflineOrder {
   notes: string | null;
   importBatch: string;
   sourceRow: number | null;
+  isTest: boolean;
 }
 export interface IOfflineTotals {
   count: number;
@@ -56,7 +57,7 @@ export interface IOfflineImportResult {
 const ORDER = `
   id orderDate customerGroup articleLink articleNote orderType amountPaid item matchedPublicationId
   customerPaymentStatus status deliveredAt liveLink liveLinks liveNote vendor vendorCost margin
-  vendorPaymentStatus vendorOrderStatus vendorPaymentNote notes importBatch sourceRow
+  vendorPaymentStatus vendorOrderStatus vendorPaymentNote notes importBatch sourceRow isTest
 `;
 
 export const OFFLINE_ORDERS = gql`
@@ -85,6 +86,18 @@ export const IMPORT_OFFLINE_ORDERS = gql`
 export const UPDATE_OFFLINE_ORDER = gql`
   mutation updateOfflineOrder($params: OfflineOrderUpdateInput!) {
     updateOfflineOrder(params: $params) { ${ORDER} }
+  }
+`;
+
+export const CREATE_OFFLINE_ORDER = gql`
+  mutation createOfflineOrder($params: OfflineOrderCreateInput!) {
+    createOfflineOrder(params: $params) { ${ORDER} }
+  }
+`;
+
+export const DELETE_OFFLINE_ORDER = gql`
+  mutation deleteOfflineOrder($id: String!) {
+    deleteOfflineOrder(id: $id)
   }
 `;
 

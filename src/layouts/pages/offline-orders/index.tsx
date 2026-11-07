@@ -16,12 +16,16 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Link from "@mui/material/Link";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import MDCircularLoader from "components/MDCircularLoader";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import {
+  CREATE_OFFLINE_ORDER,
+  DELETE_OFFLINE_ORDER,
   IMPORT_OFFLINE_ORDERS,
   IOfflineImportResult,
   IOfflineOrder,
@@ -46,6 +50,8 @@ const host = (u: string) => {
 };
 const monthLabel = (m: string) => dayjs(`${m}-01`).format("MMMM YYYY");
 const cell = { borderBottom: "1px solid rgba(0,0,0,0.06)", py: 1.25, px: 1.25, fontSize: "13px", color: INK, verticalAlign: "top" };
+// MUI selects in this theme collapse without a fixed height
+const SELECT = { "& .MuiInputBase-root": { height: 40 } };
 const head = { ...cell, fontWeight: 700, color: MUTED, fontSize: "11px", textTransform: "uppercase" as const, verticalAlign: "middle" };
 
 const Pill = ({ label, good }: { label: string; good: boolean }) => (
@@ -75,6 +81,7 @@ function OfflineOrders(): JSX.Element {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState<IOfflineOrder | null>(null);
   const [importing, setImporting] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(typed.trim()), 300);
@@ -88,6 +95,7 @@ function OfflineOrders(): JSX.Element {
   const list = data?.offlineOrders;
   const rows = list?.data || [];
   const t = list?.totals;
+  const tests = rows.filter((o) => o.isTest).length;
   const filtered = !!(status || vendorPaid || vendor || group || search);
 
   const downloadCsv = () => {
@@ -115,7 +123,8 @@ function OfflineOrders(): JSX.Element {
           </MDBox>
           <MDBox display="flex" gap={1} alignItems="center" flexWrap="wrap">
             <TextField size="small" type="month" label="Month" InputLabelProps={{ shrink: true }} value={month} onChange={(e) => e.target.value && setMonth(e.target.value)} inputProps={{ "data-testid": "month-input" }} sx={{ background: "#fff", borderRadius: "8px" }} />
-            <MDButton size="small" variant="gradient" color="primary" onClick={() => setImporting(true)}>Import sheet</MDButton>
+            <MDButton size="small" variant="gradient" color="primary" onClick={() => setAdding(true)}>Add order</MDButton>
+            <MDButton size="small" variant="outlined" color="primary" onClick={() => setImporting(true)}>Import sheet</MDButton>
             <MDButton size="small" variant="outlined" color="primary" disabled={!rows.length} onClick={downloadCsv}>Download (Excel)</MDButton>
           </MDBox>
         </MDBox>
@@ -128,6 +137,11 @@ function OfflineOrders(): JSX.Element {
           <Grid item xs={12} md={6} lg={2.5}><Total label="Owed to vendors" value={t ? rupees(t.owedToVendors) : "—"} note={t ? `${t.owedCount} ${t.owedCount === 1 ? "order" : "orders"} not paid yet` : undefined} color={t?.owedToVendors ? RED : INK} /></Grid>
         </Grid>
 
+        {tests > 0 && (
+          <MDTypography fontSize="12px" sx={{ color: MUTED, mt: 1 }}>
+            {tests} test {tests === 1 ? "order is" : "orders are"} listed below but not counted in these totals.
+          </MDTypography>
+        )}
         <Card sx={{ mt: 2 }}>
           <MDBox p={2} display="flex" gap={1.5} flexWrap="wrap" alignItems="center">
             <TextField size="small" value={typed} onChange={(e) => setTyped(e.target.value)} placeholder="Search customer, site, vendor, notes" sx={{ flex: "1 1 240px" }} inputProps={{ "aria-label": "Search offline orders" }} />
@@ -156,7 +170,10 @@ function OfflineOrders(): JSX.Element {
                 {rows.map((o) => (
                   <TableRow key={o.id} hover onClick={() => setOpen(o)} sx={{ cursor: "pointer" }} data-testid="offline-row">
                     <TableCell sx={{ ...cell, whiteSpace: "nowrap" }}>{day(o.orderDate)}</TableCell>
-                    <TableCell sx={{ ...cell, fontWeight: 600 }}>{o.customerGroup}</TableCell>
+                    <TableCell sx={{ ...cell, fontWeight: 600 }}>
+                      {o.customerGroup}
+                      {o.isTest && <MDBox component="span" sx={{ ml: 0.75, px: 0.75, py: 0.1, borderRadius: "6px", fontSize: "10px", fontWeight: 700, color: "#6a1b9a", background: "#f3e5f5" }}>TEST</MDBox>}
+                    </TableCell>
                     <TableCell sx={{ ...cell, maxWidth: 220, wordBreak: "break-word" }}>{o.item}</TableCell>
                     <TableCell sx={cell}><Pill label={o.status === "DELIVERED" ? "Delivered" : "Not delivered"} good={o.status === "DELIVERED"} /></TableCell>
                     <TableCell sx={{ ...cell, whiteSpace: "nowrap" }}>{day(o.deliveredAt)}</TableCell>
@@ -191,6 +208,7 @@ function OfflineOrders(): JSX.Element {
       </MDBox>
 
       {open && <OrderDialog order={open} onClose={() => setOpen(null)} onSaved={() => refetch()} />}
+      {adding && <AddDialog onClose={() => setAdding(false)} onDone={(m) => { setAdding(false); setMonth(m); refetch(); }} vendors={list?.vendors || []} />}
       {importing && <ImportDialog onClose={() => setImporting(false)} onDone={(m) => { setImporting(false); if (m) setMonth(m); refetch(); }} />}
     </MDBox>
   );
@@ -203,6 +221,13 @@ function OrderDialog({ order, onClose, onSaved }: { order: IOfflineOrder; onClos
   const [liveLink, setLiveLink] = useState("");
   const [notes, setNotes] = useState(order.notes || "");
   const [save, { loading }] = useMutation(UPDATE_OFFLINE_ORDER);
+  const [del, { loading: deleting }] = useMutation(DELETE_OFFLINE_ORDER);
+  const remove = () => {
+    if (!window.confirm(`Delete this order (${order.customerGroup} · ${order.item})? It leaves the list and the totals.`)) return;
+    del({ variables: { id: order.id } })
+      .then(() => { toast.success("Order deleted"); onSaved(); onClose(); })
+      .catch((e) => toast.error(e?.message || "Could not delete"));
+  };
   const row = (label: string, value: any) => (
     <MDBox display="flex" gap={2} py={0.5} sx={{ borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
       <MDTypography fontSize="13px" sx={{ color: MUTED, minWidth: 140 }}>{label}</MDTypography>
@@ -222,7 +247,7 @@ function OrderDialog({ order, onClose, onSaved }: { order: IOfflineOrder; onClos
   };
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle sx={{ color: INK }}>{order.customerGroup} · {order.item}</DialogTitle>
+      <DialogTitle sx={{ color: INK }}>{order.customerGroup} · {order.item}{order.isTest ? " (test)" : ""}</DialogTitle>
       <DialogContent>
         {row("Order date", day(order.orderDate))}
         {row("Customer paid", `${rupees(order.amountPaid)} · ${order.customerPaymentStatus === "PAID" ? "Paid" : "Unpaid"}`)}
@@ -233,17 +258,17 @@ function OrderDialog({ order, onClose, onSaved }: { order: IOfflineOrder; onClos
         {row("Vendor cost / margin", `${rupees(order.vendorCost)} · margin ${rupees(order.margin)}`)}
         {row("Vendor delivered", order.vendorOrderStatus === "DELIVERED" ? "Delivered" : order.vendorOrderStatus === "NOT_DELIVERED" ? "Not delivered" : "—")}
         {row("Vendor payment note", order.vendorPaymentNote)}
-        {row("From", `Import ${order.importBatch}${order.sourceRow ? ` · sheet row ${order.sourceRow}` : ""}`)}
+        {row("From", order.importBatch === "manual" ? `Added by hand${order.isTest ? " · test order, not counted in totals" : ""}` : `Import ${order.importBatch}${order.sourceRow ? ` · sheet row ${order.sourceRow}` : ""}`)}
         <MDTypography variant="h6" sx={{ color: INK, mt: 2 }}>Update</MDTypography>
         <Grid container spacing={2} mt={0}>
           <Grid item xs={12} sm={4}>
-            <TextField select fullWidth size="small" label="Status" value={status} onChange={(e) => setStatus(e.target.value)}>
+            <TextField select fullWidth size="small" sx={SELECT} label="Status" value={status} onChange={(e) => setStatus(e.target.value)}>
               <MenuItem value="DELIVERED">Delivered</MenuItem>
               <MenuItem value="NOT_DELIVERED">Not delivered</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField select fullWidth size="small" label="Vendor paid" value={vendorPaid} onChange={(e) => setVendorPaid(e.target.value)} inputProps={{ "data-testid": "vendor-paid" }}>
+            <TextField select fullWidth size="small" sx={SELECT} label="Vendor paid" value={vendorPaid} onChange={(e) => setVendorPaid(e.target.value)} inputProps={{ "data-testid": "vendor-paid" }}>
               <MenuItem value="PAID">Paid</MenuItem>
               <MenuItem value="UNPAID">Unpaid</MenuItem>
             </TextField>
@@ -257,8 +282,90 @@ function OrderDialog({ order, onClose, onSaved }: { order: IOfflineOrder; onClos
         </Grid>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
+        <MDButton size="small" variant="text" color="error" onClick={remove} disabled={deleting} sx={{ mr: "auto" }}>{deleting ? "Deleting…" : "Delete order"}</MDButton>
         <MDButton size="small" variant="outlined" color="secondary" onClick={onClose}>Close</MDButton>
         <MDButton size="small" variant="gradient" color="primary" onClick={submit}>{loading ? "Saving…" : "Save"}</MDButton>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+// Add one order by hand (an order not in the sheet yet, or a test order)
+function AddDialog({ onClose, onDone, vendors }: { onClose: () => void; onDone: (month: string) => void; vendors: string[] }) {
+  const [f, setF] = useState({
+    orderDate: dayjs().format("YYYY-MM-DD"), customerGroup: "", item: "", amountPaid: "", articleLink: "",
+    status: "NOT_DELIVERED", deliveredAt: "", liveLink: "", vendor: "", vendorCost: "", vendorPaymentStatus: "UNPAID", notes: "", isTest: false,
+  });
+  const [err, setErr] = useState("");
+  const [create, { loading }] = useMutation(CREATE_OFFLINE_ORDER);
+  const set = (k: string) => (e: any) => { setErr(""); setF((p) => ({ ...p, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value })); };
+  const isUrl = (s: string) => !s.trim() || /^https?:\/\/\S+\.\S+$/i.test(s.trim());
+  const submit = () => {
+    const missing = [!f.orderDate && "date", !f.customerGroup.trim() && "customer", !f.item.trim() && "site or package", !(Number(f.amountPaid) > 0) && "amount paid"].filter(Boolean);
+    if (missing.length) return setErr(`Please fill: ${missing.join(", ")}`);
+    if (f.vendorCost && !(Number(f.vendorCost) >= 0)) return setErr("Vendor cost must be a number");
+    if (!isUrl(f.liveLink) || !isUrl(f.articleLink)) return setErr("Links must start with https://");
+    const params: any = {
+      orderDate: f.orderDate, customerGroup: f.customerGroup.trim(), item: f.item.trim(), amountPaid: Number(f.amountPaid),
+      status: f.status, vendorPaymentStatus: f.vendorPaymentStatus, isTest: f.isTest,
+    };
+    if (f.articleLink.trim()) params.articleLink = f.articleLink.trim();
+    if (f.status === "DELIVERED" && f.deliveredAt) params.deliveredAt = f.deliveredAt;
+    if (f.liveLink.trim()) params.liveLink = f.liveLink.trim();
+    if (f.vendor.trim()) params.vendor = f.vendor.trim();
+    if (f.vendorCost) params.vendorCost = Number(f.vendorCost);
+    if (f.notes.trim()) params.notes = f.notes.trim();
+    create({ variables: { params } })
+      .then(() => { toast.success(f.isTest ? "Test order added (not counted in totals)" : "Order added"); onDone(f.orderDate.slice(0, 7)); })
+      .catch((e) => setErr(e?.message || "Could not add the order"));
+  };
+  const field = { fullWidth: true, size: "small" as const };
+  return (
+    <Dialog open onClose={onClose} fullWidth maxWidth="md">
+      <DialogTitle sx={{ color: INK }}>Add an order</DialogTitle>
+      <DialogContent>
+        <MDTypography fontSize="13px" sx={{ color: MUTED, mb: 2 }}>
+          For an order the sheet doesn&apos;t have yet. If the same order (date, customer, site, amount) later comes in the sheet, the import skips it.
+        </MDTypography>
+        <Grid container spacing={2} data-testid="add-order-form">
+          <Grid item xs={12} sm={4}><TextField {...field} type="date" label="Order date *" InputLabelProps={{ shrink: true }} value={f.orderDate} onChange={set("orderDate")} /></Grid>
+          <Grid item xs={12} sm={8}><TextField {...field} label="Customer / group *" placeholder="e.g. MA x 01Wire" value={f.customerGroup} onChange={set("customerGroup")} /></Grid>
+          <Grid item xs={12} sm={8}><TextField {...field} label="Site or package *" placeholder="e.g. zeebiz.com or Authority package 21 media" value={f.item} onChange={set("item")} /></Grid>
+          <Grid item xs={12} sm={4}><TextField {...field} type="number" label="Customer paid (₹) *" value={f.amountPaid} onChange={set("amountPaid")} inputProps={{ min: 0, step: "0.01" }} /></Grid>
+          <Grid item xs={12}><TextField {...field} label="Article doc link" placeholder="https://docs.google.com/…" value={f.articleLink} onChange={set("articleLink")} /></Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField {...field} select sx={SELECT} label="Status" value={f.status} onChange={set("status")}>
+              <MenuItem value="NOT_DELIVERED">Not delivered</MenuItem>
+              <MenuItem value="DELIVERED">Delivered</MenuItem>
+            </TextField>
+          </Grid>
+          {f.status === "DELIVERED" && <Grid item xs={12} sm={4}><TextField {...field} type="date" label="Delivered on" InputLabelProps={{ shrink: true }} value={f.deliveredAt} onChange={set("deliveredAt")} helperText="Empty = today" /></Grid>}
+          <Grid item xs={12} sm={f.status === "DELIVERED" ? 4 : 8}><TextField {...field} label="Live link" placeholder="https://…" value={f.liveLink} onChange={set("liveLink")} /></Grid>
+          <Grid item xs={12} sm={5}>
+            <TextField {...field} label="Vendor (we gave order to)" value={f.vendor} onChange={set("vendor")} inputProps={{ list: "offline-vendors" }} />
+            <datalist id="offline-vendors">{vendors.map((v) => <option key={v} value={v} />)}</datalist>
+          </Grid>
+          <Grid item xs={6} sm={3}><TextField {...field} type="number" label="Vendor cost (₹)" value={f.vendorCost} onChange={set("vendorCost")} inputProps={{ min: 0, step: "0.01" }} /></Grid>
+          <Grid item xs={6} sm={4}>
+            <TextField {...field} select sx={SELECT} label="Vendor paid" value={f.vendorPaymentStatus} onChange={set("vendorPaymentStatus")}>
+              <MenuItem value="UNPAID">Unpaid</MenuItem>
+              <MenuItem value="PAID">Paid</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12}><TextField {...field} multiline minRows={2} label="Notes" value={f.notes} onChange={set("notes")} /></Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              sx={{ display: "flex", flexWrap: "nowrap", alignItems: "center", mr: 0 }}
+              control={<Checkbox checked={f.isTest} onChange={set("isTest")} />}
+              label={<MDTypography fontSize="14px" sx={{ color: INK }}>Test order: show it with a &quot;Test&quot; tag but leave it out of all totals and the Overview</MDTypography>}
+            />
+          </Grid>
+        </Grid>
+        {err && <MDTypography fontSize="13px" sx={{ color: RED, mt: 1.5 }}>{err}</MDTypography>}
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <MDButton size="small" variant="outlined" color="secondary" onClick={onClose}>Cancel</MDButton>
+        <MDButton size="small" variant="gradient" color="primary" onClick={submit} disabled={loading}>{loading ? "Adding…" : "Add order"}</MDButton>
       </DialogActions>
     </Dialog>
   );

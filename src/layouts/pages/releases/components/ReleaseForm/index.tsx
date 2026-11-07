@@ -20,6 +20,7 @@ import {
   IGetArticleByIdVars,
   IGetArticleById,
 } from "graphql/queries/getArticleById";
+import ChangesNote from "../ChangesNote";
 import MDTypography from "components/MDTypography";
 import Dialog from "@mui/material/Dialog";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -222,6 +223,9 @@ function ReleaseForm({ idVal, onClose, refetch }: Props): JSX.Element {
         </Stepper>
       </MDBox>
       <MDBox p={2}>
+        {article?.status === "AWAITING_APPROVAL" && (
+          <ChangesNote banner changes={article?.changesRequested} note={article?.notes} />
+        )}
         <MDBox>
           {/* Steps read the saved PR when they mount, so wait for it */}
           {loading || (articleId && !article) ? (

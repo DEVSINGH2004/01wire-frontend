@@ -15,6 +15,7 @@ import { UPDATE_ARTICLE_STATUS } from "graphql/mutations/updateArticleStatus";
 import { ADMIN_PR_ORDER, IAdminPrRow } from "graphql/queries/adminPrOrders";
 import SitesTable from "./SitesTable";
 import { AskDialog, INK, MUTED, PR_STATUS, Pill, date, inr, methodLabel } from "./common";
+import ChangesDialog from "./ChangesDialog";
 
 type Action = "AWAITING_APPROVAL" | "SCHEDULED" | "REJECTED" | "PUBLISHED";
 const STEPS = ["Paid", "Reviewed", "Accepted", "Sites live", "Published"];
@@ -63,25 +64,23 @@ function PrOrderDetail({ articleId }: { articleId: string }): JSX.Element {
   const s = row.status;
   // Only the actions the server allows right now
   const actions: { key: Action; label: string; variant: "gradient" | "outlined"; color: "primary" | "error" | "success" | "warning" }[] = [];
-  if (["SUBMITTED", "REVIEW"].includes(s)) {
-    actions.push({ key: "SCHEDULED", label: "Accept & schedule", variant: "gradient", color: "primary" });
-    actions.push({ key: "AWAITING_APPROVAL", label: "Ask customer for changes", variant: "outlined", color: "warning" });
-  }
+  if (["SUBMITTED", "REVIEW"].includes(s)) actions.push({ key: "SCHEDULED", label: "Accept & schedule", variant: "gradient", color: "primary" });
   if (s === "SCHEDULED" && row.pendingCount === 0 && row.liveCount > 0) actions.push({ key: "PUBLISHED", label: "Mark PR published", variant: "gradient", color: "success" });
+  // Changes can be asked for until a site is live (also after accepting)
+  if (["SUBMITTED", "REVIEW", "SCHEDULED"].includes(s) && row.liveCount === 0) actions.push({ key: "AWAITING_APPROVAL", label: "Make changes", variant: "outlined", color: "warning" });
   if (["SUBMITTED", "REVIEW", "AWAITING_APPROVAL", "SCHEDULED"].includes(s) && row.liveCount === 0) {
     actions.push({ key: "REJECTED", label: row.nextStep === "REJECT_PR" ? "Close as rejected" : "Reject whole PR (refund)", variant: "outlined", color: "error" });
   }
   const left = Math.max(0, (row.payment.credits || 0) - (row.payment.refundedCredits || 0));
-  const dialog: Record<Action, { title: string; text: string; label?: string; placeholder?: string; confirm: string; danger?: boolean }> = {
+  const dialog: Record<Exclude<Action, "AWAITING_APPROVAL">, { title: string; text: string; label?: string; placeholder?: string; confirm: string; danger?: boolean }> = {
     SCHEDULED: { title: "Accept this PR?", text: "You can then publish each site and add its live link.", confirm: "Accept & schedule" },
-    AWAITING_APPROVAL: { title: "Ask the customer for changes", text: "The customer sees your message, edits the PR and sends it again (no new payment).", label: "What should they change?", placeholder: "e.g. Please add a company quote and a higher-quality image", confirm: "Send to customer" },
     REJECTED: { title: "Reject the whole PR", text: left > 0 ? `${left} credits go back to the customer's wallet. The reason is shown to them.` : "Nothing is left to refund (sites were already refunded). The reason is shown to the customer.", label: "Reason", placeholder: "e.g. Topic not allowed on these sites", confirm: "Reject PR", danger: true },
     PUBLISHED: { title: "Mark the PR as published?", text: `${row.liveCount} of ${row.totalCount} sites are live${row.rejectedCount ? `, ${row.rejectedCount} rejected and refunded` : ""}. The customer sees the PR as Published.`, confirm: "Mark published" },
   };
 
-  const run = (value: string) => {
+  const run = (value: string, changes?: string[]) => {
     if (!ask) return;
-    setStatus({ variables: { params: { id: row.articleId, status: ask, ...(value ? { notes: value } : {}) } } })
+    setStatus({ variables: { params: { id: row.articleId, status: ask, ...(value ? { notes: value } : {}), ...(changes?.length ? { changes } : {}) } } })
       .then(() => { toast.success(`PR #${row.prId}: ${PR_STATUS[ask]?.label || ask}`); setAsk(null); refetch(); art.refetch(); })
       .catch((e) => toast.error(e?.message || "Could not update the PR"));
   };
@@ -138,10 +137,29 @@ function PrOrderDetail({ articleId }: { articleId: string }): JSX.Element {
                   ))}
                 </MDBox>
               )}
-              {row.status === "AWAITING_APPROVAL" && row.notes && <MDTypography fontSize="13px" sx={{ color: "#b26a00", mt: 1 }}>Asked: {row.notes}</MDTypography>}
+              {row.status === "AWAITING_APPROVAL" && <MDTypography fontSize="13px" fontWeight="bold" sx={{ color: "#b26a00", mt: 1 }}>Waiting for the customer to make the changes</MDTypography>}
             </Box>
           </Grid>
         </Grid>
+
+        {(row.changeRequests || []).length > 0 && (
+          <Card sx={{ mt: 2, p: 2 }} data-testid="changes-history">
+            <MDTypography variant="h6" sx={{ color: INK, mb: 1 }}>Changes asked</MDTypography>
+            {[...(row.changeRequests || [])].reverse().map((c, i) => (
+              <MDBox key={`${c.at}-${i}`} py={1} sx={{ borderTop: i ? "1px solid rgba(0,0,0,0.06)" : "none" }}>
+                <MDTypography fontSize="12px" sx={{ color: MUTED }}>
+                  {c.at ? date(c.at, true) : ""}{i === 0 && row.status === "AWAITING_APPROVAL" ? " · waiting for the customer" : i === 0 ? " · customer sent it again" : ""}
+                </MDTypography>
+                {c.changes.length > 0 && (
+                  <MDBox component="ul" sx={{ pl: 2.5, my: 0.5 }}>
+                    {c.changes.map((x) => <MDBox component="li" key={x} sx={{ fontSize: "14px", color: INK }}>{x}</MDBox>)}
+                  </MDBox>
+                )}
+                {c.note && <MDTypography fontSize="14px" sx={{ color: INK, whiteSpace: "pre-wrap" }}>{c.note}</MDTypography>}
+              </MDBox>
+            ))}
+          </Card>
+        )}
 
         <Card sx={{ mt: 2 }}>
           <MDBox px={2} pt={2}>
@@ -159,7 +177,15 @@ function PrOrderDetail({ articleId }: { articleId: string }): JSX.Element {
         </Card>
       </MDBox>
 
-      {ask && (
+      {ask === "AWAITING_APPROVAL" && (
+        <ChangesDialog
+          accepted={row.status === "SCHEDULED"}
+          saving={saving}
+          onClose={() => setAsk(null)}
+          onConfirm={(changes, note) => run(note, changes)}
+        />
+      )}
+      {ask && ask !== "AWAITING_APPROVAL" && (
         <AskDialog
           open={!!ask}
           title={dialog[ask].title}

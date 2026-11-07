@@ -19,6 +19,7 @@ export interface IAdminPrRow {
   title: string;
   status: string;
   notes: string | null;
+  changeRequests?: { at: string | null; changes: string[]; note: string | null }[] | null;
   createdAt: string;
   updatedAt: string;
   customerId: string | null;
@@ -62,6 +63,7 @@ export interface IAdminPrOrders {
 
 const ROW = `
   articleId prId title status notes createdAt updatedAt
+  changeRequests { at changes note }
   customerId customerName customerEmail clientName
   items { orderId name type status publishBy url notes credits refundedCredits overdue }
   payment { method credits amount gatewayRef test paidAt issue refundedCredits }

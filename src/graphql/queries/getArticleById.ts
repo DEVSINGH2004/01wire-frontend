@@ -29,6 +29,7 @@ export const GET_ARTICLE_BY_ID = gql`
       publishType
       timezone
       notes
+      changesRequested
       instructions
       metaTitle
       metaDescription

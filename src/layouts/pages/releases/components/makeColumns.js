@@ -15,6 +15,7 @@ import { truncateString } from "utils/helpers";
 import { statusOptions } from "../../pr-management/components/makeColumns";
 import MessageIcon from "@mui/icons-material/Message";
 import RowAction from "components/RowAction";
+import ChangesNote from "./ChangesNote";
 // import ShareIcon from "assets/images/icons/shareIcon.svg";
 // import { toast } from "react-toastify";
 
@@ -201,7 +202,15 @@ export const makeColumns = (handleAction, handleUpdateStatus, setOpen) => {
               <RowAction
                 label="Comments"
                 color="primary"
-                onClick={() => setOpen(row?.original?.notes || "No comments provided")}
+                onClick={() =>
+                  setOpen(
+                    row.original.status === "AWAITING_APPROVAL" && (row.original.changesRequested || []).length ? (
+                      <ChangesNote changes={row.original.changesRequested} note={row.original.notes} />
+                    ) : (
+                      row?.original?.notes || "No comments provided"
+                    )
+                  )
+                }
                 sx={{
                   width: "35px",
                   height: "35px",

@@ -47,6 +47,7 @@ export const GET_ARTICLES = gql`
         }
         timezone
         notes
+        changesRequested
         instructions
         publishAt
         createdAt
